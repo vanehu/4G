@@ -111,7 +111,7 @@ public class OneCertFiveNumberController extends BaseController {
     public String afterCertNumber(Model model) {
 
         SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
-            SysConstant.SESSION_KEY_LOGIN_STAFF);
+                SysConstant.SESSION_KEY_LOGIN_STAFF);
 
         Calendar c = Calendar.getInstance();
         SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd");
@@ -133,7 +133,7 @@ public class OneCertFiveNumberController extends BaseController {
     public String certNumberQuery(Model model) {
 
         SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
-            SysConstant.SESSION_KEY_LOGIN_STAFF);
+                SysConstant.SESSION_KEY_LOGIN_STAFF);
 
         Calendar c = Calendar.getInstance();
         SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd");
@@ -154,10 +154,14 @@ public class OneCertFiveNumberController extends BaseController {
     @RequestMapping(value = "/queryOneFiveOrderList", method = RequestMethod.GET)
     public String queryOneFiveOrderList(Model model, @RequestParam Map<String, Object> param) throws BusinessException {
         SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
-            SysConstant.SESSION_KEY_LOGIN_STAFF);
+                SysConstant.SESSION_KEY_LOGIN_STAFF);
         List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
         Integer totalSize = 0;
         int nowPage = MapUtils.getIntValue(param, "nowPage", 1);
+        String ifFilterOwnAccNbr = MapUtils.getString(param, "ifFilterOwnAccNbr", "");
+        if(SysConstant.STR_Y.equals(ifFilterOwnAccNbr)){
+            param.put("handleStaffId", sessionStaff.getStaffId());
+        }
         try {
             Map<String, Object> resMap = cartBmo.queryCltCarts(param, null, sessionStaff);
             if (ResultCode.R_SUCC.equals(resMap.get("resultCode"))) {
@@ -167,7 +171,7 @@ public class OneCertFiveNumberController extends BaseController {
                     totalSize = MapUtils.getInteger(map, "totalCnt", 1);
                 }
                 PageModel<Map<String, Object>> pm = PageUtil.buildPageModel(nowPage, 10, totalSize < 1 ? 1
-                    : totalSize, list);
+                        : totalSize, list);
                 model.addAttribute("pageModel", pm);
                 model.addAttribute("code", "0");
 
@@ -330,10 +334,10 @@ public class OneCertFiveNumberController extends BaseController {
             return super.failedStr(model, ErrorCode.QUERY_CERT_NUM_REL, e, paramMap);
         }
         PageModel<Map<String, Object>> pm = PageUtil.buildPageModel(
-            Integer.valueOf(curPage),
-            Integer.valueOf(pageSize),
-            Integer.valueOf(totalSize) < 1 ? 1 : Integer.valueOf(totalSize),
-            list);
+                Integer.valueOf(curPage),
+                Integer.valueOf(pageSize),
+                Integer.valueOf(totalSize) < 1 ? 1 : Integer.valueOf(totalSize),
+                list);
         model.addAttribute("pageModel", pm);
         return "/certNumber/certNumber-list";
     }
@@ -349,7 +353,7 @@ public class OneCertFiveNumberController extends BaseController {
     @RequestMapping(value = "/uploadAttachment", method = RequestMethod.POST)
     @ResponseBody
     public JsonResponse uploadAttachment(@RequestParam(value = "mFileUpload") CommonsMultipartFile[] files,
-                                         @RequestParam(value = "soNbr") String soNbr) {
+                                         @RequestParam(value = "type") String type, @RequestParam(value = "soNbr") String soNbr) {
         SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
         Map<String, Object> param = new HashMap<String, Object>();
         List<Map<String, String>> errorList = new ArrayList<Map<String, String>>();
@@ -374,10 +378,20 @@ public class OneCertFiveNumberController extends BaseController {
 
 
             String picFlag = "";//文件标识
-            if (fileType.startsWith("image")) {
-                picFlag = SysConstant.ONE_FIVE_FILE_TYPE_JPG;
-            } else if (fileType.endsWith("pdf")) {
-                picFlag = SysConstant.ONE_FIVE_FILE_TYPE_PDF;
+            if (SysConstant.ONE_FIVE_FILE_TYPE_Pdf.equals(type)) {
+                if (fileType.startsWith("image")) {
+                    picFlag = SysConstant.ONE_FIVE_FILE_TYPE_JPG;
+                } else if (fileType.endsWith("pdf")) {
+                    picFlag = SysConstant.ONE_FIVE_FILE_TYPE_PDF;
+                }
+            } else if (SysConstant.ONE_FIVE_FILE_TYPE_Front.equals(type)) {
+                picFlag=SysConstant.ONE_FIVE_FILE_TYPE_JPG_FRONT;
+            } else if (SysConstant.ONE_FIVE_FILE_TYPE_Back.equals(type)) {
+                picFlag = SysConstant.ONE_FIVE_FILE_TYPE_JPG_BACK;
+            } else if (SysConstant.ONE_FIVE_FILE_TYPE_Jbr.equals(type)) {
+                picFlag = SysConstant.ONE_FIVE_FILE_TYPE_JPG_JBR;
+            }else {
+                picFlag = SysConstant.ONE_FIVE_FILE_TYPE_JPG_OTHER;
             }
             if (StringUtils.isBlank(picFlag)) {//文件类型校验
                 errorMap.put("fileType", fileType);

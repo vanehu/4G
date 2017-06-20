@@ -33,7 +33,7 @@
                         <thead>
                         <tr>
                             <td>用户名</td>
-                            <td></td>
+                            <td style="display: none;"></td>
                             <td>证件号</td>
                             <td>号码</td>
                             <td>操作</td>
@@ -45,13 +45,12 @@
                                 <#list custInfos as item >
                                 <tr>
                                     <td>${item.custName}</td>
-                                    <td>${item.certType}</td>
+                                    <td style="display: none;">${item.certType}</td>
                                     <td>${item.certNumber}</td>
                                     <td>${item.telNumber}</td>
                                     <td>
-                                        <textarea id="order_remark_${item.telNumber}" rows="3" style="width: 350px;" placeholder="在此处输入取消原因"/>
                                         <a style=" margin-left:20px;" class="btna_o"
-                                           onclick="oneFive.certNumberHandle.orderConfirm('${item.orderId}','${item.lanId}','${item.telNumber}','${item.certType}','${item.certNumber}')"><span>确认</span></a>
+                                           onclick="oneFive.certNumberHandle.orderConfirm('${item.orderId}','${item.lanId}','${item.telNumber}','${item.certType}','${item.certNumber}')"><span>完成</span></a>
                                         <a style=" margin-left:20px;" class="btna_o"
                                            onclick="oneFive.certNumberHandle.orderCancel('${item.orderId}','${item.lanId}','${item.telNumber}')"><span>取消</span></a>
                                     </td>
@@ -69,17 +68,7 @@
                     </div>
                     <div id="attachmentInfos" style="display: none;width: 800px;overflow-x: auto;"></div>
 
-                    <!--
-                    <h5 class="s_title">订单备注</h5>
-                    <ul class="fillin">
-                        <li class="full">
-                            <label>订单备注：</label>
-                            <textarea id="order_remark" class="order-remark" rows="4"></textarea>
-                        </li>
-                    </ul>
-                    -->
                 </div>
-
             </div>
         </div>
     </div>
@@ -93,8 +82,34 @@
     </div>
 
 </div>
+
+<#--取消备注信息-->
+<div class="easyDialogdiv"
+     style="width: 500px; height: 350px; display: none" id="handle_cancel_main">
+    <div class="easyDialogclose" id="handle_cancel_close"></div>
+    <form id="handle_cancel_form">
+        <h1 class="easyDialogTitle" id="handle_cancel_title">取消备注信息</h1>
+        <div class="infoBox">
+            <table class="network" style="margin: 0px 25px;">
+                <tbody>
+                <tr style="">
+                    <td width="80" id="handle_cancel_mark">取消备注：</td>
+                    <td align="center"><textarea type="textarea" id="handle_cancel_txt" data-validate="validate(required:请输入取消原因) on(blur)"
+                                                 maxlength="500" name="handle_cancel_txt" cols="" rows=""
+                                                 style="height: 160px; width: 350px; margin-top: 10px; border: 1px solid #d3d8d0;"></textarea>
+                    </td>
+                    <td width="80"><label class="f_red" id="handle_cancel_r">*</label></td>
+                </tr>
+                </tbody>
+            </table>
+            <div align="center" style="margin: 20px auto;">
+                <a class="btna_o" id="handle_cancel_bt" href="javascript:void(0)"><span id="handle_cancel_yes">确认</span></a>
+                <a style="margin-left: 20px;" class="btna_o"
+                   href="javascript:void(0)" id="handle_cancel_no"><span>取消</span></a>
+            </div>
+        </div>
+    </form>
 </div>
-<!--内容 end-->
 
 <#else>
 ${mess}
