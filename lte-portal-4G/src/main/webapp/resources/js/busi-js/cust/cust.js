@@ -4859,10 +4859,10 @@ order.cust = (function(){
 		});
 	};
 	
-	var _saveMktContactResult =function(objId,activityId,id){
+	var _saveMktContactResult =function(mktmodelCode,activityId,id){
     	var param = {
 	        areaId : OrderInfo.staff.areaId,
-	        mktmodelCode : objId,
+	        mktmodelCode : mktmodelCode,
 	        contactChlId : OrderInfo.staff.channelId,
 	        contactStaff : OrderInfo.staff.staffId,
 	        pushType : "3000",
