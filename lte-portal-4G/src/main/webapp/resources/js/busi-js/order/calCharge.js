@@ -597,7 +597,7 @@ order.calcharge = (function(){
 		$("#orderSave").off("click");
 	};*/
 	var _conBtns=function(){
-		ranNum = 1;//随机数重新赋值
+		//ranNum = 1;//随机数重新赋值
 		$("#orderCancel").removeClass("btna_g").addClass("btna_o");
 		var val=($('#realmoney').val())*1;
 		if(OrderInfo.actionFlag==11){
