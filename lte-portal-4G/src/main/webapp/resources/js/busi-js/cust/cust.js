@@ -31,6 +31,9 @@ order.cust = (function(){
 	var _orderBtnflag="";
 	// 安全办公开关
 	var _securityOfficeFlag = "";
+	
+	var _activityList = []; //营销活动标签列表
+	
 	var _form_valid_init = function() {
 		 //客户鉴权
 		$('#custAuthForm').bind('formIsValid', function(event, form) {
@@ -1547,6 +1550,11 @@ order.cust = (function(){
 						areaId : order.prodModify.choosedProdInfo.areaId
 					};
 					order.cust.initUserInfos(param);
+					//初始化营销推荐
+//					_queryMktActivityList();
+//					_changeActiLabel("");
+					$("#mark_tab").html("");
+					$("#activity_table").html("");
 				});
 
 
@@ -4694,6 +4702,181 @@ order.cust = (function(){
 			}
 		}
 	};
+	
+	//客户标签
+	var _showCustomerTag = function(){
+		if($("#customerTag").css("display")=="none"){
+			var param = {
+			    areaId : OrderInfo.staff.areaId
+			};
+			if(OrderInfo.cust.custId == "-1"){
+				param.attrType = "4";
+				param.instId = OrderInfo.boCustIdentities.identityNum;
+			}else if(order.cust.custQueryParam.identityCd !=""){
+				param.attrType = "4";
+				param.instId = order.cust.custQueryParam.identityNum;
+			}else{
+				param.attrType = "3";
+				param.instId = order.cust.custQueryParam.acctNbr;
+			}
+			var checkUrl=contextPath+"/cust/queryProdInstStats";
+			var checkResponse = $.callServiceAsJson(checkUrl, param, {"before":function(){}});
+			if (checkResponse.code == 0 && checkResponse.data.result.prodInstStats.length>0) {
+				$("#customerTag").html(""); 
+				$.each(checkResponse.data.result.prodInstStats,function(){
+					if(this.statsAttrId == "2017050001"){ //换机概率需要转换
+						var statsAttValue = this.statsAttValue * 100 +"%"
+						$("#customerTag").append("<p>"+this.attrName+"："+statsAttValue+"</p>");
+					}else{
+						$("#customerTag").append("<p>"+this.attrName+"："+this.statsAttValue+"</p>");
+					}
+					
+				});
+				$("#customerTag").addClass("active");
+			}
+		}else{
+			$("#customerTag").removeClass("active");
+		}
+	};
+	//用户标签
+    var _showUserTag = function(accNbr){
+		if($("#userTag_"+accNbr).css("display")=="none"){
+			var param = {
+			    areaId : OrderInfo.staff.areaId
+			};
+			param.attrType = "3";
+			param.instId = accNbr;
+			var checkUrl=contextPath+"/cust/queryProdInstStats";
+			var checkResponse = $.callServiceAsJson(checkUrl, param, {"before":function(){}});
+			if (checkResponse.code == 0 && checkResponse.data.result.prodInstStats.length>0) {
+				$("#userTagShow_"+accNbr).html(""); 
+				$("#userTagShow_"+accNbr).append("<p>接入号："+accNbr+"</p>");
+				$.each(checkResponse.data.result.prodInstStats,function(){
+					if(this.statsAttrId == "2017050001"){ //换机概率需要转换
+						var statsAttValue = this.statsAttValue * 100 +"%"
+						$("#userTagShow_"+accNbr).append("<p>"+this.attrName+"："+statsAttValue+"</p>");
+					}else{
+						$("#userTagShow_"+accNbr).append("<p>"+this.attrName+"："+this.statsAttValue+"</p>");
+					}
+				});
+				$("#a_"+accNbr).addClass("active");
+				$("#userTag_"+accNbr).removeClass("dis-none");
+			}
+		}else{
+			$("#a_"+accNbr).removeClass("active");
+			$("#userTag_"+accNbr).addClass("dis-none");
+		}
+	};
+	
+	//营销活动列表查询服务
+    var _queryMktActivityList = function(){
+    	if(order.cust.activityList.length == 0){
+    		var param = {
+    		        areaId : OrderInfo.staff.areaId
+    			};
+    			var response = $.callServiceAsJson(queryUrl, param, {"before":function(){}});
+    			if(response.code == 0 && response.data.result.activityList.length>0){
+    				$("#mark_tab").html("");
+    				$.each(response.data.result.activityList,function(){
+    					$("#mark_tab").append("<li class='mark-tab1' onclick='order.cust.changeActiLabel("+this.activityId+")' id='activityId_"+this.activityId+"'>"+this.activityName+"</li>");
+    				});
+    				order.cust.activityList = response.data.result.activityList;
+    				_changeActiLabel("");
+    			}
+    	}else{
+    		$("#mark_tab").html("");
+    		$.each(order.cust.activityList,function(){
+				$("#mark_tab").append("<li class='mark-tab1' onclick='order.cust.changeActiLabel("+this.activityId+")' id='activityId_"+this.activityId+"'>"+this.activityName+"</li>");
+			});
+    		_changeActiLabel("");
+    	}
+    	
+	};
+	
+	var _changeActiLabel = function(activityId){
+		var isShow = "";
+		$.each(order.cust.activityList,function(){ //附属标签显示隐藏
+			if(activityId==""){
+				activityId = this.activityId;
+				$("#activityId_"+activityId).addClass("active");
+				this.isShow = "Y";
+			}else{
+				if(activityId == this.activityId){
+					$("#activityId_"+this.activityId).addClass("active");
+					this.isShow = "Y";
+				}else{
+					$("#activityId_"+this.activityId).removeClass("active");
+					this.isShow = "N";
+				}
+			}
+		});
+		if($("#table_"+activityId).length == 0){
+			_queryMktCustList(1);
+		}
+	};
+	
+	var _queryMktCustList = function(pageIndex){
+		var activityId = "";
+		$.each(order.cust.activityList,function(){ //附属标签显示隐藏
+			if(this.isShow=="Y"){
+				activityId = this.activityId;
+                return;
+			}
+		});
+	    var curPage = 1;
+		if (pageIndex > 0) {
+			curPage = pageIndex;
+		};
+	    var param = {
+		    areaId  : OrderInfo.staff.areaId,
+		    objType : 3,
+		    objNbr  : order.prodModify.choosedProdInfo.accNbr,
+		    pageIndex : curPage,
+		    pageSize : 5,
+		    channelCode : OrderInfo.staff.channelCode,
+		    activityId : activityId
+		};
+	    $.callServiceAsHtml(contextPath + "/cust/queryMktCustList", param, {
+			"before" : function() {
+			},
+			"always" : function() {
+				$.unecOverlay();
+			},
+			"done" : function(response) {
+				if (response && response.code == -2) {
+					return;
+				} else if (response.data
+						&& response.data.substring(0, 6) != "<table") {
+					return;
+				} else {
+					$("#activity_table").html(response.data).show();
+				}
+			},
+			fail : function(response) {
+				$.unecOverlay();
+				$.alert("提示", "请求可能发生异常，请稍后再试！");
+			}
+		});
+	};
+	
+	var _saveMktContactResult =function(objId,activityId,id){
+    	var param = {
+	        areaId : OrderInfo.staff.areaId,
+	        mktmodelCode : objId,
+	        contactChlId : OrderInfo.staff.channelId,
+	        contactStaff : OrderInfo.staff.staffId,
+	        pushType : "3000",
+	        targetObjType : "3",
+	        targetObjNbr : order.prodModify.choosedProdInfo.accNbr,
+	        resultNbr : $("#result_"+id+"_"+activityId).val(),
+	        resultDes : $("#result_"+id+"_"+activityId).find("option:selected").text(),
+	        isContact : 1
+		};
+    	var queryUrl=contextPath+"/cust/saveMktContactResult";
+		var response = $.callServiceAsJson(queryUrl, param, {"before":function(){}});
+		$("#bt_"+id+"_"+activityId).removeClass("yes_btn").addClass("no_btn");
+		$("#bt_"+id+"_"+activityId).removeAttr("onclick");
+	};
 
 	return {
 		form_valid_init : _form_valid_init,
@@ -4783,7 +4966,14 @@ order.cust = (function(){
         getCustCertType:_getCustCertType,
         canOrderYiPay:_canOrderYiPay,
         yiPayidentityCdCheck:_yiPayidentityCdCheck,
-        initUserInfos:_initUserInfos
+        initUserInfos:_initUserInfos,
+        showCustomerTag:_showCustomerTag,
+        showUserTag:_showUserTag,
+        queryMktActivityList:_queryMktActivityList,
+        changeActiLabel:_changeActiLabel,
+        activityList:_activityList,
+        queryMktCustList:_queryMktCustList,
+        saveMktContactResult:_saveMktContactResult
 	};
 })();
 $(function() {

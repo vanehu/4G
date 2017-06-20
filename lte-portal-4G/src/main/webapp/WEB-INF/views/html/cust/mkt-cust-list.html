@@ -1,0 +1,49 @@
+<#if code?? && (code>=0) >
+<table id="table_${param.activityId}">
+	<thead>
+          <tr>
+            <th>营销推荐对象</th>
+            <th>推荐类别</th>
+            <th>品牌</th>
+            <th>营销推荐内容</th>
+            <th>活动备注</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+	<tbody>
+		<#if (pageModelMkt.list)?? &&((pageModelMkt.list)?size>0)> 
+		<#list pageModelMkt.list as mktCustList >
+		<tr>
+			<td>${mktCustList.objNbr}</td>
+			<#if mktCustList.type == "1">
+			<td>销售品</td>
+			<#else>
+			<td>终端</td>
+			</#if>
+			<td>${mktCustList.brandName}</td>
+			<td>${mktCustList.objName}</td>
+			<td>${mktCustList.remark}</td>
+			<td>
+			    <select id="result_${mktCustList.id}_${param.activityId}">
+			        <#if (resultList)?? &&((resultList)?size>0)> 
+		            <#list resultList as reList >
+			            <option value="${reList.id}">${reList.name}</option>
+			        </#list>
+			        </#if>
+			    </select>
+			    <button class="yes_btn" id="bt_${mktCustList.id}_${param.activityId}" onclick="order.cust.saveMktContactResult('${mktCustList.objId}','${param.activityId}','${mktCustList.id}')">收集反馈</button>
+			</td>
+		</tr>
+		</#list>
+		<#else>
+		<tr>
+			<td colspan="9">没有查询到结果</td>
+		</tr>
+		</#if>
+	</tbody>
+</table>
+<input type="hidden" value="${param.activityId}" id="activityId">
+<@portal.modelPagination4Batch pageModelMkt 5 "order.cust.queryMktCustList"/>
+<script src="${contextPath}/js/our-js/ec.pagination.js?${jsversion}" type="text/javascript"></script>
+<!--页码 end-->
+</#if>
