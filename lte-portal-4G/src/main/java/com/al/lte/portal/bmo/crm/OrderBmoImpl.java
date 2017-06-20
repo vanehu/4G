@@ -3454,7 +3454,16 @@ public class OrderBmoImpl implements OrderBmo {
 				}
 			}
 		}
-		
+		String currentD = DateUtil.getNowII();
+	    int result = effDate.compareTo(currentD);
+	    try { 
+			if(result < 0 ){
+				returnMap.put(SysConstant.RESULT_CODE, ResultCode.FAIL_ON);
+				returnMap.put(SysConstant.RESULT_MSG, "身份证已过期，无法办理业务");
+			}
+	    } catch (Exception e) {
+	    	
+	    }
 		log.debug("二代证读卡校验-结束，staffId={}，resultStr={}", sessionStaff.getStaffId(), JsonUtil.toString(returnMap));
         return returnMap;
 	}
