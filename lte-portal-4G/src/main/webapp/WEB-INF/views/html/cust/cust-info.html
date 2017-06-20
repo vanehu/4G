@@ -1,3 +1,4 @@
+<link href="${staticResPath}/css/patch.css" rel="stylesheet" media="screen" type="text/css" />
 <#if error??>
 ${error}
 <#elseif custAuth.isValidate=="true" >
@@ -14,6 +15,11 @@ ${error}
     </#if>
     <li class="uicon">客户分群</li><li id="segmentName" class="ucon">${custAuth.custInfo.segmentName}</li>
   	</#if>
+  	<li class="uicon ue_card">
+      <a onclick="javascript:order.cust.showCustomerTag()" href="javascript:void(0);">客户标签</a>
+      <div class="user_card" id ="customerTag">
+      </div>
+    </li><li class="ucon"></li>
     <li class="uedit">
     <#if fromProvFlag!="1">
         <a onclick="javascript:order.cust.custReset()" class="numberSearch loc_refresh"><span>重新定位</span></a></li>

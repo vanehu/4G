@@ -42,7 +42,12 @@
 			    <td prodBigClass="${item.prodBigClass}" areaId="${item.areaId}" accNbr="${item.accNbr}" productName="${item.productName}" prodStateName="${item.prodStateName}" feeType="${item.feeType.feeType}" feeTypeName="${item.feeType.feeTypeName}" 
 			    prodInstId="${item.prodInstId}" extProdInstId="${item.extProdInstId}" corProdInstId="${item.corProdInstId}" prodStateCd="${item.prodStateCd}" productId="${item.productId}" prodClass="${item.prodClass}" stopRecordCd="${item.stopRecordCd}" stopRecordName="${item.stopRecordName}" zoneNumber="${item.zoneNumber}" ifLteNewInstall="${item.ifLteNewInstall}"  roleCd="${item.roleCd}"style="text-align:center"></td>
 			    <td><i class="${item.treeFlag} floatright"></i></td>
-				<td>${item.roleName} ${item.accNbr}</td>
+				<td style="position: relative;"><a class="setmeat" onclick="javascript:order.cust.showUserTag(${item.accNbr})" href="javascript:void(0);" id="a_${item.accNbr}">${item.roleName} ${item.accNbr}</a>
+				<div class="alert-market dis-none" id="userTag_${item.accNbr}">
+                  <div class="user_card user_tb" id="userTagShow_${item.accNbr}">
+                  </div>
+                </div>
+                </td>
 				<td><#if item.prodOfferName!="">${item.prodOfferName} <#if item.startDt!="">${item.startDt}生效</#if><#else>更多>></#if></td>
 				<td>${item.productName}</td>
 				<td>${item.prodStateName}${item.stopRecordName}</td>
@@ -94,8 +99,30 @@
 </style>
 </#if>
 <!--页码 end-->
-<!--号码列表 end-->  
-<table width="100%" cellspacing="0" cellpadding="0" border="0">
+<!--号码列表 end-->
+
+        <!--===========营销推荐开始==========-->
+		<div class="order_confirmation ordertabcon"
+			style="display: block; margin-top: 40px;">
+			<h2 class="h2_title">
+				<span style="cursor:pointer;" onclick="order.cust.queryMktActivityList()">营销推荐</span><span class="showhide"></span>
+			</h2>
+			<div class="cardtabcon">
+				<div class="pdcardcon show">
+
+					<div class="market-tab">
+						<ul id="mark_tab">
+						</ul>
+					</div>
+					<div class="mark1-box active">
+						<div class="market" id="activity_table"></div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+		<!--===========营销推荐结束==========-->
+		<table width="100%" cellspacing="0" cellpadding="0" border="0">
   <tbody>
   <tr class="bottomline">
 	<td class="ordertitle" colspan="2" >
