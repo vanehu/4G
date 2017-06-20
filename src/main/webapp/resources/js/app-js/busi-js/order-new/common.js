@@ -297,6 +297,7 @@ common = (function($) {
 		if($("#home").length>0){
 			$("#header").hide();
 			$("#queryCust").empty();
+			$("#ewm").empty();
 			$("#prodofferPrepare").empty();
 			$("#home").show();
 			//客户信息

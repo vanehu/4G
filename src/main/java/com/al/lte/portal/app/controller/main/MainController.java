@@ -78,6 +78,7 @@ public class MainController extends BaseController {
 	public String padlogin(HttpSession session, Model model,
 			HttpServletRequest request, HttpServletResponse response) {
 		model.addAttribute("menu", request.getParameter("menu"));
+		session.setAttribute(SysConstant.SESSION_KEY_APP_VERSION, request.getParameter("app_version"));
 		model.addAttribute("app_flag", session.getAttribute(SysConstant.SESSION_KEY_APP_FLAG));
 		String actionFlag=request.getParameter("actionFlag");
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
@@ -100,6 +101,21 @@ public class MainController extends BaseController {
 	public String test(HttpSession session, Model model,
 			HttpServletRequest request, HttpServletResponse response) {
 		return "/public/app-unify";
+	}
+	
+	 /**
+	  * 跳转二维码下载页
+	  * @param session
+	  * @param model
+	  * @param request
+	  * @param response
+	  * @return
+	  */
+	@RequestMapping(value = "/ewm", method = RequestMethod.POST)
+	@SessionValid(false)
+	public String ewm(HttpSession session, Model model,
+			HttpServletRequest request, HttpServletResponse response) {
+		return "/app/home/download";
 	}
 	
 	/**
@@ -198,6 +214,8 @@ public class MainController extends BaseController {
 		Map<String, Object> resultMsg = new HashMap<String, Object>();
 		if(menu!=null){
 		model.addAttribute("haveMenu", "Y");
+		String app_version=(String) ServletUtils.getSessionAttribute(request,SysConstant.SESSION_KEY_APP_VERSION);
+		model.addAttribute("app_version",app_version);//客户端版本号
 		for (int i=0; i< menu.size(); i++) 
 		{
 			Map oneMap = (Map)menu.get(i);
