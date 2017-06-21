@@ -391,10 +391,10 @@ order.calcharge = (function(){
 				"areaId" : OrderInfo.staff.areaId,
 				"chargeItems":_chargeItems
 		};
-		if(order.calcharge.haveCharge==true){//已下过计费接口
-			return;
-		}
-		order.calcharge.haveCharge=true;
+//		if(order.calcharge.haveCharge==true){//已下过计费接口
+//			return;
+//		}
+//		order.calcharge.haveCharge=true;
 		var msg="";
 		var url=contextPath+"/app/order/chargeSubmit?token="+OrderInfo.order.token;
 		$.callServiceAsJson(url,params, {
@@ -455,6 +455,10 @@ order.calcharge = (function(){
 					SoOrder.getToken();
 					inOpetate=false;
 					$.alertM(response.data);
+					if(flag==1 && payType!="100000"){//提交接口失败，被后台拦截则,则非现金支付且金额大于0则调支付平台退款接口
+						var charge=_getCharge();//支付金额
+						_payRefund(sessionOlId,charge,response.data.errMsg);
+					}
 					//SoOrder.showAlertDialog(response.data);
 				}else{
 					_conBtns();
@@ -886,6 +890,7 @@ order.calcharge = (function(){
 			if(OrderInfo.actionFlag!=112){//非融合，先查订单收费状态，未收费继续流程，否则直接提示
 				//从session中获取olId，确保olId正确且唯一
 				var url = contextPath + "/app/pay/repair/queryOlId";
+				$.ecOverlay("<strong>正在处理中,请稍等会儿....</strong>");
 				var response = $.callServiceAsJson(url, {});
 				var sessionOlId=OrderInfo.orderResult.olId;
 				if (response.code == 0 && response.data!=null && response.data!="") {//从session获取olId成功
@@ -900,6 +905,7 @@ order.calcharge = (function(){
 						"areaId":OrderInfo.staff.areaId+""					
 				};
 				var response = $.callServiceAsJson(queryUrl, checkParams);
+				$.unecOverlay();
 				if (response.code == 0 && response.data!=null && response.data!="") {//已后台收费成功，直接提示，不走收费流程
 					var statusCd=response.data.statusCd;
 					if("201700"==statusCd || "201800"==statusCd || "201900"==statusCd ||"301200"==statusCd ||"201300"==statusCd){
@@ -926,9 +932,9 @@ order.calcharge = (function(){
 	 * 获取支付平台返回订单状态
 	 */
 	var _queryPayOrdStatus1 = function(soNbr, status,type) {
-		if(order.calcharge.haveCharge==true){//已下过计费接口
-			return;
-		}
+//		if(order.calcharge.haveCharge==true){//已下过计费接口
+//			return;
+//		}
 		if ("1" == status) { // 原生返回成功，调用支付平台查询订单状态接口，再次确定是否成功，如果成功则调用收费接口
 			$.ecOverlay("<strong>正在处理中,请稍等会儿....</strong>");
 			var params = {
@@ -1022,6 +1028,21 @@ order.calcharge = (function(){
 		_queryPayOrdStatus1(sessionOlId,"1");
 		
 	};
+	
+//支付退款
+  var _payRefund=function(olId,payAmount,remark){
+		var params={
+				"olId":olId,
+				"payAmount":payAmount,
+				"remark"   :remark
+		};
+		//params.remark=response.data.errData.resultMsg;
+		var url = contextPath+"/app/pay/repair/payRefund";
+		var response = $.callServiceAsJson(url, params);
+		if (response.code == 0) {
+			$.alert("提示","收费建档并激活出错，已帮您成功退款！");
+		}
+  };
 
 	return {
 		changeRealMoney:_changeRealMoney,

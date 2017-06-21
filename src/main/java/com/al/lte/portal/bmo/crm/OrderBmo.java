@@ -945,4 +945,10 @@ public interface OrderBmo {
 	 */
     public Map<String, Object> queryGiftPackageMemberList(Map<String, Object> dataBusMap,String optFlowNum, SessionStaff sessionStaff)
     	throws Exception;
+    
+	/**
+	 * 调用支付平台退费接口
+	 */
+	public Map<String,Object> PayRefundOrder(Map<String, Object> paramMap,String optFlowNum, 
+			SessionStaff sessionStaff) throws Exception;
 }
