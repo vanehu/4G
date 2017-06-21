@@ -309,7 +309,7 @@ public class CommonController extends BaseController {
 		paramsMap.put("timestamp", timestamp);
 		paramsMap.put("nonce", qrynonce);
 		paramsMap.put("decodeId", decodeId);
-		//serverIp="223.255.252.39:4001";
+		//serverIp="223.255.252.39:4001";//本地测试时打开
 		paramsMap.put("serverIp", serverIp);
 		try {
 			Map<?, ?> returntMap = custBmo.queryCert(paramsMap, null,
