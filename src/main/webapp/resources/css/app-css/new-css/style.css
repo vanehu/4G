@@ -2640,6 +2640,9 @@ button:focus {
 .fontcolor {
   color: #4c4c4c !important;
 }
+.font-white {
+  color: #fff!important;
+}
 .red {
   color: red!important;
 }
@@ -2655,6 +2658,9 @@ button:focus {
 .bg-none {
   background: none!important;
 }
+.bg-light {
+  background: #05a642 !important;
+}
 .gray {
   -webkit-filter: grayscale(100%);
   -moz-filter: grayscale(100%);
@@ -2667,7 +2673,7 @@ button:focus {
 /* -------------------------------
  * 标准尺寸
  * -------------------------------*/
-.ico-tfont {
+.icon-font {
   font-size: 0.4rem !important;
 }
 .icon-size-md {
@@ -3952,6 +3958,33 @@ button:focus {
 .checkbox-ture:checked {
   background: url("../img/ture1.png") no-repeat;
   background-size: contain;
+}
+.recom-list .panel-heading .panel-title .accordion-toggle {
+  padding-right: 2.58rem!important;
+}
+.recom-list .panel-heading > .right-cz {
+  font-size: 0.48rem!important;
+  line-height: 0.88rem!important;
+  width: 0.88rem;
+  text-align: center;
+  color: #05a642 !important;
+}
+.recom-list .panel-heading .r-44 {
+  right: 0.86rem!important;
+  color: #fe7e19 !important;
+}
+.mes-box {
+  padding: 0.1rem 0.22rem!important;
+  background: #fff!important;
+}
+.mes-box .mes-title {
+  color: #000;
+  font-size: 0.28rem;
+  font-weight: bold;
+  margin: 0.2rem 0!important;
+}
+.mes-box .mes-text {
+  margin-bottom: 0.06rem!important;
 }
 .sub-btn-box {
   width: 100%;

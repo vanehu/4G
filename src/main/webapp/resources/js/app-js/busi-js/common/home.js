@@ -58,6 +58,7 @@ home = (function($) {
 //		method = "/app/prodModify/prepare";
 //		method = "/app/mktRes/phonenumber/preNumRelease";
 //		method = "/app/infocollect/realname/prepare";
+//		method = "/app/marketingRecommend/mktresRecommend";
 //		resourceName = "选号码";
 //		params.method = "/app/order/prodoffer/prepare";
 //		resourceName = "返档";
