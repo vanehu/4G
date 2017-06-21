@@ -11,6 +11,7 @@ import javax.servlet.http.HttpSession;
 import net.sf.json.JSONArray;
 
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -24,6 +25,7 @@ import org.springframework.web.context.request.WebRequest;
 import com.al.ecs.common.entity.JsonResponse;
 import com.al.ecs.common.entity.PageModel;
 import com.al.ecs.common.util.JsonUtil;
+import com.al.ecs.common.util.MDA;
 import com.al.ecs.common.util.PageUtil;
 import com.al.ecs.common.util.PropertiesUtils;
 import com.al.ecs.common.web.ServletUtils;
@@ -43,6 +45,7 @@ import com.al.lte.portal.bmo.crm.OrderBmo;
 import com.al.lte.portal.bmo.print.PrintBmo;
 import com.al.lte.portal.bmo.staff.StaffBmo;
 import com.al.lte.portal.common.Const;
+import com.al.lte.portal.common.MySimulateData;
 import com.al.lte.portal.common.RedisUtil;
 import com.al.lte.portal.common.SysConstant;
 import com.al.lte.portal.model.SessionStaff;
@@ -326,6 +329,50 @@ public class PayAndOrderRepairController extends BaseController{
 			jsonResponse = super.successed(rMap, ResultConstant.FAILD.getCode());
 		}
 		return jsonResponse;
+
+	}
+	
+	/**
+	 * 订单建档失败时，翼销售调用支付平台退费接口
+	 * 
+	 * @param param
+	 * @param model
+	 * @param session
+	 * @param flowNum
+	 * @return
+	 */
+	@RequestMapping(value = "/payRefund", method = RequestMethod.POST)
+	@ResponseBody
+	public JsonResponse payRefund(@RequestBody Map<String, Object> param,
+			Model model, HttpSession session, @LogOperatorAnn String flowNum) {
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+						SysConstant.SESSION_KEY_LOGIN_STAFF);
+		Map<String, Object> rMap = null;
+		JsonResponse jsonResponse = null;
+		String dbKeyWord = sessionStaff == null ? null : sessionStaff.getDbKeyWord();
+		if(StringUtils.isBlank(dbKeyWord)){
+			dbKeyWord = "";
+		}
+		try {
+			rMap = orderBmo.PayRefundOrder(param, flowNum, sessionStaff);
+			log.debug("return={}", JsonUtil.toString(rMap));
+			if (rMap != null && "POR-0000".equals(rMap.get("respCode").toString())) {
+				jsonResponse = super.successed(rMap,
+						ResultConstant.SUCCESS.getCode());
+			} else {
+				jsonResponse = super.failed(rMap.get("respMsg").toString(),
+						ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+			}
+			return jsonResponse;
+		} catch (BusinessException be) {
+			this.log.error("调用主数据接口失败", be);
+			return super.failed(be);
+		} catch (InterfaceException ie) {
+			return super.failed(ie, param, ErrorCode.PAY_REFUND_ORDER);
+		} catch (Exception e) {
+			log.error("支付平台退费方法异常", e);
+			return super.failed(ErrorCode.PAY_REFUND_ORDER, e, param);
+		}
 
 	}
 

@@ -21,11 +21,13 @@ import org.springframework.stereotype.Service;
 import com.al.crm.log.sender.ILogSender;
 import com.al.ec.serviceplatform.client.DataBus;
 import com.al.ec.serviceplatform.client.ResultCode;
+import com.al.ecs.common.util.CryptoUtils;
 import com.al.ecs.common.util.DateUtil;
 import com.al.ecs.common.util.DigestUtils;
 import com.al.ecs.common.util.JsonUtil;
 import com.al.ecs.common.util.MDA;
 import com.al.ecs.common.util.PropertiesUtils;
+import com.al.ecs.common.util.RSAUtil;
 import com.al.ecs.common.web.ServletUtils;
 import com.al.ecs.common.web.SpringContextUtil;
 import com.al.ecs.exception.BusinessException;
@@ -3238,7 +3240,6 @@ public class OrderBmoImpl implements OrderBmo {
 		return resultMap;
 	}
 
-	@Override
     @SuppressWarnings("unchecked")
 	public Map<String, Object> cltOrderCheck(Map<String, Object> param, HttpServletRequest request,
 			SessionStaff sessionStaff) throws Exception {
@@ -3586,6 +3587,7 @@ public class OrderBmoImpl implements OrderBmo {
 		return returnMap;
 	}
 
+	@SuppressWarnings("unchecked")
 	public Map<String, Object> queryGiftPackageList(
 			Map<String, Object> dataBusMap, String optFlowNum,
 			SessionStaff sessionStaff) throws Exception {
@@ -3614,6 +3616,7 @@ public class OrderBmoImpl implements OrderBmo {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public Map<String, Object> queryGiftPackageMemberList(
 			Map<String, Object> dataBusMap, String optFlowNum,
 			SessionStaff sessionStaff) throws Exception {
@@ -3637,5 +3640,47 @@ public class OrderBmoImpl implements OrderBmo {
 			throw new BusinessException(ErrorCode.QUERY_GIFT_PACKAGE_MEMBER, dataBusMap, returnMap, e);
 		}
 		return returnMap;
+	}
+
+	public Map<String, Object> PayRefundOrder(Map<String, Object> paramMap,
+			String optFlowNum, SessionStaff sessionStaff) throws Exception {
+		Map<String, Object> paramMap2 = new HashMap<String, Object>();
+		String reqPlatForm="1000000244";
+		String provinceCode="";
+		String cityCode = sessionStaff.getCurrentAreaId();
+		if(cityCode!=null && !cityCode.equals("")){
+			provinceCode=cityCode.substring(0,3)+"0000";
+		}
+		//省份秘钥
+	    String signKey = propertiesUtils.getMessage("PRO_PAY_KEY_"+provinceCode);
+	    String timeStamp = String.valueOf(DateUtil.dateToLong(new Date()));
+		String olId = MapUtils.getString(paramMap, "olId");//业务订单号
+		String remark = MapUtils.getString(paramMap, "remark"); // 退款原因
+		Random rand = new Random();
+		int k = rand.nextInt(89999)+10000;//退款流水随机码
+		String newNbr=olId+k;
+		String payAmount = MapUtils.getString(paramMap, "payAmount");; //退款金额
+		String paramStr = "reqPlatForm="+reqPlatForm+"&provinceCode=" + provinceCode + "&oldNbr=" + olId+"&newNbr="+newNbr+"&timeStamp="+timeStamp;
+		String sign = AESUtils.encryptToString(paramStr, signKey);
+		paramMap2.put("provinceCode", provinceCode);
+		paramMap2.put("reqPlatForm", reqPlatForm);
+		paramMap2.put("oldNbr", olId);
+		paramMap2.put("payAmount", payAmount);
+		paramMap2.put("newNbr", newNbr);
+		paramMap2.put("reqNo", "");
+		paramMap2.put("timeStamp", timeStamp);
+		paramMap2.put("remark", remark);
+		paramMap2.put("sign", sign);
+		Map<String, Object> dataBusMap = new HashMap<String, Object>();
+		Map<String, Object> dataBusMap2 = new HashMap<String, Object>();
+		dataBusMap.put("params", paramMap2);
+		//省份编码rsa加密
+		String gKey =MDA.gKey;
+		String proKey=RSAUtil.getRsaString(provinceCode, gKey);
+		dataBusMap.put("proKey", proKey);//用RSA对省份编码进行加密
+		dataBusMap2.put("proot", dataBusMap);
+		DataBus db = InterfaceClient.callService(dataBusMap2,
+				PortalServiceCode.PAY_REFUND, null, sessionStaff);
+		return db.getReturnlmap();
 	}
 }
