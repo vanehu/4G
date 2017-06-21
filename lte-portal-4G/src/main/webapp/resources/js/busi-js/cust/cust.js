@@ -4769,6 +4769,7 @@ order.cust = (function(){
     		var param = {
     		        areaId : OrderInfo.staff.areaId
     			};
+    		var queryUrl= contextPath+"/cust/queryMktActivityList";
     			var response = $.callServiceAsJson(queryUrl, param, {"before":function(){}});
     			if(response.code == 0 && response.data.result.activityList.length>0){
     				$("#mark_tab").html("");
@@ -4828,7 +4829,6 @@ order.cust = (function(){
 		    objNbr  : order.prodModify.choosedProdInfo.accNbr,
 		    pageIndex : curPage,
 		    pageSize : 5,
-		    channelCode : OrderInfo.staff.channelCode,
 		    activityId : activityId
 		};
 	    $.callServiceAsHtml(contextPath + "/cust/queryMktCustList", param, {
