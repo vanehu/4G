@@ -45,6 +45,7 @@ menuConst = (function($) {
 			
 			,{"menuPath":"/app/report/cartMain","resourName":"订单查询","actionFlag":"40","enter":"","isSecond":"N","needCust":"N"}
 			,{"menuPath":"/app/mktRes/phonenumber/preNumRelease","resourName":"资源释放","actionFlag":"114","enter":"","isSecond":"N","needCust":"N"}
+			,{"menuPath":"/app/marketingRecommend/mktresRecommend","resourName":"营销推荐","actionFlag":"115","enter":"","isSecond":"N","needCust":"Y"}
 			,{"menuPath":"/app/report/terminalSalesMain","resourName":"终端销售统计","actionFlag":"150","enter":"","isSecond":"N","needCust":"N"}
 			,{"menuPath":"/app/report/statisticsCartMain","resourName":"受理订单统计","actionFlag":"40","enter":"","isSecond":"N","needCust":"N"}
 			,{"menuPath":"/app/report/statisticsCompleteCartMain","resourName":"竣工订单查询","actionFlag":"40","enter":"","isSecond":"N","needCust":"N"}

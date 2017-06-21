@@ -54,6 +54,7 @@
 		<script src="${contextPath}/js/app-js/busi-js/bill/charge.js?${jsversion}" type="text/javascript"></script>
 		<script src="${contextPath}/js/app-js/busi-js/order-new/memberChange.js?${jsversion}" type="text/javascript"></script>
 		<script src="${contextPath}/js/app-js/busi-js/bill/paymentQuery.js?${jsversion}" type="text/javascript"></script>
+		<script src="${contextPath}/js/app-js/busi-js/marketingRecommend/marketingRecommend.js?${jsversion}" type="text/javascript"></script>
 		<script>
 		window.onload= function() 
 		{  
@@ -154,6 +155,10 @@
 				case 114 :
 					params.method = "/app/mktRes/phonenumber/preNumRelease"; //资源释放
 					params.actionFlag = 114;
+					break;
+				case 115 :
+					params.method = "/app/marketingRecommend/mktresRecommend"; //营销推荐
+					params.actionFlag = 115;
 					break;
 				case 12 :
 					params.method = "/app/saleorder/queryorderlist"; //销售单列表查询

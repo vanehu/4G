@@ -1576,5 +1576,80 @@ public class MktResBmoImpl implements MktResBmo {
 		return returnMap;	
 	}
 	
+	public Map<String, Object> queryMktCustList(Map<String, Object> param,
+			String optFlowNum, SessionStaff sessionStaff) throws Exception {
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		DataBus db = InterfaceClient.callService(param,PortalServiceCode.QUERY_MKT_CUST_LIST,optFlowNum, sessionStaff);
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db.getResultCode()))) {
+			resultMap = db.getReturnlmap();
+			Map<String, Object> datamap = resultMap;
+			returnMap.put("code", ResultCode.R_SUCCESS);
+			returnMap.put("result",datamap);
+		} else {
+			returnMap.put("code", ResultCode.R_FAIL);
+			returnMap.put("msg", "营销推荐清单查询服务调用失败");
+		}
+		return returnMap;				
+	}
+	
+	public Map<String, Object> queryProdInstStats(Map<String, Object> param,
+			String optFlowNum, SessionStaff sessionStaff) throws Exception {
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		DataBus db = InterfaceClient.callService(param, 
+				PortalServiceCode.QUERY_PROD_INST_STATS,
+				optFlowNum, sessionStaff);
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db.getResultCode()))) {
+			resultMap = db.getReturnlmap();
+			Map<String, Object> datamap = resultMap;
+			returnMap.put("code", ResultCode.R_SUCCESS);
+			returnMap.put("result",datamap);
+		} else {
+			returnMap.put("code", ResultCode.R_FAIL);
+			returnMap.put("msg", "营销标签查询服务调用失败");
+		}
+		return returnMap;				
+	}
+	
+	public Map<String, Object> queryMktActivityList(Map<String, Object> param,
+			String optFlowNum, SessionStaff sessionStaff) throws Exception {
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		DataBus db = InterfaceClient.callService(param, 
+				PortalServiceCode.QUERY_MKT_ACTIVITY_LIST,
+				optFlowNum, sessionStaff);
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db
+				.getResultCode()))) {
+			resultMap = db.getReturnlmap();
+			Map<String, Object> datamap = resultMap;
+			returnMap.put("code", ResultCode.R_SUCCESS);
+			returnMap.put("result",datamap);
+		} else {
+			returnMap.put("code", ResultCode.R_FAIL);
+			returnMap.put("msg", "营销活动列表查询服务调用失败");
+		}
+		return returnMap;				
+	}
+	
+	public Map<String, Object> saveMktContactResult(Map<String, Object> param,
+			String optFlowNum, SessionStaff sessionStaff) throws Exception {
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		DataBus db = InterfaceClient.callService(param, 
+				PortalServiceCode.SAVE_MKT_CONTACT_RESULT,
+				optFlowNum, sessionStaff);
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db
+				.getResultCode()))) {
+			resultMap = db.getReturnlmap();
+			Map<String, Object> datamap = resultMap;
+			returnMap.put("code", ResultCode.R_SUCCESS);
+			returnMap.put("result",datamap);
+		} else {
+			returnMap.put("code", ResultCode.R_FAIL);
+			returnMap.put("msg", "营销任务（接触）反馈结果记录服务调用失败");
+		}
+		return returnMap;				
+	}
 
 }
