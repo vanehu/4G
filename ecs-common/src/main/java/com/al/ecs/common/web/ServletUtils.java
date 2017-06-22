@@ -615,4 +615,28 @@ public class ServletUtils {
     public static String getAppDesc(HttpServletRequest request) {
     	return request.getSession().getServletContext().getInitParameter("appDesc");
     }
+    
+    /**
+     * 获取客户端的请求的域名和端口<br>
+     * 例如客户端请求：https://js.crm.189.cn:93/provPortal/staff/login/setLoginCookie，则返回js.crm.189.cn:93；<br>
+     * 例如客户端请求：http://10.128.97.35:8101/provPortal/staff/login/setLoginCookie，则返回10.128.97.35:8101；
+     * @param request
+     * @return
+     */
+	public static String getRequestHost(HttpServletRequest request){
+		String requestHost = null;
+		
+		if(request != null){
+			String forwardedServer = request.getHeader("X-Forwarded-Server");
+			if("dmz".equalsIgnoreCase(forwardedServer)){
+				requestHost = request.getHeader("X-Forwarded-Host");
+			} else{
+				requestHost = request.getHeader("Host");
+			}
+		} else{
+			requestHost = "HttpServletRequest is null";
+		}
+		
+		return requestHost;
+	}
 }
