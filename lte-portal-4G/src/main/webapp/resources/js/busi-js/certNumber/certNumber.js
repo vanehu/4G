@@ -536,9 +536,7 @@ oneFive.certNumber = (function () {
                     "partyTypeCd": "1",//个人
                     "remarks": "",
                     "seq": seq++,
-                    "telNumber": $(this).find("td:eq(4)").text(),
-                    "channelId": OrderInfo.staff.channelId,
-                    "staffId": OrderInfo.staff.staffId
+                    "telNumber": $(this).find("td:eq(4)").text()
                 };
                 custInfos.push(number);
             });

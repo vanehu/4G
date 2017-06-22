@@ -51,6 +51,7 @@
                             <td>号码</td>
                             <td>地区</td>
                             <td>状态</td>
+                            <td>接单人</td>
                             <td>操作</td>
                         </tr>
                         </thead>
@@ -64,10 +65,21 @@
                                     <td><#if item.statusCd=="100002">未处理<#elseif item.statusCd=="100004">取消<#elseif item.statusCd=="201300">已接单<#elseif item.statusCd=="301200">完成</#if></td>
                                     <td>${item.staffName}</td>
                                     <td>
-                                        <a style=" margin-left:20px;" class="btna_o"
-                                           onclick="oneFive.certNumberHandle.orderConfirm('${item.orderId}','${item.lanId}','${item.telNumber}','${item.certType}','${item.certNumber}')"><span>完成</span></a>
-                                        <a style=" margin-left:20px;" class="btna_o"
-                                           onclick="oneFive.certNumberHandle.orderCancel('${item.orderId}','${item.lanId}','${item.telNumber}')"><span>取消</span></a>
+                                        <#if (item.staffId??&&item.staffId!=""&&item.staffId!=0)&&(item.staffId!=Session["_ecs_login_session_key"].staffId)>
+                                            <span>它人已接单无可用操作</span>
+                                        <#else >
+                                            <#if item.statusCd=="100002">
+                                                <a style=" margin-left:20px;" class="btna_o"
+                                                   onclick="oneFive.certNumberHandle.orderReceive('${item.orderId}','${item.lanId}','${item.telNumber}','${item.certType}','${item.certNumber}')"><span>接单</span></a>
+                                            <#else>
+                                                <a style=" margin-left:20px;" class="btna_o"
+                                                   onclick="oneFive.certNumberHandle.orderConfirm('${item.orderId}','${item.lanId}','${item.telNumber}','${item.certType}','${item.certNumber}')"><span>完成</span></a>
+                                                <a style=" margin-left:20px;" class="btna_o"
+                                                   onclick="oneFive.certNumberHandle.orderCancel('${item.orderId}','${item.lanId}','${item.telNumber}')"><span>取消</span></a>
+                                                <a style=" margin-left:20px;" class="btna_o"
+                                                   onclick="oneFive.certNumberHandle.orderReset('${item.orderId}','${item.lanId}','${item.telNumber}')"><span>回退</span></a>
+                                            </#if>
+                                        </#if>
                                     </td>
                                 </tr>
                                 </#list>

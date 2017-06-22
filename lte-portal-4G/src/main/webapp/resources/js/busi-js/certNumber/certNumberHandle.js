@@ -37,12 +37,14 @@ oneFive.certNumberHandle = (function () {
                 $("#p_endDt").css("background-color", "#E8E8E8").attr("disabled", true);
                 $("#p_telNumber").css("background-color", "#E8E8E8").attr("disabled", true);
                 $("#p_certNumber").css("background-color", "#E8E8E8").attr("disabled", true);
+                $("#onlyMe").css("background-color", "#E8E8E8").attr("disabled", true);
             } else {
                 $("#p_olNbr").css("background-color", "#E8E8E8").attr("disabled", true);
                 $("#p_startDt").css("background-color", "white").attr("disabled", false);
                 $("#p_endDt").css("background-color", "white").attr("disabled", false);
                 $("#p_telNumber").css("background-color", "white").attr("disabled", false);
                 $("#p_certNumber").css("background-color", "white").attr("disabled", false);
+                $("#onlyMe").css("background-color", "white").attr("disabled", false);
             }
         });
 
@@ -136,7 +138,7 @@ oneFive.certNumberHandle = (function () {
         param.statusCd = CONST.CERT_NUMBER_ORDER_STATUS.INIT;
         param.ifFilterAreaId = "N";
         param.ifFilterItem = "Y";
-        param.ifFilterOwnAccNbr = "Y";//是否过滤其他人接单工单选项默认Y
+        param.ifFilterOwnAccNbr = $("#onlyMe").val();//是否过滤其他人接单工单选项默认Y
         if (ec.util.isObj(telNumber)) {
             param.telNumber = telNumber;
         }
@@ -181,7 +183,13 @@ oneFive.certNumberHandle = (function () {
      * @private
      */
     var _queryDetail = function (orderId) {
-        var param = {"orderId": orderId, "areaId": $("#p_areaId").val(), "ifFilterAreaId": "Y"};
+        var param = {
+            "orderId": orderId,
+            "areaId": $("#p_areaId").val(),
+            "ifFilterAreaId": "Y",
+            "staffId": OrderInfo.staff.staffId,
+            "ifFilterOwnAccNbr": $("#onlyMe").val()
+        };
         $.callServiceAsHtmlGet(contextPath + "/certNumber/queryOneFiveOrderItemDetail", param, {
             "before": function () {
                 $.ecOverlay("详情查询中，请稍等...");
@@ -252,10 +260,10 @@ oneFive.certNumberHandle = (function () {
     };
 
     /**
-     * 订单确认
+     * 订单完成
      * @private
      */
-    var _orderConfirm = function (orderId, areaId, number, certType, certNumber) {
+    var _orderComplete = function (orderId, areaId, number, certType, certNumber) {
 
         var param = {
             "csbParam": {
@@ -313,7 +321,23 @@ oneFive.certNumberHandle = (function () {
     };
 
     /**
-     * 订单确认
+     * 订单接收
+     * @private
+     */
+    var _orderReceive = function (orderId, areaId, number) {
+        _orderSubmit(orderId, areaId, number, CONST.CERT_NUMBER_ORDER_STATUS.HANDLE);
+    };
+
+    /**
+     * 订单回退
+     * @private
+     */
+    var _orderReset = function (orderId, areaId, number) {
+        _orderSubmit(orderId, areaId, number, CONST.CERT_NUMBER_ORDER_STATUS.INIT);
+    };
+
+    /**
+     * 订单提交
      * @private
      */
     var _orderSubmit = function (orderId, areaId, number, statusCd, remark) {
@@ -379,7 +403,9 @@ oneFive.certNumberHandle = (function () {
         queryDetail: _queryDetail,
         queryAttachment: _queryAttachment,
         orderSubmit: _orderSubmit,
-        orderConfirm: _orderConfirm,
+        orderComplete: _orderComplete,
+        orderReceive: _orderReceive,
+        orderReset: _orderReset,
         orderCancel: _orderCancel
     }
 })();

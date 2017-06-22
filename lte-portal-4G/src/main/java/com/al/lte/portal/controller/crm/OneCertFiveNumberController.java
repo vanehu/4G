@@ -467,6 +467,8 @@ public class OneCertFiveNumberController extends BaseController {
         SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
         JsonResponse jsonResponse;
         try {
+            param.put("channelId", sessionStaff.getCurrentChannelId());
+            param.put("staffId", sessionStaff.getStaffId());
             Map<String, Object> resMap = orderBmo.cltOrderCommit(param, null, sessionStaff);
             if (ResultCode.R_SUCC.equals(resMap.get("resultCode"))) {
                 jsonResponse = super.successed(ResultConstant.SUCCESS);
