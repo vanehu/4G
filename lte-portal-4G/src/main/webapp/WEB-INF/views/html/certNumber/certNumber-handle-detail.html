@@ -8,9 +8,7 @@
                 <h2 class="h2_title">跨省一证五卡详情<span class="showhide"></span>
                 </h2>
                 <div class="main_body">
-                    <#if (orderList.collectionCustInfos)??&&((orderList.collectionCustInfos)?size>0)>
-                        <#assign custInfo = orderList.collectionCustInfos[0] >
-                    </#if>
+
                     <#if orderList.collectionOrderInfo?? >
                         <#assign baseInfo = orderList.collectionOrderInfo >
                         <h5 class="s_title">基本信息</h5>
@@ -27,15 +25,18 @@
                             <li>
                                 <font>受理渠道：</font><span>${baseInfo.channelName}</span>
                             </li>
-                            <li>
-                                <font>客户姓名：</font><span>${custInfo.custName}</span>
-                            </li>
-                            <li>
-                                <font>证件类型：</font><span>${custInfo.certTypeName}</span>
-                            </li>
-                            <li>
-                                <font>证件号码：</font><span>${custInfo.certNumber}</span>
-                            </li>
+                            <#if (orderList.collectionCustInfos)??&&((orderList.collectionCustInfos)?size>0)>
+                                <#assign custInfo = orderList.collectionCustInfos[0] >
+                                <li>
+                                    <font>客户姓名：</font><span>${custInfo.custName}</span>
+                                </li>
+                                <li>
+                                    <font>证件类型：</font><span>${custInfo.certTypeName}</span>
+                                </li>
+                                <li>
+                                    <font>证件号码：</font><span>${custInfo.certNumber}</span>
+                                </li>
+                            </#if>
                             <li>
                                 <font>联系方式：</font><span>${baseInfo.telNbr}</span>
                             </li>
