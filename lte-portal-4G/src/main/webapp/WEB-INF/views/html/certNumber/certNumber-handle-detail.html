@@ -50,6 +50,7 @@
                         <tr>
                             <td>号码</td>
                             <td>地区</td>
+                            <td>状态</td>
                             <td>操作</td>
                         </tr>
                         </thead>
@@ -60,6 +61,8 @@
                                 <tr>
                                     <td>${item.telNumber}</td>
                                     <td>${item.acceptRegionName}</td>
+                                    <td><#if item.statusCd=="100002">未处理<#elseif item.statusCd=="100004">取消<#elseif item.statusCd=="201300">已接单<#elseif item.statusCd=="301200">完成</#if></td>
+                                    <td>${item.staffName}</td>
                                     <td>
                                         <a style=" margin-left:20px;" class="btna_o"
                                            onclick="oneFive.certNumberHandle.orderConfirm('${item.orderId}','${item.lanId}','${item.telNumber}','${item.certType}','${item.certNumber}')"><span>完成</span></a>
