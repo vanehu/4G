@@ -1700,7 +1700,8 @@ common = (function($) {
 	 */  
 	var _setBtnTimer = function(btn) {  
 		$(btn).attr("disabled","disabled");  
-	   window.setTimeout(function(){$(btn).removeAttr("disabled")}, 2000);
+		$(btn).css("pointer-events","none");  
+	   window.setTimeout(function(){$(btn).removeAttr("disabled");$(btn).css("pointer-events","");}, 2000);
 	};
 	//调用原生tabbar切换页面
 	var _CallNativeButtonClick=function(method){

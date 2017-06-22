@@ -956,6 +956,19 @@ common = (function($) {
 		}
 		
 	};
+	
+	/**  
+	 * 点击按钮后多长时间内按钮不可点   
+	 * @param btn
+	   时间 以毫秒为单位   
+	 * 通过class统一控制  
+	 */  
+	var _setBtnTimer = function(btn) {  
+		$(btn).attr("disabled","disabled");  
+		$(btn).css("pointer-events","none");  
+	   window.setTimeout(function(){$(btn).removeAttr("disabled");$(btn).css("pointer-events","");}, 2000);
+	};
+	
 	return {
 		relocationCust		:	_relocationCust,
 		setCalendar			:	_setCalendar,
@@ -978,6 +991,7 @@ common = (function($) {
 		callOpenPay         :   _callOpenPay,
 		callCustLocation	:	_callCustLocation,
 		getMobileIp			: 	_getMobileIp,
-		callPhotos2         :   _callPhotos2
+		callPhotos2         :   _callPhotos2,
+		setBtnTimer			:	_setBtnTimer
 	};
 })(jQuery);
