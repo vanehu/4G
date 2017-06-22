@@ -3081,7 +3081,7 @@ SoOrder = (function() {
 					return false ;
 				}
 				//现场审核，拍照审核校验
-				if(CONST.photographReviewFlag == "ON" && CONST.isPhotographReviewNeeded && ec.util.isObj(auditMode) && auditMode == "1" && !CONST.isForcePassfaceVerify){
+				if(CONST.photographReviewFlag == "ON" && CONST.isPhotographReviewNeeded && ec.util.isObj(auditMode) && auditMode == "1"){
 					if(!isAuditSucess){
 						$.alert("提示", "请完成经办人人像审核操作！");
 						return false ;

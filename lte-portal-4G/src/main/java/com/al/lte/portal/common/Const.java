@@ -43,6 +43,7 @@ public class Const {
 	public static final int RANDOM_STRING_LENGTH = 20;
 	
 	public static final String CACHE_CERTINFO="CACHE_CERTINFO";
+
 	public static final String CACHE_CERTINFO_PARAM="CACHE_CERTINFO_PARAM";
 	
 	public static final String SESSION_SIGNATURE="SESSION_SIGNATURE";
