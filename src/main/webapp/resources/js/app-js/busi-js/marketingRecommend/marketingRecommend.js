@@ -21,6 +21,7 @@ marketingRecommend = (function(){
 	//营销推荐清单查询
 	var queryMktCustList = function(curPage,scroller){
 		var param = {
+				"typeName":"终端推荐",
 	            "objType": "3",
 	            "objNbr":OrderInfo.cust.accNbr,
 	            "pageIndex":curPage,
@@ -122,14 +123,17 @@ marketingRecommend = (function(){
 	}
 	
 	//营销任务（接触）反馈结果记录服务
-	var _saveMktContactResult = function(mktmodelCode,targetObjNbr,resultNbr){
+	var _saveMktContactResult = function(mktmodelCode,targetObjNbr,resultNbr,activityId){
 			var param = {
 		            "targetObjType": "3",
-		            "mktmodelCode":"",
+		            "mktmodelCode":mktmodelCode,
 		            "targetObjType":"3",
 		            "targetObjNbr":targetObjNbr,
 		            "resultNbr":$("#"+resultNbr).val(),
-		            "isContact":1
+		            "isContact":1,
+		            "contactChlId":OrderInfo.staff.channelId,
+		            "contactStaff":OrderInfo.staff.staffId,
+		            "activityId":activityId
 		        };
 			$.callServiceAsJson(contextPath + "/app/marketingRecommend/saveMktContactResult", param, {
 	        	"before":function(){

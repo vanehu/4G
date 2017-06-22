@@ -1,6 +1,7 @@
 package com.al.lte.portal.app.controller.crm;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -102,45 +103,108 @@ public class marketingRecommendController extends BaseController {
         List<Map<String, Object>> fk_list = MDA.MKT_CONTACT_RESULT;
         model.addAttribute("fk_list", fk_list);
         try {
-            Map<String, Object> resultMap = mktResBmo.queryMktCustList(param, flowNum, sessionStaff);
-
-            if (resultMap != null && resultMap.get("code") != null) {
-                if (resultMap.get("code").equals("POR-0000")) {
-                    Map<String, Object> o_result = (Map<String, Object>) resultMap.get("result");
-                    Map<String, Object> result = (Map<String, Object>) o_result.get("result");
-                    Map<String, Object> res_page = (Map<String, Object>) result.get("page");
-                    if (result != null && result.get("mktCustList") != null) {
-                        ArrayList<Map<String, Object>> mktCustList = (ArrayList<Map<String, Object>>) result.get("mktCustList");
-                        if (mktCustList.size() > 0) {
-                            if (res_page.get("totalCount") != null) {
-                                int pageNo = Integer.parseInt(param.get("pageIndex").toString());
-                                int pageSize = Integer.parseInt(param.get("pageSize").toString());
-                                int totalRecords = Integer.parseInt(res_page.get("totalCount").toString());
-                                PageModel<Map<String, Object>> pm = PageUtil.buildPageModel(pageNo, pageSize,
-                                        totalRecords < 1 ? 1 : totalRecords, mktCustList);
-                                model.addAttribute("pageModel", pm);
-                                //数据返回正常&&查询成功&&结果不为空
-                                model.addAttribute("flag", 0);
-                            } else {
-                                //数据返回异常
-                                model.addAttribute("flag", -1);
-                            }
-                        } else {
-                            //数据返回正常&&查询成功&&结果为空
-                            model.addAttribute("flag", 1);
-                        }
-                    } else {
-                        //数据返回异常
-                        model.addAttribute("flag", -1);
-                    }
-                } else {
-                    //数据返回正常&&查询失败
-                    model.addAttribute("flag", 2);
-                }
-            } else {
-                //数据返回异常
-                model.addAttribute("flag", -1);
-            }
+        	 Map<String, Object> param1 = new HashMap<String, Object>();
+        	 param1.put("areaId", areaId);
+        	Map<String, Object> activityMap = mktResBmo.queryMktActivityList(param1, flowNum, sessionStaff);
+        	 if (activityMap != null && activityMap.get("code") != null) {
+        		if (activityMap.get("code").equals("POR-0000")) {
+        			Map<String, Object> a_result = (Map<String, Object>) activityMap.get("result");
+                    Map<String, Object> aresult = (Map<String, Object>) a_result.get("result");
+                	List<Map<String, Object>> activitylist = (List<Map<String, Object>>) aresult.get("activityList");
+                	model.addAttribute("activitylist", activitylist);
+                	String activityId= "";
+                	for(int i=0;i<activitylist.size();i++){
+                		if(param.get("typeName").equals(activitylist.get(i).get("activityName"))){
+                			activityId = String.valueOf(activitylist.get(i).get("activityId"));
+                		}
+                	}
+                	param.put("activityId", activityId);
+                	 Map<String, Object> resultMap = mktResBmo.queryMktCustList(param, flowNum, sessionStaff);
+                     if (resultMap != null && resultMap.get("code") != null) {
+                         if (resultMap.get("code").equals("POR-0000")) {
+                             Map<String, Object> o_result = (Map<String, Object>) resultMap.get("result");
+                             Map<String, Object> result = (Map<String, Object>) o_result.get("result");
+                             Map<String, Object> res_page = (Map<String, Object>) result.get("page");
+                             if (result != null && result.get("mktCustList") != null) {
+                                 ArrayList<Map<String, Object>> mktCustList = (ArrayList<Map<String, Object>>) result.get("mktCustList");
+                                 if (mktCustList.size() > 0) {
+                                     if (res_page.get("totalCount") != null) {
+                                         int pageNo = Integer.parseInt(param.get("pageIndex").toString());
+                                         int pageSize = Integer.parseInt(param.get("pageSize").toString());
+                                         int totalRecords = Integer.parseInt(res_page.get("totalCount").toString());
+                                         PageModel<Map<String, Object>> pm = PageUtil.buildPageModel(pageNo, pageSize,
+                                                 totalRecords < 1 ? 1 : totalRecords, mktCustList);
+                                         model.addAttribute("pageModel", pm);
+                                         //数据返回正常&&查询成功&&结果不为空
+                                         model.addAttribute("flag", 0);
+                                     } else {
+                                         //数据返回异常
+                                         model.addAttribute("flag", -1);
+                                     }
+                                 } else {
+                                     //数据返回正常&&查询成功&&结果为空
+                                     model.addAttribute("flag", 1);
+                                 }
+                             } else {
+                                 //数据返回异常
+                                 model.addAttribute("flag", -1);
+                             }
+                         } else {
+                             //数据返回正常&&查询失败
+                             model.addAttribute("flag", 2);
+                         }
+                     } else {
+                         //数据返回异常
+                         model.addAttribute("flag", -1);
+                     }
+                 }else {
+                     //数据返回异常
+                     model.addAttribute("flag", 2);
+                 } 
+        	 }else {
+                 //数据返回异常
+                 model.addAttribute("flag",-1);
+             }
+                 
+//            Map<String, Object> resultMap = mktResBmo.queryMktCustList(param, flowNum, sessionStaff);
+//
+//            if (resultMap != null && resultMap.get("code") != null) {
+//                if (resultMap.get("code").equals("POR-0000")) {
+//                    Map<String, Object> o_result = (Map<String, Object>) resultMap.get("result");
+//                    Map<String, Object> result = (Map<String, Object>) o_result.get("result");
+//                    Map<String, Object> res_page = (Map<String, Object>) result.get("page");
+//                    if (result != null && result.get("mktCustList") != null) {
+//                        ArrayList<Map<String, Object>> mktCustList = (ArrayList<Map<String, Object>>) result.get("mktCustList");
+//                        if (mktCustList.size() > 0) {
+//                            if (res_page.get("totalCount") != null) {
+//                                int pageNo = Integer.parseInt(param.get("pageIndex").toString());
+//                                int pageSize = Integer.parseInt(param.get("pageSize").toString());
+//                                int totalRecords = Integer.parseInt(res_page.get("totalCount").toString());
+//                                PageModel<Map<String, Object>> pm = PageUtil.buildPageModel(pageNo, pageSize,
+//                                        totalRecords < 1 ? 1 : totalRecords, mktCustList);
+//                                model.addAttribute("pageModel", pm);
+//                                //数据返回正常&&查询成功&&结果不为空
+//                                model.addAttribute("flag", 0);
+//                            } else {
+//                                //数据返回异常
+//                                model.addAttribute("flag", -1);
+//                            }
+//                        } else {
+//                            //数据返回正常&&查询成功&&结果为空
+//                            model.addAttribute("flag", 1);
+//                        }
+//                    } else {
+//                        //数据返回异常
+//                        model.addAttribute("flag", -1);
+//                    }
+//                } else {
+//                    //数据返回正常&&查询失败
+//                    model.addAttribute("flag", 2);
+//                }
+//            } else {
+//                //数据返回异常
+//                model.addAttribute("flag", -1);
+//            }
         } catch (BusinessException be) {
             return super.failedStr(model, be);
         } catch (Exception e) {
