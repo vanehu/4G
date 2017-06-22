@@ -77,6 +77,7 @@ oneFive.certNumberHandle = (function () {
             $.alert("提示", "日期跨度太长，超过一个月，请重新选择");
             return;
         }
+
         if ($("#if_p_olNbr").attr("checked")) {
 
             var areaId = $("#p_areaId_val").val();

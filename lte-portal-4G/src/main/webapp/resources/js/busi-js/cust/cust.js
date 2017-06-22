@@ -3706,8 +3706,7 @@ order.cust = (function(){
 			$("#takePhotos").removeClass("btna_o").addClass("btna_g");
 			$("#rePhotos").removeClass("btna_g").addClass("btna_o");
 			$("#rePhotos").off("click").on("click",function(){_rePhotos();});
-			$("#confirmAgree").removeClass("btna_g").addClass("btna_o");
-			$("#confirmAgree").off("click").on("click",function(){_uploadImage();});
+			_callFaceVerify();
 		}else{
 			$.alertM(response.data);
 			$("#tips").html("提示："+response.data);
@@ -3940,8 +3939,6 @@ order.cust = (function(){
 				});
 			}
 			
-
-
 			 if(OrderInfo.faceVerifyFlag == "Y" && (!ec.util.isObj(auditMode) || auditMode == "-1")){
 				  $.each(pictures, function(){
 							this.checkType = "3";
@@ -3963,7 +3960,7 @@ order.cust = (function(){
 				photographs	: pictures
 		    };
 			
-			if(CONST.photographReviewFlag == "ON" && CONST.isPhotographReviewNeeded){
+			if(CONST.photographReviewFlag == "ON" && CONST.isPhotographReviewNeeded && !CONST.isForcePassfaceVerify){
 				if(auditMode == "1"){//现场审核，短信校验通过再上传
 					//发送短信
 					_sendSms4Audit("1");
@@ -4981,7 +4978,7 @@ $(function() {
    OrderInfo.dzjbakqx = !query.common.checkOperateSpec(CONST.DZJBAKQX);
    CONST.isHandleCustNeeded = query.common.checkOperateSpec(CONST.TGJBRBTQX);
    CONST.isPhotographReviewNeeded = !query.common.checkOperateSpec(CONST.RXSHGN);
-   CONST.isfaceVerify = !query.common.checkOperateSpec(CONST.RZBDGN);
+  // CONST.isfaceVerify = !query.common.checkOperateSpec(CONST.RZBDGN);
    CONST.isForcePassfaceVerify = !query.common.checkOperateSpec(CONST.QZSHQX);
    CONST.realNamePhotoFlag = query.common.queryPropertiesValue("REAL_NAME_PHOTO_" + String(OrderInfo.staff.areaId).substr(0, 3));
    CONST.photographReviewFlag = query.common.queryPropertiesValue("PHOTOGRAPH_REVIEW_" + String(OrderInfo.staff.areaId).substr(0, 3));

@@ -2169,8 +2169,7 @@ public class CustController extends BaseController {
         }
 		return jsonResponse;
     }
-
-	/** 人证照片比对
+    /* 人证照片比对
   	 * @param params
   	 * @param request
   	 * @param model
