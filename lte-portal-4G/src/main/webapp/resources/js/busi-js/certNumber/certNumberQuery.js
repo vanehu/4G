@@ -221,16 +221,12 @@ oneFive.certNumberQuery = (function () {
                     $("#attachmentInfos").empty();
                     if (ec.util.isObj(response.data) && ec.util.isObj(response.data.picturesInfo) && ec.util.isObj(response.data.picturesInfo.length > 0)) {
                         var files = response.data.picturesInfo;
-                        var src = "";
-                        $.each(files, function () {
-                            if (this.picFlag == "F") {
-                                src = "data:application/pdf;base64," + this.orderInfo;
-                                $("#attachmentInfos").append($("<div>").append("<embed style='width: 800px;height: 600px;' src='" + src + "'/>"));
-                            } else if (this.picFlag == "E") {
-                                src = "data:application/jpeg;base64," + this.orderInfo;
-                                $("#attachmentInfos").append($("<div>").append("<img style='width: auto;height: auto;'src='" + src + "'/>"));
-                            }
-                        });
+
+                        $("#attachmentInfos").append(createAttachmentHtml(files, "回执内容", "F,E4"));
+                        $("#attachmentInfos").append(createAttachmentHtml(files, "正面照", "E1"));
+                        $("#attachmentInfos").append(createAttachmentHtml(files, "反面照", "E2"));
+                        $("#attachmentInfos").append(createAttachmentHtml(files, "经办人照", "E3"));
+                        $("#attachmentInfos").append(createAttachmentHtml(files, "其它", "E"));
 
                         $("#attachmentInfos").show();
 
@@ -248,6 +244,27 @@ oneFive.certNumberQuery = (function () {
         });
 
     };
+
+    /**
+     * 获取附件展示html
+     * @param files 所有附件数组
+     * @param title 展示小标题，【回执内容，正面照，反面照，经办人照，其它】
+     *                               ||        ||      ||        ||     ||
+     * @param type 文件类型      "F,E4",    "E1",   "E2",     "E3",   "E4"
+     */
+    function createAttachmentHtml(files, title, type) {
+        var attachmentHtml = $("<div>").append($("<h5 class='s_title'>").append(title));
+        $.each(files, function () {
+            if ($.inArray(this.picFlag, type.split(',')) != -1) {
+                if (this.picFlag == 'F') {
+                    $(attachmentHtml).append($("<div>").append("<embed style='width: 800px;height: 600px;' src='" + "data:application/pdf;base64," + this.orderInfo + "'/>"));
+                } else {
+                    $(attachmentHtml).append($("<div>").append("<img style='width: auto;height: auto;'src='" + "data:application/jpeg;base64," + this.orderInfo + "'/>"));
+                }
+            }
+        });
+        return attachmentHtml;
+    }
 
     return {
         init: _init,
