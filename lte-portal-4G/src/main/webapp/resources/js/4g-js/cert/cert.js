@@ -130,7 +130,7 @@ cert = (function() {
 	    		    var url = contextPath + "/order/certUnifyInfo";
 				    var response = $.callServiceAsJson(url,man);
 				    if (response.code == 0) {
-				    	OrderInfo.pushCertReaderCustInfos(man.resultContent);
+				    	// OrderInfo.pushCertReaderCustInfos(man.resultContent);
 				    	man = {"resultFlag": 0, "errorMsg": "读卡成功", "resultContent": response.data};
 				    }else if(response.code == -2){// 控件版本号不一致，统一控件更新
 				        CertCtl.updateVersion();
@@ -176,7 +176,7 @@ cert = (function() {
 	    		    url = contextPath + "/order/certInfo";
 				    var response = $.callServiceAsJson(url,JSON.stringify(certInfo));
 				    if (response.code == 0) {
-				    	OrderInfo.pushCertReaderCustInfos(certInfo);
+				    	// OrderInfo.pushCertReaderCustInfos(certInfo);
 				    	man = {"resultFlag": 0, "errorMsg": "读卡成功", "resultContent": response.data};
 				    }else if(response.code == -3){
 				    	man = {"resultFlag": -3, "errorMsg": "控件版本不一致,您当前为"+response.data.fileName+"读卡器,驱动版本号为:"+ver.versionSerial+"请更新升级到版本:"+response.data.mdaVersion+"请下载新的控件","resultContent": response.data};
@@ -252,7 +252,7 @@ cert = (function() {
 				response = $.callServiceAsJson(url, JSON.stringify(params));
 				if (0 == response.code) {
 					response.data.servCode = servCode;
-					OrderInfo.pushCertReaderCustInfos(response.data);
+					// OrderInfo.pushCertReaderCustInfos(response.data);
 					man = {"resultFlag": 0, "errorMsg": "读卡成功", "resultContent": response.data};
 				} else {
 					man = {"resultFlag": -1, "errorMsg": "读卡失败，请稍后重试！"};
