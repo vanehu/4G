@@ -4251,6 +4251,7 @@ SoOrder = (function() {
 							value : OrderInfo.faceVerifyFlag //人证比对是否成功 
 						});
 					}
+				}
 			}
 		}
 
