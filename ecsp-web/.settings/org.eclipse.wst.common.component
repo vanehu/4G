@@ -2,8 +2,8 @@
     <wb-module deploy-name="ecsp-web">
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
-        <wb-resource deploy-path="/" source-path="/src/main/webapp"/>
-        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/test/java"/>
+        <wb-resource deploy-path="/" source-path="/target/m2e-wtp/web-resources"/>
+        <wb-resource deploy-path="/" source-path="/src/main/webapp" tag="defaultRootSource"/>
         <dependent-module archiveName="ecsp-core-3.0.0.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/ecsp-core/ecsp-core">
             <dependency-type>uses</dependency-type>
         </dependent-module>
@@ -17,6 +17,6 @@
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <property name="java-output-path" value="/ecsp-web/target/classes"/>
-        <property name="context-root" value="portalService"/>
+        <property name="context-root" value="ecsp-web"/>
     </wb-module>
 </project-modules>
