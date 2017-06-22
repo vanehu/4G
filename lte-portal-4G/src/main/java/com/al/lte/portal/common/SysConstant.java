@@ -882,19 +882,19 @@ public final class SysConstant {
 
     /**
      * 一证五卡文件类型标识
-     * 跨省一证五号图片：E
+     * 跨省一证五号图片：4
      * 跨省一证五号pdf：F
      * 跨省一五身份证正面照：E1
      * 跨省一五身份证背面照：E2
      * 跨省一五经办人照片：E3
-     * 跨省一五其他：E4
+     * 跨省一五其他：E
      */
-    public static final String ONE_FIVE_FILE_TYPE_JPG = "E";
+    public static final String ONE_FIVE_FILE_TYPE_JPG = "E4";
     public static final String ONE_FIVE_FILE_TYPE_PDF = "F";
     public static final String ONE_FIVE_FILE_TYPE_JPG_FRONT = "E1";
     public static final String ONE_FIVE_FILE_TYPE_JPG_BACK = "E2";
     public static final String ONE_FIVE_FILE_TYPE_JPG_JBR = "E3";
-    public static final String ONE_FIVE_FILE_TYPE_JPG_OTHER = "E4";
+    public static final String ONE_FIVE_FILE_TYPE_JPG_OTHER = "E";
 
 
     /**
