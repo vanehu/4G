@@ -308,14 +308,14 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
                     <configuration>
-                        <source>1.5</source>
-                        <target>1.5</target>
+                        <source>1.6</source>
+                        <target>1.6</target>
                         <compilerArguments>
                         	<verbose />
 							<!-- 系统环境变量能设置一个，ecs-common必须使用1.7,ecsp-core必须使用1.5，此处强制指定1.5路径 -->
-                        	<bootclasspath>C:/Program Files/Java/jdk1.5.0_22/jre/lib/rt.jar;C:/Program Files/Java/jdk1.5.0_22/jre/lib/jce.jar</bootclasspath>
+                        	<!--<bootclasspath>C:/Program Files/Java/jdk1.5.0_22/jre/lib/rt.jar;C:/Program Files/Java/jdk1.5.0_22/jre/lib/jce.jar</bootclasspath>-->
                         	<!-- 如果系统环境变量能设置为1.5，使用以下较通用写法 另见ecs-common中pom.xml文件-->
-							<!--<bootclasspath>${java.home}/lib/rt.jar;${java.home}/lib/jce.jar</bootclasspath>-->
+							<bootclasspath>${java.home}/lib/rt.jar;${java.home}/lib/jce.jar</bootclasspath>
                         </compilerArguments>                  
                     </configuration>        
                 </plugin>
