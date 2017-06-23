@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ecs.common.entity.JsonResponse;
 import com.al.ecs.common.util.DateUtil;
 import com.al.ecs.common.util.JsonUtil;
@@ -255,6 +256,17 @@ public class CommonController extends BaseController {
 	    String secret = propertiesUtils.getMessage("DES3_SECRET"); //3DES加密密钥
 	    Map<?, ?> resultMap = custBmo.decodeCert(content.trim(), secret);
 	    /*对下面的字段进行签名，可根据需要增加签名字段*/
+	    String expDate = MapUtils.getString(resultMap, "expDate"); 
+	    String currentD = DateUtil.getNowII();
+	    int result = expDate.compareTo(currentD);
+	    try { 
+			if(result < 0 ){
+				return super.failed("身份证已过期，无法办理业务", ResultConstant.FAILD.getCode());
+			}
+	    } catch (Exception e) {
+	    	
+	    }
+	    
 	    String partyName = MapUtils.getString(resultMap, "partyName"); //姓名
 	    String certAddress = MapUtils.getString(resultMap, "certAddress"); //地址
 	    String certNumber = MapUtils.getString(resultMap, "certNumber"); //身份证号码
