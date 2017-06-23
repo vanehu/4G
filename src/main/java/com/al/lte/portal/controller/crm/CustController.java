@@ -15,6 +15,7 @@ import com.al.lte.portal.bmo.crm.MktResBmo;
 import com.al.lte.portal.bmo.crm.OrderBmo;
 import com.al.lte.portal.bmo.staff.StaffBmo;
 import com.al.lte.portal.common.*;
+import com.al.lte.portal.common.Base64;
 import com.al.lte.portal.model.SessionStaff;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -52,14 +53,18 @@ public class CustController extends BaseController {
 	@Autowired
     @Qualifier("com.al.lte.portal.bmo.crm.MktResBmo")
     private MktResBmo mktResBmo;
-
+	
+    private String starChar = "********";
+    private String urlCustInfo = "/cust/cust-info";    
+    private String urlCustList = "/cust/cust-list";
+    
 	@RequestMapping(value = "/queryCust", method = { RequestMethod.POST })
     public String queryCust(@RequestBody Map<String, Object> paramMap, Model model,@LogOperatorAnn String flowNum,
             HttpServletResponse response,HttpSession httpSession,HttpServletRequest request) {
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
                 SysConstant.SESSION_KEY_LOGIN_STAFF);
 		if(sessionStaff == null){
-			return "/cust/cust-list";
+			return urlCustList;
 		}
 		String areaId = (String) paramMap.get("areaId");
 		try{
@@ -86,47 +91,10 @@ public class CustController extends BaseController {
 			}
 		}catch (Exception e) {
 			//异常在之前就捕获了，这里不做处理
+			log.error(e);
 		}
 		
-		try{
-			//访问次数限制  update by huangjj3 20160411 通过过滤器对过频操作进行限制
-			/*model.addAttribute("showVerificationcode", "N");
-			long endTime = System.currentTimeMillis();
-			long beginTime = 0;
-			if(httpSession.getAttribute(sessionStaff.getStaffCode()+"custtime")!=null){
-				beginTime = (Long) httpSession.getAttribute(sessionStaff.getStaffCode()+"custtime");
-			}
-			if(beginTime!=0){
-				Date beginDate = new Date(beginTime);
-				Date endDate = new Date(endTime);
-				long useTime = endDate.getTime()-beginDate.getTime();
-				long limit_time = Long.parseLong(MySimulateData.getInstance().getParam((String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),"LIMIT_TIME"));
-				int limit_count = Integer.parseInt(MySimulateData.getInstance().getParam((String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),"LIMIT_COUNT"));
-				if (useTime<=limit_time){
-					int count = (Integer) httpSession.getAttribute(sessionStaff.getStaffCode()+"custcount")+1;
-					if(count<limit_count){
-						httpSession.setAttribute(sessionStaff.getStaffCode()+"custcount", count);
-					}else if(count==limit_count){
-						httpSession.setAttribute(sessionStaff.getStaffCode()+"custcount", count);
-						model.addAttribute("showVerificationcode", "Y");
-					}else if(count>limit_count){
-						httpSession.setAttribute(sessionStaff.getStaffCode()+"custcount", count);
-						if(httpSession.getAttribute(sessionStaff.getStaffCode()+"custcount")!=null){
-							model.addAttribute("showVerificationcode", "Y");
-							return "/cust/cust-list";
-						}
-					}
-				}else{
-					httpSession.setAttribute(sessionStaff.getStaffCode()+"custtime", endTime);
-					httpSession.setAttribute(sessionStaff.getStaffCode()+"custcount", 1);
-				}
-			}else{
-				httpSession.setAttribute(sessionStaff.getStaffCode()+"custtime", endTime);
-				httpSession.setAttribute(sessionStaff.getStaffCode()+"custcount", 1);
-			}*/
-		}catch (Exception e) {
-			// TODO: handle exception
-		}
+
 		
 		Map resultMap =new HashMap();
 		httpSession.setAttribute("ValidateAccNbr", null);
@@ -163,11 +131,11 @@ public class CustController extends BaseController {
 							staffBmo.insert_sp_busi_run_log(logmap,flowNum,sessionStaff);
 						}
 						model.addAttribute("showDiffcode", "Y");
-						return "/cust/cust-list";
+						return urlCustList;
 					}
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					log.error(e);
 				}
 			}
 		}
@@ -189,15 +157,18 @@ public class CustController extends BaseController {
  			}
 			} catch (BusinessException e) {
 				iseditOperation="1";
+				log.error(e);
 	 		} catch (InterfaceException ie) {
 	 			iseditOperation="1";
+	 			log.error(ie);
 			} catch (Exception e) {
 				iseditOperation="1";
+				log.error(e);
 			}
 		model.addAttribute("jumpAuthflag", iseditOperation);
 
 		String qryAcctNbr=MapUtils.getString(paramMap,"acctNbr","");
-		String soNbr=MapUtils.getString(paramMap,"soNbr","");
+		//String soNbr=MapUtils.getString(paramMap,"soNbr","");
 		if(("").equals(areaId)||areaId==null){
 			paramMap.put("areaId", sessionStaff.getCurrentAreaId());
 		}
@@ -214,11 +185,11 @@ public class CustController extends BaseController {
 				String isCheckFlag=staffBmo.checkOperatSpec(SysConstant.YDBHK,sessionStaff);
 				if(!"0".equals(isCheckFlag)){
 					model.addAttribute("showDiffcode", "Y");
-					return "/cust/cust-list";
+					return urlCustList;
 				}
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				log.error(e);
 			}
 		}
 		List custInfos = new ArrayList();
@@ -234,7 +205,7 @@ public class CustController extends BaseController {
 			}
 			String num = (String) (paramMap.get("acctNbr")==""?paramMap.get("identityNum")==""?paramMap.get("queryTypeValue"):paramMap.get("identityNum"):paramMap.get("acctNbr"));
 			if(!num.matches(regex)){
-				return "/cust/cust-list";
+				return urlCustList;
 			}
 			resultMap = custBmo.queryCustInfo(paramMap,
 					flowNum, sessionStaff);
@@ -279,12 +250,12 @@ public class CustController extends BaseController {
 						if (tmpIdCardNumber != null && tmpIdCardNumber.length() == 18) {
 							String preStr = tmpIdCardNumber.substring(0, 6);
 							String subStr = tmpIdCardNumber.substring(14);
-							tmpIdCardNumber = preStr + "********" + subStr;
+							tmpIdCardNumber = preStr + starChar + subStr;
 							tmpCustInfo.put("filterIdCardNumber", tmpIdCardNumber);
 						} else if (tmpIdCardNumber != null && tmpIdCardNumber.length() == 15) {
 							String preStr = tmpIdCardNumber.substring(0, 5);
 							String subStr = tmpIdCardNumber.substring(13);
-							tmpIdCardNumber = preStr + "********" + subStr;
+							tmpIdCardNumber = preStr + starChar + subStr;
 							tmpCustInfo.put("filterIdCardNumber", tmpIdCardNumber);
 						}
 						custIds.add(MapUtils.getString(tmpCustInfo,"custId",""));
@@ -385,7 +356,7 @@ public class CustController extends BaseController {
 			if(null!=paramMap.get("pageType") && !("").equals(paramMap.get("pageType")) && ("orderUndo").equals(paramMap.get("pageType"))){
 				return "/orderUndo/cust-list";	
 			}
-			return "/cust/cust-list";
+			return urlCustList;
 		} catch (BusinessException be) {
 			return super.failedStr(model, be);
 		} catch (InterfaceException ie) {
@@ -499,7 +470,7 @@ public class CustController extends BaseController {
 				}
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e);
 		}
 		return isGov;
 	}
@@ -522,7 +493,7 @@ public class CustController extends BaseController {
 				logmap.put("HOST_IP", CommonUtils.getSerAddrPart());
 				logmap.put("INTF_URL", "service/intf.custService/queryCust");
 				logmap.put("IDENTIDIES_TYPE", paramMap.get("identidies_type").toString());
-				logmap.put("IDENTITY_NUM", (String) (paramMap.get("acctNbr")==""?paramMap.get("identityNum")==""?paramMap.get("queryTypeValue"):paramMap.get("identityNum"):paramMap.get("acctNbr")));
+				logmap.put("IDENTITY_NUM", (String) (paramMap.get("acctNbr")==""?(paramMap.get("identityNum")==""?paramMap.get("queryTypeValue"):paramMap.get("identityNum")):paramMap.get("acctNbr")));
 				logmap.put("OPERATION_PLATFORM", SysConstant.APPDESC_LTE);
 				logmap.put("ACTION_IP", sessionStaff.getIp());
 				logmap.put("CHANNEL_ID", sessionStaff.getCurrentChannelId());
@@ -532,6 +503,7 @@ public class CustController extends BaseController {
 				staffBmo.insert_sp_busi_run_log(logmap,flowNum,sessionStaff);
 			}
 		}catch (Exception e) {
+			log.error(e);
 			//异常在之前就捕获了，这里不做处理
 		}
 		try{
@@ -559,7 +531,7 @@ public class CustController extends BaseController {
 						httpSession.setAttribute(sessionStaff.getStaffCode()+"custcount", count);
 						if(httpSession.getAttribute(sessionStaff.getStaffCode()+"custcount")!=null){
 							model.addAttribute("showVerificationcode", "Y");
-							return "/cust/cust-list";
+							return urlCustList;
 						}
 					}
 				}else{
@@ -571,10 +543,11 @@ public class CustController extends BaseController {
 				httpSession.setAttribute(sessionStaff.getStaffCode()+"custcount", 1);
 			}
 		}catch (Exception e) {
+			log.error(e);
 			// TODO: handle exception
 		}
 		
-		Map resultMap =new HashMap();
+		Map<?, ?> resultMap =new HashMap();
 		httpSession.setAttribute("ValidateAccNbr", null);
 		httpSession.setAttribute("ValidateProdPwd", null);
 		httpSession.setAttribute("queryCustAccNbr", paramMap.get("acctNbr"));
@@ -595,10 +568,13 @@ public class CustController extends BaseController {
  			}
 			} catch (BusinessException e) {
 				iseditOperation="1";
+				log.error(e);
 	 		} catch (InterfaceException ie) {
 	 			iseditOperation="1";
+	 			log.error(ie);
 			} catch (Exception e) {
 				iseditOperation="1";
+				log.error(e);
 			}
 		model.addAttribute("jumpAuthflag", iseditOperation);
 		
@@ -617,7 +593,7 @@ public class CustController extends BaseController {
 			String regex = "^[A-Za-z0-9]+$";
 			String num = (String) (paramMap.get("acctNbr")==""?paramMap.get("identityNum")==""?paramMap.get("queryTypeValue"):paramMap.get("identityNum"):paramMap.get("acctNbr"));
 			if(!num.matches(regex)){
-				return "/cust/cust-list";
+				return urlCustList;
 			}
 			resultMap = custBmo.queryCustInfo(paramMap,flowNum, sessionStaff);
 			if (MapUtils.isNotEmpty(resultMap)) {
@@ -644,12 +620,12 @@ public class CustController extends BaseController {
 					if(idCardNumber != null && idCardNumber.length()==18){
 						 String preStr = idCardNumber.substring(0,6);
 				    	 String subStr = idCardNumber.substring(14);
-				    	 idCardNumber=preStr+"********"+subStr;
+				    	 idCardNumber=preStr+starChar+subStr;
 						
 					}else if(idCardNumber != null && idCardNumber.length()==15){
 						String preStr = idCardNumber.substring(0,5);
 				    	 String subStr = idCardNumber.substring(13);
-				    	 idCardNumber=preStr+"********"+subStr;
+				    	 idCardNumber=preStr+starChar+subStr;
 					}
 					model.addAttribute("idCardNumber", idCardNumber);
 				}else{
@@ -760,7 +736,7 @@ public class CustController extends BaseController {
 				}
 			}
 		}catch(Exception e){
-			e.printStackTrace();
+			log.error(e);
 		}
 	}
 	
@@ -774,7 +750,7 @@ public class CustController extends BaseController {
 		Map resultMap = new HashMap();
 		String areaName="";
 		String identityCd="";
-        String pCustIdentityCd=MapUtils.getString(param,"pCustIdentityCd");
+        //String pCustIdentityCd=MapUtils.getString(param,"pCustIdentityCd");
 		String idCardNumber="";
 		/*{accessNumber:'11969577',areaId:21,prodPwd:'000000'}*/
 		String accNbr= (String) httpSession.getAttribute("queryCustAccNbr");
@@ -808,21 +784,24 @@ public class CustController extends BaseController {
 	 			}
 				} catch (BusinessException e) {
 					isViewOperation="1";
+					log.error(e);
 		 		} catch (InterfaceException ie) {
 		 			isViewOperation="1";
+		 			log.error(ie);
 				} catch (Exception e) {
 					isViewOperation="1";
+					log.error(e);
 				}
-			Integer aa=idCardNumber.length();
+			//Integer aa=idCardNumber.length();
 			if(!isViewOperation.equals("0")&&idCardNumber.length()==18){
 				 String preStr = idCardNumber.substring(0,6);
 		    	 String subStr = idCardNumber.substring(14);
-		    	 idCardNumber=preStr+"********"+subStr;
+		    	 idCardNumber=preStr+starChar+subStr;
 				
 			}else if(!isViewOperation.equals("0")&&idCardNumber.length()==15){
 				String preStr = idCardNumber.substring(0,5);
 		    	 String subStr = idCardNumber.substring(13);
-		    	 idCardNumber=preStr+"********"+subStr;
+		    	 idCardNumber=preStr+starChar+subStr;
 			}
 		}
 		param.put("idCardNumber", idCardNumber);
@@ -852,7 +831,7 @@ public class CustController extends BaseController {
 							map.put("isChange", SysConstant.STR_Y);
 							map.put("custAuthInfo", "非正常读卡数据，信息可能被篡改，此操作将被记录！");
 							model.addAttribute("custAuth", map);
-							return "/cust/cust-info";
+							return urlCustInfo;
 						}
 					}
 					Map<String, Object> datamap = mktResBmo.checkIdCardNumber(checkIdMap,
@@ -880,7 +859,7 @@ public class CustController extends BaseController {
 				try {
 					map = custBmo.custAuth(paramMap,
 							flowNum, sessionStaff);
-					String resultCode = MapUtils.getString(map, "resultCode");
+					//String resultCode = MapUtils.getString(map, "resultCode");
 					String isValidateStr = MapUtils.getString(map, "isValidate");
 					if ("true".equals(isValidateStr)) {
 						httpSession.setAttribute("ValidateAccNbr", paramMap.get("accessNumber"));
@@ -914,7 +893,7 @@ public class CustController extends BaseController {
 				map.put("isValidate", "false");
 				map.put("authJumpInfo", "无跳过权限！");
 				model.addAttribute("custAuth", map);
-				return "/cust/cust-info";
+				return urlCustInfo;
 			}
 			//在session中保存当前客户信息
 			Map sessionCustInfo = MapUtils.getMap(listCustInfos, custId);
@@ -955,8 +934,11 @@ public class CustController extends BaseController {
                         model.addAttribute("membershipLevel", membershipLevelInfoMap.get("membershipLevel"));
 				}
         	} catch (BusinessException be) {
+        		log.error(be);
 			} catch (InterfaceException ie) {
+				log.error(ie);
 			} catch (Exception e) {
+				log.error(e);
 			}
 		}
 
@@ -964,7 +946,7 @@ public class CustController extends BaseController {
 		model.addAttribute("poingtType",sessionStaff.getPoingtType());
 		model.addAttribute("custAuth", map);
 		model.addAttribute("fromProvFlag", MapUtils.getString(param,"fromProvFlag","0"));
-		return "/cust/cust-info";
+		return urlCustInfo;
 	}
 	
 	@RequestMapping(value = "/custAuthSub", method = { RequestMethod.POST })
@@ -1004,21 +986,24 @@ public class CustController extends BaseController {
 	 			}
 				} catch (BusinessException e) {
 					isViewOperation="1";
+					log.error(e);
 		 		} catch (InterfaceException ie) {
 		 			isViewOperation="1";
+		 			log.error(ie);
 				} catch (Exception e) {
 					isViewOperation="1";
+					log.error(e);
 				}
-			Integer aa=idCardNumber.length();
+			//Integer aa=idCardNumber.length();
 			if(!isViewOperation.equals("0")&&idCardNumber.length()==18){
 				 String preStr = idCardNumber.substring(0,6);
 		    	 String subStr = idCardNumber.substring(14);
-		    	 idCardNumber=preStr+"********"+subStr;
+		    	 idCardNumber=preStr+starChar+subStr;
 				
 			}else if(!isViewOperation.equals("0")&&idCardNumber.length()==15){
 				String preStr = idCardNumber.substring(0,5);
 		    	 String subStr = idCardNumber.substring(13);
-		    	 idCardNumber=preStr+"********"+subStr;
+		    	 idCardNumber=preStr+starChar+subStr;
 			}
 		}
 		param.put("idCardNumber", idCardNumber);
@@ -1094,7 +1079,7 @@ public class CustController extends BaseController {
 		map.put("result", resultMap);
 		map.put("custInfo", param);
 		model.addAttribute("custAuth", map);
-		return "/cust/cust-info";
+		return urlCustInfo;
 	}
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/orderprod", method = RequestMethod.GET)
@@ -1361,10 +1346,13 @@ public class CustController extends BaseController {
     	 			}
      			} catch (BusinessException e) {
      				iseditOperation="1";
+     				log.error(e);
      	 		} catch (InterfaceException ie) {
      	 			iseditOperation="1";
-     			} catch (Exception e) {
+     	 			log.error(ie);
+     			} catch (Exception ie) {
      				iseditOperation="1";
+     				log.error(ie);
      			}
         		list = (List<Map<String, Object>>)result.get("profileSpec");
         		tabList = (List<Map<String, Object>>)result.get("tabList");
@@ -1375,7 +1363,7 @@ public class CustController extends BaseController {
         				String partyProfileCatgTypeCdStr=String.valueOf(list.get(i).get("partyProfileCatgTypeCd"));
         				if(partyProfileCatgTypeCdStr!=null&&!"".equals(partyProfileCatgTypeCdStr)){
         					Integer partyProfileCatgTypeCd=Integer.valueOf(partyProfileCatgTypeCdStr);
-                			if((iseditOperation!="0"&&partyProfileCatgTypeCd!=2)||iseditOperation=="0"){
+                			if((iseditOperation!="0"&&partyProfileCatgTypeCd!=2)||iseditOperation.equals("0")){
                 				temList.add(list.get(i));
                              }
         				}
@@ -1701,6 +1689,7 @@ public class CustController extends BaseController {
 			}
 			jsonResponse = super.successed(intOptSwitch, ResultConstant.SUCCESS.getCode());
 		} catch (Exception e) {
+			log.error(e);
 			return super.failed("OFF", ResultConstant.FAILD.getCode());
 		}
 		return jsonResponse;
@@ -1926,7 +1915,7 @@ public class CustController extends BaseController {
     @RequestMapping(value = "/preHandleCustCertificate", method = RequestMethod.POST)
     @ResponseBody
     public JsonResponse preHandleCustCertificate(@RequestBody Map<String, Object> param, @LogOperatorAnn String flowNum, HttpServletResponse response) {
-        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
+        //SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
         Map<String, Object> result = null;
         JsonResponse jsonResponse = null;
         OutputStream outputStream = null;
@@ -1973,7 +1962,7 @@ public class CustController extends BaseController {
         } catch (InterfaceException e) {
             jsonResponse = super.failed(e,resultMap,ErrorCode.CUSTINFO_SYNCHRONIZE);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e);
         }
         return jsonResponse;
     }
@@ -2017,7 +2006,7 @@ public class CustController extends BaseController {
         } catch (InterfaceException e) {
             jsonResponse = super.failed(e, paramMap,ErrorCode.PRE_CHECK_CERT_NUMBER_REL);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e);
         }
         return jsonResponse;
     }
@@ -2045,7 +2034,7 @@ public class CustController extends BaseController {
         } catch (InterfaceException e) {
             jsonResponse = super.failed(e, resultMap, ErrorCode.GET_SEQ);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e);
         }
         return jsonResponse;
     }
