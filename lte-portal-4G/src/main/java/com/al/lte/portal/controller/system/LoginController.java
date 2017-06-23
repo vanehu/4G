@@ -1545,6 +1545,9 @@ public class LoginController extends BaseController {
 	@RequestMapping(value = "/login/setLoginCookie", method = {RequestMethod.POST,RequestMethod.GET})
 	@ResponseBody
 	public void setLoginCookie(  HttpServletRequest request,HttpServletResponse response) {
+		HttpSession session = request.getSession();
+		session.removeAttribute(SysConstant.SESSION_KEY_LOGIN_STAFF);
+    	session.invalidate();
 		String areaId=request.getParameter("areaId");
 		String token=request.getParameter("token");
 		Map<String,Object> map=new HashMap<String,Object>();

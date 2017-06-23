@@ -3455,7 +3455,7 @@ public class OrderBmoImpl implements OrderBmo {
 			}
 		}
 		String currentD = DateUtil.getNowII();
-	    int result = effDate.compareTo(currentD);
+	    int result = expDate.compareTo(currentD);
 	    try { 
 			if(result < 0 ){
 				returnMap.put(SysConstant.RESULT_CODE, ResultCode.FAIL_ON);

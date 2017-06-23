@@ -254,6 +254,8 @@ cert = (function() {
 					response.data.servCode = servCode;
 					// OrderInfo.pushCertReaderCustInfos(response.data);
 					man = {"resultFlag": 0, "errorMsg": "读卡成功", "resultContent": response.data};
+				} else if(1 == response.code){
+					man = {"resultFlag": -1, "errorMsg": response.data};
 				} else {
 					man = {"resultFlag": -1, "errorMsg": "读卡失败，请稍后重试！"};
 				}
