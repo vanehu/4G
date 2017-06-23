@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 
+import com.al.ecs.common.web.SpringContextUtil;
 import com.al.ecs.log.Log;
 /**
  * properties 属性文件值读取
@@ -27,6 +28,21 @@ public class PropertiesUtils {
 	Log log = Log.getLog(PropertiesUtils.class);
 	/** bean name: messageSource */
 	private ReloadableResourceBundleMessageSource message;
+	
+	private static PropertiesUtils propertiesUtils;
+		
+	public static PropertiesUtils getInstance(){
+		
+		if(propertiesUtils == null){
+			synchronized(PropertiesUtils.class){
+				if(propertiesUtils == null){
+					propertiesUtils = (PropertiesUtils) SpringContextUtil.getBean("propertiesUtils");
+				}
+			}
+		}
+		
+		return propertiesUtils;
+	}
 
 	public void setMessage(ReloadableResourceBundleMessageSource message) {
 		this.message = message;
