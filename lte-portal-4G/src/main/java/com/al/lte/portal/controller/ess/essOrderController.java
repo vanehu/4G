@@ -683,6 +683,7 @@ public class essOrderController extends BaseController {
 		Map<String, Object> rMap = null;
 		JsonResponse jsonResponse = null;
 		try {
+			param.put("staffId", sessionStaff.getStaffId());
 			rMap = essOrderBmo.orderRepeal(param, flowNum,
 					sessionStaff);
 			if (ResultCode.R_SUCC.equals(rMap.get("resultCode"))
