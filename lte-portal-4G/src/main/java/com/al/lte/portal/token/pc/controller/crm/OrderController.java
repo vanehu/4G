@@ -3655,6 +3655,9 @@ public class OrderController extends BaseController {
 							model.addAttribute("segmentName", (String) custInfo.get("segmentName"));
 							model.addAttribute("vipLevel", (String) custInfo.get("vipLevel"));
 							model.addAttribute("vipLevelName", (String) custInfo.get("vipLevelName"));
+							model.addAttribute("CN", (String) custInfo.get("CN"));
+							model.addAttribute("address", (String) custInfo.get("address"));
+							model.addAttribute("certNum", (String) custInfo.get("certNum"));
 							model.addAttribute("querycustflag", "0");
 						}else{
 							model.addAttribute("querycustflag", "1");
