@@ -249,7 +249,7 @@ public class OrderController extends BaseController {
 		String propertiesKey = "NEWUIFLAG_"+ (sessionStaff.getCurrentAreaId() + "").substring(0, 3);//新ui开关
 		// 新UI开关
 		String newUIFlag = propertiesUtils.getMessage(propertiesKey);
-		if("ON".equals(newUIFlag) && params.get("newFlag") != null){
+		if(("ON".equals(newUIFlag) || newUIFlag==null) && params.get("newFlag") != null){
 			if ("2".equals(params.get("enter").toString())) {//购手机暂时走原ui
 				return "/app/order_new/phone_add";
 			}
@@ -324,7 +324,7 @@ public class OrderController extends BaseController {
 		String result = rulecheck(params,model,optFlowNum,httpSession);
 		if(result != null){
 			return result;
-		}else if("ON".equals(newUIFlag) && params.get("newFlag")!=null){
+		}else if(("ON".equals(newUIFlag) || newUIFlag==null) && params.get("newFlag")!=null){
 			return "/app/order_new/order-offerchange-search";
 		} else {
 			return "/app/order/order-offerchange-search";
@@ -417,7 +417,7 @@ public class OrderController extends BaseController {
 		String newUIFlag = propertiesUtils.getMessage(propertiesKey);
 		if(result != null){
 			return result;
-		} else if("ON".equals(newUIFlag) && params.get("newFlag") != null){
+		} else if(("ON".equals(newUIFlag) || newUIFlag==null) && params.get("newFlag") != null){
 			return "/app/order_new/order-attach-offer";
 		}else {
 			return "/app/order/order-attach-offer";
@@ -982,7 +982,7 @@ public class OrderController extends BaseController {
 		String propertiesKey = "NEWUIFLAG_"+ (sessionStaff.getCurrentAreaId() + "").substring(0, 3);//新ui开关
 		// 新UI开关
 		String newUIFlag = propertiesUtils.getMessage(propertiesKey);
-        if("ON".equals(newUIFlag) && prams.get("newFlag") != null){
+        if(("ON".equals(newUIFlag) || newUIFlag==null) && prams.get("newFlag") != null){
         	if (prams.get("actionFlag")!=null && prams.get("actionFlag").equals("2")){
             	return "/app/order_new/offer-change-list";//新版套餐变更ui
     		}else if(prams.get("enter")!=null && prams.get("enter").toString().length()>0){
@@ -1215,7 +1215,7 @@ public class OrderController extends BaseController {
         		System.out.println("++++++++++++reqMap="+JsonUtil.toString(param));
         	}
     		forward = "/app/offer/offer-change";
-    		if("ON".equals(newUIFlag) && param.get("newFlag") != null){
+    		if(("ON".equals(newUIFlag) || newUIFlag==null) && param.get("newFlag") != null){
     			forward = "/app/order_new/offer-change";
     		}
     		

@@ -25,7 +25,7 @@ order.calcharge = (function(){
 	var payType="100000";//默认现金，用于调用代理保证金接口校验
 	var _returnFlag=true;//支付平台返回成功后，返回按钮提示不让进行
 	var _haveCharge=false;//是否已经下过计费接口
-	var _timeId=1;//定时计时器
+	var failCount=0;//查询支付失败次数，超过三次不再查询
 	var chargeCheck="0";//代理保证金校验编码   0成功   1校验不通过 -2接口异常
 	var chargeOlId;//算费时的OlId
 	var payOlId;//支付时OlId
@@ -368,7 +368,7 @@ order.calcharge = (function(){
 		
 	};
 	
-	var _chargeSave = function(flag){
+	var _chargeSave = function(flag,olId){
 		order.phoneNumber.resetBoProdAn();//清楚预占号码缓存  IOS重新进入受理不会显示上次预占的号码
 		var realmoney = $("#realmoney").val();
 		if(realmoney == "0.00"){
@@ -376,17 +376,8 @@ order.calcharge = (function(){
 				return ;
 			}
 	    }
-		//从session中获取olId，确保olId正确且唯一
-		var url = contextPath + "/app/pay/repair/queryOlId";
-		var response = $.callServiceAsJson(url, {});
-		var sessionOlId=OrderInfo.orderResult.olId;
-		if (response.code == 0 && response.data!=null && response.data!="") {//从session获取olId成功
-			 sessionOlId=response.data.olId+"";						
-		}else {
-			   // 取不到则默认缓存中olId
-		}
 		var params={
-				"olId":sessionOlId,
+				"olId":olId,
 				"soNbr":OrderInfo.order.soNbr,
 				"areaId" : OrderInfo.staff.areaId,
 				"chargeItems":_chargeItems
@@ -428,8 +419,7 @@ order.calcharge = (function(){
 					if(OrderInfo.actionFlag==112){
 						order.broadband.orderSubmit();
 						return;
-					}
-					
+					}					
 					if(OrderInfo.actionFlag==11){
 						$("#orderCancel").html("<span>返回首页</span>");
 						$("#orderCancel").off("onclick").on("onclick",function(event){
@@ -457,7 +447,7 @@ order.calcharge = (function(){
 					$.alertM(response.data);
 					if(flag==1 && payType!="100000"){//提交接口失败，被后台拦截则,则非现金支付且金额大于0则调支付平台退款接口
 						var charge=_getCharge();//支付金额
-						_payRefund(sessionOlId,charge,response.data.errMsg);
+						_payRefund(olId,charge,response.data.errMsg);
 					}
 					//SoOrder.showAlertDialog(response.data);
 				}else{
@@ -760,7 +750,6 @@ order.calcharge = (function(){
 	 * 获取支付平台支付页面
 	 */
 	var _getPayTocken = function(){
-		clearInterval(order.calcharge.timeId);//定时任务取消
 		var dis=$("#printVoucherA").attr("disabled");//回执按钮置灰收费不可点击
 		if("disabled"!=dis){
 			$.alert("提示","请先保存回执");
@@ -883,41 +872,90 @@ order.calcharge = (function(){
 	 * 获取支付平台返回订单状态并进行下一步操作
 	 */
 	var _queryPayOrdStatus= function(soNbr, status,type) {
+		failCount=0;//初始化
 		if ("1" == status) { // 原生返回成功，收费按钮不可点
 			$("#toCharge").attr("disabled","disabled");
 		}
-		if(order.calcharge.busiUpType=="1"){
+		if(order.calcharge.busiUpType==CONST.APP_ORDER_BUSI_UP_TYPE){
 			if(OrderInfo.actionFlag!=112){//非融合，先查订单收费状态，未收费继续流程，否则直接提示
 				//从session中获取olId，确保olId正确且唯一
-				var url = contextPath + "/app/pay/repair/queryOlId";
-				$.ecOverlay("<strong>正在处理中,请稍等会儿....</strong>");
-				var response = $.callServiceAsJson(url, {});
 				var sessionOlId=OrderInfo.orderResult.olId;
-				if (response.code == 0 && response.data!=null && response.data!="") {//从session获取olId成功
-					 sessionOlId=response.data.olId+"";						
-				}else {
-					   // 取不到则默认缓存中olId
-				}
-				OrderInfo.orderResult.olId=sessionOlId;
-				var queryUrl = contextPath + "/app/pay/repair/queryOrdStatus";
-				var checkParams = {
-						"olId" : sessionOlId,
-						"areaId":OrderInfo.staff.areaId+""					
-				};
-				var response = $.callServiceAsJson(queryUrl, checkParams);
-				$.unecOverlay();
-				if (response.code == 0 && response.data!=null && response.data!="") {//已后台收费成功，直接提示，不走收费流程
-					var statusCd=response.data.statusCd;
-					if("201700"==statusCd || "201800"==statusCd || "201900"==statusCd ||"301200"==statusCd ||"201300"==statusCd){
-						clearInterval(order.calcharge.timeId);//查询成功定时任务取消
-						_showFinDialog("1","收费成功！");
-						return;
-					}				
-				}
+				$.callServiceAsJson(contextPath + "/app/pay/repair/queryOlId", {}, {
+					"before": function() {
+						$.ecOverlay("查询中，请稍等...");
+					},
+					"done": function(response) {
+						$.unecOverlay();
+						if (ec.util.isObj(response)) {
+							if (response.code == 0 && response.data!=null && response.data!="") {
+								 sessionOlId=response.data.olId+"";	
+							} 
+						}
+						var checkParams = {
+								"olId" : sessionOlId,
+								"areaId":OrderInfo.staff.areaId+""					
+						};
+						OrderInfo.orderResult.olId=sessionOlId;
+						$.callServiceAsJson(contextPath + "/app/pay/repair/queryOrdStatus", checkParams, {
+							"before": function() {
+								$.ecOverlay("正在处理中，请稍等...");
+							},
+							"done": function(response) {
+								$.unecOverlay();
+								if (ec.util.isObj(response)) {
+									if (response.code == 0 && response.data!=null && response.data!="") {//已后台收费成功，直接提示，不走收费流程
+										var statusCd=response.data.statusCd;
+										if("201700"==statusCd || "201800"==statusCd || "201900"==statusCd ||"301200"==statusCd ||"201300"==statusCd){
+											clearInterval(order.calcharge.timeId);//查询成功定时任务取消
+											_showFinDialog("1","收费成功！");
+											return;
+										}				
+									}
+								}
+								//处理未建档成功的订单
+								_queryPayOrdStatus1(sessionOlId,"1");
+							},
+							"fail": function(response) {
+								$.unecOverlay();
+								//处理未建档成功的订单
+								_queryPayOrdStatus1(sessionOlId,"1");	
+							}
+						});
+					},
+					"fail": function(response) {
+						$.unecOverlay();
+						var checkParams = {
+								"olId" : sessionOlId,
+								"areaId":OrderInfo.staff.areaId+""					
+						};
+						$.callServiceAsJson(contextPath + "/app/pay/repair/queryOrdStatus", checkParams, {
+							"before": function() {
+								$.ecOverlay("正在处理中，请稍等...");
+							},
+							"done": function(response) {
+								$.unecOverlay();
+								if (ec.util.isObj(response)) {
+									if (response.code == 0 && response.data!=null && response.data!="") {//已后台收费成功，直接提示，不走收费流程
+										var statusCd=response.data.statusCd;
+										if("201700"==statusCd || "201800"==statusCd || "201900"==statusCd ||"301200"==statusCd ||"201300"==statusCd){
+											_showFinDialog("1","收费成功！");
+											return;
+										}				
+									}
+									//处理未建档成功的订单
+									_queryPayOrdStatus1(sessionOlId,"1");	
+								} 
+							},
+							"fail": function(response) {
+								$.unecOverlay();
+								//处理未建档成功的订单
+								_queryPayOrdStatus1(sessionOlId,"1");	
+							}
+						});
+					}
+				});
 			}
-			//实时受理收费走计费接口
-			order.calcharge.timeId=setInterval(order.calcharge.timeToFee,5000);//开始定时任务
-		}else if(order.calcharge.busiUpType=="-1"){//补收费
+		}else if(order.calcharge.busiUpType==CONST.APP_REPAIR_BUSI_UP_TYPE){//补收费
 			repair.main.queryPayOrdStatus1(soNbr, status,type);
 		}else if(order.calcharge.busiUpType == CONST.APP_CHARGE_BUSI_UP_TYPE) { // 话费充值
 			// 初始化失败次数
@@ -931,49 +969,59 @@ order.calcharge = (function(){
 	/**
 	 * 获取支付平台返回订单状态
 	 */
-	var _queryPayOrdStatus1 = function(soNbr, status,type) {
+	var _queryPayOrdStatus1 = function(soNbr, status) {
 //		if(order.calcharge.haveCharge==true){//已下过计费接口
 //			return;
 //		}
 		if ("1" == status) { // 原生返回成功，调用支付平台查询订单状态接口，再次确定是否成功，如果成功则调用收费接口
-			$.ecOverlay("<strong>正在处理中,请稍等会儿....</strong>");
 			var params = {
 				"olId" : soNbr
 				
 			};
-			payOlId=params.olId;//调取支付平台传回的olId用于前台校验
-			var url = contextPath + "/app/pay/repair/queryOrdStatusFromRedis";
-			var response = $.callServiceAsJson(url, params);
-			$.unecOverlay();
-			if (response.code == 0 && response.data!=null && response.data!="") {//支付成功，调用收费接口
-				clearInterval(order.calcharge.timeId);//查询成功定时任务取消
-				var val=_getCharge();
-				if(OrderInfo.actionFlag==112){//融合甩单传融合
-					val=val+order.broadband.broadbandCharge;
+			$.callServiceAsJson(contextPath + "/app/pay/repair/queryOrdStatusFromRedis",params, {
+				"before": function() {
+					$.ecOverlay("请求处理中，请稍等...");
+				},
+				"done": function(response) {
+					$.unecOverlay();
+					if (response.code == 0 && response.data!=null && response.data!="") {//支付成功，调用收费接口
+						clearInterval(order.calcharge.timeId);//查询成功定时任务取消
+						var val=_getCharge();
+						if(OrderInfo.actionFlag==112){//融合甩单传融合
+							val=val+order.broadband.broadbandCharge;
+						}
+						var payMoney=response.data.payAmount+"";
+						if(val!=payMoney){
+							$.alert("提示","金额可能被篡改，为了您的安全，请重新下单");
+							return;
+						}
+						payType=response.data.payCode;
+						_chargeItems=[];
+						_buildChargeItems();//根据支付平台返回支付方式重新生成费用项
+						if(val!=0){//费用不为0
+							_chargeSave(1,soNbr);
+						}else{
+							_chargeSave(0,soNbr);
+						}						
+					}else if(response.code==1){//支付接口支付失败
+						// 如果查询5次后，还是支付失败，则停止重试
+						if ((++ failCount) > 5) {
+							return;
+						}
+						setTimeout(function() {_queryPayOrdStatus1(soNbr,status);}, 2000);			
+					}else if (response.status == 1002) {
+						$.alert("提示",response.data); // 支付失败
+					} else if (response.data==""){//封装的ajax方法调用超时也可能返回code=0
+						$.alert("提示","调用支付接口查询超时！"); // 查询失败
+					}else {
+						$.alertM(response.data);// 调用接口异常
+					}
+				},
+				"fail": function(response) {
+					$.unecOverlay();
+					$.alert("提示", "请求可能发生异常，请稍后再试！");
 				}
-				var payMoney=response.data.payAmount+"";
-				if(val!=payMoney){
-					$.alert("提示","金额可能被篡改，为了您的安全，请重新下单");
-					return;
-				}
-				payType=response.data.payCode;
-				_chargeItems=[];
-				_buildChargeItems();//根据支付平台返回支付方式重新生成费用项
-				if(val!=0){//费用不为0
-					_chargeSave(1);
-				}else{
-					_chargeSave(0);
-				}		
-				
-			}else if(response.code==1){//支付接口支付失败
-			
-			}else if (response.status == 1002) {
-				$.alert("提示",response.data); // 支付失败
-			} else if (response.data==""){//封装的ajax方法调用超时也可能返回code=0
-				$.alert("提示","调用支付接口查询超时！"); // 查询失败
-			}else {
-				$.alertM(response.data);// 调用接口异常
-			}
+			});
 		}
 	};
 	
@@ -1013,21 +1061,6 @@ order.calcharge = (function(){
 		}
 	};
 	
-	//收费界面定时任务入口
-	var _timeToFee=function(){
-		//从session中获取olId，确保olId正确且唯一
-		var url = contextPath + "/app/pay/repair/queryOlId";
-		var response = $.callServiceAsJson(url, {});
-		var sessionOlId=OrderInfo.orderResult.olId;
-		if (response.code == 0 && response.data!=null && response.data!="") {//从session获取olId成功
-			 sessionOlId=response.data.olId+"";						
-		}else {
-			   // 取不到则默认缓存中olId
-		}
-		OrderInfo.orderResult.olId=sessionOlId;
-		_queryPayOrdStatus1(sessionOlId,"1");
-		
-	};
 	
 //支付退款
   var _payRefund=function(olId,payAmount,remark){
@@ -1043,6 +1076,7 @@ order.calcharge = (function(){
 			$.alert("提示","收费建档并激活出错，已帮您成功退款！");
 		}
   };
+  
 
 	return {
 		changeRealMoney:_changeRealMoney,
@@ -1063,9 +1097,7 @@ order.calcharge = (function(){
 		busiUpType:_busiUpType,
 		returnFlag:_returnFlag,
 		setGreyNoEdit:_setGreyNoEdit,
-		timeToFee    :_timeToFee,
-		getPayTockenRh:_getPayTockenRh,
-		timeId        :_timeId
+		getPayTockenRh:_getPayTockenRh
 
 	};
 })();
