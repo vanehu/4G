@@ -29,7 +29,7 @@ public class PropertiesUtils {
 	/** bean name: messageSource */
 	private ReloadableResourceBundleMessageSource message;
 	
-	private static PropertiesUtils propertiesUtils;
+	private volatile static PropertiesUtils propertiesUtils;
 		
 	public static PropertiesUtils getInstance(){
 		
