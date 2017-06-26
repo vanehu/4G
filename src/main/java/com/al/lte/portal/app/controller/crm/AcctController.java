@@ -1,5 +1,5 @@
 package com.al.lte.portal.app.controller.crm;
-
+ 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -38,7 +39,7 @@ import com.al.lte.portal.bmo.staff.StaffBmo;
 import com.al.lte.portal.common.EhcacheUtil;
 import com.al.lte.portal.common.SysConstant;
 import com.al.lte.portal.model.SessionStaff;
-
+  
 
 /**
  * 帐户管理控制层
@@ -61,6 +62,26 @@ public class AcctController extends BaseController {
 	@Qualifier("com.al.lte.portal.bmo.staff.StaffBmo")
 	private StaffBmo staffBmo;
 	
+	private String acctDetailUrl="/app/acct/acct-detail";
+	
+	private String acctListUrl="/app/acct/acct-list";
+	
+	private String ACCT_ITEMS="acctItems";
+	
+	private String ACCT_TYPE="acctType";
+	
+	private String BANK_LIST="bankList";
+	
+	private String FAIL_INFO="failInfo";
+	
+	private String PAYMENT_TYPE ="paymentType";
+	
+	private String RESULT="result";
+	
+	private String RESULT_CODE="resultCode";
+	
+	private String STATUS="status";
+	
 	@RequestMapping(value = "/queryBankInfo", method = RequestMethod.GET)
     @AuthorityValid(isCheck = false)
     public String main(Model model,HttpSession session,@LogOperatorAnn String flowNum) throws AuthorityException {
@@ -73,18 +94,17 @@ public class AcctController extends BaseController {
 	        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
 	                SysConstant.SESSION_KEY_LOGIN_STAFF);
 	        Map<String, Object> paramMap =  JsonUtil.toObject(param, Map.class);
-	        Map getParam = new HashMap();
+	        //Map getParam = new HashMap();
 	        List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
 	        Integer nowPage = 1 ;
 	        Integer pageSize = 10 ;
 	        Integer totalSize = 0 ;
-	        String bank="";
 			try {
 				if (sessionStaff != null) {
 						Map<String, Object> map = acctBmo.queryBankInfo(paramMap,
 								null, sessionStaff);
-						if (map != null && map.get("bankList") != null) {
-							list = (List<Map<String, Object>>) map.get("bankList");
+						if (map != null && map.get(BANK_LIST) != null) {
+							list = (List<Map<String, Object>>) map.get(BANK_LIST);
 							totalSize = 1;
 						}
 					PageModel<Map<String, Object>> pm = PageUtil.buildPageModel(
@@ -112,7 +132,7 @@ public class AcctController extends BaseController {
 		JsonResponse jsonResponse = null;
 		try {
 			rMap = acctBmo.saveBank(param, null, sessionStaff);
-			if (rMap != null&& ResultCode.R_SUCC.equals(rMap.get("resultCode").toString())) {
+			if (rMap != null&& ResultCode.R_SUCC.equals(rMap.get(RESULT_CODE).toString())) {
 				jsonResponse = super.successed("银行详情保存成功",
 						ResultConstant.SUCCESS.getCode());
 			} else {
@@ -141,7 +161,7 @@ public class AcctController extends BaseController {
 		JsonResponse jsonResponse = null;
 		try {
 			rMap = acctBmo.updateBank(param, null, sessionStaff);
-			if (rMap != null&& ResultCode.R_SUCC.equals(rMap.get("resultCode").toString())) {
+			if (rMap != null&& ResultCode.R_SUCC.equals(rMap.get(RESULT_CODE).toString())) {
 				jsonResponse = super.successed("银行详情保存成功",
 						ResultConstant.SUCCESS.getCode());
 			} else {
@@ -194,37 +214,37 @@ public class AcctController extends BaseController {
     	
     	SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
     	
-    	Map<String, Object> empty = new HashMap<String, Object>();
+    	Map<String, Object> empty = new HashMap<>();
 		String serviceName = "后台服务service/intf.acctService/queryExistAcctByCond的回参缺少";
 		
-		Map<String, Object> resultMap = new HashMap<String, Object>();
+		Map<String, Object> resultMap = new HashMap<>();
     	
     	try{
     		resultMap = acctBmo.queryAccount(param, flowNum, sessionStaff);    		    	    			
-    		if(MapUtils.getString(resultMap, "resultCode", "").equals("0")){
-    			if(!MapUtils.getMap(resultMap, "result", empty).isEmpty()){
-    				Map<String, Object> result = (Map<String, Object>)resultMap.get("result");
-    				if(result.get("acctItems")!=null){
-    					ArrayList<Map<String, Object>> acctItems = (ArrayList<Map<String, Object>>)result.get("acctItems");
-            			model.addAttribute("acctItems", acctItems);
+    		if(("0").equals(MapUtils.getString(resultMap, RESULT_CODE, ""))){
+    			if(!MapUtils.getMap(resultMap, RESULT, empty).isEmpty()){
+    				Map<String, Object> result = (Map<String, Object>)resultMap.get(RESULT);
+    				if(result.get(ACCT_ITEMS)!=null){
+    					ArrayList<Map<String, Object>> acctItems = (ArrayList<Map<String, Object>>)result.get(ACCT_ITEMS);
+            			model.addAttribute(ACCT_ITEMS, acctItems);
             			model.addAttribute("flag", 0);
     				}
     				else{
     					model.addAttribute("flag", 1);
-    					model.addAttribute("failInfo", serviceName + "【acctItems】节点或该节点为空，请与省内确认！");
-    					return "/app/acct/acct-list";
+    					model.addAttribute(FAIL_INFO, serviceName + "【acctItems】节点或该节点为空，请与省内确认！");
+    					return acctListUrl;
     				}
     			}
     			else{
     				model.addAttribute("flag", 1);
-    				model.addAttribute("failInfo", serviceName + "【result】节点或该节点为空，请与省内确认！");
-    				return "/app/acct/acct-list";
+    				model.addAttribute(FAIL_INFO, serviceName + "【result】节点或该节点为空，请与省内确认！");
+    				return acctListUrl;
     			}
     		}
     		else{
     			model.addAttribute("flag", 1);
-    			model.addAttribute("failInfo", MapUtils.getString(resultMap, "resultMsg"));
-    			return "/app/acct/acct-list";
+    			model.addAttribute(FAIL_INFO, MapUtils.getString(resultMap, "resultMsg"));
+    			return acctListUrl;
     		}
     	}catch(BusinessException be){
 			return super.failedStr(model, be);
@@ -236,7 +256,7 @@ public class AcctController extends BaseController {
 			interfaceIO.put("后台回参", resultMap);
 			return super.failedStr(model, ErrorCode.QUERY_ACCT, e, interfaceIO);
 		}
-    	return "/app/acct/acct-list";
+    	return acctListUrl;
     }
     
     /**
@@ -255,16 +275,16 @@ public class AcctController extends BaseController {
     	
     	SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
     	
-    	Map<String, Object> empty = new HashMap<String, Object>();
+    	Map<String, Object> empty = new HashMap<>();
 		String serviceName = "后台服务service/intf.acctService/queryAcctDetailInfo的回参缺少";
 		
-		Map<String, Object> resultMap = new HashMap<String, Object>();
+		Map<String, Object> resultMap = new HashMap<>();
     	
     	try{
     		resultMap = acctBmo.queryAcctDetail(param, flowNum, sessionStaff);    		    	    			
-    		if(MapUtils.getString(resultMap, "resultCode", "").equals("0")){
-    			if(!MapUtils.getMap(resultMap, "result", empty).isEmpty()){
-    				Map<String, Object> result = (Map<String, Object>)resultMap.get("result");
+    		if(("0").equals(MapUtils.getString(resultMap, RESULT_CODE, ""))){
+    			if(!MapUtils.getMap(resultMap, RESULT, empty).isEmpty()){
+    				Map<String, Object> result = (Map<String, Object>)resultMap.get(RESULT);
     				if(!MapUtils.getMap(result, "acctInfo", empty).isEmpty()){
     					Map<String, Object> acctInfo = (Map<String, Object>)result.get("acctInfo");    					    						
             			model.addAttribute("name", acctInfo.get("acctName"));//帐户名称
@@ -275,25 +295,24 @@ public class AcctController extends BaseController {
             				Map<String, Object> area = (Map<String, Object>)acctInfo.get("area");    						    							
                 			model.addAttribute("area", area.get("name"));//帐户地区
             			}
-            			if(!MapUtils.getMap(acctInfo, "acctType", empty).isEmpty()){
-            				Map<String, Object> acctType = (Map<String, Object>)acctInfo.get("acctType");
-                			model.addAttribute("acctType", acctType.get("name"));//帐户类型
+            			if(!MapUtils.getMap(acctInfo, ACCT_TYPE, empty).isEmpty()){
+            				Map<String, Object> acctType = (Map<String, Object>)acctInfo.get(ACCT_TYPE);
+                			model.addAttribute(ACCT_TYPE, acctType.get("name"));//帐户类型
             			}
             			String status = MapUtils.getString(acctInfo, "acctStatusCd", "");//帐户状态编码
-            			if(status.equals("1000")){
-            				model.addAttribute("status", "有效");
+            			if("1000".equals(status)){
+            				model.addAttribute(STATUS, "有效");
             			}
-            			else if(status.equals("1100")){
-            				model.addAttribute("status", "无效");
+            			else if("1100".equals(status)){
+            				model.addAttribute(STATUS, "无效");
             			}
-            			else if(status.equals("1200")){
-            				model.addAttribute("status", "未生效");
+            			else if("1200".equals(status)){
+            				model.addAttribute(STATUS, "未生效");
             			}
-            			else if(status.equals("1300")){
-            				model.addAttribute("status", "已归档");
-            			}
-            			else{
-            				model.addAttribute("status", "");
+            			else if("1300".equals(status)){
+            				model.addAttribute(STATUS, "已归档");
+            			}else{
+            				model.addAttribute(STATUS, "");
             			}
             			/* 
             			  *客户信息暂不展示
@@ -315,35 +334,35 @@ public class AcctController extends BaseController {
                 				if(!MapUtils.getMap(acctPayment, "paymentAccount", empty).isEmpty()){    						
                 					Map<String, Object> paymentAccount = (Map<String, Object>)acctPayment.get("paymentAccount");
                 					String paymentAccountTypeCd = MapUtils.getString(paymentAccount, "paymentAccountTypeCd", "");
-                					if(paymentAccountTypeCd.equals("100000")){
-                						model.addAttribute("paymentType", "1");//现金支付    						
+                					if("100000".equals(paymentAccountTypeCd)){
+                						model.addAttribute(PAYMENT_TYPE, "1");//现金支付    						
                 					}    						
-                					else if(paymentAccountTypeCd.equals("110000")){
-                						model.addAttribute("paymentType", "2");//银行托收    							
+                					else if("110000".equals(paymentAccountTypeCd)){
+                						model.addAttribute(PAYMENT_TYPE, "2");//银行托收    							
                 						model.addAttribute("bankName", paymentAccount.get("bankName"));//银行名称    							
                 						model.addAttribute("bankAcct", paymentAccount.get("bankAcctCd"));//银行帐号    							
                 						model.addAttribute("paymentMan", paymentAccount.get("paymentMan"));//支付人      													
                 					}
                 					else{
-                						model.addAttribute("paymentType", "x");//支付类型编码异常
+                						model.addAttribute(PAYMENT_TYPE, "x");//支付类型编码异常
                 					}
                 				}
                 				else{
                 					model.addAttribute("flag", 1);
-                					model.addAttribute("failInfo", serviceName + "【paymentAccount】节点或该节点为空，请与省内确认！");
-                					return "/app/acct/acct-detail";
+                					model.addAttribute(FAIL_INFO, serviceName + "【paymentAccount】节点或该节点为空，请与省内确认！");
+                					return acctDetailUrl;
                 				}
                 			}
             				else{
             					model.addAttribute("flag", 1);
-            					model.addAttribute("failInfo", serviceName + "【acct2PaymentAcct】节点或该节点为空，请与省内确认！");
-            					return "/app/acct/acct-detail";
+            					model.addAttribute(FAIL_INFO, serviceName + "【acct2PaymentAcct】节点或该节点为空，请与省内确认！");
+            					return acctDetailUrl;
             				}
             			}
             			else{
             				model.addAttribute("flag", 1);
-            				model.addAttribute("failInfo", serviceName + "【acct2PaymentAcct】节点或该节点为空，请与省内确认！");
-            				return "/app/acct/acct-detail";            				
+            				model.addAttribute(FAIL_INFO, serviceName + "【acct2PaymentAcct】节点或该节点为空，请与省内确认！");
+            				return acctDetailUrl;            				
             			}           			
             			//账单投递信息
             			if(acctInfo.get("accountMailing")!=null){
@@ -351,13 +370,14 @@ public class AcctController extends BaseController {
             				if(accountMailing.size()>0){
                 				Map<String, Object> billPost = accountMailing.get(0);
                 				String postType = MapUtils.getString(billPost, "mailingType", "");
-                				if(postType.equals("11") || postType.equals("12") || postType.equals("13") || postType.equals("14") || postType.equals("15")){
+                				String []typeStr={"11","12","13","14","15"};
+                				if(ArrayUtils.contains(typeStr,postType)){
                 					model.addAttribute("postType", postType);//投递方式
                     				model.addAttribute("receiveInfo", billPost.get("param1"));//收件信息
                     				model.addAttribute("postCycle", MapUtils.getString(billPost, "param3", ""));//投递周期
                     				model.addAttribute("postContent", MapUtils.getString(billPost, "param7", ""));//投递内容
                     				//当投递方式是邮寄或快递时将分三个字段展示收件信息
-                    				if(postType.equals("11") || postType.equals("15")){
+                    				if("11".equals(postType) || "15".equals(postType)){
                     					String receiveInfo = MapUtils.getString(billPost, "param1", "无");
                     					receiveInfo = receiveInfo + ",无,无";
                     					model.addAttribute("mailAddress", receiveInfo.split(",")[0]);//邮寄（快递）地址
@@ -372,20 +392,20 @@ public class AcctController extends BaseController {
     				}
     				else{
     					model.addAttribute("flag", 1);
-    					model.addAttribute("failInfo", serviceName + "【acctInfo】节点或该节点为空，请与省内确认");
-    					return "/app/acct/acct-detail";
+    					model.addAttribute(FAIL_INFO, serviceName + "【acctInfo】节点或该节点为空，请与省内确认");
+    					return acctDetailUrl;
     				}
     			}
     			else{
     				model.addAttribute("flag", 1);
-    				model.addAttribute("failInfo", serviceName + "【result】节点或该节点为空，请与省内确认！");
-    				return "/app/acct/acct-detail"; 
+    				model.addAttribute(FAIL_INFO, serviceName + "【result】节点或该节点为空，请与省内确认！");
+    				return acctDetailUrl; 
     			}
     		}
     		else{
     			model.addAttribute("flag", 1);
-    			model.addAttribute("failInfo", MapUtils.getString(resultMap, "resultMsg"));
-    			return "/app/acct/acct-detail";
+    			model.addAttribute(FAIL_INFO, MapUtils.getString(resultMap, "resultMsg"));
+    			return acctDetailUrl;
     		}
     	}catch(BusinessException be){
 			return super.failedStr(model, be);
@@ -397,7 +417,7 @@ public class AcctController extends BaseController {
 			interfaceIO.put("后台回参", resultMap);
 			return super.failedStr(model, ErrorCode.QUERY_ACCT_DETAIL, e, interfaceIO);
 		}
-    	return "/app/acct/acct-detail";
+    	return acctDetailUrl;
     }
     
     /**
@@ -419,7 +439,7 @@ public class AcctController extends BaseController {
     		int pageNo = (Integer)param.get("curPage");
     		int pageSize = (Integer)param.get("pageSize");
     		int totalRecords = (Integer)page.get("totalCount");
-			ArrayList<Map<String, Object>> bankList = (ArrayList<Map<String, Object>>)resultMap.get("bankList");							
+			ArrayList<Map<String, Object>> bankList = (ArrayList<Map<String, Object>>)resultMap.get(BANK_LIST);							
 			PageModel<Map<String, Object>> pm = PageUtil.buildPageModel(pageNo, pageSize, totalRecords<1 ? 1:totalRecords, bankList);
 				
 			model.addAttribute("pageModel", pm);			
@@ -451,10 +471,13 @@ public class AcctController extends BaseController {
  				ServletUtils.setSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_BANKPAYMENT+"_"+sessionStaff.getStaffId(), iseditOperation);
  			}
     	} catch (BusinessException e) {
+    		log.error("checkOperatSpec异常", e);
     		iseditOperation="1";
     	} catch (InterfaceException ie) {
+    		log.error("checkOperatSpec", ie);
     		iseditOperation="1";
     	} catch (Exception e) {
+    		log.error("权限查询方法异常", e);
     		iseditOperation="1";
     	}
     	return successed(iseditOperation);
