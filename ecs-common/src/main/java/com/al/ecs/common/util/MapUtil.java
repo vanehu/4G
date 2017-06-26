@@ -68,7 +68,7 @@ public class MapUtil {
 
     @SuppressWarnings("unchecked")
     public static void copy(Map dest, Map src, String key) {
-        if (StringUtils.isBlank(key) || dest != null || isEmpty(src)) {
+        if (StringUtils.isBlank(key) || dest == null || isEmpty(src)) {
             return;
         }
         dest.put(key, val(src, key));
