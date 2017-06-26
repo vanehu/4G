@@ -212,13 +212,13 @@
 							$("#btn-dialog-ok").off("click").on("click",function(){
 								$("#alert-modal").modal("hide");
 								if (/iphone|ipad|ipod/.test(ua)) {//跳转下载苹果apk
-									window.location= "itms-services://?action=download-manifest&url=https://crm.189.cn:86/phoneimg/app/ios_wan/lteIosApp.plist";		
+									window.location= "itms-services://?action=download-manifest&url=https://ct.crm.189.cn:86/phoneimg/app/ios_wan/lteIosApp.plist";		
 								} else{									
 									home.goDownload();
 								}
 							});
 							$("#modal-title").html(title);
-							$("#modal-content").html("您当前的版本已经发生了重大变化，请到http://crm.189.cn/ltePad/上下载翼销售最新版本");
+							$("#modal-content").html("您当前的版本已经发生了重大变化，请到http://ct.crm.189.cn/ltePad/上下载翼销售最新版本");
 							$("#alert-modal").modal();						 					              					              
 				     }, 500);
 				}
