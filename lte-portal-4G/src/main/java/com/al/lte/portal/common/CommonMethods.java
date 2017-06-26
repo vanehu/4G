@@ -78,7 +78,7 @@ public class CommonMethods {
 					String areaCode = sessionStaff.getCurrentAreaCode();
 					String areaName = sessionStaff.getCurrentAreaAllName();
 					if(areaName!=null && areaName.contains(",")){
-						areaName.replace(",", " > ");
+						areaName = areaName.replace(",", " > ");
 					}
 					Map<String, Object> map = new HashMap<String, Object>();
 					map.put("commonRegionId", areaIdNew);
