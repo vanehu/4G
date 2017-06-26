@@ -1268,7 +1268,7 @@ public class MktResController extends BaseController {
 					}
 				}*/
 				ArrayList obj =  (ArrayList) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_TERMINAL+"_"+sessionStaff.getStaffId());		
-				if(obj == null || "null".equals(obj) || "".equals(obj)){
+				if(obj == null){
 					obj = new ArrayList();
 				}	
 				List list = (List)obj;
@@ -1277,7 +1277,7 @@ public class MktResController extends BaseController {
 				}
 				
 				ArrayList obj2 =  (ArrayList)ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_AGREEMENT+"_"+sessionStaff.getStaffId());		
-				if(obj2 == null || "null".equals(obj2) || "".equals(obj2)){
+				if(obj2 == null){
 					obj2 = new ArrayList();
 				}	
 				List list2 = (List)obj2;

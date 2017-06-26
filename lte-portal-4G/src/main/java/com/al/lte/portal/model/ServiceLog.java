@@ -10,7 +10,6 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 
 import com.al.ec.serviceplatform.client.DataBus;
-import com.al.ecs.common.util.JsonUtil;
 import com.al.ecs.common.web.ServletUtils;
 import com.al.ecs.log.Log;
 import com.al.lte.portal.common.InterfaceClient;
@@ -400,7 +399,7 @@ public class ServiceLog{
 	public String getRemotePort() {
 		if(this.remotePort == null){
 			if(this.request != null){
-				String.valueOf(this.request.getRemotePort());
+				this.remotePort = String.valueOf(this.request.getRemotePort());
 			}
 		}
 		
