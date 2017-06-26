@@ -268,7 +268,7 @@ public class OfferController extends BaseController {
 		String propertiesKey = "NEWUIFLAG_"+ (sessionStaff.getCurrentAreaId() + "").substring(0, 3);//新ui开关
 		// 新UI开关
 		String newUIFlag = propertiesUtils.getMessage(propertiesKey);
-		if("ON".equals(newUIFlag) && paramMap.get("newFlag") != null){
+		if(("ON".equals(newUIFlag)|| newUIFlag==null) && paramMap.get("newFlag") != null){
 			return "/app/order_new/attach-offer-change";
 		}
 	 	return "/app/offer/attach-offer-change";
@@ -312,7 +312,7 @@ public class OfferController extends BaseController {
 		String propertiesKey = "NEWUIFLAG_"+ (sessionStaff.getCurrentAreaId() + "").substring(0, 3);//新ui开关
 		// 新UI开关
 		String newUIFlag = propertiesUtils.getMessage(propertiesKey);
-		if("ON".equals(newUIFlag) && paramMap.get("newFlag") != null){
+		if(("ON".equals(newUIFlag) || newUIFlag==null) && paramMap.get("newFlag") != null){
 			return "/app/order_new/attach-offer";
 		}
 	 	return "/app/offer/attach-offer";

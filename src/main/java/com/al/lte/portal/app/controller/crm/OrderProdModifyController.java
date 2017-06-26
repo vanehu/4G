@@ -175,7 +175,7 @@ public class OrderProdModifyController extends BaseController {
 		String propertiesKey = "NEWUIFLAG_"+ (sessionStaff.getCurrentAreaId() + "").substring(0, 3);//新ui开关
 		// 新UI开关
 		String newUIFlag = propertiesUtils.getMessage(propertiesKey);
-		if("ON".equals(newUIFlag) && params.get("newFlag")!=null){
+		if(("ON".equals(newUIFlag) || newUIFlag==null) && params.get("newFlag")!=null){
 			return "/app/order_new/cust-activie-return";
 		}
 		return "/app/order/cust-activie-return";
@@ -201,7 +201,7 @@ public class OrderProdModifyController extends BaseController {
 		String propertiesKey = "NEWUIFLAG_"+ (sessionStaff.getCurrentAreaId() + "").substring(0, 3);//新ui开关
 		// 新UI开关
 		String newUIFlag = propertiesUtils.getMessage(propertiesKey);
-		if("ON".equals(newUIFlag) && params.get("newFlag")!=null){
+		if(("ON".equals(newUIFlag) || newUIFlag==null) && params.get("newFlag")!=null){
 			return "/app/changeCard/card-change";
 		} 
 		return "/app/changeCard/order-change-card";		
@@ -216,7 +216,7 @@ public class OrderProdModifyController extends BaseController {
 		String propertiesKey = "NEWUIFLAG_"+ (sessionStaff.getCurrentAreaId() + "").substring(0, 3);//新ui开关
 		// 新UI开关
 		String newUIFlag = propertiesUtils.getMessage(propertiesKey);
-		if("ON".equals(newUIFlag) && param.get("newFlag")!=null){
+		if(("ON".equals(newUIFlag) || newUIFlag==null) && param.get("newFlag")!=null){
 			model.addAttribute("prodInfo",param.get("prodInfo"));
 			return "/app/changeCard/order-uim-new";
 		} 

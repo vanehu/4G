@@ -80,7 +80,10 @@ bill.charge = (function() {
 			if (!_checkParams(param)) {
 				return;
 			}
-			$.callServiceAsJson(contextPath + "/app/bill/balance", param, {
+			var params = {
+					"phoneNumber":$("#userPhoneNum").val()
+				};
+			$.callServiceAsJson(contextPath + "/app/bill/phoneNumberQry", params, {
 				"before": function() {
 					$.ecOverlay("查询中，请稍等...");
 				},
@@ -88,47 +91,75 @@ bill.charge = (function() {
 					$.unecOverlay();
 					if (ec.util.isObj(response)) {
 						if (response.code == 0) {
-							// TODO 在charge-prepare.html显示余额
-							if(response.data.arrears.resultCode !=0){
-								$.alert("提示", response.data.arrears.message);
-								return;
-							}
-							if(response.data.balance.resultCode !=0){
-								$.alert("提示", response.data.balance.message);
-								return;
-							}
-							$('#queryResult').modal('show');
-							var totalBalance = "0";
-							if(response.data.arrears.result.SvcCont && response.data.arrears.result.SvcCont.Service_Information && response.data.arrears.result.SvcCont.Service_Information.Bill_Query_Information && response.data.arrears.result.SvcCont.Service_Information.Bill_Query_Information.Sum_Charge){
-								totalBalance =response.data.arrears.result.SvcCont.Service_Information.Bill_Query_Information.Sum_Charge;
-							}
-							$('#totalBalance').text(totalBalance?totalBalance:"0");	
-							var currentBalance = "0";
-							if(totalBalance =="0"){
-								if(response.data.balance.result.SvcCont && response.data.balance.result.SvcCont.Service_Information && response.data.balance.result.SvcCont.Service_Information.Total_Balance_Available){
-						        	currentBalance =response.data.balance.result.SvcCont.Service_Information.Total_Balance_Available;
+							$.callServiceAsJson(contextPath + "/app/bill/balance", param, {
+								"before": function() {
+									$.ecOverlay("查询中，请稍等...");
+								},
+								"done": function(response) {
+									$.unecOverlay();
+									if (ec.util.isObj(response)) {
+										if (response.code == 0) {
+											// TODO 在charge-prepare.html显示余额
+											if(response.data.arrears.resultCode !=0){
+												$.alert("提示", response.data.arrears.message);
+												return;
+											}
+											if(response.data.balance.resultCode !=0){
+												$.alert("提示", response.data.balance.message);
+												return;
+											}
+											$('#queryResult').modal('show');
+											var totalBalance = "0";
+											if(response.data.arrears.result.SvcCont && response.data.arrears.result.SvcCont.Service_Information && response.data.arrears.result.SvcCont.Service_Information.Bill_Query_Information && response.data.arrears.result.SvcCont.Service_Information.Bill_Query_Information.Sum_Charge){
+												totalBalance =response.data.arrears.result.SvcCont.Service_Information.Bill_Query_Information.Sum_Charge;
+											}
+											$('#totalBalance').text(totalBalance?totalBalance:"0");	
+											var currentBalance = "0";
+											if(totalBalance =="0"){
+												if(response.data.balance.result.SvcCont && response.data.balance.result.SvcCont.Service_Information && response.data.balance.result.SvcCont.Service_Information.Total_Balance_Available){
+										        	currentBalance =response.data.balance.result.SvcCont.Service_Information.Total_Balance_Available;
+												}
+												
+												
+//												if(response.data.balance.result.SvcCont && response.data.balance.result.SvcCont.Service_Information && response.data.balance.result.SvcCont.Service_Information.Balance_Information){
+//													for (var i=0; i < response.data.balance.result.SvcCont.Service_Information.Balance_Information.length; i++) {
+//														if(response.data.balance.result.SvcCont.Service_Information.Balance_Information[i].BalanceTypeFlag == 0){
+//															currentBalance =response.data.balance.result.SvcCont.Service_Information.Balance_Information[i].Balance_Available;
+//														}
+//													}
+//												}
+												$('#totalBalance').text(currentBalance?currentBalance:"0");
+											}
+											$('#currentBalance').text(currentBalance?currentBalance:"0");
+												
+										} else if (response.code == 1) {
+											$.alert("提示", response.data.message);
+											return;
+										} else if (response.code == -2) {
+											$.alertM(response.data);
+											return;
+										} else if (response.code == 1202) {
+											$.alert("提示", response.data);
+											return;
+										}
+									} else {
+										$.alert("提示", "返回异常");
+										return;
+									}
+								},
+								"fail": function(response) {
+									$.unecOverlay();
+									$.alert("提示", "请求可能发生异常，请稍后再试！");
 								}
-								
-								
-//								if(response.data.balance.result.SvcCont && response.data.balance.result.SvcCont.Service_Information && response.data.balance.result.SvcCont.Service_Information.Balance_Information){
-//									for (var i=0; i < response.data.balance.result.SvcCont.Service_Information.Balance_Information.length; i++) {
-//										if(response.data.balance.result.SvcCont.Service_Information.Balance_Information[i].BalanceTypeFlag == 0){
-//											currentBalance =response.data.balance.result.SvcCont.Service_Information.Balance_Information[i].Balance_Available;
-//										}
-//									}
-//								}
-								$('#totalBalance').text(currentBalance?currentBalance:"0");
-							}
-							$('#currentBalance').text(currentBalance?currentBalance:"0");
-								
-						} else if (response.code == 1) {
-							$.alert("提示", response.data.message);
-							return;
-						} else if (response.code == -2) {
+							});
+						}  else if (response.code == -2) {
 							$.alertM(response.data);
 							return;
-						} else if (response.code == 1202) {
-							$.alert("提示", response.data);
+						} else if (response.code == 1002) {
+							$.alert("提示",response.data.message);
+							return;
+						} else  {
+							$.alert("提示","查询号码信息失败,稍后重试");
 							return;
 						}
 					} else {
@@ -235,11 +266,42 @@ bill.charge = (function() {
 			if (!_checkParams(_chargeParams)) {
 				return;
 			}
-			// 因为支付平台返回，原生只会调用calCharge.js中的queryPayOrdStatus方法，所以先设置业务类型，方便回调
-			order.calcharge.busiUpType = CONST.APP_CHARGE_BUSI_UP_TYPE;
-			_checkDeposit();
-			// 跳转支付平台
-			_toPay();
+			var params = {
+					"phoneNumber":$.trim($("#userPhoneNum").val())
+				};
+			$.callServiceAsJson(contextPath + "/app/bill/phoneNumberQry", params, {
+				"before": function() {
+					$.ecOverlay("查询中，请稍等...");
+				},
+				"done": function(response) {
+					$.unecOverlay();
+					if (ec.util.isObj(response)) {
+						if (response.code == 0) {
+							// 因为支付平台返回，原生只会调用calCharge.js中的queryPayOrdStatus方法，所以先设置业务类型，方便回调
+							order.calcharge.busiUpType = CONST.APP_CHARGE_BUSI_UP_TYPE;
+							_checkDeposit();
+							// 跳转支付平台
+							_toPay();
+						}  else if (response.code == -2) {
+							$.alertM(response.data);
+							return;
+						} else if (response.code == 1002) {
+							$.alert("提示",response.data.message);
+							return;
+						} else  {
+							$.alert("提示","查询号码信息失败,稍后重试");
+							return;
+						}
+					} else {
+						$.alert("提示", "返回异常");
+						return;
+					}
+				},
+				"fail": function(response) {
+					$.unecOverlay();
+					$.alert("提示", "请求可能发生异常，请稍后再试！");
+				}
+			});
 		});
 	};
 	

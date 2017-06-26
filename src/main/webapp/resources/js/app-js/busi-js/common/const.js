@@ -518,6 +518,10 @@ CONST = (function(){
 			STRING_A: "yyyyMMddHHmmss",
 			STRING_B: "yyyyMMddHHmmssSSS"	
 	};
+	// 翼销售实时受理业务类型
+	var _APP_ORDER_BUSI_UP_TYPE = "1";
+	// 翼销售补收费业务类型
+	var _APP_REPAIR_BUSI_UP_TYPE = "-1";
 	// 翼销售充值业务类型
 	var _APP_CHARGE_BUSI_UP_TYPE = "4";
 	//翼销售查询主销售品与附属销售品的系统标识
@@ -526,6 +530,8 @@ CONST = (function(){
 		//批量受理查询，是否执行改造后的新代码的开关标识，用于暂时记录是否执行新代码。Y执行改造后的新代码，N执行改造前的旧代码，默认为N。 By ZhangYu 2015-10-20
 		BATCHORDER_FLAG : _BATCHORDER_FLAG,
 		APP_CHARGE_BUSI_UP_TYPE: _APP_CHARGE_BUSI_UP_TYPE,
+		APP_ORDER_BUSI_UP_TYPE  :_APP_ORDER_BUSI_UP_TYPE,
+		APP_REPAIR_BUSI_UP_TYPE :_APP_REPAIR_BUSI_UP_TYPE,
 		DATE_FORMATE        : _DATE_FORMATE,
 		APP_DESC			: _APP_DESC,
 		OFFER_FAST_FILL    :  _OFFER_FAST_FILL,

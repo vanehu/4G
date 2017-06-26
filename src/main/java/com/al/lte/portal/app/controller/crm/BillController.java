@@ -45,6 +45,7 @@ import com.al.ecs.spring.annotation.session.AuthorityValid;
 import com.al.ecs.spring.controller.BaseController;
 import com.al.lte.portal.bmo.crm.BillBmo;
 import com.al.lte.portal.bmo.crm.CustBmo;
+import com.al.lte.portal.bmo.crm.MktResBmo;
 import com.al.lte.portal.bmo.crm.OrderBmo;
 import com.al.lte.portal.bmo.staff.StaffBmo;
 import com.al.lte.portal.common.CommonMethods;
@@ -82,6 +83,10 @@ public class BillController extends BaseController {
 	@Autowired
 	@Qualifier("com.al.lte.portal.bmo.staff.StaffBmo")
 	private StaffBmo staffBmo;
+	
+    @Autowired
+    @Qualifier("com.al.lte.portal.bmo.crm.MktResBmo")
+    private MktResBmo mktResBmo;
 	
 	private static Object pLock = new Object();
 
@@ -1983,6 +1988,51 @@ public class BillController extends BaseController {
    		}catch(Exception e){
    			return failed(ErrorCode.CHECK_DEPOSIT, e, paramMap);
 		}
+		return jsonResponse;
+	}
+	
+	/**
+	 * 充值缴费和余额查询前，先进行号码信息查询
+	 * @param param
+	 * @param model
+	 * @param flowNum
+	 * @param response
+	 * @param session
+	 * @return
+	 */
+	@RequestMapping(value = "/phoneNumberQry", method = { RequestMethod.POST })
+	@ResponseBody
+	public JsonResponse phoneNumberQry(@RequestBody Map<String, Object> param,
+			@LogOperatorAnn String flowNum, HttpServletResponse response,HttpSession session) {
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils
+				.getSessionAttribute(super.getRequest(),
+						SysConstant.SESSION_KEY_LOGIN_STAFF);
+        Map<String, Object> defaultAreaInfo = CommonMethods.getDefaultAreaInfo_MinimumC3(sessionStaff);
+		param.put("areaId", defaultAreaInfo.get("defaultAreaId"));
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		JsonResponse jsonResponse = null;
+		try {
+			Map<String, Object> datamap = this.mktResBmo.phoneNumInfoQry(param,
+					flowNum, sessionStaff);
+			if (datamap != null) {
+				String code = (String) datamap.get("code");
+				if (ResultCode.R_SUCCESS.equals(code)) {
+					resultMap.put("datamap", datamap);
+					jsonResponse=super.successed(resultMap, ResultConstant.SUCCESS.getCode());
+				}else{
+					resultMap.put("message", (String) datamap.get("msg"));
+					jsonResponse = super.failed(resultMap,ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+				}
+			}
+		}catch (BusinessException e) {
+			this.log.error("查询号码信息失败", e);
+			jsonResponse = super.failed("号码查询服务出错",
+					ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+		} catch (InterfaceException ie) {
+			return super.failed(ie, param, ErrorCode.PHONENUM_LIST);
+		} catch (Exception e) {
+			return super.failed(ErrorCode.PHONENUM_LIST, e, param);
+		}		
 		return jsonResponse;
 	}
 }
