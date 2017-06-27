@@ -807,9 +807,9 @@ AttachOffer = (function() {
 					}
 				});
 				
-				if(AttachOffer.openServList.length>0){
-					for(var n=0;n<AttachOffer.openServList[0].servSpecList.length;n++){
-						var opendServ = AttachOffer.openServList[0].servSpecList[n];
+				for(var m = 0; m < AttachOffer.openServList.length; m++){
+					for(var n=0;n<AttachOffer.openServList[m].servSpecList.length;n++){
+						var opendServ = AttachOffer.openServList[m].servSpecList[n];
 						if(opendServ.isdel ==undefined || "Y"!= opendServ.isdel){
 							_servSpecIds.push(opendServ.servSpecId);
 						}
@@ -834,9 +834,9 @@ AttachOffer = (function() {
 			
 			if(respnose !="" &&  respnose.data.resultCode == "0" && respnose.data.result.servSpec!=undefined && respnose.data.result.servSpec !=null && respnose.data.result.servSpec !=""){
 				$.each(respnose.data.result.servSpec,function(){
-					if(AttachOffer.openServList.length>0){
-						for(var n=0;n<AttachOffer.openServList[0].servSpecList.length;n++){
-							var opendServ = AttachOffer.openServList[0].servSpecList[n];
+					for(var m = 0; m < AttachOffer.openServList.length; m++){
+						for(var n=0;n<AttachOffer.openServList[m].servSpecList.length;n++){
+							var opendServ = AttachOffer.openServList[m].servSpecList[n];
 							if(this.servSpecId == opendServ.servSpecId){
 								contentAppend = contentAppend + this.servSpecName +"<br>"; 
 							}
@@ -900,9 +900,9 @@ AttachOffer = (function() {
 					}
 				}
 				
-				if(AttachOffer.openServList.length>0){
-					for(var n=0;n<AttachOffer.openServList[0].servSpecList.length;n++){
-						var opendServ = AttachOffer.openServList[0].servSpecList[n];
+				for(var m = 0; m < AttachOffer.openServList.length; m++){
+					for(var n=0;n<AttachOffer.openServList[m].servSpecList.length;n++){
+						var opendServ = AttachOffer.openServList[m].servSpecList[n];
 							if(this.servSpecId == opendServ.servSpecId){
 								opendServ.isdel = "Y";
 								$("#li_"+prodId+"_"+opendServ.servSpecId).find("span").addClass("del"); 

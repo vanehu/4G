@@ -797,7 +797,7 @@ public class CommonMethods {
 					sessionStaff.setCurrentAreaId(mapSession.get("staffProvCode").toString());
 					sessionStaff.setCurrentAreaAllName(mapSession.get("loginAreaName").toString());
 				} else{
-					log.debug("页面登录currentAreaId正则匹配失败sessionStaff:={}, mapSession:={}", 
+					log.debug("页面登录currentAreaId非省级地区ID，默认地区ID无需降级，sessionStaff:={}, mapSession:={}", 
 							JSONObject.fromObject(sessionStaff).toString(), JSONObject.fromObject(mapSession).toString());
 				}
 			} else if(singleSignFlag){//单点登录
@@ -807,10 +807,10 @@ public class CommonMethods {
 					sessionStaff.setCurrentAreaId(areaInfo[0].toString());
 					sessionStaff.setCurrentAreaAllName(areaInfo[1].toString());
 				} else{
-					log.debug("单点登录currentAreaId正则匹配失败sessionStaff: ={}", JSONObject.fromObject(sessionStaff).toString());
+					log.debug("单点登录currentAreaId非省级地区ID，默认地区ID无需降级，sessionStaff: ={}", JSONObject.fromObject(sessionStaff).toString());
 				}
 			} else{
-				log.debug("非页面登录、单点登录sessionStaff:={}, mapSession:={}", 
+				log.debug("非页面登录、单点登录，sessionStaff:={}, mapSession:={}", 
 							JSONObject.fromObject(sessionStaff).toString(), JSONObject.fromObject(mapSession).toString());
 			}
 		}

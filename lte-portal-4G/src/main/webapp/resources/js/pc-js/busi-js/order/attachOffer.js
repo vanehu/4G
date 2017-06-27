@@ -747,14 +747,16 @@ AttachOffer = (function() {
 							_orderedOfferSpecIds.push($(this).attr('offerSpecId'));
 						}
 					});
-					
-					if(AttachOffer.openList.length>0){
-						for(var j=0;j<AttachOffer.openList[0].specList.length;j++){
-							var openedServ = AttachOffer.openList[0].specList[j];
-							if(openedServ.isdel ==undefined || "Y"!= openedServ.isdel){
-								_orderedOfferSpecIds.push(openedServ.offerSpecId);
+					if(ec.util.isArray(AttachOffer.openList)){
+						$.each(AttachOffer.openList, function(index_1, sthOpened){
+							if(sthOpened.prodId == prodId){
+								$.each(sthOpened.specList, function(index_2, openedServ){
+									if(openedServ.isdel == undefined || "Y" != openedServ.isdel){
+										_orderedOfferSpecIds.push(openedServ.offerSpecId);
+									}
+								});
 							}
-						}
+						});
 					}
 					$("li[name='product']").each(function(){
 						if($(this).attr('servSpecId') !=""){
@@ -762,36 +764,43 @@ AttachOffer = (function() {
 						}
 					});
 					
-					if(AttachOffer.openServList.length>0){
-						for(var n=0;n<AttachOffer.openServList[0].servSpecList.length;n++){
-							var opendServ = AttachOffer.openServList[0].servSpecList[n];
-							if(opendServ.isdel ==undefined || "Y"!= opendServ.isdel){
-								_servSpecIds.push(opendServ.servSpecId);
+					if(ec.util.isArray(AttachOffer.openServList)){
+						$.each(AttachOffer.openServList, function(index_1, opendServ){
+							if(opendServ.prodId == prodId){
+								$.each(opendServ.servSpecList, function(index_2, opendServSpec){
+									if(opendServSpec.isdel == undefined || "Y"!= opendServSpec.isdel){
+										_servSpecIds.push(opendServ.servSpecId);
+									}
+								});
 							}
-						}
+						});
 					}
+					
 					respnose = AttachOffer.queryOfferAndServDependForCancel("",servSpecId);
 				}	
 				var contentAppend = "";
 				if(respnose !="" &&  respnose.data.resultCode == "0" && respnose.data.result.servSpec!=undefined && respnose.data.result.servSpec !=null && respnose.data.result.servSpec !=""){
 					$.each(respnose.data.result.servSpec,function(){
-						if(AttachOffer.openServList.length>0){
-							for(var n=0;n<AttachOffer.openServList[0].servSpecList.length;n++){
-								var opendServ = AttachOffer.openServList[0].servSpecList[n];
-								if(this.servSpecId == opendServ.servSpecId){
-									contentAppend = contentAppend + this.servSpecName +"<br>"; 
-								}
-							}
+						if(ec.util.isArray(AttachOffer.openServList)){
+							$.each(AttachOffer.openServList, function(index_1, openServ){
+								$.each(openServ.servSpecList, function(index_2, opendServSpec){
+									if(this.servSpecId == opendServ.servSpecId){
+										contentAppend = contentAppend + this.servSpecName +"<br>"; 
+									}
+								});
+							});
 						}
 					});
 				}
 				if(respnose !="" &&  respnose.data.resultCode == "0" && respnose.data.result.servSpec!=undefined && respnose.data.result.offerSpec !=null && respnose.data.result.offerSpec !=""){
 					$.each(respnose.data.result.offerSpec,function(){
-						if(AttachOffer.openList.length>0){
-							for(var n=0;n<AttachOffer.openList[0].specList.length;n++){
-								var opendServ = AttachOffer.openList[0].specList[n];
-								if(this.offerSpecId == opendServ.offerSpecId){
-									contentAppend = contentAppend +this.offerSpecName+"<br>";  
+						if(ec.util.isArray(AttachOffer.openList)){
+							for(var m = 0; m < AttachOffer.openList.length; m++){
+								for(var n=0;n<AttachOffer.openList[m].specList.length;n++){
+									var opendServ = AttachOffer.openList[m].specList[n];
+									if(this.offerSpecId == opendServ.offerSpecId){
+										contentAppend = contentAppend +this.offerSpecName+"<br>";  
+									}
 								}
 							}
 						}
@@ -908,14 +917,16 @@ AttachOffer = (function() {
 						_orderedOfferSpecIds.push($(this).attr('offerSpecId'));
 					}
 				});
-				
-				if(AttachOffer.openList.length>0){
-					for(var j=0;j<AttachOffer.openList[0].specList.length;j++){
-						var openedServ = AttachOffer.openList[0].specList[j];
-						if(openedServ.isdel ==undefined || "Y"!= openedServ.isdel){
-							_orderedOfferSpecIds.push(openedServ.offerSpecId);
+				if(ec.util.isArray(AttachOffer.openList)){
+					$.each(AttachOffer.openList, function(index_1, sthOpened){
+						if(sthOpened.prodId == prodId){
+							$.each(sthOpened.specList, function(index_2, openedServ){
+								if(openedServ.isdel ==undefined || "Y"!= openedServ.isdel){
+									_orderedOfferSpecIds.push(openedServ.offerSpecId);
+								}
+							});
 						}
-					}
+					});
 				}
 				$("li[name='product']").each(function(){
 					if($(this).attr('servSpecId') !=""){
@@ -923,13 +934,16 @@ AttachOffer = (function() {
 					}
 				});
 				
-				if(AttachOffer.openServList.length>0){
-					for(var n=0;n<AttachOffer.openServList[0].servSpecList.length;n++){
-						var opendServ = AttachOffer.openServList[0].servSpecList[n];
-						if(opendServ.isdel ==undefined || "Y"!= opendServ.isdel){
-							_servSpecIds.push(opendServ.servSpecId);
+				if(ec.util.isArray(AttachOffer.openServList)){
+					$.each(AttachOffer.openServList, function(index_1, openServ){
+						if(openServ.prodId == prodId){
+							$.each(openServ.servSpecList, function(index_2, openServSpec){
+								if(opendServ.isdel ==undefined || "Y"!= opendServ.isdel){
+									_servSpecIds.push(opendServ.servSpecId);
+								}
+							});
 						}
-					}
+					});
 				}
 				respnose = AttachOffer.queryOfferAndServDependForCancel("",$("#del_"+prodId+"_"+servId).attr("servSpecId"));
 			}
@@ -944,10 +958,12 @@ AttachOffer = (function() {
 				if(respnose !="" &&  respnose.data.resultCode == "0" && respnose.data.result.servSpec!=undefined && respnose.data.result.servSpec !=null && respnose.data.result.servSpec !=""){
 					$.each(respnose.data.result.servSpec,function(){
 						if(AttachOffer.openedServList.length>0){
-							for(var n=0;n<AttachOffer.openedServList[0].servList.length;n++){
-								var opendServ = AttachOffer.openedServList[0].servList[n];
-								if(this.servSpecId == opendServ.servSpecId){
-									contentAppend = contentAppend + this.servSpecName +"<br>"; 
+							for(var m = 0; m < AttachOffer.openedServList.length; m++){
+								for(var n=0;n<AttachOffer.openedServList[m].servList.length;n++){
+									var opendServ = AttachOffer.openedServList[m].servList[n];
+									if(this.servSpecId == opendServ.servSpecId){
+										contentAppend = contentAppend + this.servSpecName +"<br>"; 
+									}
 								}
 							}
 						}
@@ -956,10 +972,12 @@ AttachOffer = (function() {
 				if(respnose !="" &&  respnose.data.resultCode == "0" && respnose.data.result.servSpec!=undefined && respnose.data.result.servSpec !=null && respnose.data.result.servSpec !=""){
 					$.each(respnose.data.result.servSpec,function(){
 						if(AttachOffer.openServList.length>0){
-							for(var n=0;n<AttachOffer.openServList[0].servSpecList.length;n++){
-								var opendServ = AttachOffer.openServList[0].servSpecList[n];
-								if(this.servSpecId == opendServ.servSpecId){
-									contentAppend = contentAppend + this.servSpecName +"<br>"; 
+							for(var m = 0; m < AttachOffer.openServList.length; m++){
+								for(var n=0;n<AttachOffer.openServList[m].servSpecList.length;n++){
+									var opendServ = AttachOffer.openServList[m].servSpecList[n];
+									if(this.servSpecId == opendServ.servSpecId){
+										contentAppend = contentAppend + this.servSpecName +"<br>"; 
+									}
 								}
 							}
 						}
@@ -968,10 +986,12 @@ AttachOffer = (function() {
 				if(respnose !="" &&  respnose.data.resultCode == "0" && respnose.data.result.servSpec!=undefined && respnose.data.result.offerSpec !=null && respnose.data.result.offerSpec !=""){
 					$.each(respnose.data.result.offerSpec,function(){
 						if(AttachOffer.openedList.length>0){
-							for(var n=0;n<AttachOffer.openedList[0].offerList.length;n++){
-								var opendServ = AttachOffer.openedList[0].offerList[n];
-								if(this.offerSpecId == opendServ.offerSpecId){
-									contentAppend = contentAppend +this.offerSpecName+"<br>";  
+							for(var m = 0; m < AttachOffer.openedList.length; m++){
+								for(var n=0;n<AttachOffer.openedList[m].offerList.length;n++){
+									var opendServ = AttachOffer.openedList[m].offerList[n];
+									if(this.offerSpecId == opendServ.offerSpecId){
+										contentAppend = contentAppend +this.offerSpecName+"<br>";  
+									}
 								}
 							}
 						}
@@ -1004,23 +1024,25 @@ AttachOffer = (function() {
 				for(var j=0;j<servSpecs.servSpe.length;j++){
 					var servSpe = servSpecs.servSpe[j];
 					if(AttachOffer.openedServList.length>0){
-						for(var n=0;n<AttachOffer.openedServList[0].servList.length;n++){
-								var opendServ = AttachOffer.openedServList[0].servList[n];
+						for(var m = 0; m < AttachOffer.openedServList; m++){
+							for(var n=0;n<AttachOffer.openedServList[m].servList.length;n++){
+								var opendServ = AttachOffer.openedServList[m].servList[n];
 								if(servSpe.servSpecId == opendServ.servSpecId){
 									opendServ.isdel = "N";
 									$("#li"+prodId+"_"+opendServ.servId).find("span").removeClass("del");
 									//AttachOffer.openedServList[0].servList.splice(n,1);//删除因为依赖加入的销售品
 								}
+							}
 						}
 					}
-					if(AttachOffer.openServList.length>0){
-					   for(var n=0;n<AttachOffer.openServList[0].servSpecList.length;n++){
-								var opendServ = AttachOffer.openServList[0].servSpecList[n];
-								if(this.servSpecId == opendServ.servSpecId){
-									opendServ.isdel = "Y";
-							         	$("#li_"+prodId+"_"+openedServ.servId).find("span").addClass("del"); 
-								}
-					  }
+					for(var m = 0; m < AttachOffer.openServList.length; m++){
+						for(var n=0;n<AttachOffer.openServList[m].servSpecList.length;n++){
+							var opendServ = AttachOffer.openServList[m].servSpecList[n];
+							if(this.servSpecId == opendServ.servSpecId){
+								opendServ.isdel = "Y";
+						         $("#li_"+prodId+"_"+openedServ.servId).find("span").addClass("del"); 
+							}
+						}
 					}
 				}
 			}
@@ -1031,15 +1053,15 @@ AttachOffer = (function() {
 			if(thisServSpecId == servSpecs.servSpecId){
 				for(var j=0;j<servSpecs.offerSpe.length;j++){
 					var offerSpe = servSpecs.offerSpe[j];
-					if(AttachOffer.openedList.length>0){
-						for(var n=0;n<AttachOffer.openedList[0].offerList.length;n++){
-							var opendServ = AttachOffer.openedList[0].offerList[n];
+					for(var m = 0; m < AttachOffer.openedList.length; m++){
+						for(var n=0;n<AttachOffer.openedList[m].offerList.length;n++){
+							var opendServ = AttachOffer.openedList[m].offerList[n];
 							if(offerSpe.offerId == opendServ.offerId){
 								opendServ.isdel = "N";
 								$("#li_"+prodId+"_"+opendServ.offerId).find("span").removeClass("del");
 								//AttachOffer.openedList[0].offerList.splice(n,1);//删除因为依赖加入的销售品
 							}
-					}
+						}
 					}
 				}
 			}
@@ -1070,15 +1092,18 @@ AttachOffer = (function() {
 			_servSpecs.push(servSpec);
 			
 			$.each(reSrvSpec,function(){
-					if(AttachOffer.openServList.length>0){
-						for(var j=0;j<AttachOffer.openServList[0].servSpecList.length;j++){
-							var openedServ = AttachOffer.openServList[0].servSpecList[j];
+				for(var m=0;m<AttachOffer.openServList.length;m++){
+			    	var mproid = AttachOffer.openServList[m].prodId;
+			    	if(prodId == mproid){
+						for(var j=0;j<AttachOffer.openServList[m].servSpecList.length;j++){
+							var openedServ = AttachOffer.openServList[m].servSpecList[j];
 							if(this.servSpecId == openedServ.servSpecId){
 								openedServ.isdel = "Y";
 								$("#li_"+prodId+"_"+openedServ.servSpecId).find("span").addClass("del");
 							}
 						}
-					}
+			    	}
+			    }
 			});
 			
 		}
@@ -1091,17 +1116,16 @@ AttachOffer = (function() {
 			_offerSpecs.push(offerSpec);
 			
 			$.each(reOfferSpec,function(){
-					if(AttachOffer.openList.length>0){
-						for(var j=0;j<AttachOffer.openList[0].specList.length;j++){
-							var openedServ = AttachOffer.openList[0].specList[j];
-							if(this.offerSpecId  == openedServ.offerSpecId){
-								openedServ.isdel = "Y";
-								$("#li_"+prodId+"_"+openedServ.offerSpecId).find("span").addClass("del");
-							}
+				for(var i = 0; i < AttachOffer.openList.length; i++){
+					for(var j=0;j<AttachOffer.openList[i].specList.length;j++){
+						var openedServ = AttachOffer.openList[i].specList[j];
+						if(this.offerSpecId  == openedServ.offerSpecId){
+							openedServ.isdel = "Y";
+							$("#li_"+prodId+"_"+openedServ.offerSpecId).find("span").addClass("del");
 						}
 					}
+				}
 			});
-			
 		}
 	};
 	
@@ -1115,15 +1139,22 @@ AttachOffer = (function() {
 			_servSpecs.push(servSpec);
 			
 			$.each(reSrvSpec,function(){
-					if(AttachOffer.openServList.length>0){
-						for(var j=0;j<AttachOffer.openServList[0].servSpecList.length;j++){
-							var openedServ = AttachOffer.openServList[0].servSpecList[j];
+				for(var m=0;m<AttachOffer.openServList.length;m++){
+			    	var mproid = AttachOffer.openServList[m].prodId;
+			    	if(prodId == mproid){
+						for(var j=0;j<AttachOffer.openServList[m].servSpecList.length;j++){
+							var openedServ = AttachOffer.openServList[m].servSpecList[j];
 							if(this.servSpecId == openedServ.servSpecId){
 								openedServ.isdel = "Y";
 								$("#li_"+prodId+"_"+openedServ.servSpecId).find("span").addClass("del");
 							}
 						}
-					}
+					
+			    	}
+			    }
+				
+				
+				
 			});
 			
 		}
@@ -1136,9 +1167,9 @@ AttachOffer = (function() {
 			_offerSpecs.push(offerSpec);
 			
 			$.each(reOfferSpec,function(){
-					if(AttachOffer.openList.length>0){
-						for(var j=0;j<AttachOffer.openList[0].specList.length;j++){
-							var openedServ = AttachOffer.openList[0].specList[j];
+					for(var i = 0; i < AttachOffer.openList.length; i++){
+						for(var j=0;j<AttachOffer.openList[i].specList.length;j++){
+							var openedServ = AttachOffer.openList[i].specList[j];
 							if(this.offerSpecId  == openedServ.offerSpecId){
 								openedServ.isdel = "Y";
 								$("#li_"+prodId+"_"+openedServ.offerSpecId).find("span").addClass("del");
@@ -1160,23 +1191,23 @@ AttachOffer = (function() {
 			_servSpecs.push(servSpec);
 			
 			$.each(reSrvSpec,function(){
-					if(AttachOffer.openedServList.length>0){
-						for(var j=0;j<AttachOffer.openedServList[0].servList.length;j++){
-							var openedServ = AttachOffer.openedServList[0].servList[j];
+					for(var i = 0; i < AttachOffer.openedServList.length; i++){
+						for(var j=0;j<AttachOffer.openedServList[i].servList.length;j++){
+							var openedServ = AttachOffer.openedServList[i].servList[j];
 							if(this.servSpecId == openedServ.servSpecId){
 								openedServ.isdel = "Y";
 								$("#li_"+prodId+"_"+openedServ.servId).find("span").addClass("del");
 							}
 						}
 					}
-					if(AttachOffer.openServList.length>0){
-							for(var n=0;n<AttachOffer.openServList[0].servSpecList.length;n++){
-								var opendServ = AttachOffer.openServList[0].servSpecList[n];
-								if(this.servSpecId == opendServ.servSpecId){
-									opendServ.isdel = "Y";
-									$("#li_"+prodId+"_"+opendServ.servSpecId).find("span").addClass("del"); 
-								}
+					for(var m = 0 ; m < AttachOffer.openServList.length; m++){
+						for(var n=0;n<AttachOffer.openServList[m].servSpecList.length;n++){
+							var opendServ = AttachOffer.openServList[m].servSpecList[n];
+							if(this.servSpecId == opendServ.servSpecId){
+								opendServ.isdel = "Y";
+								$("#li_"+prodId+"_"+opendServ.servSpecId).find("span").addClass("del"); 
 							}
+						}
 					}
 			});
 			
@@ -1190,9 +1221,9 @@ AttachOffer = (function() {
 			_offerSpecs.push(offerSpec);
 			
 			$.each(reOfferSpec,function(){
-					if(AttachOffer.openedList.length>0){
-						for(var j=0;j<AttachOffer.openedList[0].offerList.length;j++){
-							var openedServ = AttachOffer.openedList[0].offerList[j];
+					for(var i = 0; i < AttachOffer.openedList.length; i++){
+						for(var j=0;j<AttachOffer.openedList[i].offerList.length;j++){
+							var openedServ = AttachOffer.openedList[i].offerList[j];
 							if(this.offerSpecId == openedServ.offerSpecId){
 								openedServ.isdel = "Y";
 								$("#li_"+prodId+"_"+openedServ.offerId).find("span").addClass("del");
@@ -1626,136 +1657,6 @@ AttachOffer = (function() {
 			});
 		}
 	};
-	
-	/*//解析互斥依赖返回结果
-	var paserData = function(datas,prodId,offerSpecId,specName,objType){
-		var exclude = result.offerSpec.exclude;
-		var depend = result.offerSpec.depend;
-		var servExclude = result.servSpec.exclude;
-		var servDepend = result.servSpec.depend;
-
-		var content = "";
-		//转换接口返回的互斥依赖
-		var param = {  
-			excludeOffer : [],   //互斥依赖显示列表
-			dependOffer : {  //存放互斥依赖列表
-				dependOffers : [],
-				offerGrpInfos : []
-			},
-			excludeServ : [],  //互斥依赖显示列表
-			dependServ : [] //存放互斥依赖列表
-		};
-		
-		//解析可选包互斥依赖组
-		if(exclude!=undefined && exclude.length>0){
-			for (var i = 0; i < exclude.length; i++) {
-				var offerList = AttachOffer.getOfferList(prodId); //互斥要去除已订购手动删除
-				var flag = true;
-				if(offerList!=undefined){
-					for ( var j = 0; j < offerList.length; j++) {
-						if(offerList[j].isdel=="Y"){
-							if(offerList[j].offerSpecId == exclude[i].offerSpecId){  //返回互斥数组在已订购中删除，不需要判断
-								flag = false;
-								break;
-							}
-						}
-					}
-				}
-				if(flag){
-					content += "需要关闭：   " + exclude[i].offerSpecName + "<br>";
-					param.excludeOffer.push(exclude[i].offerSpecId);
-				}
-			}
-		}
-		if(depend!=undefined && depend.offerInfos!=undefined && depend.offerInfos.length>0){
-			for (var i = 0; i < depend.offerInfos.length; i++) {	
-				content += "需要开通： " + depend.offerInfos[i].offerSpecName + "<br>";
-				param.dependOffer.dependOffers.push(depend.offerInfos[i].offerSpecId);
-			}	
-		}
-		if(depend!=undefined && depend.offerGrpInfos!=undefined && depend.offerGrpInfos.length>0){
-			for (var i = 0; i < depend.offerGrpInfos.length; i++) {
-				var offerGrpInfo = depend.offerGrpInfos[i];
-				param.dependOffer.offerGrpInfos.push(offerGrpInfo);
-				content += "需要开通： 开通" + offerGrpInfo.minQty+ "-" + offerGrpInfo.maxQty+ "个以下业务:<br>";
-				if(offerGrpInfo.subOfferSpecInfos!="undefined" && offerGrpInfo.subOfferSpecInfos.length>0){
-					for (var j = 0; j < offerGrpInfo.subOfferSpecInfos.length; j++) {
-						var subOfferSpec = offerGrpInfo.subOfferSpecInfos[j];
-						content += '<input id="'+subOfferSpec.offerSpecId+'" type="checkbox" name="'+offerGrpInfo.grpId+'" value="'+subOfferSpec.offerSpecId+'">'+subOfferSpec.offerSpecName+'</input><br>';
-					}
-				}
-			}
-		}
-		
-		//解析功能产品互斥依赖组
-		if(servExclude!=undefined && servExclude.length>0){
-			$.each(servExclude,function(){
-				if(this.offerSpecId == undefined || this.offerSpecId == ""){ //纯功能产品互斥
-					var servList = AttachOffer.getServList(prodId); //互斥要去除已订购手动删除
-					var flag = true;
-					if(servList!=undefined){
-						for ( var i = 0; i < servList.length; i++) {
-							if(servList[i].isdel=="Y"){
-								if(servList[i].servSpecId == this.servSpecId){  //返回互斥数组在已订购中删除，不需要判断
-									flag = false;
-									break;
-								}
-							}
-						}
-					}
-					if(flag){
-						content += "需要关闭：   " + this.servSpecName + "<br>";
-						param.excludeServ.push(this);
-					}
-				}else {  //可选包下功能产品互斥
-					var offerList = AttachOffer.getOfferList(prodId); //互斥要去除已订购手动删除
-					var flag = true;
-					if(offerList!=undefined){
-						for ( var j = 0; j < offerList.length; j++) {
-							if(offerList[j].isdel=="Y"){
-								if(offerList[j].offerSpecId == this.offerSpecId){  //返回互斥数组在已订购中删除，不需要判断
-									flag = false;
-									break;
-								}
-							}
-						}
-					}
-					if(flag){
-						content += "需要关闭：   " + this.offerSpecName + "<br>";
-						param.excludeOffer.push(this.offerSpecId);
-					}
-				}
-			});
-		}
-		if(servDepend!=undefined && servDepend.length>0){
-			$.each(servDepend,function(){
-				if(this.offerSpecId == undefined || this.offerSpecId == ""){ //纯功能产品依赖
-					content += "需要开通：   " + this.servSpecName + "<br>";
-					param.dependServ.push(this);
-				}else {  //功能产品与可选包下功能产品依赖
-					content += "需要开通：   " + this.offerSpecName + "<br>";
-					param.dependOffer.dependOffers.push(this.offerSpecId);
-				}
-			});
-		}
-		
-		if(content==""){ //没有互斥依赖
-			if(objType == "OFFER"){
-				AttachOffer.addOpenList(prodId,offerSpecId); 
-			}else {
-				AttachOffer.addOpenServList(prodId,offerSpecId); 
-			}
-		}else{	
-			$.confirm("开通： " + specName,content,{ 
-				yesdo:function(){
-					excludeAddattch(prodId,offerSpecId,param,objType);
-				},
-				no:function(){
-					
-				}
-			});
-		}
-	};*/
 	
 	//解析服务互斥依赖
 	var paserServData = function(result,prodId,serv){
