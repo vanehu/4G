@@ -33,9 +33,6 @@ import com.al.lte.portal.model.SessionStaff;
 
 /**
  * 宽带甩单－订单查询 .
- * <BR>
- *  TODO 要点概述.
- * <P>
  * @author leilj
  * @version V1.0 2012-3-30
  * @createDate 2012-3-30 下午3:29:40
