@@ -203,4 +203,14 @@ public interface CustBmo {
 	 */
 	public Map<String, Object> saveMktContactResult(Map<String, Object> dataBusMap, String optFlowNum,
             SessionStaff sessionStaff) throws Exception;
+	
+	/**
+	 * 获取云平台加密身份证信息
+	 * @param dataBusMap
+	 * @param optFlowNum
+	 * @param sessionStaff
+	 * @return
+	 * @throws Exception
+	 */
+	 public Map<String, Object> queryCert(Map<String, Object> dataBusMap, String optFlowNum, SessionStaff sessionStaff) throws Exception;
 }

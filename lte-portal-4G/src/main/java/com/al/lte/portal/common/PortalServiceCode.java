@@ -1233,6 +1233,8 @@ public final class PortalServiceCode {
     /**营销任务（接触）反馈结果记录服务*/
     public static final String SAVE_MTK_RESULT= "biz-service/intf.couponService/saveMktContactResult";
     
+    /**查询云平台身份证信息*/
+    public static final String QUERY_CLOUD_CERT = "/api/v1/queryCert?";
     
 }
 

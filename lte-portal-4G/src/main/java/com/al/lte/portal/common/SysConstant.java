@@ -933,4 +933,13 @@ public final class SysConstant {
     
     /** 融合ESS 的订单类型 */
     public static final String OL_TYPE_LTE_ESS = "17"; 
+    
+    /** Session Key　appId */
+    public static final String SESSION_KEY_APP_ID = "app_id_session_key";
+    
+    /** Session Key　timestamp */
+    public static final String SESSION_KEY_TIME_STAMP = "timestamp_session_key";
+    
+    /** Session Key　nonce */
+    public static final String SESSION_KEY_NONCE = "nonce_session_key";
 }

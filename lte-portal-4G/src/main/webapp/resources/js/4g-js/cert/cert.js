@@ -245,6 +245,10 @@ cert = (function() {
 			man = JSON.parse(jsonStr);
 			if (0 == man.resultFlag) {
 				url = contextPath + "/common/decodeCert";
+				var certUnifyFlag = query.common.queryPropertiesMapValue("CERT_SIGNATURE_UNIFY",String(OrderInfo.staff.areaId).substr(0, 3));
+				if(certUnifyFlag == "ON"){
+					url = contextPath + "/common/decodeCertNew";	
+				}
 				params = {
 					data: man.resultContent.certificate,
 					createFlag:$('#createFlag').val()

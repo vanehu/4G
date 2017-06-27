@@ -34,6 +34,7 @@ import com.al.ecs.common.util.PropertiesUtils;
 import com.al.ecs.common.util.UIDGenerator;
 import com.al.ecs.common.web.ServletUtils;
 import com.al.ecs.exception.BusinessException;
+import com.al.ecs.exception.ErrorCode;
 import com.al.ecs.exception.InterfaceException;
 import com.al.ecs.exception.ResultConstant;
 import com.al.ecs.spring.annotation.log.LogOperatorAnn;
@@ -239,6 +240,9 @@ public class CommonController extends BaseController {
         resultMap.put("appId", appId);
         resultMap.put("timestamp", timestamp);
         resultMap.put("nonce", nonce);
+        request.getSession().setAttribute(SysConstant.SESSION_KEY_APP_ID, appId);
+        request.getSession().setAttribute(SysConstant.SESSION_KEY_TIME_STAMP, timestamp);
+        request.getSession().setAttribute(SysConstant.SESSION_KEY_NONCE, nonce);
         resultMap.put("businessExt", businessExt);
         resultMap.put("signature", signature);
         return super.successed(resultMap);
@@ -448,4 +452,78 @@ public class CommonController extends BaseController {
         
         return jsonResponse;
     }
+    
+	/**
+	 * 新云读卡获取加密身份证信息并解密，客户端调用
+	 * @param param
+	 * @param request
+	 * @return
+	 * @throws Exception
+	 */
+	@ResponseBody
+    @RequestMapping(value="/decodeCertNew", method = RequestMethod.POST)
+    public JsonResponse decodeCertNew(@RequestBody Map<String, Object> param,
+        HttpServletRequest request) throws Exception {
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils
+				.getSessionAttribute(super.getRequest(),
+						SysConstant.SESSION_KEY_LOGIN_STAFF);
+		String content = MapUtils.getString(param, "data");
+		String createFlag = MapUtils.getString(param, "createFlag");
+		if (StringUtils.isBlank(content)) {
+			return super.failed("", ResultConstant.IN_PARAM_FAILTURE.getCode());
+		}
+		String secret = propertiesUtils.getMessage("DES3_SECRET"); // 3DES加密密钥
+		Map<?, ?> resultMap = custBmo.decodeCert(content.trim(), secret);
+		/* 获取加密省份证信息所需字段 */
+		Map<String, Object> paramsMap = new HashMap<String, Object>();
+		String decodeId = MapUtils.getString(resultMap, "decodeId"); // 加密身份证唯一id
+		String serverIp = MapUtils.getString(resultMap, "serverIP"); // 获取请求服务器ip
+		String appId = (String) ServletUtils.getSessionAttribute(request,
+				SysConstant.SESSION_KEY_APP_ID);
+		String timestamp = (String) ServletUtils.getSessionAttribute(request,
+				SysConstant.SESSION_KEY_TIME_STAMP);
+		String qrynonce = (String) ServletUtils.getSessionAttribute(request,
+				SysConstant.SESSION_KEY_NONCE);
+		paramsMap.put("appId", appId);
+		paramsMap.put("timestamp", timestamp);
+		paramsMap.put("nonce", qrynonce);
+		paramsMap.put("decodeId", decodeId);
+		//serverIp="223.255.252.39:4001";//本地测试时打开
+		paramsMap.put("serverIp", serverIp);
+		try {
+			Map<?, ?> returntMap = custBmo.queryCert(paramsMap, null,
+					sessionStaff);// 请求云平台获取的加密身份证信息
+			String certificate = MapUtils.getString(returntMap, "certificate");
+			Map<?, ?> certificateMap = custBmo.decodeCert(certificate.trim(),
+					secret);
+			/* 对下面的字段进行签名，可根据需要增加签名字段 */
+			String partyName = MapUtils.getString(certificateMap, "partyName"); // 姓名
+			String certAddress = MapUtils.getString(certificateMap,
+					"certAddress"); // 地址
+			String certNumber = MapUtils
+					.getString(certificateMap, "certNumber"); // 身份证号码
+			request.getSession().setAttribute(Const.CACHE_CERTINFO, certNumber);
+			String identityPic = MapUtils.getString(certificateMap,
+					"identityPic"); // 照片
+			String nonce = RandomStringUtils
+					.randomAlphanumeric(Const.RANDOM_STRING_LENGTH); // 随机字符串
+			String appSecret = propertiesUtils.getMessage("APP_SECRET"); // appId对应的加密密钥
+			String signature = commonBmo.signature(partyName, certNumber,
+					certAddress, identityPic, nonce, appSecret);
+			if ("1".equals(createFlag)) {
+				request.getSession().setAttribute(Const.SESSION_SIGNATURE,
+						signature);
+			}
+			MapUtils.safeAddToMap(certificateMap, "signature", signature);
+			return super.successed(certificateMap);
+		} catch (BusinessException be) {
+			this.log.error("调用主数据接口失败", be);
+			return super.failed(be);
+		} catch (InterfaceException ie) {
+			return super.failed(ie, paramsMap, ErrorCode.QUERY_CLOUD_CERT);
+		} catch (Exception e) {
+			log.error("云平台/获取身份信息方法异常", e);
+			return super.failed(ErrorCode.QUERY_CLOUD_CERT, e, paramsMap);
+		}
+	}
 }
