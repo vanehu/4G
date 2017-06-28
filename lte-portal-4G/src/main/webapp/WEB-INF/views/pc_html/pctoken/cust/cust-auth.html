@@ -8,23 +8,23 @@
         
         
         <#if rules.rule2=="Y">
-            <li id="auth_tab2" onclick="order.cust.changeTab(2)" class="setcon">短信鉴权</li>
+            <li id="auth_tab2" onclick="order.cust.changeTab('auth2',2)" class="setcon">短信鉴权</li>
         </#if>
         
         <#if rules.rule3=="Y">
                  <#if rules.rule1=="Y" || rules.rule2=="Y">
-                      <li id="auth_tab3" onclick="order.cust.changeTab(3)">产品密码鉴权</li>
+                      <li id="auth_tab3" onclick="order.cust.changeTab('auth2',3)">产品密码鉴权</li>
                       <#else>
-                       <li id="auth_tab3" onclick="order.cust.changeTab(3)" class="setcon">产品密码鉴权</li>
+                       <li id="auth_tab3" onclick="order.cust.changeTab('auth2',3)" class="setcon">产品密码鉴权</li>
                  </#if>
                  
           </#if>
         
          <#if rules.rule1=="Y">
             <#if rules.rule2=="Y" >
-                <li id="auth_tab1" onclick="order.cust.changeTab(1)" class="">证件号码鉴权</li>
+                <li id="auth_tab1" onclick="order.cust.changeTab('auth2',1)" class="">证件号码鉴权</li>
               <#else>
-               <li id="auth_tab1" onclick="order.cust.changeTab(1)" class="setcon">证件号码鉴权</li>
+               <li id="auth_tab1" onclick="order.cust.changeTab('auth2',1)" class="setcon">证件号码鉴权</li>
              </#if> 
          </#if> 
        

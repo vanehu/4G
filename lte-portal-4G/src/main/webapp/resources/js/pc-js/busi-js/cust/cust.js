@@ -890,7 +890,7 @@ order.cust = (function(){
 			},
 			"done" : function(response){
 				if(!response){
-					 response.data='<div style="margin:2px 0 2px 0;width:100%,height:100%;text-align:center;"><strong>not data return,please try reload again.</strong></div>';
+					 response.data='<div style="margin:2px 0 2px 0;width:100%;height:100%;text-align:center;"><strong>not data return,please try reload again.</strong></div>';
 				}
 				if (response.code == -2) {
 					return;
@@ -2313,40 +2313,40 @@ order.cust = (function(){
 	
 	};
 
-	//多种鉴权方式的tab页切换
-	var _changeTab = function (tabId) {
-		//如果是政企客户
-		if(_isCustomers(OrderInfo.cust.identityCd)==1000 && order.prodModify.customersOnOff=="ON"){
-	       //使用人证件类型非个人证件类型，请选择其它鉴权方式
-			var idType=OrderInfo.rulesJson.identidyTypeCd;
-			if(idType=="" || idType==undefined || idType==null || _isCustomers(idType)==1000){
-				 $.alert("提示","使用人证件类型非个人证件类型，请选择其它鉴权方式");
-				 return ;
-			}
-         }
-		$.each($("#auth_tab"+tabId).parent().find("li"),function(){
-			$(this).removeClass("setcon");
-		});
-		$("#auth_tab"+tabId).addClass("setcon");
-		$.each($("#contents div"),function(){
-			$(this).hide();
-		});
-		$("#content"+tabId).show();
-		if (tabId == 2) {
-			if (_choosedCustInfo.identityCd == 1) {
-				$("#idCardNumber2").attr("disabled", "disabled");
-			} else {
-				$("#idCardNumber2").removeAttr("disabled");
-			}
-		}
-		if(tabId==1){
-			//判断是否是自营渠道
-			if(!order.cust.isSelfChannel()){
-				 $("#idCardNumber2").attr("readonly","readonly");
-				 $.alert("提示","请到电信自有营业厅办理业务");
-			}
-		}
-	};
+    //多种鉴权方式的tab页切换
+    var _changeTab = function (id, tabId) {
+        //如果是政企客户
+        if (_isCustomers(OrderInfo.cust.identityCd) == 1000 && order.prodModify.customersOnOff == "ON") {
+            //使用人证件类型非个人证件类型，请选择其它鉴权方式
+            var idType = OrderInfo.rulesJson.identidyTypeCd;
+            if (idType == "" || idType == undefined || idType == null || _isCustomers(idType) == 1000) {
+                $.alert("提示", "使用人证件类型非个人证件类型，请选择其它鉴权方式");
+                return;
+            }
+        }
+        $.each($("#" + id).find("#auth_tab" + tabId).parent().find("li"), function () {
+            $(this).removeClass("setcon");
+        });
+        $("#" + id).find("#auth_tab" + tabId).addClass("setcon");
+        $.each($("#" + id + " #contents div"), function () {
+            $(this).hide();
+        });
+        $("#" + id).find("#content" + tabId).show();
+        if (tabId == 2) {
+            if (_choosedCustInfo.identityCd == 1) {
+                $("#" + id).find("#idCardNumber2").attr("disabled", "disabled");
+            } else {
+                $("#" + id).find("#idCardNumber2").removeAttr("disabled");
+            }
+        }
+        if (tabId == 1) {
+            //判断是否是自营渠道
+            if (!order.cust.isSelfChannel()) {
+                $("#" + id).find("#idCardNumber2").attr("readonly", "readonly");
+                $.alert("提示", "请到电信自有营业厅办理业务");
+            }
+        }
+    };
 	// 判断是否是政企客户(入参identityCd 为要判断的证件类型)
 	var _isCovCust = function (identityCd) {
 		var isGovCustFlag = false;
