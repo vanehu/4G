@@ -487,7 +487,190 @@ order.main = (function(){
 			}
 			SoOrder.submitOrder(data);//订单提交
 		}else{
+			if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==14 || OrderInfo.actionFlag==6){
+				//新装进行使用人证件类型检测
+				_checkUserForYZF();
+			}else {
+				SoOrder.submitOrder();//订单提交
+			}
+		}
+	}
+	var _unconformUsers = [];//筛选不合规的证件类型
+	var _yzfInitialState = [];//翼支付及其相关功能产品的原始状态纪录，用于订单返回时恢复使用
+	
+	//获取翼支付在订单提交之前的开通状态
+	var _getYzfInitialState = function(prodId){
+		var specList = [];
+		if(ec.util.isArray(AttachOffer.openServList)){
+			for ( var j = 0; j < AttachOffer.openServList.length; j++) {
+				if(prodId == AttachOffer.openServList[j].prodId){
+					for(var n=0;n<AttachOffer.openServList[j].servSpecList.length;n++){
+						var opendServ = AttachOffer.openServList[j].servSpecList[n];
+						if(CONST.YZFservSpecId1 == opendServ.servSpecId){
+							opendServ.isdel = (!opendServ.isdel) ? "" : opendServ.isdel;
+							var spec = {
+									"servSpecId":opendServ.servSpecId,
+									"isdel":opendServ.isdel
+								};
+							specList.push(spec);
+						}
+					}
+				}
+			}
+		}
+		var respnose = AttachOffer.queryOfferAndServDependForCancel("",CONST.YZFservSpecId1);
+		if(respnose !="" &&  respnose.data.resultCode == "0" && respnose.data.result.servSpec!=undefined && respnose.data.result.servSpec !=null && respnose.data.result.servSpec !=""){
+			$.each(respnose.data.result.servSpec,function(){
+				if(ec.util.isArray(AttachOffer.openServList)){
+					for ( var j = 0; j < AttachOffer.openServList.length; j++) {
+						if(prodId == AttachOffer.openServList[j].prodId){
+							for(var n=0;n<AttachOffer.openServList[j].servSpecList.length;n++){
+								var opendServ = AttachOffer.openServList[j].servSpecList[n];
+								if(this.servSpecId == opendServ.servSpecId){
+									opendServ.isdel = (!opendServ.isdel) ? "" : opendServ.isdel;
+									var spec = {
+										"servSpecId":opendServ.servSpecId,
+										"isdel":opendServ.isdel
+									};
+									specList.push(spec);
+								}
+							}
+						}
+					}
+				}
+			});
+		}
+		if(respnose !="" &&  respnose.data.resultCode == "0" && respnose.data.result.servSpec!=undefined && respnose.data.result.offerSpec !=null && respnose.data.result.offerSpec !=""){
+			$.each(respnose.data.result.offerSpec,function(){
+				if(AttachOffer.openList.length>0){
+					for ( var j = 0; j < AttachOffer.openList.length; j++) {
+						if(prodId == AttachOffer.openList[j].prodId){
+							for(var n=0;n<AttachOffer.openList[j].specList.length;n++){
+								var opendServ = AttachOffer.openList[j].specList[n];
+								if(this.offerSpecId == opendServ.offerSpecId){
+									opendServ.isdel = (!opendServ.isdel) ? "" : opendServ.isdel;
+									var spec = {
+											"servSpecId":opendServ.servSpecId,
+											"isdel":opendServ.isdel
+										};
+										specList.push(spec);
+								}
+							}
+						}
+					}
+					
+				}
+			});
+		}
+		var state={
+			"specList":specList,
+			"prodId":prodId
+		};
+		order.main.yzfInitialState.push(state);
+	}
+	
+	var _getYzfStateByProdId = function(prodId){
+		for (var i = 0; i < order.main.yzfInitialState.length; i++) {
+//		$.each(order.main.yzfInitialState,function(){
+			var state = order.main.yzfInitialState[i];
+			if(state.prodId == prodId){
+				return state.specList;
+			}
+		}
+//		});
+		return {};
+	}
+	
+	//使用人证件类型校验
+	var _checkUserForYZF = function(){
+		order.main.unconformUsers = [];
+		if(!!OrderInfo.choosedUserInfos && OrderInfo.choosedUserInfos.length){
+			$.each(OrderInfo.choosedUserInfos,function(){
+				var identityCd = this.custInfo.identityCd;
+				var yzfFlag = $("#yzfFlag_" + this.prodId + "_"+CONST.YZFservSpecId1).val();
+				if(identityCd != 1 && identityCd != 41 && identityCd != 12 && yzfFlag && yzfFlag == "1"){
+					order.main.unconformUsers.push(this);
+					_getYzfInitialState(this.prodId);
+				}
+			});
+		}
+		var numberStr="";
+		if(!!order.main.unconformUsers && order.main.unconformUsers.length){
+			 $.each(order.main.unconformUsers,function(){
+				 var user = this;
+				 var specList = order.main.getYzfStateByProdId(user.prodId);
+				 for(var j=0;j<AttachOffer.openServList.length;j++){
+						var mproid = AttachOffer.openServList[j].prodId;
+				    	if(user.prodId == mproid){
+				    		for(var m=0;m<AttachOffer.openServList[j].servSpecList.length;m++){
+								var openedServ = AttachOffer.openServList[j].servSpecList[m];
+								for(var i=0;i<specList.length;i++){
+//								$.each(specList,function(){
+									var spec = specList[i];
+									if(openedServ.servSpecId == spec.servSpecId && openedServ.isdel != "Y"){
+										openedServ.isdel = "Y";
+										if(spec.servSpecId == CONST.YZFservSpecId1){
+											numberStr+="["+OrderInfo.getAccessNumber(user.prodId)+']';
+											$("#yzfFlag_" + user.prodId + "_"+CONST.YZFservSpecId1).val("2");
+										}
+									}
+//								});
+								}
+							}
+				    	}
+				 }
+				 
+				 
+//				 if(AttachOffer.delServForYZF(this.prodId,CONST.YZFservSpecId1,'翼支付','N')){
+//					 numberStr+="["+OrderInfo.getAccessNumber(this.prodId)+']';
+//				 }
+			 });
+			 if(numberStr.length>0){
+				 var content = "号码"+numberStr+"使用人证件类型不符合实名规范，无开通翼支付及其相关功能产品权限，已自动退订！"
+				 $.confirm("信息确认",content,{ 
+						yes:function(){
+						},
+						yesdo:function(){
+							SoOrder.submitOrder();//订单提交	
+						},
+						no:function(){
+							order.main.restoreYzfInitialState();
+						}
+					});
+			 }
+			
+			 
+		} else {
 			SoOrder.submitOrder();//订单提交
+		}
+		
+	}
+	
+	
+	//恢复翼支付及相关产品订购的初始状态
+	var _restoreYzfInitialState = function(){
+		if(!!order.main.unconformUsers && order.main.unconformUsers.length){
+			 $.each(order.main.unconformUsers,function(){
+				 var user = this;
+				 var specList = order.main.getYzfStateByProdId(user.prodId);
+				 for(var j=0;j<AttachOffer.openServList.length;j++){
+						var mproid = AttachOffer.openServList[j].prodId;
+				    	if(user.prodId == mproid){
+				    		for(var m=0;m<AttachOffer.openServList[j].servSpecList.length;m++){
+								var openedServ = AttachOffer.openServList[j].servSpecList[m];
+								for(var i=0;i<specList.length;i++){
+										var spec = specList[i];
+										if(openedServ.servSpecId == spec.servSpecId && openedServ.isdel == "Y"){
+											openedServ.isdel = spec.isdel;
+											if(spec.servSpecId == CONST.YZFservSpecId1){
+												$("#yzfFlag_" + user.prodId + "_"+CONST.YZFservSpecId1).val("1");
+											}
+										}
+								}
+							}
+				    	}
+				 }
+			 });
 		}
 	}
 
@@ -943,18 +1126,6 @@ order.main = (function(){
 						cust.clearUserForm();
 						return;
 					}
-					var identityCd = cust.tmpChooseUserInfo.identityCd;
-					if(identityCd != 1 && identityCd != 41 && identityCd != 12){
-						var yzfFlag = $("#yzfFlag_" + prodId + "_"+CONST.YZFservSpecId1).val();
-						if(yzfFlag){
-							var $span = $("#li_"+prodId+"_"+CONST.YZFservSpecId1).find("span"); //定位删除的附属
-							if($span.attr("class")!="list-title delete"){  //已经退订，再订购
-								$("#yzfFlag_" + prodId + "_"+CONST.YZFservSpecId1).val("1");
-								$.alert("提示","当前使用人证件类型不符合实名规范，无开通翼支付及其相关功能产品权限，已自动退订！")
-								AttachOffer.closeServSpec(prodId,CONST.YZFservSpecId1,'翼支付','N');
-							}
-						}
-					}
 					if($("#userOrderAttrPhoneNbr").val() != ''){
 						cust.tmpChooseUserInfo.accNbr = $("#userOrderAttrPhoneNbr").val();
 					}
@@ -1406,7 +1577,12 @@ order.main = (function(){
 		noUserFlag			:_noUserFlag,
 		buildGiftMainView   :_buildGiftMainView,
 		loadGiftAttachOffer :_loadGiftAttachOffer,
-		loadGiftAttachOfferSpec:_loadGiftAttachOfferSpec
+		loadGiftAttachOfferSpec:_loadGiftAttachOfferSpec,
+		unconformUsers		:_unconformUsers,
+		yzfInitialState		:_yzfInitialState,
+		getYzfInitialState	:_getYzfInitialState,
+		getYzfStateByProdId	:_getYzfStateByProdId,
+		restoreYzfInitialState:_restoreYzfInitialState
 	};
 })();
 
