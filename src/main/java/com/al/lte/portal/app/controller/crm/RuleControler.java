@@ -30,7 +30,6 @@ import com.al.lte.portal.model.SessionStaff;
 @RequestMapping("/app/rule/*")
 @AuthorityValid(isCheck = false)
 public class RuleControler extends BaseController {
-
 	@Autowired
 	@Qualifier("com.al.lte.portal.bmo.crm.RuleBmo")
 	private RuleBmo ruleBmo;
@@ -45,7 +44,7 @@ public class RuleControler extends BaseController {
 			Map<String, Object> ruleMap = ruleBmo.checkRulePrepare(param, flowNum, sessionStaff);
 			Map<String, Object> result = MapUtils.getMap(ruleMap, "result");
 			List<Map<String, Object>> resultInfo=(List<Map<String,Object>>)result.get("resultInfo");
-			if(resultInfo!=null&&resultInfo.size()>0){
+			if(resultInfo!=null&&(!resultInfo.isEmpty())){
 				resultMap.put("ruleMap", result);
 				model.addAttribute("validatoResutlMap", resultMap);
 			}else{
