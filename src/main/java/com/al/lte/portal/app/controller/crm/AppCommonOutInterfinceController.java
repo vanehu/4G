@@ -65,6 +65,34 @@ public class AppCommonOutInterfinceController extends BaseController{
 	@Autowired
 	@Qualifier("com.al.lte.portal.bmo.crm.CustBmo")
 	private CustBmo custBmo;
+	
+	private String  PROV_MENU_CONST="PROVENCE_MENU_";
+	
+	private String AREA_ID="areaId";
+	
+	private String CHARGE_ITEMS="chargeItems";
+	
+	private String FALSE="false";
+	
+	private String PAY_MOUNT="payAmount";
+	
+	private String PAY_METHODCD="payMethodCd";
+	
+	private String RESULT_CODE="resultCode";
+	
+	private String RESULT_MSG="resultMsg";
+	
+	private String SECRET_KEY="secretKey";
+	
+	private String SO_NBR="soNbr";
+	
+	private String STAFF_ID="stafflId";
+	
+	private String SUCCESS="success";
+	
+	private String TOKEN="token";
+	
+	private String FAIL_MSG="随机码发送失败";
 
 	/**
 	 * 支付平台成功通知app
@@ -84,7 +112,7 @@ public class AppCommonOutInterfinceController extends BaseController{
 		Map<String, Object> resultMsg = new HashMap<String, Object>();
 		String rwtMsg = "";
 		if("https".equals(http)){//不允许https访问
-			resultMsg.put("success", "false"); // true:成功，false:失败
+			resultMsg.put(SUCCESS, FALSE); // true:成功，false:失败
 			resultMsg.put("data", "只能http访问！");
 			rwtMsg = JsonUtil.toString(resultMsg);
 			return rwtMsg;
@@ -102,61 +130,61 @@ public class AppCommonOutInterfinceController extends BaseController{
 		Map<String, Object> param = new HashMap<String, Object>();
 		param = (Map<String, Object>) jasonObject;
 		if (param.get("sign") == null || "".equals(param.get("sign"))) {// 参数为空校验
-			resultMsg.put("success", "false"); // true:成功，false:失败
+			resultMsg.put(SUCCESS, FALSE); // true:成功，false:失败
 			resultMsg.put("data", "签名串为空！");
 			rwtMsg = JsonUtil.toString(resultMsg);
 			return rwtMsg;
 		}
 		if (param.get("olId") == null || "".equals(param.get("olId").toString())) {// 参数为空校验
-			resultMsg.put("success", "false"); // true:成功，false:失败
+			resultMsg.put(SUCCESS, FALSE); // true:成功，false:失败
 			resultMsg.put("data", "购物车id为空！");
 			rwtMsg = JsonUtil.toString(resultMsg);
 			return rwtMsg;
 		}
-		if (param.get("payMethodCd") == null || "".equals(param.get("payMethodCd").toString())) {
-			resultMsg.put("success", "false"); // true:成功，false:失败
+		if (param.get(PAY_METHODCD) == null || "".equals(param.get(PAY_METHODCD).toString())) {
+			resultMsg.put(SUCCESS, FALSE); // true:成功，false:失败
 			resultMsg.put("data", "支付方式为空！");
 			rwtMsg = JsonUtil.toString(resultMsg);
 			return rwtMsg;
 		}
-		if (param.get("payAmount") == null || "".equals(param.get("payAmount").toString())) {
-			resultMsg.put("success", "false"); // true:成功，false:失败
+		if (param.get(PAY_MOUNT) == null || "".equals(param.get(PAY_MOUNT).toString())) {
+			resultMsg.put(SUCCESS, FALSE); // true:成功，false:失败
 			resultMsg.put("data", "收费金额为空！");
 			rwtMsg = JsonUtil.toString(resultMsg);
 			return rwtMsg;
 		}
 		//将olId、支付方式和收费金额存入redis，表示支付成功
 		RedisUtil.set("app_status_"+param.get("olId").toString(), "0");
-		RedisUtil.set("app_payCode_"+param.get("olId").toString(), param.get("payMethodCd").toString());
-		RedisUtil.set("app_payAmount_"+param.get("olId").toString(), param.get("payAmount").toString());
+		RedisUtil.set("app_payCode_"+param.get("olId").toString(), param.get(PAY_METHODCD).toString());
+		RedisUtil.set("app_payAmount_"+param.get("olId").toString(), param.get(PAY_MOUNT).toString());
 		// 签名校验
 		String signKey = param.get("olId") + "1000000244";
 		String sign = AESUtils.getMD5Str(signKey);
 		if (!sign.equals(param.get("sign"))) {
-			resultMsg.put("success", "false"); // true:成功，false:失败
+			resultMsg.put(SUCCESS, FALSE); // true:成功，false:失败
 			resultMsg.put("data", "签名不一致！");
 			rwtMsg = JsonUtil.toString(resultMsg);
 			return rwtMsg;
 		}		
-		if (param.get("areaId") == null || "".equals(param.get("areaId").toString())) {
-			resultMsg.put("success", "false"); // true:成功，false:失败
+		if (param.get(AREA_ID) == null || "".equals(param.get(AREA_ID).toString())) {
+			resultMsg.put(SUCCESS, FALSE); // true:成功，false:失败
 			resultMsg.put("data", "地区id为空！");
 			rwtMsg = JsonUtil.toString(resultMsg);
 			return rwtMsg;
 		}
-		if (param.get("chargeItems") == null || "".equals(param.get("chargeItems").toString())) {
-			resultMsg.put("success", "true"); // true:成功，false:失败
+		if (param.get(CHARGE_ITEMS) == null || "".equals(param.get(CHARGE_ITEMS).toString())) {
+			resultMsg.put(SUCCESS, "true"); // true:成功，false:失败
 			resultMsg.put("data", "费用项为空！");
 			rwtMsg = JsonUtil.toString(resultMsg);
 			return rwtMsg;
 		}
 		List<Map> chargeItems=new ArrayList();
 		Map<String, Object> rMap = null;
-		chargeItems=(List) param.get("chargeItems");
+		chargeItems=(List) param.get(CHARGE_ITEMS);
 		if(chargeItems.size()>0){
 			if(chargeItems.get(0).get("acctItemId")!=null){//用于判断费用项是否为空
 				for(Map<String, Object> map:chargeItems){
-					map.put("payMethodCd", param.get("payMethodCd").toString());
+					map.put(PAY_METHODCD, param.get(PAY_METHODCD).toString());
 					String objInstId=map.get("objInstId").toString();//将[]转为""
 					String posSeriaNbr=map.get("posSeriaNbr").toString();
 					String prodId=map.get("prodId").toString();
@@ -180,41 +208,41 @@ public class AppCommonOutInterfinceController extends BaseController{
 				}
 			}else{
 				JSONArray jsonarray=new JSONArray();
-				param.put("chargeItems", jsonarray);//空费用项
+				param.put(CHARGE_ITEMS, jsonarray);//空费用项
 			}
-			if(chargeItems.get(0).get("soNbr")!=null){
-				String soNbr=chargeItems.get(0).get("soNbr").toString();
-				param.put("soNbr", soNbr);
+			if(chargeItems.get(0).get(SO_NBR)!=null){
+				String soNbr=chargeItems.get(0).get(SO_NBR).toString();
+				param.put(SO_NBR, soNbr);
 				try {
 					//添加app标志
 					request.getSession().setAttribute(SysConstant.SESSION_KEY_APP_FLAG,"1");
 					rMap = orderBmo.chargeSubmit(param, null, null);
 					if (rMap != null && ResultCode.R_SUCCESS.equals(rMap.get("code").toString())) {
-						resultMsg.put("success", "true"); // true:成功，false:失败
+						resultMsg.put(SUCCESS, "true"); // true:成功，false:失败
 						resultMsg.put("data", "调用收费接口成功，收费完成！"); // 返回信息0成功，1失败
 						rwtMsg = JsonUtil.toString(resultMsg);
 						return rwtMsg;
 					} else {
-						resultMsg.put("success", "true"); // true:成功，false:失败
+						resultMsg.put(SUCCESS, "true"); // true:成功，false:失败
 						resultMsg.put("data", "调用收费接口成功，收费失败！");
 						rwtMsg = JsonUtil.toString(resultMsg);
 						return rwtMsg;
 					}
 					
 				} catch (Exception e) {
-					resultMsg.put("success", "true"); // true:成功，false:失败
+					resultMsg.put(SUCCESS, "true"); // true:成功，false:失败
 					resultMsg.put("data", "请求失败，下计费接口出错！"); // 返回信息0成功，1失败
 					rwtMsg = JsonUtil.toString(resultMsg);
 					return rwtMsg;
 				}
 			}else{
-				resultMsg.put("success", "true"); // true:成功，false:失败
+				resultMsg.put(SUCCESS, "true"); // true:成功，false:失败
 				resultMsg.put("data", "请求参数不完整，soNbr为空！"); // 返回信息0成功，1失败
 				rwtMsg = JsonUtil.toString(resultMsg);
 				return rwtMsg;
 			}
 		}
-		resultMsg.put("success", "true"); // true:成功，false:失败
+		resultMsg.put(SUCCESS, "true"); // true:成功，false:失败
 		resultMsg.put("data", "请求参数不完整，chargeItems为空！"); 
 		rwtMsg = JsonUtil.toString(resultMsg);
 		return rwtMsg;
@@ -279,8 +307,8 @@ public class AppCommonOutInterfinceController extends BaseController{
 		String staffCode = sessionStaff.getStaffCode();
 		String sysCode = "111";
 		Map<String, Object> rMap = new HashMap<String, Object>();
-		rMap.put("resultCode", "0");
-		rMap.put("resultMsg", "");
+		rMap.put(RESULT_CODE, "0");
+		rMap.put(RESULT_MSG, "");
 		JSONObject jo = null;
 		Map<String, Object> staffList = new HashMap<String, Object>();
 		String randomCode = DateFormatUtils.format(new Date(), "yyyyMMddHHmmssSSS")+RandomStringUtils.randomNumeric(4);
@@ -298,9 +326,9 @@ public class AppCommonOutInterfinceController extends BaseController{
 				String result = httpClient.doPost("http://10.6.10.86:8080/yxs_service/random?msg="+encodeRandom, encodeRandom);
 //				System.out.println(result);
 	        }  catch (Exception e) {
-				log.error("随机码发送失败", e);
-				rMap.put("resultCode", "1");
-				rMap.put("resultMsg", "随机码发送失败");
+				log.error(FAIL_MSG, e);
+				rMap.put(RESULT_CODE, "1");
+				rMap.put(RESULT_MSG, FAIL_MSG);
 				jo = JSONObject.fromObject(rMap);
 				return jo;
 			}
@@ -322,7 +350,7 @@ public class AppCommonOutInterfinceController extends BaseController{
 	public @ResponseBody JSONObject goProvPage(@RequestBody Map<String, Object> reqMap,HttpServletResponse response,HttpServletRequest request){
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
                 SysConstant.SESSION_KEY_LOGIN_STAFF);
-		Map<String, Object> menu_cfg = MDA.PROVENCE_MENU.get("PROVENCE_MENU_"+(sessionStaff.getAreaId() + "").substring(0, 3));
+		Map<String, Object> menu_cfg = MDA.PROVENCE_MENU.get(PROV_MENU_CONST+(sessionStaff.getAreaId() + "").substring(0, 3));
 		Map<String, Object> custInfo = new HashMap<String, Object>();
 		if(reqMap!=null){
 			custInfo.put("custName", reqMap.get("partyName"));
@@ -344,17 +372,17 @@ public class AppCommonOutInterfinceController extends BaseController{
 		Map<String, Object> busiDetail = new HashMap<String, Object>();
 		busiDetail.put("menuId", reqMap.get("menuId"));
 		busiDetail.put("menuName", reqMap.get("menuName"));
-		busiDetail.put("stafflId", sessionStaff.getStaffId());
+		busiDetail.put(STAFF_ID, sessionStaff.getStaffId());
 		String msg = "";
 		JSONObject jo = new JSONObject();
-		jo.put("resultCode", "0");
-		jo.put("resultMsg", "");
+		jo.put(RESULT_CODE, "0");
+		jo.put(RESULT_MSG, "");
 		JSONObject req = new JSONObject();
-		req.put("token", RedisUtil.get(sessionStaff.getStaffId()));
+		req.put(TOKEN, RedisUtil.get(sessionStaff.getStaffId()));
 		req.put("busiDetail", busiDetail);
 		req.put("custInfo", custInfo);
 			try {
-				msg = Des33.encode(req.toString(),(String) menu_cfg.get("secretKey"));//加密随机数
+				msg = Des33.encode(req.toString(),(String) menu_cfg.get(SECRET_KEY));//加密随机数
 				System.out.println("token:"+req+"----msg:"+msg);
 				msg = msg.replaceAll("\\+", "plus");
 //				HTTPUtil httpClient = new HTTPUtil();
@@ -362,8 +390,8 @@ public class AppCommonOutInterfinceController extends BaseController{
 //				System.out.println(result);
 	        }  catch (Exception e) {
 				log.error("跳转到省份页面失败", e);
-				jo.put("resultCode", "1");
-				jo.put("resultMsg", "跳转到省份页面失败");
+				jo.put(RESULT_CODE, "1");
+				jo.put(RESULT_MSG, "跳转到省份页面失败");
 				return jo;
 			}
 			jo.put("msg", msg);
@@ -384,7 +412,7 @@ public class AppCommonOutInterfinceController extends BaseController{
 	public @ResponseBody JSONObject randomStaffMsg(HttpServletResponse response,HttpServletRequest request){
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
                 SysConstant.SESSION_KEY_LOGIN_STAFF);
-		Map<String, Object> menu_cfg = MDA.PROVENCE_MENU.get("PROVENCE_MENU_"+(sessionStaff.getAreaId() + "").substring(0, 3));
+		Map<String, Object> menu_cfg = MDA.PROVENCE_MENU.get(PROV_MENU_CONST+(sessionStaff.getAreaId() + "").substring(0, 3));
 		String chnNbr = "";
 		HttpSession session = request.getSession();
 		List<Map> channelList = (List<Map>)session.getAttribute(SysConstant.SESSION_KEY_STAFF_CHANNEL);
@@ -395,18 +423,18 @@ public class AppCommonOutInterfinceController extends BaseController{
 			}
 		}
 		Map<String, Object> rMap = new HashMap<String, Object>();
-		rMap.put("resultCode", "0");
-		rMap.put("resultMsg", "");
+		rMap.put(RESULT_CODE, "0");
+		rMap.put(RESULT_MSG, "");
 		JSONObject jo = null;
 		Map<String, Object> staffList = new HashMap<String, Object>();
 		String randomCode = DateFormatUtils.format(new Date(), "yyyyMMddHHmmssSSS")+RandomStringUtils.randomNumeric(4);
 			try {
-				staffList.put("stafflId", sessionStaff.getStaffId());//sessionStaff.getStaffId()
+				staffList.put(STAFF_ID, sessionStaff.getStaffId());//sessionStaff.getStaffId()
 				staffList.put("stafflCode", sessionStaff.getStaffCode());//sessionStaff.getStaffCode()
 				staffList.put("channelId", sessionStaff.getCurrentChannelId());
-				staffList.put("areaId", sessionStaff.getAreaId());
+				staffList.put(AREA_ID, sessionStaff.getAreaId());
 				staffList.put("chnNbr", chnNbr);
-				String encodeRandom = Des33.encode(randomCode,(String) menu_cfg.get("secretKey"));//加密随机数
+				String encodeRandom = Des33.encode(randomCode,(String) menu_cfg.get(SECRET_KEY));//加密随机数
 				System.out.println(encodeRandom);
 				encodeRandom = encodeRandom.replaceAll("\\+", "plus");
 				rMap.put("encodeRandom", encodeRandom);
@@ -421,9 +449,9 @@ public class AppCommonOutInterfinceController extends BaseController{
 //				String result = httpClient.doPost("http://123.150.141.129:8905/yxs_service/service/random?msg="+encodeRandom, encodeRandom);
 //				System.out.println(result);
 	        }  catch (Exception e) {
-				log.error("随机码发送失败", e);
-				rMap.put("resultCode", "1");
-				rMap.put("resultMsg", "随机码发送失败");
+				log.error(FAIL_MSG, e);
+				rMap.put(RESULT_CODE, "1");
+				rMap.put(RESULT_MSG, FAIL_MSG);
 				jo = JSONObject.fromObject(rMap);
 				return jo;
 			}
@@ -451,27 +479,27 @@ public class AppCommonOutInterfinceController extends BaseController{
 		String msg = "";
 		String areaId = "";
 		if(msgstr!=null){
-			String msgList[] = msgstr.split("areaId");
+			String msgList[] = msgstr.split(AREA_ID);
 			if(msgList.length==2){
 				msg = msgList[0];
 				areaId = msgList[1];
 			}
 		}
-		Map<String, Object> menu_cfg = MDA.PROVENCE_MENU.get("PROVENCE_MENU_"+(areaId + "").substring(0, 3));
+		Map<String, Object> menu_cfg = MDA.PROVENCE_MENU.get(PROV_MENU_CONST+(areaId + "").substring(0, 3));
 			try {
 //				System.out.println("++++++++++++reqMap="+JsonUtil.toString(reqMap));
 //				rMap = custBmo.verify(reqMap, optFlowNum, sessionStaff);
 //	 			log.debug("return={}", JsonUtil.toString(rMap));
 				if(msg==null || msg.length()==0 || menu_cfg==null){
 //					msg = "9PRo8gE3P0Flmw3AWE+jJoMXO4sUqRHv";
-					rMap.put("resultCode", "1");
-					rMap.put("resultMsg", "获取随机码失败");
+					rMap.put(RESULT_CODE, "1");
+					rMap.put(RESULT_MSG, "获取随机码失败");
 					jo = JSONObject.fromObject(rMap);
 					return jo;
 				}
 //				System.out.println(msg);
 				msg = msg.replaceAll("plus", "\\+");
-				String aa = Des33.decode1(msg, (String) menu_cfg.get("secretKey"));//加密随机数
+				String aa = Des33.decode1(msg, (String) menu_cfg.get(SECRET_KEY));//加密随机数
 				param = JSONObject.fromObject(aa);
 				String randomCode = param.get("randomCode").toString();
 				String appId = param.get("appId").toString();
@@ -482,23 +510,23 @@ public class AppCommonOutInterfinceController extends BaseController{
 //				staffList.put("areaId", "8410000");//sessionStaff.getAreaId()
 				staffList = (Map<String, Object>) RedisUtil.get(randomCode);
 				if(staffList==null){
-					rMap.put("resultCode", "1");
-					rMap.put("resultMsg", "获取登陆信息失败");
+					rMap.put(RESULT_CODE, "1");
+					rMap.put(RESULT_MSG, "获取登陆信息失败");
 					jo = JSONObject.fromObject(rMap);
 					return jo;
 				}
 				String token = UIDGenerator.getUIDByTime();
 				rMap.put("staffList", staffList);
-				rMap.put("token", token);
-				rMap.put("resultCode", "0");
-				rMap.put("resultMsg", "");
-				RedisUtil.set(staffList.get("stafflId").toString(), rMap.get("token"));
+				rMap.put(TOKEN, token);
+				rMap.put(RESULT_CODE, "0");
+				rMap.put(RESULT_MSG, "");
+				RedisUtil.set(staffList.get(STAFF_ID).toString(), rMap.get(TOKEN));
 				jo = JSONObject.fromObject(rMap);
 				System.out.println("随机数："+randomCode+"--------token："+token);
 	        }  catch (Exception e) {
 				log.error("数获取员工信息与令牌失败", e);
-				rMap.put("resultCode", "1");
-				rMap.put("resultMsg", "数获取员工信息与令牌失败");
+				rMap.put(RESULT_CODE, "1");
+				rMap.put(RESULT_MSG, "数获取员工信息与令牌失败");
 				jo = JSONObject.fromObject(rMap);
 				return jo;
 						//super.failed(ErrorCode.QUERY_STAFF_INFO, e, reqMap);
