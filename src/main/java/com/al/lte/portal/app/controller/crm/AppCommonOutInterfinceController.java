@@ -55,7 +55,7 @@ import com.al.lte.portal.model.SessionStaff;
  * 
  */
 @Controller("com.al.lte.portal.app.controller.crm.AppCommonOutInterfinceController")
-@RequestMapping("/appInterfince/*")
+@RequestMapping("/appInterfince/*") 
 public class AppCommonOutInterfinceController extends BaseController{
 	
 	@Autowired
@@ -462,7 +462,7 @@ public class AppCommonOutInterfinceController extends BaseController{
 //				System.out.println("++++++++++++reqMap="+JsonUtil.toString(reqMap));
 //				rMap = custBmo.verify(reqMap, optFlowNum, sessionStaff);
 //	 			log.debug("return={}", JsonUtil.toString(rMap));
-				if(msg==null || msg.length()==0 | menu_cfg==null){
+				if(msg==null || msg.length()==0 || menu_cfg==null){
 //					msg = "9PRo8gE3P0Flmw3AWE+jJoMXO4sUqRHv";
 					rMap.put("resultCode", "1");
 					rMap.put("resultMsg", "获取随机码失败");
