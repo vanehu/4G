@@ -12,6 +12,12 @@ oneFive.certNumber = (function () {
     var selectList = [];
 
     /**
+     * 经办人拍照照片
+     * @type {string}
+     */
+    var jbr_picture = "";
+
+    /**
      * 本次文件上传数量
      * @type {number}
      */
@@ -113,6 +119,8 @@ oneFive.certNumber = (function () {
         $("#certCustName").val(man.resultContent.partyName);
         $("#certAddress").val(man.resultContent.certAddress);
         idCardInfo = man.resultContent;
+        $("#img_Cert15").attr("src", "data:image/jpeg;base64," + man.resultContent.identityPic);
+        _showCameraView();
     };
 
     /**
@@ -308,6 +316,13 @@ oneFive.certNumber = (function () {
             $("#uploadAttachmentFront").find("#type").val("Front");
             $("#uploadAttachmentBack").find("#soNbr").val(_getOneFiveSoNbr());
             $("#uploadAttachmentBack").find("#type").val("Back");
+            if (ec.util.isObj(jbr_picture)) {
+                $("#uploadAttachmentJbr").find("#jbr_info").text("已拍照");
+            } else {
+                $("#uploadAttachmentJbr").find("#jbr_info").text("未拍照");
+            }
+            $("#uploadAttachmentJbr").find("#soNbr").val(_getOneFiveSoNbr());
+            $("#uploadAttachmentJbr").find("#type").val("Jbr");
             $("#uploadAttachmentOther").find("#soNbr").val(_getOneFiveSoNbr());
             $("#uploadAttachmentOther").find("#type").val("Other");
             $("#tab_custInfoList").find("#soNbr").text(soNbr);
@@ -467,7 +482,61 @@ oneFive.certNumber = (function () {
                     updateUploadFlags(id);
                     $("#tab_custInfoList").find("#fileNumbers").text(isLowIE10() ? ++fileNumbers : (fileNumbers += files.length));
                     resetAttachment(id);
-                } else if (response.code == -2) {
+                } else if (response.code == -1) {
+                    $.alert("提示", getErrorListStr(response.data.errorList));
+                    resetAttachment(id);
+                } else {
+                    $.alertM(response.data);
+                }
+            },
+            error: function () {
+                $.unecOverlay();
+                $.alert("提示", "请求可能发生异常，请稍后再试！");
+            }
+        };
+        $('#uploadAttachment' + id).ajaxSubmit(options);
+
+    };
+
+
+    /**
+     * 上传经办人照片附件
+     * @private
+     */
+    var _uploadJbrAttachment = function (id) {
+
+        var certImg = idCardInfo.identityPic;//身份证读卡照片数据
+
+        if (ec.util.isObj(certImg)) {
+            $("#uploadAttachmentJbr").find("#certImg").val(certImg);
+        }
+
+        if (ec.util.isObj(jbr_picture)) {
+            if (jbr_picture.length > CONST.MAX_FILE_SIZE) {
+                $.alert("提示", "上传的附件过大，单个文件的大小不得超出1M！");
+                return;
+            }
+            $("#uploadAttachmentJbr").find("#photograph").val(jbr_picture);
+        } else {
+            $.alert("提示", "若要上传经办人照片，请先拍照！");
+            return;
+        }
+
+        var options = {
+            type: 'post',
+            dataType: 'json',
+            url: 'uploadAttachment',
+            beforeSubmit: function () {
+                $.ecOverlay("<strong>正在上传文件,请稍等...</strong>");
+            },
+            success: function (response) {
+                $.unecOverlay();
+                if (response.code == 0) {
+                    $.alert("提示", "附件上传完成！");
+                    updateUploadFlags(id);
+                    $("#tab_custInfoList").find("#fileNumbers").text(ec.util.isObj(certImg) ? fileNumbers = fileNumbers + 2 : ++fileNumbers);
+                    resetAttachment(id);
+                } else if (response.code == -1) {
                     $.alert("提示", getErrorListStr(response.data.errorList));
                     resetAttachment(id);
                 } else {
@@ -536,9 +605,7 @@ oneFive.certNumber = (function () {
                     "partyTypeCd": "1",//个人
                     "remarks": "",
                     "seq": seq++,
-                    "telNumber": $(this).find("td:eq(4)").text(),
-                    "channelId": OrderInfo.staff.channelId,
-                    "staffId": OrderInfo.staff.staffId
+                    "telNumber": $(this).find("td:eq(4)").text()
                 };
                 custInfos.push(number);
             });
@@ -645,6 +712,21 @@ oneFive.certNumber = (function () {
     }
 
     /**
+     * 经办人拍照弹出窗口关闭事件
+     */
+    function _close() {
+        try {
+            cert.closeVideo();
+        } catch (e) {
+            throw new Error("camera driver (DoccameraOcx.exe) is not installed correctly.");
+        } finally {
+            easyDialog.close();
+            $(".ZebraDialogOverlay").remove();
+            $(".ZebraDialog").remove();
+        }
+    }
+
+    /**
      * 更新上传标识位
      */
     function updateUploadFlags(id) {
@@ -666,11 +748,177 @@ oneFive.certNumber = (function () {
         }
     }
 
+    /**
+     * 展示拍照弹出加载摄像头
+     */
+    var _showCameraView = function () {
+        //没有看错，确实是open->close->open
+        easyDialog.open({
+            container: "ec-dialog-one-five-photo-graph"
+        });
+        easyDialog.close();
+        easyDialog.open({
+            container: "ec-dialog-one-five-photo-graph"
+        });
+        $("#img_Cert15")[0].height = 258;
+        $("#img_Cert15")[0].width = 200;
+        //初始化页面
+        $("#device15").empty();
+        $("#startPhotos15").show();
+        $("#startPhotos15").off("click").on("click", function () {
+            createVideo();
+        });
+        $("#tips15").empty();
+        $("#img_Photo15")[0].src = "";
+        $("#img_Photo15")[0].height = 0;
+        $("#img_Photo15")[0].width = 0;
+        //按钮灰话，不绑定事件
+        $("#takePhotos15").removeClass("btna_o").addClass("btna_g");
+        $("#rePhotos15").removeClass("btna_o").addClass("btna_g");
+        $("#confirmAgree15").removeClass("btna_o").addClass("btna_g");
+        $("#takePhotos15").off("click");
+        $("#rePhotos15").off("click");
+        $("#confirmAgree15").off("click");
+        $("#auditStaffTips15").empty();
+        $("#photographReviewDiv15").show();
+        getCameraInfo();
+    };
+
+
+    /**
+     * 加载拍照设备列表，获取摄像头信息
+     */
+    function getCameraInfo() {
+
+        var device = capture15.getDevices();
+        device = JSON.parse(device);
+        if (device == null || device == undefined) {
+            $("#tips15").html("提示：请检查是否正确安装插件");
+            return;
+        }
+        if (device.resultFlag == 0) {
+            $.each(device.devices, function () {
+                $("#device15").append("<option value='" + this.device + "' >" + this.name + "</option>");
+            });
+            $("#startPhotos15").off("click").on("click", function () {
+                createVideo();
+            });
+        } else {
+            $("#tips15").html("提示：" + device.errorMsg);
+            return;
+        }
+    }
+
+    /**
+     * 创建视频(点击重新拍照也是这里)
+     */
+    function createVideo() {
+        var device = $("#device15").val();
+        if (device != null && device != "") {
+            var createVideo = JSON.parse(capture15.createVideo(device, 1280, 720));//创建视频
+            if (createVideo.resultFlag == 0) {
+                $("#startPhotos15").hide();
+                OrderInfo.isCreateVideo = "Y";
+                $("#capture15")[0].style.visibility = 'visible';
+                $("#takePhotos15").removeClass("btna_g").addClass("btna_o");
+                $("#takePhotos15").off("click").on("click", function () {
+                    createImage();
+                });
+            } else {
+                $("#tips15").html("提示：" + createVideo.errorMsg);
+                return;
+            }
+        } else {
+            $("#startPhotos15").show();
+            $("#tips15").html("提示：请选择一个摄像头设备");
+            return;
+        }
+    }
+
+    /**
+     * 拍照(点击确认拍照)
+     */
+    function createImage() {
+        $("#tips15").empty();
+
+        var createImage = cert.createImage("device15", capture15);
+        if (createImage && createImage.resultFlag != 0) {
+            $("#tips15").html("提示：" + createImage.errorMsg);
+            return false;
+        }
+
+        //针对IE8需要压缩照片
+        var browser = CommonUtils.validateBrowser();
+        var photograph = ((browser.indexOf("IE8") >= 0) || (browser.indexOf("IE7") >= 0)) ? createImage.compImage : createImage.image;
+
+        $("#takePhotos15").removeClass("btna_o").addClass("btna_g").off("click");
+        $("#img_Photo15").attr("src", "data:image/jpeg;base64," + photograph);
+        $("#img_Photo15").attr("width", 640);
+        $("#img_Photo15").attr("height", 360);
+
+        $("#img_Photo15").data("identityPic", createImage.image);
+        $("#img_Photo15").data("signature", createImage.signature);
+        $("#img_Photo15").data("venderId", createImage.venderId);
+        //拍照后置灰按钮，取消绑定事件
+        $("#takePhotos15").off("click");
+        $("#takePhotos15").removeClass("btna_o").addClass("btna_g");
+        $("#rePhotos15").removeClass("btna_g").addClass("btna_o");
+        $("#rePhotos15").off("click").on("click", function () {
+            rePhotos();
+        });
+        $("#confirmAgree15").removeClass("btna_g").addClass("btna_o");
+        $("#confirmAgree15").off("click").on("click", function () {
+            saveImg(photograph);
+        });
+
+        try {
+            var obj = cert.closeVideo();
+            var json = JSON.parse(obj);
+            if (json && json.resultFlag != 0) {
+                $("#tips15").html("提示：" + json.errorMsg);
+            }
+        } catch (e) {
+            throw new Error("camera driver (DoccameraOcx.exe) is not installed correctly.");
+        }
+    }
+
+
+    /**
+     * 重新拍照
+     */
+    function rePhotos() {
+        //初始化页面
+        $("#tips15").html("");
+        $("#img_Photo15")[0].src = "";
+        $("#img_Photo15")[0].height = 0;
+        $("#img_Photo15")[0].width = 0;
+        //拍照后置灰按钮，取消绑定事件
+        $("#rePhotos15").off("click");
+        $("#rePhotos15").removeClass("btna_o").addClass("btna_g");
+        $("#confirmAgree15").removeClass("btna_o").addClass("btna_g");
+        $("#confirmAgree15").off("click");
+        $("#takePhotos15").off("click").on("click", function () {
+            createImage();
+        });
+        $("#takePhotos15").removeClass("btna_g").addClass("btna_o");
+        createVideo();
+    }
+
+    /**
+     * 缓存照片数据
+     * @param imgData 拍摄的照片数据
+     */
+    function saveImg(imgData) {
+        jbr_picture = imgData;
+        _close();
+    }
+
     return {
         init: _init,
         getOneFiveSoNbr: _getOneFiveSoNbr,
         orderSubmit: _orderSubmit,
         uploadAttachment: _uploadAttachment,
+        uploadJbrAttachment: _uploadJbrAttachment,
         selectUploadFiles: _selectUploadFiles,
         oneCertFiveNumberPrint: _oneCertFiveNumberPrint,
         queryCertNumRelList: _queryCertNumRelList,
@@ -678,7 +926,9 @@ oneFive.certNumber = (function () {
         identidiesTypeCdChoose: _identidiesTypeCdChoose,
         selectItem: _selectItem,
         selectAll: _selectAll,
-        selectConfirm: _selectConfirm
+        selectConfirm: _selectConfirm,
+        close: _close,
+        showCameraView: _showCameraView
     }
 })();
 

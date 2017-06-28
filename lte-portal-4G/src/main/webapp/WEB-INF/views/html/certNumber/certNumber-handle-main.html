@@ -32,18 +32,6 @@
                                        readonly="readonly" value="${p_endDt}"/>
                                 <label class="f_red" style="float: left;">*</label>
                             </dd>
-                            <#--<dt>受理渠道：</dt>-->
-                            <#--<dd>-->
-                                <#--<select id="p_channelId" class="width202">-->
-                                    <#--<option value="">--选择渠道--</option>-->
-                                    <#--<#if Session["_staff_channel"]?? && (Session["_staff_channel"]?size>0) >-->
-                                        <#--<#list Session["_staff_channel"] as channel>-->
-                                            <#--<option value="${channel.id}"-->
-                                                    <#--areaid="${channel.areaId}">${channel.name}</option>-->
-                                        <#--</#list>-->
-                                    <#--</#if>-->
-                                <#--</select>-->
-                            <#--</dd>-->
                         </dl>
                         <dl>
                             <dt>手机号码：</dt>
@@ -53,6 +41,13 @@
                             <dt>证件号码：</dt>
                             <dd>
                                 <input type="text" class="numberTextBox width198" id="p_certNumber" placeholder="在此输入18位身份证号"/>
+                            </dd>
+                            <dt>只显示本人：</dt>
+                            <dd>
+                                <select id="onlyMe" style="width: 40px;">
+                                    <option value="Y" selected="selected">是</option>
+                                    <option value="N">否</option>
+                                </select>
                             </dd>
                         </dl>
                         <dl>

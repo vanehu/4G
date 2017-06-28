@@ -1542,14 +1542,16 @@ order.cust = (function(){
 						_linkQueryOffer(this);
 					}
 					OrderInfo.roleCd = $(thisTr).find("td:eq(0)").attr('roleCd');
-					//#1476472初始化老用户使用人信息
-					var param = {
-						prodInstId : order.prodModify.choosedProdInfo.prodInstId,
-						acctNbr : order.prodModify.choosedProdInfo.accNbr,
-						prodSpecId : order.prodModify.choosedProdInfo.productId,
-						areaId : order.prodModify.choosedProdInfo.areaId
-					};
-					order.cust.initUserInfos(param);
+					if(order.prodModify.choosedProdInfo!=null && order.prodModify.choosedProdInfo.prodInstId!=null){
+						//#1476472初始化老用户使用人信息
+						var param = {
+							prodInstId : order.prodModify.choosedProdInfo.prodInstId,
+							acctNbr : order.prodModify.choosedProdInfo.accNbr,
+							prodSpecId : order.prodModify.choosedProdInfo.productId,
+							areaId : order.prodModify.choosedProdInfo.areaId
+						};
+						order.cust.initUserInfos(param);
+					}
 					//初始化营销推荐
 //					_queryMktActivityList();
 //					_changeActiLabel("");
@@ -4875,6 +4877,7 @@ order.cust = (function(){
 
 	return {
 		form_valid_init : _form_valid_init,
+        showCameraView : _showCameraView,
 		showCustAuth : _showCustAuth,
 		showCustCreate : _showCustCreate,
 		custAuth : _custAuth,

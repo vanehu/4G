@@ -50,6 +50,7 @@
                             <td>号码</td>
                             <td>地区</td>
                             <td>状态</td>
+                            <td>接单人</td>
                             <td>备注</td>
                         </tr>
                         </thead>
@@ -60,7 +61,8 @@
                                 <tr>
                                     <td>${item.telNumber}</td>
                                     <td>${item.acceptRegionName}</td>
-                                    <td><#if item.statusCd=="100002">未处理<#elseif item.statusCd=="100004">取消<#elseif item.statusCd=="301200">确认</#if></td>
+                                    <td><#if item.statusCd=="100002">未处理<#elseif item.statusCd=="100004">取消<#elseif item.statusCd=="201300">已接单<#elseif item.statusCd=="301200">完成</#if></td>
+                                    <td>${item.staffName}</td>
                                     <td>
                                         <textarea disabled="disabled" rows="3" style="width: 350px;" >${item.remarks}</textarea>
                                     </td>

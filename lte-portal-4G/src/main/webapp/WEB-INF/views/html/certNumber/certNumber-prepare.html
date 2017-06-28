@@ -4,7 +4,9 @@
 <script>
     $.extend($, {
         httpData: function (xhr, type, s) {
-            var ct = xhr.getResponseHeader("content-type"), xml = type == "xml" || !type && ct && ct.indexOf("xml") >= 0, data = xml ? xhr.responseXML : xhr.responseText;
+            var ct = xhr.getResponseHeader("content-type"),
+                    xml = type == "xml" || !type && ct && ct.indexOf("xml") >= 0,
+                    data = xml ? xhr.responseXML : xhr.responseText;
 
             if (xml && data.documentElement.tagName == "parsererror")
                 throw "parsererror";
@@ -42,16 +44,25 @@
 
     .oneFiveBottomLeftDiv {
         width: 350px;
-        height: 240px;
+        height: 300px;
         float: left;
         border: 1px solid;
     }
 
     .oneFiveBottomRightDiv {
         width: 440px;
-        height: 240px;
+        height: 300px;
         float: left;
         border: 1px solid;
+    }
+
+    .jbrInfoDiv {
+        width: 160px;
+        height: 28px;
+        float: left;
+        text-align: center;
+        font-weight: bold;
+        line-height: 44px;
     }
 
     .oneFiveBottomRightDiv table thead tr th {
@@ -94,8 +105,13 @@
                                     <label class="f_red">*</label>
                                 </dd>
                                 <dd>
-                                    <input type="button" value="读卡" class="numberSearch" id="certNumberReadCertBtn"
-                                           onclick="javascript:oneFive.certNumber.readCard()"/>
+                                    <#if isHand??&&isHand==-1>
+                                        <input type="button" value="读卡" class="numberSearch" id="certNumberReadCertBtn"
+                                               onclick="javascript:oneFive.certNumber.readCard()"/>
+                                    <#else>
+                                        <input type="button" value="拍照" class="numberSearch" id="certNumberCamera"
+                                               onclick="javascript:oneFive.certNumber.showCameraView()"/>
+                                    </#if>
                                     <input type="button" value="查询" class="numberSearch" id="bt_Qry"/>
                                 </dd>
                             </dl>
@@ -216,6 +232,15 @@
                         <input type="hidden" id="type" name="type"/>
                         <a class="btna_o" onclick="oneFive.certNumber.uploadAttachment('Back')"><span>上传反面照</span></a>
                     </form>
+                    <form method="post" id="uploadAttachmentJbr" enctype="multipart/form-data">
+                        <div class="jbrInfoDiv"><span id="jbr_info"></span></div>
+                        <input type="hidden" id="certImg" name="certImg"/>
+                        <input type="hidden" id="photograph" name="photograph"/>
+                        <input type="hidden" id="soNbr" name="soNbr"/>
+                        <input type="hidden" id="type" name="type"/>
+                        <a class="btna_o" onclick="oneFive.certNumber.uploadJbrAttachment('Jbr')"
+                           multiple><span>上传经办人照</span></a>
+                    </form>
                     <form method="post" id="uploadAttachmentOther" enctype="multipart/form-data">
                         <input type="file" style="width: 165px;height: 28px;font-size: 14px;" id="mFileUpload"
                                name="mFileUpload" accept="image/jpg"
@@ -250,6 +275,10 @@
     </div>
 </div>
 <!--一证五号号码选择确认弹出窗 end-->
+
+<#--拍照弹出窗口 start-->
+    <#include "/cert-number-camera-box.html" />
+<#--拍照弹出窗口 end-->
 
 <input type="hidden" id="isHand" value="${isHand}"/>
 </@override>

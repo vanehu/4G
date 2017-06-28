@@ -692,9 +692,9 @@ AttachOffer = (function() {
 								}
 							});
 							
-							if(AttachOffer.openServList.length>0){
-								for(var n=0;n<AttachOffer.openServList[0].servSpecList.length;n++){
-									var opendServ = AttachOffer.openServList[0].servSpecList[n];
+							for(var m = 0; m < AttachOffer.openServList.length; m++){
+								for(var n=0;n<AttachOffer.openServList[m].servSpecList.length;n++){
+									var opendServ = AttachOffer.openServList[m].servSpecList[n];
 									if(opendServ.isdel ==undefined || "Y"!= opendServ.isdel){
 										_servSpecIds.push(opendServ.servSpecId);
 									}
@@ -705,9 +705,9 @@ AttachOffer = (function() {
 					var contentAppend = "";
 					if(respnose !="" &&  respnose.data.resultCode == "0" && respnose.data.result.servSpec!=undefined && respnose.data.result.servSpec !=null && respnose.data.result.servSpec !=""){
 						$.each(respnose.data.result.servSpec,function(){
-							if(AttachOffer.openServList.length>0){
-								for(var n=0;n<AttachOffer.openServList[0].servSpecList.length;n++){
-									var opendServ = AttachOffer.openServList[0].servSpecList[n];
+							for(var m = 0; m < AttachOffer.openServList.length; m++){
+								for(var n=0;n<AttachOffer.openServList[m].servSpecList.length;n++){
+									var opendServ = AttachOffer.openServList[m].servSpecList[n];
 									if(this.servSpecId == opendServ.servSpecId){
 										contentAppend = contentAppend + this.servSpecName +"<br>"; 
 									}
@@ -717,9 +717,9 @@ AttachOffer = (function() {
 					}
 					if(respnose !="" &&  respnose.data.resultCode == "0" && respnose.data.result.servSpec!=undefined && respnose.data.result.offerSpec !=null && respnose.data.result.offerSpec !=""){
 						$.each(respnose.data.result.offerSpec,function(){
-							if(AttachOffer.openList.length>0){
-								for(var n=0;n<AttachOffer.openList[0].specList.length;n++){
-									var opendServ = AttachOffer.openList[0].specList[n];
+							for(var m = 0; m < AttachOffer.openList.length; m++){
+								for(var n=0;n<AttachOffer.openList[m].specList.length;n++){
+									var opendServ = AttachOffer.openList[m].specList[n];
 									if(this.offerSpecId == opendServ.offerSpecId){
 										contentAppend = contentAppend +this.offerSpecName+"<br>";  
 									}
@@ -798,9 +798,9 @@ AttachOffer = (function() {
 					}
 				});
 				
-				if(AttachOffer.openList.length>0){
-					for(var j=0;j<AttachOffer.openList[0].specList.length;j++){
-						var openedServ = AttachOffer.openList[0].specList[j];
+				for(var i = 0; i < AttachOffer.openList.length; i++){
+					for(var j=0;j<AttachOffer.openList[i].specList.length;j++){
+						var openedServ = AttachOffer.openList[i].specList[j];
 						if(openedServ.isdel ==undefined || "Y"!= openedServ.isdel){
 							_orderedOfferSpecIds.push(openedServ.offerSpecId);
 						}
@@ -812,9 +812,9 @@ AttachOffer = (function() {
 					}
 				});
 				
-				if(AttachOffer.openServList.length>0){
-					for(var n=0;n<AttachOffer.openServList[0].servSpecList.length;n++){
-						var opendServ = AttachOffer.openServList[0].servSpecList[n];
+				for(var m = 0; m < AttachOffer.openServList.length; m++){
+					for(var n=0;n<AttachOffer.openServList[m].servSpecList.length;n++){
+						var opendServ = AttachOffer.openServList[m].servSpecList[n];
 						if(opendServ.isdel ==undefined || "Y"!= opendServ.isdel){
 							_servSpecIds.push(opendServ.servSpecId);
 						}
@@ -833,9 +833,9 @@ AttachOffer = (function() {
 				var contentAppend = "";
 				if(respnose !="" &&  respnose.data.resultCode == "0" && respnose.data.result.servSpec!=undefined && respnose.data.result.servSpec !=null && respnose.data.result.servSpec !=""){
 					$.each(respnose.data.result.servSpec,function(){
-						if(AttachOffer.openedServList.length>0){
-							for(var n=0;n<AttachOffer.openedServList[0].servList.length;n++){
-								var opendServ = AttachOffer.openedServList[0].servList[n];
+						for(var m = 0; m < AttachOffer.openedServList.length; m++){
+							for(var n=0;n<AttachOffer.openedServList[m].servList.length;n++){
+								var opendServ = AttachOffer.openedServList[m].servList[n];
 								if(this.servSpecId == opendServ.servSpecId){
 									contentAppend = contentAppend + this.servSpecName +"<br>"; 
 								}
@@ -845,9 +845,9 @@ AttachOffer = (function() {
 				}
 				if(respnose !="" &&  respnose.data.resultCode == "0" && respnose.data.result.servSpec!=undefined && respnose.data.result.servSpec !=null && respnose.data.result.servSpec !=""){
 					$.each(respnose.data.result.servSpec,function(){
-						if(AttachOffer.openServList.length>0){
-							for(var n=0;n<AttachOffer.openServList[0].servSpecList.length;n++){
-								var opendServ = AttachOffer.openServList[0].servSpecList[n];
+						for(var m = 0; m < AttachOffer.openServList.length; m++){
+							for(var n=0;n<AttachOffer.openServList[m].servSpecList.length;n++){
+								var opendServ = AttachOffer.openServList[m].servSpecList[n];
 								if(this.servSpecId == opendServ.servSpecId){
 									contentAppend = contentAppend + this.servSpecName +"<br>"; 
 								}
@@ -857,9 +857,9 @@ AttachOffer = (function() {
 				}
 				if(respnose !="" &&  respnose.data.resultCode == "0" && respnose.data.result.servSpec!=undefined && respnose.data.result.offerSpec !=null && respnose.data.result.offerSpec !=""){
 					$.each(respnose.data.result.offerSpec,function(){
-						if(AttachOffer.openedList.length>0){
-							for(var n=0;n<AttachOffer.openedList[0].offerList.length;n++){
-								var opendServ = AttachOffer.openedList[0].offerList[n];
+						for(var m = 0; m < AttachOffer.openedList.length; m++){
+							for(var n=0;n<AttachOffer.openedList[m].offerList.length;n++){
+								var opendServ = AttachOffer.openedList[m].offerList[n];
 								if(this.offerSpecId == opendServ.offerSpecId){
 									contentAppend = contentAppend +this.offerSpecName+"<br>";  
 								}
@@ -4160,9 +4160,9 @@ AttachOffer = (function() {
 			if(thisServSpecId == servSpecs.servSpecId){
 				for(var j=0;j<servSpecs.servSpe.length;j++){
 					var servSpe = servSpecs.servSpe[j];
-					if(AttachOffer.openServList.length>0){
-						for(var n=0;n<AttachOffer.openServList[0].servSpecList.length;n++){
-							var opendServ = AttachOffer.openServList[0].servSpecList[n];
+					for(var m = 0; m < AttachOffer.openServList.length; m++){
+						for(var n=0;n<AttachOffer.openServList[m].servSpecList.length;n++){
+							var opendServ = AttachOffer.openServList[m].servSpecList[n];
 							if(servSpe.servSpecId == opendServ.servSpecId){
 								opendServ.isdel = "N";
 								$("#li"+prodId+"_"+opendServ.servId).find("span").removeClass("del");
