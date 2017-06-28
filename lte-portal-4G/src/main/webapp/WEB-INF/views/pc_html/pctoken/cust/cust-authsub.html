@@ -7,23 +7,23 @@
         
         
          <#if rules.rule6=="Y">
-                   <li id="auth_tab6" onclick="order.cust.changeTab(6)" class="setcon">单位证件鉴权</li>
+                   <li id="auth_tab6" onclick="order.cust.changeTab('auth2',6)" class="setcon">单位证件鉴权</li>
          </#if>
          
           <#if rules.rule5=="Y">
                 <#if rules.rule6=="Y">
-                      <li id="auth_tab5" onclick="order.cust.changeTab(5)">单位证件+使用人证件鉴权</li>
+                      <li id="auth_tab5" onclick="order.cust.changeTab('auth2',5)">单位证件+使用人证件鉴权</li>
                 <#else>
-                     <li id="auth_tab5" onclick="order.cust.changeTab(5)" class="setcon">单位证件+使用人证件鉴权</li>
+                     <li id="auth_tab5" onclick="order.cust.changeTab('auth2',5)" class="setcon">单位证件+使用人证件鉴权</li>
                </#if>
          </#if>
        
           <!--使用人名与账户名一致  -->
          <#if rules.rule7=="Y" || rules.rule8=="Y" >
               <#if rules.rule5=="Y" || rules.rule6=="Y">
-                   <li id="auth_tab17" onclick="order.cust.changeTab(17)">使用人证件鉴权</li>
+                   <li id="auth_tab17" onclick="order.cust.changeTab('auth2',17)">使用人证件鉴权</li>
                 <#else>
-                   <li id="auth_tab17" onclick="order.cust.changeTab(17)" class="setcon">使用人证件鉴权</li>
+                   <li id="auth_tab17" onclick="order.cust.changeTab('auth2',17)" class="setcon">使用人证件鉴权</li>
               </#if>
          </#if>
         
@@ -32,17 +32,17 @@
       
           <#if rules.rule2=="Y">
               <#if rules.rule5=="Y" || rules.rule6=="Y" ||  rules.rule7=="Y" || rules.rule8=="Y">
-                   <li id="auth_tab2" onclick="order.cust.changeTab(2)">短信鉴权</li>
+                   <li id="auth_tab2" onclick="order.cust.changeTab('auth2',2)">短信鉴权</li>
                 <#else>
-                   <li id="auth_tab2" onclick="order.cust.changeTab(2)" class="setcon">短信鉴权</li>
+                   <li id="auth_tab2" onclick="order.cust.changeTab('auth2',2)" class="setcon">短信鉴权</li>
               </#if>
          </#if>
          
           <#if rules.rule3=="Y">
               <#if rules.rule5=="Y" || rules.rule6=="Y" ||  rules.rule7=="Y" ||  rules.rule8=="Y" || rules.rule2=="Y">
-                   <li id="auth_tab3" onclick="order.cust.changeTab(3)">产品密码鉴权</li>
+                   <li id="auth_tab3" onclick="order.cust.changeTab('auth2',3)">产品密码鉴权</li>
                 <#else>
-                   <li id="auth_tab3" onclick="order.cust.changeTab(3)" class="setcon">产品密码鉴权</li>
+                   <li id="auth_tab3" onclick="order.cust.changeTab('auth2',3)" class="setcon">产品密码鉴权</li>
               </#if>
          </#if>
     </ul>
