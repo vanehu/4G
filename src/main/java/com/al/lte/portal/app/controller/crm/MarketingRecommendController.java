@@ -49,7 +49,6 @@ public class MarketingRecommendController extends BaseController {
 
 	@Autowired
 	PropertiesUtils propertiesUtils;
-	
 	@Autowired
 	@Qualifier("com.al.lte.portal.bmo.crm.CommonBmo")
 	private CommonBmo commonBmo;
@@ -127,7 +126,7 @@ public class MarketingRecommendController extends BaseController {
                              Map<String, Object> res_page = (Map<String, Object>) result.get("page");
                              if (result != null && result.get("mktCustList") != null) {
                                  ArrayList<Map<String, Object>> mktCustList = (ArrayList<Map<String, Object>>) result.get("mktCustList");
-                                 if (mktCustList.size() > 0) {
+                                 if (!mktCustList.isEmpty()) {
                                      if (res_page.get("totalCount") != null) {
                                          int pageNo = Integer.parseInt(param.get("pageIndex").toString());
                                          int pageSize = Integer.parseInt(param.get("pageSize").toString());
