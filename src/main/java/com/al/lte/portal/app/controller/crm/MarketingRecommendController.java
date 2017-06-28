@@ -45,7 +45,7 @@ import com.al.lte.portal.model.SessionStaff;
 @Controller("com.al.lte.portal.app.controller.crm.MarketingRecommendController")
 @RequestMapping("/app/marketingRecommend/*")
 @AuthorityValid(isCheck = false)
-public class marketingRecommendController extends BaseController {
+public class MarketingRecommendController extends BaseController {
 
 	@Autowired
 	PropertiesUtils propertiesUtils;
