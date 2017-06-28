@@ -155,8 +155,14 @@ SoOrder = (function() {
 						}
 					}else if(response.code == 1002){
 						$.alert("信息提示",response.data);
+						if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==14 || OrderInfo.actionFlag==6){//新装与主副卡成员变更需要重置翼支付订购状态
+							order.main.restoreYzfInitialState();
+						}
 					}else{
 						$.alertM(response.data);
+						if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==14 || OrderInfo.actionFlag==6){//新装与主副卡成员变更需要重置翼支付订购状态
+							order.main.restoreYzfInitialState();
+						}
 //						_getToken();
 						OrderInfo.orderData.orderList.custOrderList[0].busiOrder = [];
 						OrderInfo.resetSeq(); //重置序列
@@ -241,9 +247,6 @@ SoOrder = (function() {
 			});
 		}
 		OrderInfo.orderData.orderList.orderListInfo.custOrderType = OrderInfo.busitypeflag;
-		if(!_checkData()){ //校验通过
-			return false;
-		}
 		
 		//订单备注前置
 		var remark = $('#order_remark').val(); 
@@ -1777,6 +1780,10 @@ SoOrder = (function() {
 		}
 		if(OrderInfo.actionFlag==1){//新装
 			OrderInfo.order.step=5;
+		}
+		
+		if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==14 || OrderInfo.actionFlag==6 || OrderInfo.actionFlag==112){//新装与主副卡成员变更需要重置翼支付订购状态
+			order.main.restoreYzfInitialState();
 		}
 		$("#orderConfirmDiv").hide();
 		$("#orderContentDiv").show();
