@@ -60,7 +60,7 @@ public class ReportController extends com.al.lte.portal.controller.crm.ReportCon
 	 @Autowired
     @Qualifier("com.al.lte.portal.bmo.crm.MktResBmo")
     private MktResBmo mktResBmo;
-	
+	private String dateFormat = "yyyy-MM-dd";
 	/**
 	 * 订单查询页面
 	 * @param model
@@ -77,7 +77,7 @@ public class ReportController extends com.al.lte.portal.controller.crm.ReportCon
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
 				SysConstant.SESSION_KEY_LOGIN_STAFF);
 		Calendar c = Calendar.getInstance();
-		SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat f = new SimpleDateFormat(dateFormat);
 		String startTime = f.format(c.getTime());
 		Map<String, Object> defaultAreaInfo = CommonMethods.getDefaultAreaInfo_MinimumC3(sessionStaff);
 		
@@ -108,7 +108,7 @@ public class ReportController extends com.al.lte.portal.controller.crm.ReportCon
 					SysConstant.SESSION_KEY_LOGIN_STAFF);
 			
 			Calendar c = Calendar.getInstance();
-			SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd");
+			SimpleDateFormat f = new SimpleDateFormat(dateFormat);
 			String endTime = f.format(c.getTime());
 			c.add(Calendar.DATE, -7);
 			String startTime = f.format(c.getTime());
@@ -210,7 +210,7 @@ public class ReportController extends com.al.lte.portal.controller.crm.ReportCon
 					SysConstant.SESSION_KEY_LOGIN_STAFF);
 			
 			Calendar c = Calendar.getInstance();
-			SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd");
+			SimpleDateFormat f = new SimpleDateFormat(dateFormat);
 			String endTime = f.format(c.getTime());
 			c.add(Calendar.DATE, -7);
 			String startTime = f.format(c.getTime());
@@ -300,7 +300,7 @@ public class ReportController extends com.al.lte.portal.controller.crm.ReportCon
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
 				SysConstant.SESSION_KEY_LOGIN_STAFF);
 		Calendar c = Calendar.getInstance();
-		SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat f = new SimpleDateFormat(dateFormat);
 		String endTime = f.format(c.getTime());
 		c.add(Calendar.DATE, -7);
 		String startTime = f.format(c.getTime());
@@ -332,7 +332,7 @@ public class ReportController extends com.al.lte.portal.controller.crm.ReportCon
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
 				SysConstant.SESSION_KEY_LOGIN_STAFF);
 		Calendar c = Calendar.getInstance();
-		SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat f = new SimpleDateFormat(dateFormat);
 		String endTime = f.format(c.getTime());
 		c.add(Calendar.DATE, -7);
 		String startTime = f.format(c.getTime());
