@@ -1,5 +1,5 @@
 package com.al.lte.portal.bmo.crm;
-
+ 
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -8,12 +8,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
+import org.bouncycastle.jcajce.provider.asymmetric.rsa.RSAUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -21,13 +21,11 @@ import org.springframework.stereotype.Service;
 import com.al.crm.log.sender.ILogSender;
 import com.al.ec.serviceplatform.client.DataBus;
 import com.al.ec.serviceplatform.client.ResultCode;
-import com.al.ecs.common.util.CryptoUtils;
 import com.al.ecs.common.util.DateUtil;
 import com.al.ecs.common.util.DigestUtils;
 import com.al.ecs.common.util.JsonUtil;
 import com.al.ecs.common.util.MDA;
 import com.al.ecs.common.util.PropertiesUtils;
-import com.al.ecs.common.util.RSAUtil;
 import com.al.ecs.common.web.ServletUtils;
 import com.al.ecs.common.web.SpringContextUtil;
 import com.al.ecs.exception.BusinessException;
@@ -964,7 +962,7 @@ public class OrderBmoImpl implements OrderBmo {
 		rMap = queryAgentPortalConfig(pMap, flowNum, sessionStaff);
 		columnValue = getAgentPortalConfigColumnValue(rMap,"PROD_RULE");
 		ruleList = JsonUtil.toObject(columnValue, List.class);
-		if (!(ruleList==null)){
+		if (ruleList!=null){
 			for (int k = 0; k< ruleList.size(); k++){
 				//停机规则
 				Map stopMap = new HashMap();
