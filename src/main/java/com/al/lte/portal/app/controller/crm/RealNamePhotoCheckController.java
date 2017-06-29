@@ -283,8 +283,8 @@ public class RealNamePhotoCheckController extends BaseController{
 				long inteval = 10 * 1000;//间隔10秒
 				if (nowTime - sessionTime > inteval ) {		
 					Map<String, Object> msgMap = sendMsg(request, flowNum); 
-					if (ResultCode.R_FAILURE.equals(msgMap.get(RESULT_CODE))||msgMap.size()==0||msgMap==null) {
-						//如果发送短信异常
+					if (ResultCode.R_FAILURE.equals(msgMap.get(RESULT_CODE))) {
+						//如果发送短信异常 
 						String resultMsg="发送短信异常";
 						if(msgMap.get(RESULT_MSG)!=null){
 							resultMsg=(String) msgMap.get(RESULT_MSG);
@@ -296,7 +296,7 @@ public class RealNamePhotoCheckController extends BaseController{
 				}
 			}else{
 				Map<String, Object> msgMap = sendMsg(request, flowNum); 
-				if (ResultCode.R_FAILURE.equals(msgMap.get(RESULT_CODE))|| msgMap.size()==0 || msgMap==null) {
+				if (ResultCode.R_FAILURE.equals(msgMap.get(RESULT_CODE))) {
 					//如果发送短信异常
 					String resultMsg="发送短信异常";
 					if(msgMap.get(RESULT_MSG)!=null){
