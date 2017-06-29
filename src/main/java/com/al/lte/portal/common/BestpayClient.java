@@ -205,10 +205,10 @@ public class BestpayClient {
 		csbMap.put(SERVICE_CONTRACT_VER, "SVC4700220160307");
 		csbMap.put(DSTSYS_ID, DSTSYS_ID_VAL);
 		Object serviceCodeObj = null;
-		if(false&&StringUtils.isNotBlank((String) dataBusMap.get(DB_KEY_WORD))) {
-			serviceCodeObj = DataRepository.getInstence().getCommonParam(dataBusMap.get(DB_KEY_WORD)+"","placeOrder");	
-			Map<String, Object> map = JsonUtil.toObject((String)serviceCodeObj, Map.class);
-		}
+//		if(false&&StringUtils.isNotBlank((String) dataBusMap.get(DB_KEY_WORD))) {
+//			serviceCodeObj = DataRepository.getInstence().getCommonParam(dataBusMap.get(DB_KEY_WORD)+"","placeOrder");	
+//			Map<String, Object> map = JsonUtil.toObject((String)serviceCodeObj, Map.class);
+//		}
 		dataBusMap.remove(DB_KEY_WORD);
 		Map<String, Object> rootMap =  XmlSendClient.callService(dataBusMap,csbMap);
 	/*	String paramString = toParamString(dataBusMap, new String[]{"key"});
