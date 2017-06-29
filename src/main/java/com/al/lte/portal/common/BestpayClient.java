@@ -26,7 +26,7 @@ import com.al.ecs.exception.InterfaceException;
 import com.al.ecs.exception.InterfaceException.ErrType;
 import com.al.ecs.log.Log;
 import com.al.lte.portal.core.DataRepository;
-
+ 
 @Component
 public class BestpayClient {
 
@@ -40,6 +40,34 @@ public class BestpayClient {
 	private static final String URL_QUERY_ORDER = "https://webpaywg.bestpay.com.cn/query/queryOrder"; // 订单查询
 	private static final String URL_COMMON_REFUND = "https://webpaywg.bestpay.com.cn/refund/commonRefund"; // 普通退款
 	private static final String URL_REVERSE = "https://webpaywg.bestpay.com.cn/reverse/reverse"; // 冲正
+	
+	private static String SERVICE_CODE="serviceCode";
+	
+	private static String ORDER_REQ_NO="orderReqNo";
+	
+	private static String ORDER_NO="orderNo";
+	
+	private static String ORDER_DATE="orderDate";
+	
+	private static String ORDER_AMT="orderAmt";
+	
+	private static String MERCHANT_ID="merchantId";
+	
+	private static String DB_KEY_WORD="dbKeyWord";
+	
+	private static String BAR_CODE="barcode";
+	
+	private static String SVC_CONT="SvcCont";
+	
+	private static String SERVICE_CONTRACT_VER="ServiceContractVer";
+	
+	private static String DSTSYS_ID="DstSysID";
+	
+	private static String BUS_CODE="BusCode";
+	
+	private static String BUS_47001="BUS47001";
+	
+	private static String DSTSYS_ID_VAL="1000000050";
 
 	private static DataBus httpCall(String paramString, String reqUrl, String contentType) throws InterfaceException {
 		long startTime = System.currentTimeMillis();
@@ -74,7 +102,7 @@ public class BestpayClient {
 				paramMap.put("paramString", paramString);
 				db.setParammap(paramMap);
 				msg = reqUrl + "\n" + msg + "\n" + retnJson;
-				throw new InterfaceException(ErrType.OPPOSITE, "serviceCode", msg, paramString);
+				throw new InterfaceException(ErrType.OPPOSITE, SERVICE_CODE, msg, paramString);
 			}
 		} catch (IOException ioe) {
 			log.error("HTTP调用异常", ioe);
@@ -85,21 +113,23 @@ public class BestpayClient {
 				String msg = ioe.getMessage();
 				if ("Read timed out".equals(msg)) {
 					msg = reqUrl + "\n" + msg;
-					throw new InterfaceException(ErrType.OPPOSITE, "serviceCode", msg, paramString);
+					throw new InterfaceException(ErrType.OPPOSITE, SERVICE_CODE, msg, paramString);
 				}
 			} else if (ioe.getCause() != null) {
 				String msg = ioe.getCause().getMessage();
 				if ("Connection timed out: connect".equals(msg)) {
 					msg = reqUrl + "\n" + msg + "\n" + ioe.getMessage();
-					throw new InterfaceException(ErrType.OPPOSITE, "serviceCode", msg, paramString);
+					throw new InterfaceException(ErrType.OPPOSITE, SERVICE_CODE, msg, paramString);
 				}
 			}
 			
-			throw new InterfaceException(ErrType.PORTAL, "serviceCode", paramString, ioe);
+			throw new InterfaceException(ErrType.PORTAL, SERVICE_CODE, paramString, ioe);
 		} catch (InterfaceException ie) {
 			throw ie;
 		} finally {
-			post.abort();// 连接停止，释放资源
+			if(post!=null){
+				post.abort();// 连接停止，释放资源
+			}
 			try {
 				if (null != entity) {
 					EntityUtils.consume(entity);
@@ -160,26 +190,26 @@ public class BestpayClient {
 	 * merchantId/subMerchantId/barcode/orderNo/orderReqNo/channel/busiType/orderDate/orderAmt/productAmt/attachAmt/
 	 * goodsName/storeId/backUrl/ledgerDetail/attach/key
 	 * @return
-	 * {"success":true,"result":{"merchantId":"01440109025345000","orderNo":"20150918224530","orderReqNo":"20150918224611047659587","orderDate":null,"transStatus":"B","transAmt":"1","ourTransNo":"2015091800000260482593","encodeType":"1","sign":"71D9058C14D238B379E39B989400719B","respCode":null,"respDesc":null},"errorCode":null,"errorMsg":null}
+	 * {"success":true,"result":{"merchantId":"01440109025345000","orderNo":"20150918224530",ORDER_REQ_NO:"20150918224611047659587","orderDate":null,"transStatus":"B","transAmt":"1","ourTransNo":"2015091800000260482593","encodeType":"1","sign":"71D9058C14D238B379E39B989400719B","respCode":null,"respDesc":null},"errorCode":null,"errorMsg":null}
 	 * bad:
-	 * {"success":true,"result":{"merchantId":"01440109025345000","orderNo":"20150917202637","orderReqNo":"20150917202730120331240","orderDate":null,"transStatus":"C","transAmt":"1","ourTransNo":"2015091700000259394386","encodeType":"1","sign":"02ACBDA2E5629DFA23B8F7C03635B7BA","respCode":"200020","respDesc":"亲，账户可用余额不足"},"errorCode":null,"errorMsg":null}
+	 * {"success":true,"result":{"merchantId":"01440109025345000","orderNo":"20150917202637",ORDER_REQ_NO:"20150917202730120331240","orderDate":null,"transStatus":"C","transAmt":"1","ourTransNo":"2015091700000259394386","encodeType":"1","sign":"02ACBDA2E5629DFA23B8F7C03635B7BA","respCode":"200020","respDesc":"亲，账户可用余额不足"},"errorCode":null,"errorMsg":null}
 	 * {"success":false,"result":null,"errorCode":"BARCODE_VALIDATE_ERROR","errorMsg":"条形码验证异常"}
 	 * @throws Exception
 	 */
 	public static Map<String, Object> placeOrder(Map<String, Object> dataBusMap) throws Exception {
-		String mac = genMac(dataBusMap, new String[]{"merchantId", "orderNo", "orderReqNo", "orderDate", "barcode", "orderAmt", "key"});
+		String mac = genMac(dataBusMap, new String[]{MERCHANT_ID, ORDER_NO, ORDER_REQ_NO, ORDER_DATE, BAR_CODE, ORDER_AMT, "key"});
 		dataBusMap.put("mac", mac);
 		Map<String, Object> csbMap = new HashMap<String, Object>();
-		csbMap.put("BusCode", "BUS47001");
-		csbMap.put("ServiceCode", "SVC47002");
-		csbMap.put("ServiceContractVer", "SVC4700220160307");
-		csbMap.put("DstSysID", "1000000050");
+		csbMap.put(BUS_CODE, BUS_47001);
+		csbMap.put(SERVICE_CODE, "SVC47002");
+		csbMap.put(SERVICE_CONTRACT_VER, "SVC4700220160307");
+		csbMap.put(DSTSYS_ID, DSTSYS_ID_VAL);
 		Object serviceCodeObj = null;
-		if(false&&StringUtils.isNotBlank((String) dataBusMap.get("dbKeyWord"))) {
-			serviceCodeObj = DataRepository.getInstence().getCommonParam(dataBusMap.get("dbKeyWord")+"","placeOrder");	
+		if(false&&StringUtils.isNotBlank((String) dataBusMap.get(DB_KEY_WORD))) {
+			serviceCodeObj = DataRepository.getInstence().getCommonParam(dataBusMap.get(DB_KEY_WORD)+"","placeOrder");	
 			Map<String, Object> map = JsonUtil.toObject((String)serviceCodeObj, Map.class);
 		}
-		dataBusMap.remove("dbKeyWord");
+		dataBusMap.remove(DB_KEY_WORD);
 		Map<String, Object> rootMap =  XmlSendClient.callService(dataBusMap,csbMap);
 	/*	String paramString = toParamString(dataBusMap, new String[]{"key"});
 		String url = URL_PLACE_ORDER;
@@ -187,7 +217,7 @@ public class BestpayClient {
 		DataBus db = httpCall(paramString, url, TEXT_CONTENT_TYPE);
 		String retnJson = db.getResultMsg();*/
 		//Map<String, Object> rootMap = JsonUtil.toObject(retnJson, Map.class);
-		return (Map<String, Object>) rootMap.get("SvcCont");
+		return (Map<String, Object>) rootMap.get(SVC_CONT);
 	}
 	
 	/**
@@ -196,21 +226,21 @@ public class BestpayClient {
 	 * @param dataBusMap
 	 * merchantId/orderNo/orderReqNo/orderDate/key
 	 * @return
-	 * {"success":true,"result":{"merchantId":"01440109025345000","orderNo":"20150918224530","orderReqNo":"20150918224611047659587","orderDate":"20150918224530","transStatus":"B","transAmt":"1","ourTransNo":"2015091800000260482593","encodeType":"1","sign":"47F174C6964BAD2C14E0D8D3785BC40C"},"errorCode":null,"errorMsg":null}
-	 * {"success":true,"result":{"merchantId":"01440109025345000","orderNo":"20150917202637","orderReqNo":"20150917202730120331240","orderDate":"20150917202637","transStatus":"C","transAmt":"1","ourTransNo":"2015091700000259394386","encodeType":"1","sign":"C312F90C223C7AB4FE9DC7EA16910190"},"errorCode":null,"errorMsg":null}
+	 * {"success":true,"result":{"merchantId":"01440109025345000","orderNo":"20150918224530",ORDER_REQ_NO:"20150918224611047659587","orderDate":"20150918224530","transStatus":"B","transAmt":"1","ourTransNo":"2015091800000260482593","encodeType":"1","sign":"47F174C6964BAD2C14E0D8D3785BC40C"},"errorCode":null,"errorMsg":null}
+	 * {"success":true,"result":{"merchantId":"01440109025345000","orderNo":"20150917202637",ORDER_REQ_NO:"20150917202730120331240","orderDate":"20150917202637","transStatus":"C","transAmt":"1","ourTransNo":"2015091700000259394386","encodeType":"1","sign":"C312F90C223C7AB4FE9DC7EA16910190"},"errorCode":null,"errorMsg":null}
 	 * bad:
 	 * {"success":false,"result":null,"errorCode":"BE300001","errorMsg":"订单MAC域验证失败"}
 	 * {"success":false,"result":null,"errorCode":"BE110062","errorMsg":"没有找到符合条件的记录。"}
 	 * @throws Exception
 	 */
 	public static Map<String, Object> queryOrder(Map<String, Object> dataBusMap) throws Exception {
-		String mac = genMac(dataBusMap, new String[]{"merchantId", "orderNo", "orderReqNo", "orderDate", "key"});
+		String mac = genMac(dataBusMap, new String[]{MERCHANT_ID, ORDER_NO, ORDER_REQ_NO, ORDER_DATE, "key"});
 		dataBusMap.put("mac", mac);
 		Map<String, Object> csbMap = new HashMap<String, Object>();
-		csbMap.put("BusCode", "BUS47001");
-		csbMap.put("ServiceCode", "SVC47003");
-		csbMap.put("ServiceContractVer", "SVC4700320160307");
-		csbMap.put("DstSysID", "1000000050");
+		csbMap.put(BUS_CODE, BUS_47001);
+		csbMap.put(SERVICE_CODE, "SVC47003");
+		csbMap.put(SERVICE_CONTRACT_VER, "SVC4700320160307");
+		csbMap.put(DSTSYS_ID, DSTSYS_ID_VAL);
 		Map<String, Object> rootMap =  XmlSendClient.callService(dataBusMap,csbMap);
 		/*String paramString = toParamString(dataBusMap, new String[]{"key"});
 		String url = URL_QUERY_ORDER;
@@ -219,7 +249,7 @@ public class BestpayClient {
 		String retnJson = db.getResultMsg();
 		@SuppressWarnings("unchecked")
 		Map<String, Object> rootMap = JsonUtil.toObject(retnJson, Map.class);*/
-		return  (Map<String, Object>) rootMap.get("SvcCont");
+		return  (Map<String, Object>) rootMap.get(SVC_CONT);
 	}
 	
 	/**
@@ -237,14 +267,14 @@ public class BestpayClient {
 	 * @throws Exception
 	 */
 	public static Map<String, Object> commonRefund(Map<String, Object> dataBusMap) throws Exception {
-		String mac = genMac(dataBusMap, new String[]{"merchantId", "merchantPwd", "oldOrderNo", "oldOrderReqNo", "refundReqNo", 
+		String mac = genMac(dataBusMap, new String[]{MERCHANT_ID, "merchantPwd", "oldOrderNo", "oldOrderReqNo", "refundReqNo", 
 				"refundReqDate", "transAmt", "ledgerDetail", "key"});
 		dataBusMap.put("mac", mac);
 		Map<String, Object> csbMap = new HashMap<String, Object>();
-		csbMap.put("BusCode", "BUS47001");
-		csbMap.put("ServiceCode", "SVC47004");
-		csbMap.put("ServiceContractVer", "SVC4700420160307");
-		csbMap.put("DstSysID", "1000000050");
+		csbMap.put(BUS_CODE, BUS_47001);
+		csbMap.put(SERVICE_CODE, "SVC47004");
+		csbMap.put(SERVICE_CONTRACT_VER, "SVC4700420160307");
+		csbMap.put(DSTSYS_ID, DSTSYS_ID_VAL);
 		Map<String, Object> rootMap =  XmlSendClient.callService(dataBusMap,csbMap);
 		/*String paramString = toParamString(dataBusMap, new String[]{"key"});
 		String url = URL_COMMON_REFUND;
@@ -253,7 +283,7 @@ public class BestpayClient {
 		String retnJson = db.getResultMsg();
 		@SuppressWarnings("unchecked")
 		Map<String, Object> rootMap = JsonUtil.toObject(retnJson, Map.class);*/
-		return  (Map<String, Object>) rootMap.get("SvcCont");
+		return  (Map<String, Object>) rootMap.get(SVC_CONT);
 	}
 	
 	/**
@@ -271,14 +301,14 @@ public class BestpayClient {
 	 * @throws Exception
 	 */
 	public static Map<String, Object> reverse(Map<String, Object> dataBusMap) throws Exception {
-		String mac = genMac(dataBusMap, new String[]{"merchantId", "merchantPwd", "oldOrderNo", "oldOrderReqNo", "refundReqNo", 
+		String mac = genMac(dataBusMap, new String[]{MERCHANT_ID, "merchantPwd", "oldOrderNo", "oldOrderReqNo", "refundReqNo", 
 				"refundReqDate", "transAmt", "key"});
 		dataBusMap.put("mac", mac);
 		Map<String, Object> csbMap = new HashMap<String, Object>();
-		csbMap.put("BusCode", "BUS47001");
-		csbMap.put("ServiceCode", "SVC47005");
-		csbMap.put("ServiceContractVer", "SVC4700420160307");
-		csbMap.put("DstSysID", "1000000050");
+		csbMap.put(BUS_CODE, BUS_47001);
+		csbMap.put(SERVICE_CODE, "SVC47005");
+		csbMap.put(SERVICE_CONTRACT_VER, "SVC4700420160307");
+		csbMap.put(DSTSYS_ID, DSTSYS_ID_VAL);
 		Map<String, Object> rootMap =  XmlSendClient.callService(dataBusMap,csbMap);
 	/*	String paramString = toParamString(dataBusMap, new String[]{"key"});
 		String url = URL_REVERSE;
@@ -287,7 +317,7 @@ public class BestpayClient {
 		String retnJson = db.getResultMsg();
 		@SuppressWarnings("unchecked")
 		Map<String, Object> rootMap = JsonUtil.toObject(retnJson, Map.class);*/
-		return  (Map<String, Object>) rootMap.get("SvcCont");
+		return  (Map<String, Object>) rootMap.get(SVC_CONT);
 	}
 	
 	public static void main(String[] args) {
@@ -299,16 +329,16 @@ public class BestpayClient {
 		String orderAmt = "1";
 		
 		Map<String, Object> param = new HashMap<String, Object>();
-        param.put("merchantId", merchantId);
+        param.put(MERCHANT_ID, merchantId);
         param.put("subMerchantId", merchantId);
-        param.put("barcode", barcode);
-        param.put("orderNo", orderNo);
-        param.put("orderReqNo", orderReqNo);
-        param.put("orderDate", orderDate);
+        param.put(BAR_CODE, barcode);
+        param.put(ORDER_NO, orderNo);
+        param.put(ORDER_REQ_NO, orderReqNo);
+        param.put(ORDER_DATE, orderDate);
         param.put("channel", "05");
         param.put("busiType", "0001");
         param.put("TransType", "B");
-        param.put("orderAmt", orderAmt);
+        param.put(ORDER_AMT, orderAmt);
         param.put("productAmt", "1");
         param.put("attachAmt", "0");
         param.put("goodsName", "条码支付");
@@ -320,7 +350,7 @@ public class BestpayClient {
         param.put("key", "111");
 //        param.put("mac", mac);		
         
-		String mac = genMac(param, new String[]{"merchantId", "orderNo", "orderReqNo", "orderDate", "barcode", "orderAmt", "key"});
+		String mac = genMac(param, new String[]{MERCHANT_ID, ORDER_NO, ORDER_REQ_NO, ORDER_DATE, BAR_CODE, ORDER_AMT, "key"});
 		System.out.println(mac);
 	}
 
