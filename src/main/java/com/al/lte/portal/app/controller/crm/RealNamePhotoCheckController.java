@@ -48,7 +48,7 @@ import com.al.lte.portal.common.InterfaceClient;
 import com.al.lte.portal.common.SysConstant;
 import com.al.lte.portal.model.SessionStaff;
 
-
+ 
 
 /**
  * 实名制经办人拍照照片审核
@@ -111,6 +111,15 @@ public class RealNamePhotoCheckController extends BaseController{
 	@Autowired
 	PropertiesUtils propertiesUtils;
 	
+	private String NUMBER="number";
+	
+	private String RANDOM_CODE="randomCode";
+	
+	private String RESULT_CODE="resultCode";
+	
+	private String RESULT_MSG="resultMsg";
+	
+	private String SYS_SG_MSG="系管权限查询接口sys-checkOperatSpec异常：";
 	
 	
 	/**
@@ -251,7 +260,7 @@ public class RealNamePhotoCheckController extends BaseController{
 	public JsonResponse smsSend(@RequestParam Map<String, Object> paramMap,HttpServletRequest request, @LogOperatorAnn String flowNum) {
 		try {
 			SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
-			String number = (String) paramMap.get("number");
+			String number = (String) paramMap.get(NUMBER);
 			String areaId = (String) paramMap.get("areaId");
 			String staffId = sessionStaff.getStaffId();
 			String staffName = sessionStaff.getStaffName();
@@ -274,18 +283,26 @@ public class RealNamePhotoCheckController extends BaseController{
 				long inteval = 10 * 1000;//间隔10秒
 				if (nowTime - sessionTime > inteval ) {		
 					Map<String, Object> msgMap = sendMsg(request, flowNum); 
-					if (ResultCode.R_FAILURE.equals(msgMap.get("resultCode"))|msgMap.size()==0|msgMap==null) {
+					if (ResultCode.R_FAILURE.equals(msgMap.get(RESULT_CODE))||msgMap.size()==0||msgMap==null) {
 						//如果发送短信异常
-						return super.failed(msgMap.get("resultMsg"), 3);
+						String resultMsg="发送短信异常";
+						if(msgMap.get(RESULT_MSG)!=null){
+							resultMsg=(String) msgMap.get(RESULT_MSG);
+						}						
+						return super.failed(resultMsg, 3);
 					}
 				}else{
 					return super.successed("验证码发送中，请稍后再操作进行验证！", 1003);
 				}
 			}else{
 				Map<String, Object> msgMap = sendMsg(request, flowNum); 
-				if (ResultCode.R_FAILURE.equals(msgMap.get("resultCode"))|msgMap.size()==0|msgMap==null) {
+				if (ResultCode.R_FAILURE.equals(msgMap.get(RESULT_CODE))|| msgMap.size()==0 || msgMap==null) {
 					//如果发送短信异常
-					return super.failed(msgMap.get("resultMsg"), 3);
+					String resultMsg="发送短信异常";
+					if(msgMap.get(RESULT_MSG)!=null){
+						resultMsg=(String) msgMap.get(RESULT_MSG);
+					}	
+					return super.failed(resultMsg, 3);
 				}
 			}
 			
@@ -300,7 +317,7 @@ public class RealNamePhotoCheckController extends BaseController{
 		}
 		Map<String, Object> successedData = new HashMap<String, Object>();
 		successedData.put("data", "短信验证码发送成功!");
-		successedData.put("randomCode", ServletUtils.getSessionAttribute(request, SysConstant.SESSION_KEY_CONFIRMAGREE_RANDONCODE));
+		successedData.put(RANDOM_CODE, ServletUtils.getSessionAttribute(request, SysConstant.SESSION_KEY_CONFIRMAGREE_RANDONCODE));
 		return super.successed(successedData, ResultConstant.SUCCESS.getCode());
 	}
     
@@ -337,8 +354,8 @@ public class RealNamePhotoCheckController extends BaseController{
 		}
 		Map<String, Object> successedData = new HashMap<String, Object>();
 		successedData.put("data", "短信验证码发送成功!");
-		//successedData.put("randomCode", ServletUtils.getSessionAttribute(request, SysConstant.SESSION_KEY_LOGIN_SMS));
-		successedData.put("randomCode", ServletUtils.getSessionAttribute(request, SysConstant.SESSION_KEY_CONFIRMAGREE_RANDONCODE));
+		//successedData.put(RANDOM_CODE, ServletUtils.getSessionAttribute(request, SysConstant.SESSION_KEY_LOGIN_SMS));
+		successedData.put(RANDOM_CODE, ServletUtils.getSessionAttribute(request, SysConstant.SESSION_KEY_CONFIRMAGREE_RANDONCODE));
 		return super.successed(successedData, ResultConstant.SUCCESS.getCode());
 	}
 
@@ -353,17 +370,17 @@ public class RealNamePhotoCheckController extends BaseController{
 			SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
 			Map<String, Object> retnMap = new HashMap<String, Object>();
             if(request.getSession().getAttribute(SESSION_CONFIRMAGREE_SMS_NUMBER) ==null){
-				retnMap.put("resultCode",ResultCode.R_FAILURE );
-				retnMap.put("resultMsg","短信验证号码获取失败，系统异常！请刷新重试!");
+				retnMap.put(RESULT_CODE,ResultCode.R_FAILURE );
+				retnMap.put(RESULT_MSG,"短信验证号码获取失败，系统异常！请刷新重试!");
 				return retnMap;
 			}else if(request.getSession().getAttribute(SESSION_CONFIRMAGREE_SMS_AREAID) ==null){
-				retnMap.put("resultCode",ResultCode.R_FAILURE );
-				retnMap.put("resultMsg","短信验证号码所属地区获取失败，系统异常！请刷新重试!");
+				retnMap.put(RESULT_CODE,ResultCode.R_FAILURE );
+				retnMap.put(RESULT_MSG,"短信验证号码所属地区获取失败，系统异常！请刷新重试!");
 				return retnMap;
 			}
 			if(StringUtils.isBlank(number)){
-				retnMap.put("resultCode",ResultCode.R_FAILURE );
-				retnMap.put("resultMsg","短信验证号码为空，系统异常！请刷新重试!");
+				retnMap.put(RESULT_CODE,ResultCode.R_FAILURE );
+				retnMap.put(RESULT_MSG,"短信验证号码为空，系统异常！请刷新重试!");
 				return retnMap;
 			}
 			if (sessionStaff != null) {
@@ -384,12 +401,12 @@ public class RealNamePhotoCheckController extends BaseController{
 				msgMap.put("sendflag", "1");
 				
 				if(checkType.equals(SysConstant.CHECKTYPE_LOCAL)){//本地审核
-					msgMap.put("randomCode", randomCode);
+					msgMap.put(RANDOM_CODE, randomCode);
 					msgMap.put("message", propertiesUtils.getMessage(
 							"PHOTOGRAPH_REVIEW_SMS_CONTENT_LOCAL", new Object[] {staffName,staffId,smsPwd}));
 				}else{//远程审核
 					String virOlId = (String)request.getSession().getAttribute(SESSION_CONFIRMAGREE_SMS_OLID);
-					msgMap.put("randomCode", randomCode);
+					msgMap.put(RANDOM_CODE, randomCode);
 					msgMap.put("message", propertiesUtils.getMessage(
 							"PHOTOGRAPH_REVIEW_SMS_CONTENT_DIFF", new Object[] {staffName,staffId,virOlId}));
 				}
@@ -421,8 +438,8 @@ public class RealNamePhotoCheckController extends BaseController{
 		if(param.get("smspwd")!=null){
 			smsPwd=param.get("smspwd").toString();	
 		}
-		if(param.get("number")!=null){
-			number=param.get("number").toString();	
+		if(param.get(NUMBER)!=null){
+			number=param.get(NUMBER).toString();	
 		}
 		this.log.debug("smsValid={}", smsPwd);
 		// 验证码内容
@@ -457,13 +474,13 @@ public class RealNamePhotoCheckController extends BaseController{
 			try {
 				isPhotographReviewNeeded = staffBmo.checkOperatBySpecCd(SysConstant.RXSHGN, sessionStaff);
 			} catch (BusinessException be) {
-				log.error("系管权限查询接口sys-checkOperatSpec异常：", be);
+				log.error(SYS_SG_MSG, be);
 			} catch (InterfaceException ie) {
-				log.error("系管权限查询接口sys-checkOperatSpec异常：", ie);
+				log.error(SYS_SG_MSG, ie);
 			} catch (IOException ioe) {
-				log.error("系管权限查询接口sys-checkOperatSpec异常：", ioe);
+				log.error(SYS_SG_MSG, ioe);
 			} catch (Exception e) {
-				log.error("系管权限查询接口sys-checkOperatSpec异常：", e);
+				log.error(SYS_SG_MSG, e);
 			} finally {
 				
 			}
