@@ -156,7 +156,7 @@ provence = (function(){
 					addressStr: OrderInfo.cust.addressStr,
 					idCardNumber: OrderInfo.cust.idCardNumber,
 					identityCd: OrderInfo.cust.identityCd,
-					custType: OrderInfo.cust.custFlag
+					custFlag: OrderInfo.cust.custFlag
 			};
 			if(param.custId == undefined || param.custId == "-1" || param.custId == ""){
 				param.custId = "-1";
