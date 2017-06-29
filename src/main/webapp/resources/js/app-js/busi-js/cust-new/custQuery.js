@@ -396,7 +396,7 @@ custQuery = (function(){
 				return;
 			}
 		}
-		if(OrderInfo.actionFlag == "9"){
+		if(OrderInfo.actionFlag == "9" || OrderInfo.actionFlag == "115"){
 			$("#custQuerycontent").hide();
 			$("#cust-query-list").hide();
 			OrderInfo.cust = _choosedCustInfo;

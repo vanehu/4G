@@ -81,7 +81,7 @@
 	//}else 
 	if(custInfoSize==1){
 		custQuery.authType = '${cust.custInfos[0].authType}';
-		//$("#custInfos").click();
+		$("#custInfos").click();
 	}
 	if(custInfoSize!=0){
 		custQuery.q_custList = $.parseJSON('${custInfos}');
