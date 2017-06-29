@@ -67,6 +67,54 @@ public class OfferController extends BaseController {
 	@Autowired
 	PropertiesUtils propertiesUtils;
 	
+	private String offerListUrl="/app/offer/attach-offer-list";
+	
+	private String newOfferListUrl="/app/order_new/attach-offer-list";
+	
+	private String ID_99999="99999";
+	
+	private String OFFER_IDS="OfferIds";
+	
+	private String AREA_ID="areaId";
+	
+	private String CHANNEL_ID="channelId";
+	
+	private String ENTER="enter";
+	
+	private String LABEL_MAP="labelMap";
+	
+	private String LABEL_MAP_JSON="labelMapJson";
+	
+	private String OFFER_SPEC_ID="offerSpecId";
+	
+	private String OFFER_SPEC_LIST="offerSpecList";
+	
+	private String OPEN_MAP="openMap";
+	
+	private String OPEN_MAP_JSON="openMapJson";
+	
+	private String OPERATORS_ID="operatorsId";
+	
+	private String PARAM="param";
+	
+	private String PROD_ID="prodId";
+	
+	private String QUERY_TYPE="queryType";
+	
+	private String RESULT="result";
+	
+	private String SPEC_IDS="specIds";
+	
+	private String STAFF_ID="staffId";
+	
+	private String SYS_FLAG="sysFlag";
+	
+	private String YSL_FLAG="yslflag";
+	
+	private String OPEN_SERV_MAP="openServMap";
+	
+	private String OPEN_SERV_MAP_JSON="openServMapJson";
+	
 	/**
 	 * 获取销售品规格构成
 	 * @param reqMap
@@ -78,9 +126,9 @@ public class OfferController extends BaseController {
     public JsonResponse queryOfferSpec(@RequestParam Map<String, Object> paramMap,Model model){
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
 				SysConstant.SESSION_KEY_LOGIN_STAFF);
-		paramMap.put("areaId", sessionStaff.getCurrentAreaId());
-		paramMap.put("channelId", sessionStaff.getCurrentChannelId());
-		paramMap.put("staffId", sessionStaff.getStaffId());
+		paramMap.put(AREA_ID, sessionStaff.getCurrentAreaId());
+		paramMap.put(CHANNEL_ID, sessionStaff.getCurrentChannelId());
+		paramMap.put(STAFF_ID, sessionStaff.getStaffId());
         Map<String, Object> resMap = null;
         JsonResponse jsonResponse = null;
         try {
@@ -111,7 +159,7 @@ public class OfferController extends BaseController {
 		Map<String, Object> resMap = new HashMap<String, Object>();
 		JsonResponse jsonResponse = null;
 		try {
-			paramMap.put("staffId", sessionStaff.getStaffId());
+			paramMap.put(STAFF_ID, sessionStaff.getStaffId());
 			resMap = offerBmo.queryOfferInst(paramMap,null, sessionStaff);			
 			jsonResponse = super.successed(resMap,ResultConstant.SUCCESS.getCode());
 		} catch (BusinessException be) {
@@ -135,9 +183,9 @@ public class OfferController extends BaseController {
     public JsonResponse queryOfferParam(@RequestParam Map<String, Object> paramMap,Model model){
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
 				SysConstant.SESSION_KEY_LOGIN_STAFF);
-		paramMap.put("areaId", sessionStaff.getCurrentAreaId());
-		paramMap.put("channelId", sessionStaff.getCurrentChannelId());
-		paramMap.put("staffId", sessionStaff.getStaffId());
+		paramMap.put(AREA_ID, sessionStaff.getCurrentAreaId());
+		paramMap.put(CHANNEL_ID, sessionStaff.getCurrentChannelId());
+		paramMap.put(STAFF_ID, sessionStaff.getStaffId());
         Map<String, Object> resMap = null;
         JsonResponse jsonResponse = null;
         try {
@@ -221,7 +269,7 @@ public class OfferController extends BaseController {
 		JsonResponse jsonResponse = null;
         try {
         	paramMap = JsonUtil.toObject(param, Map.class);
-        	paramMap.put("sysFlag", Const.APP_SEARCH_OFFER_SYSFLAG);//系统标识
+        	paramMap.put(SYS_FLAG, Const.APP_SEARCH_OFFER_SYSFLAG);//系统标识
         	Map<String, Object> resMap = offerBmo.queryAttachOffer(paramMap,null,sessionStaff);
         	jsonResponse = super.successed(resMap,ResultConstant.SUCCESS.getCode());
         } catch (BusinessException be) {
@@ -251,13 +299,13 @@ public class OfferController extends BaseController {
 		try{	
 			paramMap =  JsonUtil.toObject(param, Map.class);
 			Map<String, Object> labelMap = offerBmo.queryLabel(paramMap,null,sessionStaff);	
-			model.addAttribute("labelMap",labelMap);
-			model.addAttribute("labelMapJson", JsonUtil.buildNormal().objectToJson(labelMap));
+			model.addAttribute(LABEL_MAP,labelMap);
+			model.addAttribute(LABEL_MAP_JSON, JsonUtil.buildNormal().objectToJson(labelMap));
 			Map<String, Object> openMap = offerBmo.queryAttachOffer(paramMap,null,sessionStaff);
-			model.addAttribute("openMap",openMap);
-			model.addAttribute("openMapJson", JsonUtil.buildNormal().objectToJson(openMap));
-			model.addAttribute("prodId",paramMap.get("prodId"));
-			model.addAttribute("param",paramMap);
+			model.addAttribute(OPEN_MAP,openMap);
+			model.addAttribute(OPEN_MAP_JSON, JsonUtil.buildNormal().objectToJson(openMap));
+			model.addAttribute(PROD_ID,paramMap.get(PROD_ID));
+			model.addAttribute(PARAM,paramMap);
 		} catch (BusinessException be) {
 			return super.failedStr(model,be);
 		} catch (InterfaceException ie) {
@@ -288,19 +336,19 @@ public class OfferController extends BaseController {
 				SysConstant.SESSION_KEY_LOGIN_STAFF);
 		Map<String, Object> paramMap =  JsonUtil.toObject(param, Map.class);
 		try{
-			paramMap.put("sysFlag", Const.APP_SEARCH_OFFER_SYSFLAG);//系统标识
+			paramMap.put(SYS_FLAG, Const.APP_SEARCH_OFFER_SYSFLAG);//系统标识
 			//已订购附属销售品查询
 			Map<String, Object> openMap = offerBmo.queryAttachOffer(paramMap,null,sessionStaff);
-			model.addAttribute("openMap",openMap);
-			model.addAttribute("openMapJson", JsonUtil.buildNormal().objectToJson(openMap));
+			model.addAttribute(OPEN_MAP,openMap);
+			model.addAttribute(OPEN_MAP_JSON, JsonUtil.buildNormal().objectToJson(openMap));
 			
 			//可订购附属标签查询
 			Map<String, Object> labelMap = offerBmo.queryLabel(paramMap,null,sessionStaff);	
-			model.addAttribute("labelMap",labelMap);
-			model.addAttribute("labelMapJson", JsonUtil.buildNormal().objectToJson(labelMap));
+			model.addAttribute(LABEL_MAP,labelMap);
+			model.addAttribute(LABEL_MAP_JSON, JsonUtil.buildNormal().objectToJson(labelMap));
 			
-			model.addAttribute("prodId",paramMap.get("prodId"));
-			model.addAttribute("param",paramMap);
+			model.addAttribute(PROD_ID,paramMap.get(PROD_ID));
+			model.addAttribute(PARAM,paramMap);
 		} catch (BusinessException e) {
 			log.error("获取附属销售品变更页面失败", e);
 			super.addHeadCode(response, ResultConstant.SERVICE_RESULT_FAILTURE);
@@ -331,24 +379,24 @@ public class OfferController extends BaseController {
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
 		Map<String, Object> paramMap =  JsonUtil.toObject(param, Map.class);
 		try{
-			paramMap.put("sysFlag", Const.APP_SEARCH_OFFER_SYSFLAG);//系统标识
+			paramMap.put(SYS_FLAG, Const.APP_SEARCH_OFFER_SYSFLAG);//系统标识
 			//默认必开功能产品
 			Map<String, Object> openServMap = offerBmo.queryServSpec(paramMap,null,sessionStaff);
-			model.addAttribute("openServMap",openServMap);
-			model.addAttribute("openServMapJson", JsonUtil.buildNormal().objectToJson(openServMap));
+			model.addAttribute(OPEN_SERV_MAP,openServMap);
+			model.addAttribute(OPEN_SERV_MAP_JSON, JsonUtil.buildNormal().objectToJson(openServMap));
 			
 			//已订购附属销售品查询
 			Map<String, Object> openMap = offerBmo.queryAttachOffer(paramMap,null,sessionStaff);
-			model.addAttribute("openMap",openMap);
-			model.addAttribute("openMapJson", JsonUtil.buildNormal().objectToJson(openMap));
+			model.addAttribute(OPEN_MAP,openMap);
+			model.addAttribute(OPEN_MAP_JSON, JsonUtil.buildNormal().objectToJson(openMap));
 			
 			//可订购附属标签查询
 			Map<String, Object> labelMap = offerBmo.queryLabel(paramMap,null,sessionStaff);	
-			model.addAttribute("labelMap",labelMap);
-			model.addAttribute("labelMapJson", JsonUtil.buildNormal().objectToJson(labelMap));
+			model.addAttribute(LABEL_MAP,labelMap);
+			model.addAttribute(LABEL_MAP_JSON, JsonUtil.buildNormal().objectToJson(labelMap));
 			
-			model.addAttribute("prodId",paramMap.get("prodId"));
-			model.addAttribute("param",paramMap);
+			model.addAttribute(PROD_ID,paramMap.get(PROD_ID));
+			model.addAttribute(PARAM,paramMap);
 		} catch (BusinessException e) {
 			log.error("获取附属销售品变更页面失败", e);
 			super.addHeadCode(response, ResultConstant.SERVICE_RESULT_FAILTURE);
@@ -375,25 +423,25 @@ public class OfferController extends BaseController {
 			SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);	
 			
 			paramMap =  JsonUtil.toObject(param, Map.class);
-			paramMap.put("sysFlag", Const.APP_SEARCH_OFFER_SYSFLAG);//系统标识
+			paramMap.put(SYS_FLAG, Const.APP_SEARCH_OFFER_SYSFLAG);//系统标识
 			//默认必开功能产品
 			Map<String, Object> openServMap = offerBmo.queryServSpec(paramMap,null,sessionStaff);
-			model.addAttribute("openServMap",openServMap);
-			model.addAttribute("openServMapJson", JsonUtil.buildNormal().objectToJson(openServMap));
+			model.addAttribute(OPEN_SERV_MAP,openServMap);
+			model.addAttribute(OPEN_SERV_MAP_JSON, JsonUtil.buildNormal().objectToJson(openServMap));
 			
 			//默认必开附属销售品
-			paramMap.remove("queryType");
+			paramMap.remove(QUERY_TYPE);
 			Map<String, Object> openMap = offerBmo.queryMustAttOffer(paramMap,null,sessionStaff);
-			model.addAttribute("openMap",openMap);
-			model.addAttribute("openMapJson", JsonUtil.buildNormal().objectToJson(openMap));
+			model.addAttribute(OPEN_MAP,openMap);
+			model.addAttribute(OPEN_MAP_JSON, JsonUtil.buildNormal().objectToJson(openMap));
 			
 			//可订购附属标签查询
 			Map<String, Object> labelMap = offerBmo.queryLabel(paramMap,null,sessionStaff);	
-			model.addAttribute("labelMap",labelMap);
-			model.addAttribute("labelMapJson", JsonUtil.buildNormal().objectToJson(labelMap));
+			model.addAttribute(LABEL_MAP,labelMap);
+			model.addAttribute(LABEL_MAP_JSON, JsonUtil.buildNormal().objectToJson(labelMap));
 			
-			model.addAttribute("prodId",paramMap.get("prodId"));	
-			model.addAttribute("param",paramMap);
+			model.addAttribute(PROD_ID,paramMap.get(PROD_ID));	
+			model.addAttribute(PARAM,paramMap);
 		} catch (BusinessException be) {
 			return super.failedStr(model, be);
 		} catch (InterfaceException ie) {
@@ -401,7 +449,7 @@ public class OfferController extends BaseController {
 		} catch (Exception e) {
 			return super.failedStr(model, ErrorCode.QUERY_MUST_OFFER, e, paramMap);
 		}
-		if(paramMap.get("enter")!=null){
+		if(paramMap.get(ENTER)!=null){
 			return "/app/order_new/attach-spec-new";
 		}
 	 	return "/app/offer/attach-spec";
@@ -421,11 +469,11 @@ public class OfferController extends BaseController {
 		try{
 			SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
 					SysConstant.SESSION_KEY_LOGIN_STAFF);	
-			paramMap.put("staffId", sessionStaff.getStaffId());
-			paramMap.put("channelId", sessionStaff.getCurrentChannelId());
-			paramMap.put("areaId", sessionStaff.getCurrentAreaId());
+			paramMap.put(STAFF_ID, sessionStaff.getStaffId());
+			paramMap.put(CHANNEL_ID, sessionStaff.getCurrentChannelId());
+			paramMap.put(AREA_ID, sessionStaff.getCurrentAreaId());
 			paramMap.put("partyId", sessionStaff.getCustId());
-			paramMap.put("queryType", "1,2");
+			paramMap.put(QUERY_TYPE, "1,2");
 			paramMap.put("objType", "2");
 			paramMap.put("objId", paramMap.get("prodSpecId"));
 			//paramMap =  JsonUtil.toObject(param, Map.class);
@@ -435,22 +483,22 @@ public class OfferController extends BaseController {
 			
 			//默认必开功能产品
 			Map<String, Object> openServMap = offerBmo.queryServSpec(paramMap,null,sessionStaff);
-			model.addAttribute("openServMap",openServMap);
-			model.addAttribute("openServMapJson", JsonUtil.buildNormal().objectToJson(openServMap));
+			model.addAttribute(OPEN_SERV_MAP,openServMap);
+			model.addAttribute(OPEN_SERV_MAP_JSON, JsonUtil.buildNormal().objectToJson(openServMap));
 			
 			//默认必开附属销售品
-			paramMap.remove("queryType");
+			paramMap.remove(QUERY_TYPE);
 			Map<String, Object> openMap = offerBmo.queryMustAttOffer(paramMap,null,sessionStaff);
-			model.addAttribute("openMap",openMap);
-			model.addAttribute("openMapJson", JsonUtil.buildNormal().objectToJson(openMap));
+			model.addAttribute(OPEN_MAP,openMap);
+			model.addAttribute(OPEN_MAP_JSON, JsonUtil.buildNormal().objectToJson(openMap));
 			
 			//可订购附属标签查询
 			Map<String, Object> labelMap = offerBmo.queryLabel(paramMap,null,sessionStaff);	
-			model.addAttribute("labelMap",labelMap);
-			model.addAttribute("labelMapJson", JsonUtil.buildNormal().objectToJson(labelMap));
+			model.addAttribute(LABEL_MAP,labelMap);
+			model.addAttribute(LABEL_MAP_JSON, JsonUtil.buildNormal().objectToJson(labelMap));
 			
-			model.addAttribute("prodId",paramMap.get("prodId"));
-			model.addAttribute("param",paramMap);
+			model.addAttribute(PROD_ID,paramMap.get(PROD_ID));
+			model.addAttribute(PARAM,paramMap);
 		} catch (BusinessException be) {
 			return super.failedStr(model, be);
 		} catch (InterfaceException ie) {
@@ -473,7 +521,7 @@ public class OfferController extends BaseController {
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
 				SysConstant.SESSION_KEY_LOGIN_STAFF);
 		JsonResponse jsonResponse = null;
-		paramMap.put("sysFlag", Const.APP_SEARCH_OFFER_SYSFLAG);//系统标识
+		paramMap.put(SYS_FLAG, Const.APP_SEARCH_OFFER_SYSFLAG);//系统标识
         try {
         	Map<String, Object> resMap = offerBmo.queryMustAttOffer(paramMap,null,sessionStaff);
         	jsonResponse = super.successed(resMap,ResultConstant.SUCCESS.getCode());
@@ -502,7 +550,7 @@ public class OfferController extends BaseController {
 		Map<String, Object> paramMap = null;
         try {
         	paramMap =  JsonUtil.toObject(param, Map.class);
-        	paramMap.put("sysFlag", Const.APP_SEARCH_OFFER_SYSFLAG);//系统标识
+        	paramMap.put(SYS_FLAG, Const.APP_SEARCH_OFFER_SYSFLAG);//系统标识
         	Map<String, Object> resMap = offerBmo.queryCanBuyAttachSpec(paramMap,null,sessionStaff);
         	jsonResponse = super.successed(resMap,ResultConstant.SUCCESS.getCode());
         } catch (BusinessException be) {
@@ -557,22 +605,22 @@ public class OfferController extends BaseController {
     				SysConstant.SESSION_KEY_LOGIN_STAFF);
         	paramMap =  JsonUtil.toObject(URLDecoder.decode(param,"utf-8"), Map.class);
         	//搜索可订购销售品
-        	paramMap.put("operatorsId", sessionStaff.getOperatorsId()!=""?sessionStaff.getOperatorsId():"99999");
-        	paramMap.put("sysFlag", Const.APP_SEARCH_OFFER_SYSFLAG);//系统标识
+        	paramMap.put(OPERATORS_ID, sessionStaff.getOperatorsId()!=""?sessionStaff.getOperatorsId():ID_99999);
+        	paramMap.put(SYS_FLAG, Const.APP_SEARCH_OFFER_SYSFLAG);//系统标识
     		Map<String, Object> offerMap = offerBmo.queryCanBuyAttachSpec(paramMap,null,sessionStaff);
     		List<Integer> specIds=new ArrayList<Integer>(); //存放已选择可选包或功能id
-    		if(paramMap.get("specIds")!=null){
-    			specIds=(List) paramMap.get("specIds");
+    		if(paramMap.get(SPEC_IDS)!=null){
+    			specIds=(List) paramMap.get(SPEC_IDS);
     		}
 			if (offerMap != null) {
-				Map result = (Map) offerMap.get("result");
+				Map result = (Map) offerMap.get(RESULT);
 				if (result != null) {
-					List<Map> offerSpecList = (List<Map>) result.get("offerSpecList");
+					List<Map> offerSpecList = (List<Map>) result.get(OFFER_SPEC_LIST);
 					List<Map> offerSpecList2 = new ArrayList<Map>();
 					for (Map offerSpec : offerSpecList) {
 						boolean flag=true;//未在已选择列表标志
 						for (int id : specIds) {
-							if ((id+"").equals(offerSpec.get("offerSpecId").toString())) {
+							if ((id+"").equals(offerSpec.get(OFFER_SPEC_ID).toString())) {
 								flag=false;
 								break;
 							}
@@ -581,8 +629,8 @@ public class OfferController extends BaseController {
 							offerSpecList2.add(offerSpec);
 						}
 					}
-					result.put("offerSpecList", offerSpecList2);
-					offerMap.put("result", result);
+					result.put(OFFER_SPEC_LIST, offerSpecList2);
+					offerMap.put(RESULT, result);
 				}
 				model.addAttribute("offerMap", offerMap);
 			}
@@ -590,7 +638,7 @@ public class OfferController extends BaseController {
     		paramMap.put("matchString", paramMap.get("offerSpecName"));
     		Map<String, Object> servMap = offerBmo.queryCanBuyServ(paramMap,null,sessionStaff);
 			if (servMap != null) {
-				Map result = (Map) servMap.get("result");
+				Map result = (Map) servMap.get(RESULT);
 				if (result != null) {
 					List<Map> serverSpecList = (List<Map>) result.get("servSpec");
 					List<Map> serverSpecList2 = new ArrayList<Map>();
@@ -607,14 +655,14 @@ public class OfferController extends BaseController {
 						}
 					}
 					result.put("servSpec", serverSpecList2);
-					servMap.put("result", result);
+					servMap.put(RESULT, result);
 				}
 				model.addAttribute("servMap", servMap);
 			}		
-        	model.addAttribute("param",paramMap);
-    		model.addAttribute("prodId",paramMap.get("prodId"));
-    		if(paramMap.get("yslflag")!=null){
-    			model.addAttribute("yslflag",paramMap.get("yslflag"));
+        	model.addAttribute(PARAM,paramMap);
+    		model.addAttribute(PROD_ID,paramMap.get(PROD_ID));
+    		if(paramMap.get(YSL_FLAG)!=null){
+    			model.addAttribute(YSL_FLAG,paramMap.get(YSL_FLAG));
     		}
         } catch (BusinessException be) {
         	return super.failedStr(model,be);
@@ -623,10 +671,10 @@ public class OfferController extends BaseController {
 		} catch (Exception e) {
 			return super.failedStr(model, ErrorCode.QUERY_MUST_OFFER, e, paramMap);
 		}
-        if(paramMap.get("enter")!=null){//新版ui
-        	return "/app/order_new/attach-offer-list";
+        if(paramMap.get(ENTER)!=null){//新版ui
+        	return newOfferListUrl;
         }
-		return "/app/offer/attach-offer-list";
+		return offerListUrl;
 	}
 	
 
@@ -674,16 +722,16 @@ public class OfferController extends BaseController {
 				SysConstant.SESSION_KEY_LOGIN_STAFF);
 		Map<String, Object> paramMap =  null;	
 		try{	
-			paramMap.put("sysFlag", Const.APP_SEARCH_OFFER_SYSFLAG);//系统标识
 			paramMap =  JsonUtil.toObject(param, Map.class);
+			paramMap.put(SYS_FLAG, Const.APP_SEARCH_OFFER_SYSFLAG);//系统标识
 			Map<String, Object> labelMap = offerBmo.queryLabel(paramMap,null,sessionStaff);	
-			model.addAttribute("labelMap",labelMap);
-			model.addAttribute("labelMapJson", JsonUtil.buildNormal().objectToJson(labelMap));
+			model.addAttribute(LABEL_MAP,labelMap);
+			model.addAttribute(LABEL_MAP_JSON, JsonUtil.buildNormal().objectToJson(labelMap));
 			Map<String, Object> openMap = offerBmo.queryAttachOffer(paramMap,null,sessionStaff);
-			model.addAttribute("openMap",openMap);
-			model.addAttribute("openMapJson", JsonUtil.buildNormal().objectToJson(openMap));
-			model.addAttribute("prodId",paramMap.get("prodId"));
-			model.addAttribute("param",paramMap);
+			model.addAttribute(OPEN_MAP,openMap);
+			model.addAttribute(OPEN_MAP_JSON, JsonUtil.buildNormal().objectToJson(openMap));
+			model.addAttribute(PROD_ID,paramMap.get(PROD_ID));
+			model.addAttribute(PARAM,paramMap);
 		} catch (BusinessException be) {
 			return super.failedStr(model,be);
 		} catch (InterfaceException ie) {
@@ -699,10 +747,10 @@ public class OfferController extends BaseController {
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
 				SysConstant.SESSION_KEY_LOGIN_STAFF);
 		JsonResponse jsonResponse = null;
-		paramMap.put("operatorsId", sessionStaff.getOperatorsId()!=""?sessionStaff.getOperatorsId():"99999");
-		paramMap.put("channelId", sessionStaff.getCurrentChannelId());
-		paramMap.put("areaId", sessionStaff.getAreaId());
-		paramMap.put("staffId", sessionStaff.getStaffId());
+		paramMap.put(OPERATORS_ID, sessionStaff.getOperatorsId()!=""?sessionStaff.getOperatorsId():ID_99999);
+		paramMap.put(CHANNEL_ID, sessionStaff.getCurrentChannelId());
+		paramMap.put(AREA_ID, sessionStaff.getAreaId());
+		paramMap.put(STAFF_ID, sessionStaff.getStaffId());
 		
         try {
 			//已订购附属销售品查询
@@ -734,9 +782,9 @@ public class OfferController extends BaseController {
         try {
         	paramMap =  JsonUtil.toObject(param, Map.class);
         	Map<String, Object> resMap = offerBmo.queryCanBuyAttachSpec(paramMap,null,sessionStaff);
-        	model.addAttribute("param",paramMap);
+        	model.addAttribute(PARAM,paramMap);
         	model.addAttribute("canMap",resMap);
-        	model.addAttribute("prodId",paramMap.get("prodId"));
+        	model.addAttribute(PROD_ID,paramMap.get(PROD_ID));
         } catch (BusinessException be) {
 			return super.failedStr(model,be);
 		} catch (InterfaceException ie) {
@@ -763,9 +811,9 @@ public class OfferController extends BaseController {
         	Map<String, Object> resMap = offerBmo.addMyfavorite(paramMap,null,sessionStaff);
         	if(ResultCode.R_SUCC.equals(resMap.get("resultCode")+"")){
         		if(paramMap.get("main")!=null){//刷新收藏的主套餐ids
-        			String ids = httpSession.getAttribute("OfferIds").toString();
-        			ids += paramMap.get("offerSpecId").toString()+",";
-        			httpSession.setAttribute("OfferIds", ids);
+        			String ids = httpSession.getAttribute(OFFER_IDS).toString();
+        			ids += paramMap.get(OFFER_SPEC_ID).toString()+",";
+        			httpSession.setAttribute(OFFER_IDS, ids);
         		}
 				jsonResponse = super.successed(resMap,
 						ResultConstant.SUCCESS.getCode());
@@ -799,10 +847,10 @@ public class OfferController extends BaseController {
         	Map<String, Object> resMap = offerBmo.delMyfavorite(paramMap,null,sessionStaff);
         	jsonResponse = super.successed(resMap,ResultConstant.SUCCESS.getCode());
         	if(paramMap.get("main")!=null){//刷新收藏的主套餐ids
-    			String ids = httpSession.getAttribute("OfferIds").toString();
-    			String id = paramMap.get("offerSpecId").toString()+",";
+    			String ids = httpSession.getAttribute(OFFER_IDS).toString();
+    			String id = paramMap.get(OFFER_SPEC_ID).toString()+",";
     			ids = ids.replace(id,"");
-    			httpSession.setAttribute("OfferIds", ids);
+    			httpSession.setAttribute(OFFER_IDS, ids);
     		}
         } catch (BusinessException be) {
         	return super.failed(be);
@@ -828,8 +876,8 @@ public class OfferController extends BaseController {
 		Map<String, Object> paramMap = null;
         try {
         	paramMap =  JsonUtil.toObject(param, Map.class);
-        	paramMap.put("sysFlag", Const.APP_SEARCH_OFFER_SYSFLAG);//系统标识
-        	paramMap.put("operatorsId", sessionStaff.getOperatorsId()!=""?sessionStaff.getOperatorsId():"99999");
+        	paramMap.put(SYS_FLAG, Const.APP_SEARCH_OFFER_SYSFLAG);//系统标识
+        	paramMap.put(OPERATORS_ID, sessionStaff.getOperatorsId()!=""?sessionStaff.getOperatorsId():ID_99999);
         	Map<String, Object> resMap = offerBmo.queryMyfavorite(paramMap,null,sessionStaff);
         	jsonResponse = super.successed(resMap,ResultConstant.SUCCESS.getCode());
         } catch (BusinessException be) {
@@ -860,10 +908,10 @@ public class OfferController extends BaseController {
 			if (MapUtils.isNotEmpty(mktRes) && ResultCode.R_SUCC.equals(mktRes.get("code"))) {
 				paramMap.put("mktResCd",mktRes.get("mktResId"));
 			}else{
-				if(paramMap.get("enter")!=null){//新版ui
-		        	return "/app/order_new/attach-offer-list";
+				if(paramMap.get(ENTER)!=null){//新版ui
+		        	return newOfferListUrl;
 		        }
-				return "/app/offer/attach-offer-list";
+				return offerListUrl;
 			}
 		} catch (BusinessException be) {
 			return super.failedStr(model,be);
@@ -875,22 +923,22 @@ public class OfferController extends BaseController {
         try {
 			paramMap.put("agreementType","");
 			Map<String, Object> offerByMtkResCdMap = mktResBmo.queryOfferByMtkResCd(paramMap, flowNum, sessionStaff);
-			if(paramMap.get("yslflag")!=null){
-    			model.addAttribute("yslflag",paramMap.get("yslflag"));
+			if(paramMap.get(YSL_FLAG)!=null){
+    			model.addAttribute(YSL_FLAG,paramMap.get(YSL_FLAG));
     		}
 			List<Integer> specIds=new ArrayList<Integer>(); //存放已选择可选包或功能id
-    		if(paramMap.get("specIds")!=null){
-    			specIds=(List) paramMap.get("specIds");
+    		if(paramMap.get(SPEC_IDS)!=null){
+    			specIds=(List) paramMap.get(SPEC_IDS);
     		}
 			if (offerByMtkResCdMap != null) {
-				Map result = (Map) offerByMtkResCdMap.get("result");
+				Map result = (Map) offerByMtkResCdMap.get(RESULT);
 				if (result != null) {
 					List<Map> offerSpecList = (List<Map>) result.get("agreementOfferList");
 					List<Map> offerSpecList2 = new ArrayList<Map>();
 					for (Map offerSpec : offerSpecList) {
 						boolean flag=true;//未在已选择列表标志
 						for (int id : specIds) {
-							if ((id+"").equals(offerSpec.get("offerSpecId").toString())) {
+							if ((id+"").equals(offerSpec.get(OFFER_SPEC_ID).toString())) {
 								flag=false;
 								break;
 							}
@@ -899,8 +947,8 @@ public class OfferController extends BaseController {
 							offerSpecList2.add(offerSpec);
 						}
 					}
-					result.put("offerSpecList", offerSpecList2);
-					offerByMtkResCdMap.put("result", result);
+					result.put(OFFER_SPEC_LIST, offerSpecList2);
+					offerByMtkResCdMap.put(RESULT, result);
 				}
 				model.addAttribute("offerByMtkResCdMap", offerByMtkResCdMap);
 			}
@@ -911,10 +959,10 @@ public class OfferController extends BaseController {
 		} catch (Exception e) {
 			return super.failedStr(model, ErrorCode.QUERY_MUST_OFFER, e, paramMap);
 		}
-        if(paramMap.get("enter")!=null){//新版ui
-        	return "/app/order_new/attach-offer-list";
+        if(paramMap.get(ENTER)!=null){//新版ui
+        	return newOfferListUrl;
         }
-		return "/app/offer/attach-offer-list";
+		return offerListUrl;
 	}
 
 	/**
@@ -928,9 +976,9 @@ public class OfferController extends BaseController {
     public JsonResponse queryGiftPackageSpec(@RequestParam Map<String, Object> paramMap,Model model){
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
 				SysConstant.SESSION_KEY_LOGIN_STAFF);
-		paramMap.put("areaId", sessionStaff.getCurrentAreaId());
-		paramMap.put("channelId", sessionStaff.getCurrentChannelId());
-		paramMap.put("staffId", sessionStaff.getStaffId());
+		paramMap.put(AREA_ID, sessionStaff.getCurrentAreaId());
+		paramMap.put(CHANNEL_ID, sessionStaff.getCurrentChannelId());
+		paramMap.put(STAFF_ID, sessionStaff.getStaffId());
         Map<String, Object> resMap = null;
         JsonResponse jsonResponse = null;
         try {
@@ -960,13 +1008,13 @@ public class OfferController extends BaseController {
 			SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);	
 			
 			paramMap =  JsonUtil.toObject(param, Map.class);
-			paramMap.put("sysFlag", Const.APP_SEARCH_OFFER_SYSFLAG);//系统标识
+			paramMap.put(SYS_FLAG, Const.APP_SEARCH_OFFER_SYSFLAG);//系统标识
 			//默认必开功能产品
 			Map<String, Object> openServMap = offerBmo.queryServSpec(paramMap,null,sessionStaff);
-			model.addAttribute("openServMap",openServMap);
-			model.addAttribute("openServMapJson", JsonUtil.buildNormal().objectToJson(openServMap));			
-			model.addAttribute("prodId",paramMap.get("prodId"));	
-			model.addAttribute("param",paramMap);
+			model.addAttribute(OPEN_SERV_MAP,openServMap);
+			model.addAttribute(OPEN_SERV_MAP_JSON, JsonUtil.buildNormal().objectToJson(openServMap));			
+			model.addAttribute(PROD_ID,paramMap.get(PROD_ID));	
+			model.addAttribute(PARAM,paramMap);
 		} catch (BusinessException be) {
 			return super.failedStr(model, be);
 		} catch (InterfaceException ie) {
