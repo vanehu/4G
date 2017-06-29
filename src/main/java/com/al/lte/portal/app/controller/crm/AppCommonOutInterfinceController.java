@@ -129,118 +129,22 @@ public class AppCommonOutInterfinceController extends BaseController{
 		JSONObject jasonObject = JSONObject.fromObject(postData);
 		Map<String, Object> param = new HashMap<String, Object>();
 		param = (Map<String, Object>) jasonObject;
-		if (param.get("sign") == null || "".equals(param.get("sign"))) {// 参数为空校验
-			resultMsg.put(SUCCESS, FALSE); // true:成功，false:失败
-			resultMsg.put("data", "签名串为空！");
-			rwtMsg = JsonUtil.toString(resultMsg);
-			return rwtMsg;
+		resultMsg=checkChargeParam(param,resultMsg);
+		if(!"0".equals(resultMsg.get("data"))){//校验不通过
+			return JsonUtil.toString(resultMsg);
 		}
-		if (param.get("olId") == null || "".equals(param.get("olId").toString())) {// 参数为空校验
-			resultMsg.put(SUCCESS, FALSE); // true:成功，false:失败
-			resultMsg.put("data", "购物车id为空！");
-			rwtMsg = JsonUtil.toString(resultMsg);
-			return rwtMsg;
-		}
-		if (param.get(PAY_METHODCD) == null || "".equals(param.get(PAY_METHODCD).toString())) {
-			resultMsg.put(SUCCESS, FALSE); // true:成功，false:失败
-			resultMsg.put("data", "支付方式为空！");
-			rwtMsg = JsonUtil.toString(resultMsg);
-			return rwtMsg;
-		}
-		if (param.get(PAY_MOUNT) == null || "".equals(param.get(PAY_MOUNT).toString())) {
-			resultMsg.put(SUCCESS, FALSE); // true:成功，false:失败
-			resultMsg.put("data", "收费金额为空！");
-			rwtMsg = JsonUtil.toString(resultMsg);
-			return rwtMsg;
-		}
-		//将olId、支付方式和收费金额存入redis，表示支付成功
-		RedisUtil.set("app_status_"+param.get("olId").toString(), "0");
-		RedisUtil.set("app_payCode_"+param.get("olId").toString(), param.get(PAY_METHODCD).toString());
-		RedisUtil.set("app_payAmount_"+param.get("olId").toString(), param.get(PAY_MOUNT).toString());
-		// 签名校验
-		String signKey = param.get("olId") + "1000000244";
-		String sign = AESUtils.getMD5Str(signKey);
-		if (!sign.equals(param.get("sign"))) {
-			resultMsg.put(SUCCESS, FALSE); // true:成功，false:失败
-			resultMsg.put("data", "签名不一致！");
-			rwtMsg = JsonUtil.toString(resultMsg);
-			return rwtMsg;
-		}		
-		if (param.get(AREA_ID) == null || "".equals(param.get(AREA_ID).toString())) {
-			resultMsg.put(SUCCESS, FALSE); // true:成功，false:失败
-			resultMsg.put("data", "地区id为空！");
-			rwtMsg = JsonUtil.toString(resultMsg);
-			return rwtMsg;
-		}
-		if (param.get(CHARGE_ITEMS) == null || "".equals(param.get(CHARGE_ITEMS).toString())) {
-			resultMsg.put(SUCCESS, "true"); // true:成功，false:失败
-			resultMsg.put("data", "费用项为空！");
-			rwtMsg = JsonUtil.toString(resultMsg);
-			return rwtMsg;
-		}
-		List<Map> chargeItems=new ArrayList();
-		Map<String, Object> rMap = null;
+		List<Map> chargeItems;
 		chargeItems=(List) param.get(CHARGE_ITEMS);
-		if(chargeItems.size()>0){
-			if(chargeItems.get(0).get("acctItemId")!=null){//用于判断费用项是否为空
-				for(Map<String, Object> map:chargeItems){
-					map.put(PAY_METHODCD, param.get(PAY_METHODCD).toString());
-					String objInstId=map.get("objInstId").toString();//将[]转为""
-					String posSeriaNbr=map.get("posSeriaNbr").toString();
-					String prodId=map.get("prodId").toString();
-					String remark=map.get("remark").toString();
-					String terminalNo=map.get("terminalNo").toString();
-					if("[]".equals(objInstId)){
-						map.put("objInstId", "");
-					}
-					if("[]".equals(posSeriaNbr)){
-						map.put("posSeriaNbr", "");
-					}
-					if("[]".equals(prodId)){
-						map.put("prodId", "");
-					}
-					if("[]".equals(remark)){
-						map.put("remark", "");
-					}
-					if("[]".equals(terminalNo)){
-						map.put("terminalNo", "");
-					}
-				}
-			}else{
-				JSONArray jsonarray=new JSONArray();
-				param.put(CHARGE_ITEMS, jsonarray);//空费用项
+		if(!chargeItems.isEmpty()){
+			if (chargeItems.get(0).get("acctItemId") != null) {// 用于判断费用项是否为空
+				chargeItems=transChargeItems(chargeItems, param);
+				param.put(CHARGE_ITEMS, chargeItems);// 重设费用项
+			}else {
+				JSONArray jsonarray = new JSONArray();
+				param.put(CHARGE_ITEMS, jsonarray);// 空费用项
 			}
-			if(chargeItems.get(0).get(SO_NBR)!=null){
-				String soNbr=chargeItems.get(0).get(SO_NBR).toString();
-				param.put(SO_NBR, soNbr);
-				try {
-					//添加app标志
-					request.getSession().setAttribute(SysConstant.SESSION_KEY_APP_FLAG,"1");
-					rMap = orderBmo.chargeSubmit(param, null, null);
-					if (rMap != null && ResultCode.R_SUCCESS.equals(rMap.get("code").toString())) {
-						resultMsg.put(SUCCESS, "true"); // true:成功，false:失败
-						resultMsg.put("data", "调用收费接口成功，收费完成！"); // 返回信息0成功，1失败
-						rwtMsg = JsonUtil.toString(resultMsg);
-						return rwtMsg;
-					} else {
-						resultMsg.put(SUCCESS, "true"); // true:成功，false:失败
-						resultMsg.put("data", "调用收费接口成功，收费失败！");
-						rwtMsg = JsonUtil.toString(resultMsg);
-						return rwtMsg;
-					}
-					
-				} catch (Exception e) {
-					resultMsg.put(SUCCESS, "true"); // true:成功，false:失败
-					resultMsg.put("data", "请求失败，下计费接口出错！"); // 返回信息0成功，1失败
-					rwtMsg = JsonUtil.toString(resultMsg);
-					return rwtMsg;
-				}
-			}else{
-				resultMsg.put(SUCCESS, "true"); // true:成功，false:失败
-				resultMsg.put("data", "请求参数不完整，soNbr为空！"); // 返回信息0成功，1失败
-				rwtMsg = JsonUtil.toString(resultMsg);
-				return rwtMsg;
-			}
+			resultMsg=chargeSubmit(request,chargeItems,param,resultMsg);
+			return JsonUtil.toString(resultMsg);
 		}
 		resultMsg.put(SUCCESS, "true"); // true:成功，false:失败
 		resultMsg.put("data", "请求参数不完整，chargeItems为空！"); 
@@ -532,6 +436,117 @@ public class AppCommonOutInterfinceController extends BaseController{
 						//super.failed(ErrorCode.QUERY_STAFF_INFO, e, reqMap);
 			}
 			return jo;
+	}
+	
+	 /**
+	 * 支付回调参数校验
+	 * @return
+	 */
+	private Map<String, Object> checkChargeParam(Map<String, Object> param,Map<String, Object> resultMsg) {
+		if (param.get("sign") == null || "".equals(param.get("sign"))) {// 参数为空校验
+			resultMsg.put(SUCCESS, FALSE); // true:成功，false:失败
+			resultMsg.put("data", "签名串为空！");
+			return resultMsg;
+		}
+		if (param.get("olId") == null || "".equals(param.get("olId").toString())) {// 参数为空校验
+			resultMsg.put(SUCCESS, FALSE); // true:成功，false:失败
+			resultMsg.put("data", "购物车id为空！");
+			return resultMsg;
+		}
+		if (param.get(PAY_METHODCD) == null || "".equals(param.get(PAY_METHODCD).toString())) {
+			resultMsg.put(SUCCESS, FALSE); // true:成功，false:失败
+			resultMsg.put("data", "支付方式为空！");
+			return resultMsg;
+		}
+		if (param.get(PAY_MOUNT) == null || "".equals(param.get(PAY_MOUNT).toString())) {
+			resultMsg.put(SUCCESS, FALSE); // true:成功，false:失败
+			resultMsg.put("data", "收费金额为空！");
+			return resultMsg;
+		}
+		// 将olId、支付方式和收费金额存入redis，表示支付成功
+		RedisUtil.set("app_status_" + param.get("olId").toString(), "0");
+		RedisUtil.set("app_payCode_" + param.get("olId").toString(), param.get(PAY_METHODCD).toString());
+		RedisUtil.set("app_payAmount_" + param.get("olId").toString(), param.get(PAY_MOUNT).toString());
+		// 签名校验
+		String signKey = param.get("olId") + "1000000244";
+		String sign = AESUtils.getMD5Str(signKey);
+		if (!sign.equals(param.get("sign"))) {
+			resultMsg.put(SUCCESS, FALSE); // true:成功，false:失败
+			resultMsg.put("data", "签名不一致！");
+			return resultMsg;
+		}
+		if (param.get(AREA_ID) == null || "".equals(param.get(AREA_ID).toString())) {
+			resultMsg.put(SUCCESS, FALSE); // true:成功，false:失败
+			resultMsg.put("data", "地区id为空！");
+			return resultMsg;
+		}
+		if (param.get(CHARGE_ITEMS) == null || "".equals(param.get(CHARGE_ITEMS).toString())) {
+			resultMsg.put(SUCCESS, "true"); // true:成功，false:失败
+			resultMsg.put("data", "费用项为空！");
+			return resultMsg;
+		}
+		resultMsg.put(SUCCESS, "true"); // true:成功，false:失败
+		resultMsg.put("data", "0");//表示允许下计费接口
+		return resultMsg;
+	}
+	
+	/**
+	 * 转化费用项[]为""
+	 * 
+	 */
+	private List<Map> transChargeItems(List<Map> chargeItems,Map<String, Object> param) {
+			for (Map<String, Object> map : chargeItems) { 
+				map.put(PAY_METHODCD, param.get(PAY_METHODCD).toString());
+				String objInstId = map.get("objInstId").toString();// 将[]转为""
+				String posSeriaNbr = map.get("posSeriaNbr").toString();
+				String prodId = map.get("prodId").toString();
+				String remark = map.get("remark").toString();
+				String terminalNo = map.get("terminalNo").toString();
+				if ("[]".equals(objInstId)) map.put("objInstId", "");
+				if ("[]".equals(posSeriaNbr)) map.put("posSeriaNbr", "");
+				if ("[]".equals(prodId)) map.put("prodId", "");
+				if ("[]".equals(remark)) map.put("remark", "");
+				if ("[]".equals(terminalNo)) map.put("terminalNo", "");
+			}
+		return chargeItems;
+	}
+	
+	
+	/**
+	 * web端下收费建档接口
+	 * 
+	 * @return
+	 */
+	private Map<String, Object> chargeSubmit(HttpServletRequest request,List<Map> chargeItems,Map<String, Object> param,Map<String, Object> resultMsg) {
+		Map<String, Object> rMap = null;
+		if (chargeItems.get(0).get(SO_NBR) != null) {
+			String soNbr = chargeItems.get(0).get(SO_NBR).toString();
+			param.put(SO_NBR, soNbr);
+			try {
+				// 添加app标志
+				request.getSession().setAttribute(SysConstant.SESSION_KEY_APP_FLAG, "1");
+				rMap = orderBmo.chargeSubmit(param, null, null);
+				if (rMap != null && ResultCode.R_SUCCESS.equals(rMap.get("code").toString())) {
+					resultMsg.put(SUCCESS, "true"); // true:成功，false:失败
+					resultMsg.put("data", "调用收费接口成功，收费完成！"); // 返回信息0成功，1失败
+					return resultMsg;
+				} else {
+					resultMsg.put(SUCCESS, "true"); // true:成功，false:失败
+					resultMsg.put("data", "调用收费接口成功，收费失败！");
+					return resultMsg;
+				}
+
+			} catch (Exception e) {
+				log.error(e);
+				resultMsg.put(SUCCESS, "true"); // true:成功，false:失败
+				resultMsg.put("data", "请求失败，下计费接口出错！"); // 返回信息0成功，1失败
+				return resultMsg;
+			}
+		} else {
+			resultMsg.put(SUCCESS, "true"); // true:成功，false:失败
+			resultMsg.put("data", "请求参数不完整，soNbr为空！"); // 返回信息0成功，1失败
+			return resultMsg;
+		}
 	}
 
 }
