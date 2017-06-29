@@ -131,7 +131,7 @@ cert = (function() {
 	    		    var url = contextPath + "/order/certUnifyInfo";
 				    var response = $.callServiceAsJson(url,man);
 				    if (response.code == 0) {
-				    	// OrderInfo.pushCertReaderCustInfos(man.resultContent);
+				    	_recordCertReaderCustInfos(response.data);
 				    	man = {"resultFlag": 0, "errorMsg": "读卡成功", "resultContent": response.data};
 				    }else if(response.code == -2){// 控件版本号不一致，统一控件更新
 				        CertCtl.updateVersion();
@@ -177,7 +177,7 @@ cert = (function() {
 	    		    url = contextPath + "/order/certInfo";
 				    var response = $.callServiceAsJson(url,JSON.stringify(certInfo));
 				    if (response.code == 0) {
-				    	// OrderInfo.pushCertReaderCustInfos(certInfo);
+				    	_recordCertReaderCustInfos(certInfo);
 				    	man = {"resultFlag": 0, "errorMsg": "读卡成功", "resultContent": response.data};
 				    }else if(response.code == -3){
 				    	man = {"resultFlag": -3, "errorMsg": "控件版本不一致,您当前为"+response.data.fileName+"读卡器,驱动版本号为:"+ver.versionSerial+"请更新升级到版本:"+response.data.mdaVersion+"请下载新的控件","resultContent": response.data};
@@ -257,7 +257,7 @@ cert = (function() {
 				response = $.callServiceAsJson(url, JSON.stringify(params));
 				if (0 == response.code) {
 					response.data.servCode = servCode;
-					// OrderInfo.pushCertReaderCustInfos(response.data);
+					 _recordCertReaderCustInfos(response.data);
 					man = {"resultFlag": 0, "errorMsg": "读卡成功", "resultContent": response.data};
 				} else if(1 == response.code){
 					man = {"resultFlag": -1, "errorMsg": response.data};
@@ -291,73 +291,87 @@ cert = (function() {
 	};
 	
 	//处理订单数据
-	var _recordCertReaderCustInfos = function(){
-		var resultFlag = false;
-		
-		if(ec.util.isArray(OrderInfo.certReaderCustInfos)){
-			var param = {
-				"certInfos":OrderInfo.certReaderCustInfos
-			};
+	var _recordCertReaderCustInfos = function(certInfo){
+		if(ec.util.isObj(certInfo)){
+			var param = {"certInfos":[certInfo]};
 			try{
-				var response= $.callServiceAsJson(contextPath + "/cert/recordCertReaderCustInfos", param);
-				if(response.code == 0 && response.data){
-					OrderInfo.certInfoKeys = [];
-					var certResults = response.data.certResults;
-					
-					if(ec.util.isArray(certResults)){
-						$.each(certResults, function(index, certResult){
-							if(certResult.certInfoId != -1){
-								_fillupOrderInfoCertReaderCustInfos();
-								_fillupOrderInfoCertInfoKeys(certResult);
-								resultFlag = true;
-							} else{
-								resultFlag = false;
-								return resultFlag;
-							}
-						});
+				$.callServiceAsJson(contextPath + "/cert/recordCertReaderCustInfos", param, {
+					"done" : function(response) {
+						if(response.code == 0 && response.data){
+							_fillupOrderInfoCertInfoKeys(response.data.certResults);
+						}
+					},
+					"fail" : function(response) {
+						window.console && window.console.log && (console.log("%crecordCertReaderCustInfos异常：" + e, "color:red"));
 					}
-					
-					if(ec.util.isArray(OrderInfo.certInfoKeys)){
-						OrderInfo.orderData.orderList.orderListInfo.certInfoKeys = OrderInfo.certInfoKeys;
-					}
-				}
+				});
 			} catch(e){
 				window.console && window.console.log && (console.log("%crecordCertReaderCustInfos异常：" + e, "color:red"));
 			}
 		}
-		
-		return resultFlag;
-	};
-	
-	//OrderInfo.certReaderCustInfos补充数据
-	var _fillupOrderInfoCertReaderCustInfos = function(){
-		//填充客户的custId
-		OrderInfo.fillupPartyId2CertReaderCustInfos(OrderInfo.cust.idCardNumber, OrderInfo.cust.custId);
-		
-		$.each(OrderInfo.certReaderCustInfos, function(index, certReaderCustInfo){
-			if(!ec.util.isObj(certReaderCustInfo.partyId)){
-				//没有partyId，使用报文中C1节点的虚拟客户ID替代
-				$.each(OrderInfo.orderData.orderList, function(index, busiOrder){
-					if(busiOrder.boActionType.boActionTypeCd == "C1"){
-						if(busiOrder.data.boCustIdentities[0].identityNum == certReaderCustInfo.certNumber){
-							certReaderCustInfo.partyId = busiOrder.busiObj.instId;
-						}
-					}
-				});
-			}
-		});
 	};
 	//OrderInfo.certInfoKeys补充数据
 	var _fillupOrderInfoCertInfoKeys = function(certResults){
-		if(ec.util.isArray(OrderInfo.certReaderCustInfos)){
-			$.each(OrderInfo.certReaderCustInfos, function(index, certReaderCustInfo){
-				if(certResult.certNumber == certReaderCustInfo.certNumber){
-					OrderInfo.certInfoKeys.push({
+		if(ec.util.isArray(certResults)){
+			$.each(certResults, function(index, certResult){
+				if(certResult.certInfoId != -1 && certResults.certNumber != -1){
+					OrderInfo.pushCertInfoKeys({
+						"certNumber":certResult.certNumber,
 						"certInfoId":certResult.certInfoId,
-						"partyId":certReaderCustInfo.partyId
+						"partyId":""
 					});
 				}
 			});
+		}
+	};
+	//兼容脱敏
+	var _fillupPartyId2CertReaderCustInfos = function(identityNum, custId){
+		
+		if(!(ec.util.isObj(identityNum) && ec.util.isObj(custId))){
+			return;
+		}
+
+		if(ec.util.isArray(OrderInfo.certInfoKeys)){
+			var custIdStr 		= new String(custId);
+			var identityNumStr 	= new String(identityNum);
+			var length			= identityNumStr.length;
+			var fromIndex 		= identityNumStr.indexOf("*");
+			var lastIndex 		= identityNumStr.lastIndexOf("*");
+			
+			var subIdentityNumStr = identityNumStr.substring(0, fromIndex) + identityNumStr.substring(lastIndex + 1, length);
+			
+			$.each(OrderInfo.certInfoKeys, function(){
+				var certNumberStr = new String(this.certNumber);
+				var subCertNumberStr = certNumberStr.substring(0, fromIndex) + certNumberStr.substring(lastIndex + 1, length);
+				if(subCertNumberStr == subIdentityNumStr){
+					this.partyId = custId;
+				}
+			});
+		}
+	};
+	var _fillupOrderInfoCertReaderCustInfos = function(){
+		try{
+			//老客户数据填充
+			_fillupPartyId2CertReaderCustInfos(OrderInfo.cust.idCardNumber, OrderInfo.cust.custId);
+			//新客户数据填充
+			if(ec.util.isArray(OrderInfo.certInfoKeys)){
+				$.each(OrderInfo.certInfoKeys, function(index, certInfoKey){
+					if(!ec.util.isObj(certInfoKey.partyId)){
+						//没有partyId，使用报文中C1节点的虚拟客户ID替代
+						$.each(OrderInfo.orderData.orderList, function(index, busiOrder){
+							if(busiOrder.boActionType.boActionTypeCd == "C1"){
+								if(busiOrder.data.boCustIdentities[0].identityNum == certInfoKey.certNumber){
+									certInfoKey.partyId = busiOrder.busiObj.instId;
+								}
+							}
+						});
+					}
+				});
+				
+				OrderInfo.orderData.orderList.orderListInfo.certInfoKeys = OrderInfo.certInfoKeys;
+			}
+		} catch(e){
+			window.console && window.console.log && (console.log("%cfillupOrderInfoCertReaderCustInfos异常：" + e, "color:red"));
 		}
 	};
 	
@@ -369,7 +383,8 @@ cert = (function() {
 		createImage		: _createImage,
 		closeVideo		: _closeVideo,
 		setReaderAreaId	:_setReaderAreaId,
-		recordCertReaderCustInfos:_recordCertReaderCustInfos
+		fillupPartyId2CertReaderCustInfos:_fillupPartyId2CertReaderCustInfos,
+		fillupOrderInfoCertReaderCustInfos:_fillupOrderInfoCertReaderCustInfos
 	};
 })();
 $(function(){

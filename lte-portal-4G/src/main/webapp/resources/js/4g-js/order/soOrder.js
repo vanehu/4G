@@ -118,7 +118,8 @@ SoOrder = (function() {
 				if (OrderInfo.custCreateToken !== undefined || OrderInfo.custCreateToken !== "") {
 					OrderInfo.orderData.token = OrderInfo.custCreateToken;
 				}
-				cert.recordCertReaderCustInfos();//读卡记录失败继续受理
+				//读卡记录失败继续受理，不影响业务
+				cert.fillupOrderInfoCertReaderCustInfos();
 				async = true;
 				$.callServiceAsJson(url,JSON.stringify(OrderInfo.orderData), {
 					"before":function(){
@@ -4253,9 +4254,8 @@ SoOrder = (function() {
 					}
 				}
 			}
-		}
-
-
+		};
+	
 	//创建经办人节点
 	var _createHandleCust = function(busiOrders) {
 		var busiOrder = {

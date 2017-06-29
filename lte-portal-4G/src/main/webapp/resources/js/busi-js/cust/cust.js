@@ -3438,7 +3438,7 @@ order.cust = (function(){
 	};
 
 	//处理经办人查询结果
-	var _getResponseResult = function(response, identityNum){
+	var _getResponseResult = function(response, originIdentityNum){
 		//经办人信息填写模块信息保护优化
 		 _disableHandleCustInfos();
 		//判断新老用户封装用户信息
@@ -3463,7 +3463,7 @@ order.cust = (function(){
 			}
 			//填充读卡信息
 			if (custInfo.identityCd == 1) {
-				OrderInfo.fillupPartyId2CertReaderCustInfos(identityNum, custInfo.custId);
+				cert.fillupPartyId2CertReaderCustInfos(originIdentityNum, custInfo.custId);
 			};
 		} else{
 			//实名信息采集单受理自动新建
@@ -4109,7 +4109,7 @@ order.cust = (function(){
 		 }
 		 uploadCustCertificate(params, callBackFuncMust, callBackFuncOption);
 	};
-	var uploadCustCertificate = function(params){
+	var uploadCustCertificate = function(params, callBackFuncMust, callBackFuncOption){
 		    $.ecOverlay("<strong>正在处理中, 请稍等...</strong>");
 			var response = $.callServiceAsJson(contextPath + "/cust/uploadCustCertificate", params);
 			$.unecOverlay();
