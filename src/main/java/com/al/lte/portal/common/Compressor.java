@@ -39,6 +39,14 @@ public class Compressor {
 	public static final boolean DEF_VERBOSE = false;
 	public static final boolean DEF_PRESERVE = false;
 	public static final boolean DEF_DISABLE = false;
+	
+	private static String OUTPUT="output:";
+	
+	private static String INPUT="input :";
+	
+	private static String ALL_JS=".all.js";
+	
+	private static String ALL_JS_1="-1.0.0.all.js";
 
 	public static void main(String[] args) {
 		
@@ -54,9 +62,9 @@ public class Compressor {
 		String inputFileListName = "resources/merge/js/thirdJsList.txt";
 		String outputFilename = "resources/merge/js/third";
 		if (StringUtils.isEmpty(version)) {
-			outputFilename += "-1.0.0.all.js";
+			outputFilename += ALL_JS_1;
 		} else {
-			outputFilename += "-" + version + ".all.js";
+			outputFilename += "-" + version + ALL_JS;
 		}
 		int combineResult = combine(inputFileListName, outputFilename);
 		if (combineResult == 0) {
@@ -69,9 +77,9 @@ public class Compressor {
 		String inputFileListName = "resources/merge/js/thirdPADJsList.txt";
 		String outputFilename = "resources/merge/js/thirdPAD";
 		if (StringUtils.isEmpty(version)) {
-			outputFilename += "-1.0.0.all.js";
+			outputFilename += ALL_JS_1;
 		} else {
-			outputFilename += "-" + version + ".all.js";
+			outputFilename += "-" + version + ALL_JS;
 		}
 		int combineResult = combine(inputFileListName, outputFilename);
 		if (combineResult == 0) {
@@ -84,9 +92,9 @@ public class Compressor {
 		String inputFileListName = "resources/merge/js/thirdPCJsList.txt";
 		String outputFilename = "resources/merge/js/thirdPC";
 		if (StringUtils.isEmpty(version)) {
-			outputFilename += "-1.0.0.all.js";
+			outputFilename += ALL_JS_1;
 		} else {
-			outputFilename += "-" + version + ".all.js";
+			outputFilename += "-" + version + ALL_JS;
 		}
 		int combineResult = combine(inputFileListName, outputFilename);
 		if (combineResult == 0) {
@@ -99,9 +107,9 @@ public class Compressor {
 		String inputFileListName = "resources/merge/js/baseJsList.txt";
 		String outputFilename = "resources/merge/js/base";
 		if (StringUtils.isEmpty(version)) {
-			outputFilename += "-1.0.0.all.js";
+			outputFilename += ALL_JS_1;
 		} else {
-			outputFilename += "-" + version + ".all.js";
+			outputFilename += "-" + version + ALL_JS;
 		}
 		int result = combine(inputFileListName, outputFilename);
 		if (result == 0) {
@@ -114,9 +122,9 @@ public class Compressor {
 		String inputFileListName = "resources/merge/js/busiJsList.txt";
 		String outputFilename = "resources/merge/js/busi";
 		if (StringUtils.isEmpty(version)) {
-			outputFilename += "-1.0.0.all.js";
+			outputFilename += ALL_JS_1;
 		} else {
-			outputFilename += "-" + version + ".all.js";
+			outputFilename += "-" + version + ALL_JS;
 		}
 		int result = combine(inputFileListName, outputFilename);
 		if (result == 0) {
@@ -129,9 +137,9 @@ public class Compressor {
 		String inputFileListName = "resources/merge/js/busiPCJsList.txt";
 		String outputFilename = "resources/merge/js/busiPC";
 		if (StringUtils.isEmpty(version)) {
-			outputFilename += "-1.0.0.all.js";
+			outputFilename += ALL_JS_1;
 		} else {
-			outputFilename += "-" + version + ".all.js";
+			outputFilename += "-" + version + ALL_JS;
 		}
 		int result = combine(inputFileListName, outputFilename);
 		if (result == 0) {
@@ -144,9 +152,9 @@ public class Compressor {
 		String inputFileListName = "resources/merge/js/busiAPPJsList.txt";
 		String outputFilename = "resources/merge/js/busiAPP";
 		if (StringUtils.isEmpty(version)) {
-			outputFilename += "-1.0.0.all.js";
+			outputFilename += ALL_JS_1;
 		} else {
-			outputFilename += "-" + version + ".all.js";
+			outputFilename += "-" + version + ALL_JS;
 		}
 		int result = combine(inputFileListName, outputFilename);
 		if (result == 0) {
@@ -160,9 +168,9 @@ public class Compressor {
 		String inputFileListName = "resources/merge/js/busiAppMemJsList.txt";
 		String outputFilename = "resources/merge/js/busiAppMem";
 		if (StringUtils.isEmpty(version)) {
-			outputFilename += "-1.0.0.all.js";
+			outputFilename += ALL_JS_1;
 		} else {
-			outputFilename += "-" + version + ".all.js";
+			outputFilename += "-" + version + ALL_JS;
 		}
 		int result = combine(inputFileListName, outputFilename);
 		if (result == 0) {
@@ -175,9 +183,9 @@ public class Compressor {
 		String inputFileListName = "resources/merge/js/busiPADJsList.txt";
 		String outputFilename = "resources/merge/js/busiPAD";
 		if (StringUtils.isEmpty(version)) {
-			outputFilename += "-1.0.0.all.js";
+			outputFilename += ALL_JS_1;
 		} else {
-			outputFilename += "-" + version + ".all.js";
+			outputFilename += "-" + version + ALL_JS;
 		}
 		int result = combine(inputFileListName, outputFilename);
 		if (result == 0) {
@@ -201,17 +209,17 @@ public class Compressor {
 	}
 
 	public static int combine(String inputFileListName, String outputFilename) {
-		BufferedReader bufferedReader = null;
-		BufferedWriter bufferedWriter = null;
-		try {
-			log.info("combine files begin.");
-			long beginTime = System.currentTimeMillis();
-
-			String basePath = getBasePath();
-			String filename = getInputFileName(inputFileListName, basePath);
-			log.info("input :" + filename);
-
-			bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(filename), "UTF-8"));
+		log.info("combine files begin.");
+		long beginTime = System.currentTimeMillis();
+		String basePath = getBasePath();
+		String filename = getInputFileName(inputFileListName, basePath);
+		log.info(INPUT + filename);
+		outputFilename = basePath + outputFilename;
+		log.info(OUTPUT + outputFilename);
+		try(FileInputStream fileInputStream=new FileInputStream(filename);
+			BufferedReader	bufferedReader = new BufferedReader(new InputStreamReader(fileInputStream, DEF_CHARSET));
+			FileOutputStream fileOutputStream=new FileOutputStream(outputFilename);
+			BufferedWriter	bufferedWriter = new BufferedWriter(new OutputStreamWriter(fileOutputStream, DEF_CHARSET));) {
 			String str = null;
 			StringBuilder sb = new StringBuilder();
 			while ((str = bufferedReader.readLine()) != null) {
@@ -237,18 +245,14 @@ public class Compressor {
 					}
 				}
 			}
-			bufferedReader.close();
 
 			// 如果sb中没有内容，则返回
 			if (sb.length() == 0) {
 				log.info("no data in sb, end up here.");
 				return 1;
 			}
-
-			outputFilename = basePath + outputFilename;
-			log.info("output:" + outputFilename);
-			bufferedWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputFilename), "UTF-8"));
 			bufferedWriter.write(sb.toString());
+			fileOutputStream.close();
 			bufferedWriter.close();
 			// File oldFile = new File(outputFilename);
 			// if(!oldFile.canRead()) {
@@ -280,8 +284,6 @@ public class Compressor {
 					+ " ms.");
 
 		} catch (Exception e) {
-			close(bufferedReader);
-			close(bufferedWriter);
 			log.error(e);
 			return -1;
 		}
@@ -299,20 +301,18 @@ public class Compressor {
 	}
 
 	private static int readFileToSb(String input, StringBuilder sb, String type) {
-		BufferedReader bufferedReader = null;
-		try {
-			bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(input), "UTF-8"));
+		try(FileInputStream fileInputStream=new FileInputStream(input);
+				BufferedReader bufferedReader=new BufferedReader(new InputStreamReader(new FileInputStream(input), DEF_CHARSET))) {
 			int c = -1;
 			while ((c = bufferedReader.read()) != -1) {
 				sb.append((char) c);
 			}
+			fileInputStream.close();
 			bufferedReader.close();
 		} catch (Exception e) {
-			close(bufferedReader);
 			log.error(e);
 			return 1;
 		}
-
 		return 0;
 	}
 	
@@ -323,11 +323,8 @@ public class Compressor {
 	 * @return 0-success 1-fail
 	 */
 	private static int readFileToSbOld(String input, StringBuilder sb, String type) {
-		FileReader fileReader = null;
-		BufferedReader bufferedReader = null;
-		try {
-			fileReader = new FileReader(input);
-			bufferedReader = new BufferedReader(fileReader);
+		try(FileReader fileReader = new FileReader(input);
+				BufferedReader bufferedReader=new BufferedReader(fileReader)) {
 			int c = -1;
 			while ((c = bufferedReader.read()) != -1) {
 				sb.append((char) c);
@@ -335,12 +332,9 @@ public class Compressor {
 			bufferedReader.close();
 			fileReader.close();
 		} catch (Exception e) {
-			close(fileReader);
-			close(bufferedReader);
 			log.error(e);
 			return 1;
 		}
-
 		return 0;
 	}
 
@@ -348,14 +342,14 @@ public class Compressor {
 			String charset, String typeOverride, int linebreakpos,
 			boolean munge, boolean verbose, boolean preserveAllSemiColons,
 			boolean disableOptimizations) {
-
-		Reader in = null;
 		Writer out = null;
 		// 不使用该功能
 		Writer mungemap = null;
 
 		String type = null;
-		try {
+		try (FileInputStream fileInputStream=new FileInputStream(inputFilename);
+				Reader in = new InputStreamReader(fileInputStream,charset);
+				FileOutputStream fileOutputStream=new FileOutputStream(outputFilename);) {
 			if (typeOverride != null) {
 				type = typeOverride;
 			} else {
@@ -369,13 +363,7 @@ public class Compressor {
 					&& !type.equalsIgnoreCase("css")) {
 				return -1;
 			}
-
-			in = new InputStreamReader(new FileInputStream(inputFilename),
-					charset);
-
 			if (type.equalsIgnoreCase("js")) {
-
-				try {
 					final String localFilename = inputFilename;
 
 					JavaScriptCompressor compressor = new JavaScriptCompressor(
@@ -420,28 +408,16 @@ public class Compressor {
 					// Close the input stream first, and then open the output
 					// stream,
 					// in case the output file should override the input file.
-					in.close();
-					in = null;
-
 					if (outputFilename == null) {
 						out = new OutputStreamWriter(System.out, charset);
 					} else {
-						out = new OutputStreamWriter(new FileOutputStream(
-								outputFilename), charset);
+						out = new OutputStreamWriter(fileOutputStream, charset);
 					}
 
 					compressor.compress(out, mungemap, linebreakpos, munge,
 							verbose, preserveAllSemiColons,
 							disableOptimizations);
-
-				} catch (EvaluatorException e) {
-
-					log.error(e);
-					// Return a special error code used specifically by the web
-					// front-end.
-					return -1;
-
-				}
+					close(fileOutputStream);
 
 			} else if (type.equalsIgnoreCase("css")) {
 
@@ -451,41 +427,18 @@ public class Compressor {
 				// stream,
 				// in case the output file should override the input file.
 				in.close();
-				in = null;
-
 				if (outputFilename == null) {
 					out = new OutputStreamWriter(System.out, charset);
 				} else {
-					out = new OutputStreamWriter(new FileOutputStream(
-							outputFilename), charset);
+					out = new OutputStreamWriter(fileOutputStream, charset);
 				}
-
+                close(fileOutputStream);
 				compressor.compress(out, linebreakpos);
 			}
 
-		} catch (IOException e) {
-
+		}catch (Exception e) {
 			log.error(e);
-			return -1;
-
-		} finally {
-
-			if (in != null) {
-				try {
-					in.close();
-				} catch (IOException e) {
-					log.error(e);
-				}
-			}
-
-			if (out != null) {
-				try {
-					out.close();
-				} catch (IOException e) {
-					log.error(e);
-				}
-			}
-		}
+		} 
 		return 0;
 	}
 
@@ -523,7 +476,7 @@ public class Compressor {
 			String suffix = "";
 			String type = "";
 			if (input.endsWith("all.js")) {
-				suffix = ".all.js";
+				suffix = ALL_JS;
 				type = ".js";
 			} else if (input.endsWith("all.css")) {
 				suffix = ".all.css";
@@ -554,10 +507,10 @@ public class Compressor {
 
 			String basePath = getBasePath();
 			String inputFilename = getInputFileName(input, basePath);
-			log.info("input :" + inputFilename);
+			log.info(INPUT + inputFilename);
 
 			String outputFilename = getOutputFileName(output, input, basePath);
-			log.info("output:" + outputFilename);
+			log.info(OUTPUT + outputFilename);
 
 			result = compressor(inputFilename, outputFilename, charset, typeOverride,
 					linebreakpos, munge, verbose, preserveAllSemiColons,
@@ -585,10 +538,10 @@ public class Compressor {
 
 			String basePath = getBasePath();
 			String inputFilename = getInputFileName(input, basePath);
-			log.info("input :" + inputFilename);
+			log.info(INPUT + inputFilename);
 
 			String outputFilename = getOutputFileName(output, input, basePath);
-			log.info("output:" + outputFilename);
+			log.info(OUTPUT + outputFilename);
 
 			result = compressor(inputFilename, outputFilename, charset, typeOverride,
 					linebreakpos, munge, verbose, preserveAllSemiColons,
@@ -604,17 +557,21 @@ public class Compressor {
 	
 	public static String calcMD5(String filename) throws Exception {
 		String value = null;
-		FileInputStream in = null;
 		File file = new File(filename);
 		MessageDigest md5 = MessageDigest.getInstance("MD5");
-		in = new FileInputStream(file);
-		byte[] buffer = new byte[4096];
-		int length = -1;
-		while ((length = in.read(buffer)) != -1) {
-			md5.update(buffer, 0, length);
+		try(FileInputStream in=new FileInputStream(file)){
+			byte[] buffer = new byte[4096];
+			int length = -1;
+			while ((length = in.read(buffer)) != -1) {
+				md5.update(buffer, 0, length);
+			}
+			in.close();
+			BigInteger bi = new BigInteger(1, md5.digest());
+			value = bi.toString(16);
+		}catch(Exception e){
+			log.error(e);
+			return "";
 		}
-		BigInteger bi = new BigInteger(1, md5.digest());
-		value = bi.toString(16);
 		return value;
 	}
 
@@ -633,10 +590,10 @@ public class Compressor {
 
 			String basePath = getBasePath();
 			String inputFilename = getInputFileName(input, basePath);
-			log.debug("input :" + inputFilename);
+			log.debug(INPUT + inputFilename);
 
 			String outputFilename = getOutputFileName(output, input, basePath);
-			log.debug("output:" + outputFilename);
+			log.debug(OUTPUT + outputFilename);
 
 			compressor(inputFilename, outputFilename, charset, typeOverride,
 					linebreakpos, munge, verbose, preserveAllSemiColons,
