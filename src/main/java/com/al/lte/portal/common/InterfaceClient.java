@@ -644,7 +644,11 @@ public class InterfaceClient {
 					throw new InterfaceException(ErrType.ECSP, PortalServiceCode.SERVICE_GET_LOG_SEQUENCE, String.valueOf(_db.getResultMsg()), JsonUtil.toString(dataBusMap));
 				}
 			}catch (Exception e) {
-				throw new InterfaceException(ErrType.ECSP, PortalServiceCode.SERVICE_GET_LOG_SEQUENCE, String.valueOf(_db.getResultMsg()), JsonUtil.toString(dataBusMap));
+				String resultMsg="请求接口异常";
+				if(_db!=null && _db.getResultMsg()!=null){
+					resultMsg=_db.getResultMsg();
+				}
+				throw new InterfaceException(ErrType.ECSP, PortalServiceCode.SERVICE_GET_LOG_SEQUENCE, resultMsg, JsonUtil.toString(dataBusMap));
 			}
 		}
 		return logSeqId;
@@ -1014,7 +1018,9 @@ public class InterfaceClient {
 		} catch (InterfaceException ie) {
 			throw ie;
 		} finally {
-			post.abort();// 连接停止，释放资源
+			if(post!=null){
+				post.abort();// 连接停止，释放资源
+			}
 			try {
 				if (null != entity) {
 					EntityUtils.consume(entity);
@@ -1201,7 +1207,11 @@ public class InterfaceClient {
 				throw new InterfaceException(ErrType.ECSP, PortalServiceCode.SERVICE_GET_TRANID, String.valueOf(db.getResultMsg()), JsonUtil.toString(dataBusMap));
 			}
 		}catch (Exception e) {
-			throw new InterfaceException(ErrType.ECSP, PortalServiceCode.SERVICE_GET_TRANID, String.valueOf(db.getResultMsg()), JsonUtil.toString(dataBusMap));
+			String resultMsg="请求发生异常";
+			if(db!=null && db.getResultMsg()!=null){
+				resultMsg=db.getResultMsg();
+			}
+			throw new InterfaceException(ErrType.ECSP, PortalServiceCode.SERVICE_GET_TRANID, resultMsg, JsonUtil.toString(dataBusMap));
         }
 		String srcSysID = SysConstant.CSB_SRC_SYS_ID_LTE;
 		CsbDataMap cdm = new CsbDataMap();
@@ -1264,7 +1274,11 @@ public class InterfaceClient {
 				throw new InterfaceException(ErrType.ECSP, PortalServiceCode.SERVICE_GET_TRANID, String.valueOf(db.getResultMsg()), JsonUtil.toString(dataBusMap));
 			}
 		}catch (Exception e) {
-			throw new InterfaceException(ErrType.ECSP, PortalServiceCode.SERVICE_GET_TRANID, String.valueOf(db.getResultMsg()), JsonUtil.toString(dataBusMap));
+			String resultMsg="请求发生异常";
+			if(db!=null && db.getResultMsg()!=null){
+				resultMsg=db.getResultMsg();
+			}
+			throw new InterfaceException(ErrType.ECSP, PortalServiceCode.SERVICE_GET_TRANID, resultMsg, JsonUtil.toString(dataBusMap));
         }
 		StringBuffer inXml = new StringBuffer();
 		inXml.append("<SvcCont>");
@@ -1291,7 +1305,11 @@ public class InterfaceClient {
 				throw new InterfaceException(ErrType.ECSP, PortalServiceCode.SERVICE_GET_TRANID, String.valueOf(db.getResultMsg()), JsonUtil.toString(dataBusMap));
 			}
 		}catch (Exception e) {
-			throw new InterfaceException(ErrType.ECSP, PortalServiceCode.SERVICE_GET_TRANID, String.valueOf(db.getResultMsg()), JsonUtil.toString(dataBusMap));
+			String resultMsg="请求发生异常";
+			if(db!=null && db.getResultMsg()!=null){
+				resultMsg=db.getResultMsg();
+			}
+			throw new InterfaceException(ErrType.ECSP, PortalServiceCode.SERVICE_GET_TRANID, resultMsg, JsonUtil.toString(dataBusMap));
         }
 		String srcSysID = SysConstant.CSB_SRC_SYS_ID_APP;
 		CsbDataMap cdm = new CsbDataMap();
