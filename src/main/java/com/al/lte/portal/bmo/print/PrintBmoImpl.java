@@ -1,4 +1,41 @@
 package com.al.lte.portal.bmo.print;
+ 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.imageio.stream.FileImageOutputStream;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
+import org.xhtmlrenderer.pdf.ITextFontResolver;
+import org.xhtmlrenderer.pdf.ITextRenderer;
 
 import com.al.ec.serviceplatform.client.DataBus;
 import com.al.ec.serviceplatform.client.ResultCode;
@@ -61,41 +98,6 @@ import com.al.lte.portal.common.print.dto.StringTwoSet;
 import com.al.lte.portal.common.print.dto.TerminalInfoSet;
 import com.al.lte.portal.core.DataRepository;
 import com.al.lte.portal.model.SessionStaff;
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Service;
-import org.xhtmlrenderer.pdf.ITextFontResolver;
-import org.xhtmlrenderer.pdf.ITextRenderer;
-
-import javax.imageio.stream.FileImageOutputStream;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * 业务接口 .
@@ -6544,7 +6546,11 @@ public class PrintBmoImpl implements PrintBmo {
 			}
 			return returnMap;
 		} catch (Exception e) {
-			throw new BusinessException(ErrorCode.SEAL_CA,dataBusMap,db.getReturnlmap(), e);
+			if(db!=null && db.getReturnlmap()!=null){
+				throw new BusinessException(ErrorCode.SEAL_CA,dataBusMap,db.getReturnlmap(), e);
+			}else{
+				throw new BusinessException(ErrorCode.SEAL_CA,dataBusMap,returnMap, e);
+			}
 		}
 	}
 
