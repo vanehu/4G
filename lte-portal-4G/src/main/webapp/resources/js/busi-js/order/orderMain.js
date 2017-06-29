@@ -1995,7 +1995,7 @@ order.main = (function(){
 				isExists = true;
 				//填充读卡信息
 				if (identityCd == 1) {
-					OrderInfo.fillupPartyId2CertReaderCustInfos(identityNum, $(scope).attr("custId"));
+					cert.fillupPartyId2CertReaderCustInfos(identityNum, $(scope).attr("custId"));
 				};
 			}
 		}
