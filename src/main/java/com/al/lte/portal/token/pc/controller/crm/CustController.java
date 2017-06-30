@@ -1339,12 +1339,16 @@ public class CustController extends BaseController {
 			log.info("产品查询异常"+ex.getMessage());
 			resultMap.put("code","-1");
 			resultMap.put("msg","产品查询异常");
-			pw.print(resultMap);
+			if(pw!=null){
+				pw.print(resultMap);
+			}	
 			return null;
 		}
 		finally{
-			pw.flush();
-			pw.close();
+			if(pw!=null){
+				pw.flush();
+				pw.close();
+			}
 		}		
 	}
 	
