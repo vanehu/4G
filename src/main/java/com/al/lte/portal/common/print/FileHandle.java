@@ -117,7 +117,8 @@ public class FileHandle {
 		file = correctFilePathForBes(file, "/SysConfig.properties");
 		try(InputStream is = new FileInputStream(file);
 			OutputStream os = new FileOutputStream(file);
-			BufferedReader reader = new BufferedReader(new InputStreamReader(is))){
+			BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+				PrintWriter writer = new PrintWriter(new OutputStreamWriter(os))){
 			StringBuffer buffer = new StringBuffer();
 			boolean isFound = false;
 			String line = reader.readLine(); // 读取第一行
@@ -131,8 +132,7 @@ public class FileHandle {
 			}
 			if (!isFound) {// 之前没有定义，那么文件末尾要加上
 				buffer.append(parameterName + "=" + parameterValue + '\n');
-			}
-			PrintWriter writer = new PrintWriter(new OutputStreamWriter(os));
+			} 
 			writer.write(buffer.toString());
 			writer.flush();
 		} catch (Exception exp) {
