@@ -158,6 +158,10 @@ public class LoginController extends BaseController {
     @Qualifier("com.al.lte.portal.bmo.system.MenuBmo")
     private MenuBmo menuBmo;
     
+    private String RESULT_MSG="resultMsg";
+    
+    private String ERROR_MSG="发送短信异常";
+    
 	/**
 	 * consumes="text/plain",produces="application/json 接受的请求的header中的
 	 * Content-Type为text/plain; Accept为application/json
@@ -815,9 +819,13 @@ public class LoginController extends BaseController {
 					long inteval = 10 * 1000;//间隔10秒
 					if (nowTime - sessionTime > inteval ) {		
 						Map<String, Object> msgMap = changeUimSendMsg(request, flowNum); 
-						if (ResultCode.R_FAILURE.equals(msgMap.get("resultCode"))|msgMap.size()==0|msgMap==null) {
-							//如果发送短信异常
-							return super.failed(msgMap.get("resultMsg"), 3);
+						if (ResultCode.R_FAILURE.equals(msgMap.get("resultCode"))) {
+							//如果发送短信异常 
+							String resultMsg=ERROR_MSG;
+							if(msgMap.get(RESULT_MSG)!=null){
+								resultMsg=(String) msgMap.get(RESULT_MSG);
+							}	
+							return super.failed(resultMsg, 3);
 						}
 					}else{
 						return super.successed("验证码发送中，请稍后再操作进行验证！", 1003);
@@ -825,8 +833,12 @@ public class LoginController extends BaseController {
 				}else{
 					Map<String, Object> msgMap = changeUimSendMsg(request, flowNum); 
 					if (ResultCode.R_FAILURE.equals(msgMap.get("resultCode"))|msgMap.size()==0|msgMap==null) {
-						//如果发送短信异常
-						return super.failed(msgMap.get("resultMsg"), 3);
+						//如果发送短信异常 
+						String resultMsg=ERROR_MSG;
+						if(msgMap.get(RESULT_MSG)!=null){
+							resultMsg=(String) msgMap.get(RESULT_MSG);
+						}	
+						return super.failed(resultMsg, 3);
 					}
 				}
 			}else{
@@ -2658,8 +2670,12 @@ public class LoginController extends BaseController {
 				if (nowTime - sessionTime > inteval ) {		
 					Map<String, Object> msgMap = confirmAgreeSendMsg(request, flowNum); 
 					if (ResultCode.R_FAILURE.equals(msgMap.get("resultCode"))|msgMap.size()==0|msgMap==null) {
-						//如果发送短信异常
-						return super.failed(msgMap.get("resultMsg"), 3);
+						//如果发送短信异常 
+						String resultMsg=ERROR_MSG;
+						if(msgMap.get(RESULT_MSG)!=null){
+							resultMsg=(String) msgMap.get(RESULT_MSG);
+						}	
+						return super.failed(resultMsg, 3);
 					}
 				}else{
 					return super.successed("验证码发送中，请稍后再操作进行验证！", 1003);
@@ -2667,8 +2683,12 @@ public class LoginController extends BaseController {
 			}else{
 				Map<String, Object> msgMap = confirmAgreeSendMsg(request, flowNum); 
 				if (ResultCode.R_FAILURE.equals(msgMap.get("resultCode"))|msgMap.size()==0|msgMap==null) {
-					//如果发送短信异常
-					return super.failed(msgMap.get("resultMsg"), 3);
+					//如果发送短信异常 
+					String resultMsg=ERROR_MSG;
+					if(msgMap.get(RESULT_MSG)!=null){
+						resultMsg=(String) msgMap.get(RESULT_MSG);
+					}	
+					return super.failed(resultMsg, 3);
 				}
 			}
 			
