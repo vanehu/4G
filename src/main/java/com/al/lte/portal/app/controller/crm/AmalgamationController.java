@@ -41,6 +41,7 @@ import com.al.lte.portal.bmo.crm.CommonBmo;
 import com.al.lte.portal.bmo.crm.OrderBmo;
 import com.al.lte.portal.bmo.print.PrintBmo;
 import com.al.lte.portal.common.CommonMethods;
+import com.al.lte.portal.common.Const;
 import com.al.lte.portal.common.EhcacheUtil;
 import com.al.lte.portal.common.InterfaceClient;
 import com.al.lte.portal.common.MySimulateData;
@@ -89,7 +90,8 @@ public class AmalgamationController extends BaseController {
 	@AuthorityValid(isCheck = false)
 	public String page_kd(@RequestBody Map<String, Object> paramMap,HttpSession session, Model model,
 			HttpServletRequest request, HttpServletResponse response, @LogOperatorAnn String flowNum) {
-		model.addAttribute("prodType", paramMap.get("prodType"));
+		String prodTypeStr = "prodType";
+		model.addAttribute(prodTypeStr, paramMap.get(prodTypeStr));
 		return "/app/amalgamation/amalgamation-broadband";
 	}
 	
@@ -99,6 +101,8 @@ public class AmalgamationController extends BaseController {
 			HttpServletRequest request, HttpServletResponse response, @LogOperatorAnn String flowNum) {
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
                 SysConstant.SESSION_KEY_LOGIN_STAFF);
+		String inFluxStr = "inFlux";
+		
 		 try {
 	        	String OfferIds = "";
 //	        	prams.put("ifQS", "Y");
@@ -110,7 +114,7 @@ public class AmalgamationController extends BaseController {
 //	        	prams.put("downRate", "");
 	        	prams.put("sysFlag", "10004");
 	        	prams.put("channelId", sessionStaff.getCurrentChannelId());
-	        	prams.put("areaId", sessionStaff.getCurrentAreaId());
+	        	prams.put(Const.AREAID, sessionStaff.getCurrentAreaId());
 //	        	prams.put("areaId", "8520000");
 	        	prams.put("staffId", sessionStaff.getStaffId());
 	        	prams.put("pageSize", SysConstant.PAGE_SIZE);
@@ -142,15 +146,15 @@ public class AmalgamationController extends BaseController {
 	        				List<Map<String,Object>> downRateList = new ArrayList();
 	        				Map<String,Object> exitParam = new HashMap<String,Object>();
 	        				exitParam = (Map<String,Object>) prodOfferInfosList.get(i);
-	        				if(exitParam.containsKey("inFlux")){
+	        				if(exitParam.containsKey(inFluxStr)){
 	        					float influx = 0 ;
 	        					String influx_str ="";
 	        					/*
 	        					 判断返回的流量是否大于1024M，如果大于1024M，显示的单位是G，否则显示的单位是M
 	        					 */
-	        					if(exitParam.get("inFlux")!=null){
+	        					if(exitParam.get(inFluxStr)!=null){
 	        						try{
-	        							influx = Float.parseFloat(exitParam.get("inFlux").toString());
+	        							influx = Float.parseFloat(exitParam.get(inFluxStr).toString());
 	        							if(influx<1024){
 	        								influx_str = influx+"";
 	        								if(influx_str.indexOf(".") > 0){  
@@ -170,7 +174,7 @@ public class AmalgamationController extends BaseController {
 	        							this.log.error("WIFI", e);
 	        						}
 	        					}
-	        					prodOfferInfosList.get(i).put("inFlux", influx_str);
+	        					prodOfferInfosList.get(i).put(inFluxStr, influx_str);
 	        				}
 //	        				if(exitParam.containsKey("objIdList")){
 	        					List<Map<String,Object>> objIdList = (List<Map<String,Object>>) exitParam.get("objIdList");
@@ -235,28 +239,37 @@ public class AmalgamationController extends BaseController {
     @AuthorityValid(isCheck = false)
     public String broadband_searchADD(@RequestBody Map<String, Object> params, HttpServletRequest request,Model model,HttpSession session) throws AuthorityException {
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
-		String areaLimit = params.get("areaLimit")==null?"":params.get("areaLimit").toString();
+		String regionNameStr = "regionName";
+		String prodTypeStr = "prodType";
+		String parentAreaIdStr = "parentAreaId";
+		String dataDimensionCdStr = "dataDimensionCd";
+		String commonRegionIdStr = "commonRegionId";
+		String areaNameStr = "areaName";
+		String areaLimitStr = "areaLimit";
+		String APPDESCStr = "APPDESC";
+		
+		String areaLimit = params.get(areaLimitStr)==null?"":params.get(areaLimitStr).toString();
 		String urlType = "/app/order/prodoffer/prepare";
 		String cityid = sessionStaff.getAreaId();//市
 		String proid = cityid.substring(0, 3) + "0000";//省
 		String areaid = sessionStaff.getCurrentAreaId();//区
 		cityid = areaid.substring(0, 5) + "00";//市
 		params.put("leve", 2);
-		params.put("parentAreaId", "");//8100000
-		params.put("areaLimit", areaLimit);
+		params.put(parentAreaIdStr, "");//8100000
+		params.put(areaLimitStr, areaLimit);
 		params.put("channelAreaId", areaid);
-		params.put("APPDESC", propertiesUtils.getMessage(SysConstant.APPDESC));
-		model.addAttribute("prodType",params.get("prodType"));
+		params.put(APPDESCStr, propertiesUtils.getMessage(SysConstant.APPDESC));
+		model.addAttribute(prodTypeStr,params.get(prodTypeStr));
 		try{
 			
-			params.put("dataDimensionCd", MySimulateData.getInstance().getParam((String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),SysConstant.AREA_DIMENSION_CD));
+			params.put(dataDimensionCdStr, MySimulateData.getInstance().getParam((String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),SysConstant.AREA_DIMENSION_CD));
 			String operateSpecInfo = EhcacheUtil.getOperateSpecInfo(session, urlType);
 			List<Map<String, Object>> list = CommonMethods.getAreaRangeList(sessionStaff, params, operateSpecInfo);
 			if(list.size()==0){
 				Map<String, Object> mapProv = CommonMethods.getAreaInfo(proid);
-				mapProv.put("commonRegionId", mapProv.get("areaId"));
+				mapProv.put(commonRegionIdStr, mapProv.get(Const.AREAID));
 				mapProv.put("areaLevel", "3");
-				mapProv.put("regionName", mapProv.get("areaName"));
+				mapProv.put(regionNameStr, mapProv.get(areaNameStr));
 				list.add(mapProv);
 			}
 			model.addAttribute("province", list);
@@ -264,16 +277,16 @@ public class AmalgamationController extends BaseController {
 			
 			Map<String,Object> paramCity = new HashMap<String,Object>();
 			paramCity.put("leve", "3");
-			paramCity.put("parentAreaId", proid);
+			paramCity.put(parentAreaIdStr, proid);
 			paramCity.put("isChannelArea", "N");
-			paramCity.put("APPDESC", propertiesUtils.getMessage(SysConstant.APPDESC));
-			paramCity.put("dataDimensionCd", MySimulateData.getInstance().getParam((String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),SysConstant.AREA_DIMENSION_CD));
+			paramCity.put(APPDESCStr, propertiesUtils.getMessage(SysConstant.APPDESC));
+			paramCity.put(dataDimensionCdStr, MySimulateData.getInstance().getParam((String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),SysConstant.AREA_DIMENSION_CD));
 			String cityoperateSpecInfo = EhcacheUtil.getOperateSpecInfo(session, urlType);
 			List<Map<String, Object>> citylist = CommonMethods.getAreaRangeList(sessionStaff, paramCity, cityoperateSpecInfo);
 			if(citylist.size()==0 && !cityid.equals(proid)){
 				Map<String, Object> mapCity = CommonMethods.getAreaInfo(cityid);
-				mapCity.put("commonRegionId", mapCity.get("areaId"));
-				mapCity.put("regionName", mapCity.get("areaName"));
+				mapCity.put(commonRegionIdStr, mapCity.get(Const.AREAID));
+				mapCity.put(regionNameStr, mapCity.get(areaNameStr));
 				citylist.add(mapCity);
 			}
 			model.addAttribute("citylist", citylist);
@@ -281,20 +294,20 @@ public class AmalgamationController extends BaseController {
 			
 			Map<String,Object> paramChild = new HashMap<String,Object>();
 			paramChild.put("leve", "4");
-			paramChild.put("parentAreaId", cityid);
+			paramChild.put(parentAreaIdStr, cityid);
 			paramChild.put("isChannelArea", "N");
-			paramChild.put("APPDESC", propertiesUtils.getMessage(SysConstant.APPDESC));
-			paramChild.put("dataDimensionCd", MySimulateData.getInstance().getParam((String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),SysConstant.AREA_DIMENSION_CD));
+			paramChild.put(APPDESCStr, propertiesUtils.getMessage(SysConstant.APPDESC));
+			paramChild.put(dataDimensionCdStr, MySimulateData.getInstance().getParam((String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),SysConstant.AREA_DIMENSION_CD));
 			String childoperateSpecInfo = EhcacheUtil.getOperateSpecInfo(session, urlType);
 			List<Map<String, Object>> childlist = CommonMethods.getAreaRangeList(sessionStaff, paramChild, childoperateSpecInfo);
 			if(childlist.size()==0 && !areaid.equals(cityid)){
 				Map<String, Object> mapArea = CommonMethods.getAreaInfo(areaid);
-				mapArea.put("commonRegionId", mapArea.get("areaId"));
-				mapArea.put("regionName", mapArea.get("areaName"));
+				mapArea.put(commonRegionIdStr, mapArea.get(Const.AREAID));
+				mapArea.put(regionNameStr, mapArea.get(areaNameStr));
 				childlist.add(mapArea);
 			}
 			model.addAttribute("childlist", childlist);
-			model.addAttribute("areaid", areaid);
+			model.addAttribute(Const.AREAID, areaid);
 			
 		} catch (BusinessException be) {
 
@@ -334,7 +347,7 @@ public class AmalgamationController extends BaseController {
 			String TransactionID = AppKey+ymdStr+str10;
 			model.addAttribute("TransactionID",TransactionID);
 				String cityid = sessionStaff.getCurrentAreaId();//市
-				params.put("areaId", cityid);
+				params.put(Const.AREAID, cityid);
 //				params.put("areaId", "8410100");
 				List feelList = new ArrayList();
 				rMap = orderBmo.queryChargeConfig(params,optFlowNum, sessionStaff);
@@ -380,24 +393,25 @@ public class AmalgamationController extends BaseController {
 //			String cityid = sessionStaff.getAreaId();//市
 //			cityid = cityid.substring(0, 5) + "00";//市
 //			reqMap.put("areaId", cityid);
+			String signFlagStr = "signFlag";
 			JsonResponse jsonResponse = null;
 				try {
 					String busiType = MapUtils.getString(reqMap, "busiType");
 					String printType = MapUtils.getString(reqMap, "printType");
 					String agreement = MapUtils.getString(reqMap, "needAgreement");
-					String signFlag = MapUtils.getString(reqMap, "signFlag");//0:打印 1:数字签名预览 2:生成pdf保存 3:生成未签名的pdf文件保存 4:手机端数字签名预览 5:保存客手机端的pdf文件
+					String signFlag = MapUtils.getString(reqMap, signFlagStr);//0:打印 1:数字签名预览 2:生成pdf保存 3:生成未签名的pdf文件保存 4:手机端数字签名预览 5:保存客手机端的pdf文件
 					if(signFlag==null){
 						signFlag="0";
 					}
 					boolean needAgreement = SysConstant.STR_Y.equals(agreement);
 					Map<String,Object> params=new HashMap<String,Object>();
 					params.putAll(reqMap);
-					params.put("signFlag", SysConstant.PREVIEW_SIGN_PDF);
+					params.put(signFlagStr, SysConstant.PREVIEW_SIGN_PDF);
 					if(params.get("signStr")!=null){
 						params.remove("signStr");
 					}
-					if(params.get("signFlag")!=null){
-						params.remove("signFlag");
+					if(params.get(signFlagStr)!=null){
+						params.remove(signFlagStr);
 					}
 					Map<String, Object> printData = new HashMap<String, Object>();
 					DataBus db = InterfaceClient.callService(params,PortalServiceCode.INTF_GET_VOUCHER_DATA,optFlowNum, sessionStaff);
