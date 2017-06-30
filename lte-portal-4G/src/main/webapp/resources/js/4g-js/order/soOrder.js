@@ -4255,8 +4255,7 @@ SoOrder = (function() {
 			}
 		}
 
-	};
-	
+
 	//创建经办人节点
 	var _createHandleCust = function(busiOrders) {
 		var busiOrder = {
