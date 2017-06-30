@@ -194,7 +194,6 @@ public class Compressor {
 		return -1;
 	}
 
-	@Deprecated
 	public static void combineBaseCss(String version) {
 		String inputFileListName = "resources/merge/css/baseCssList.txt";
 		String outputFilename = "resources/merge/css/base";
@@ -230,7 +229,7 @@ public class Compressor {
 
 				// 只处理js和css后缀文件
 				if (str.endsWith(".js") || str.endsWith(".css")) {
-					String type = str.substring(str.lastIndexOf("."),
+					String type = str.substring(str.lastIndexOf('.'),
 							str.length());
 					int result = readFileToSb(basePath + str, sb, type);
 					// 读取文件到sb失败
@@ -322,9 +321,9 @@ public class Compressor {
 	 * @param sb
 	 * @return 0-success 1-fail
 	 */
-	private static int readFileToSbOld(String input, StringBuilder sb, String type) {
+	private static int readFileToSbOld(String input, StringBuilder sb) {
 		try(FileReader fileReader = new FileReader(input);
-				BufferedReader bufferedReader=new BufferedReader(fileReader)) {
+			BufferedReader bufferedReader=new BufferedReader(fileReader)) {
 			int c = -1;
 			while ((c = bufferedReader.read()) != -1) {
 				sb.append((char) c);
@@ -449,14 +448,14 @@ public class Compressor {
 		// 移除最后的 / 符号
 		basePath = basePath.substring(0, basePath.length() - 1);
 		// 移除最后两层目录
-		int lastIndex = basePath.lastIndexOf("/");
+		int lastIndex = basePath.lastIndexOf('/');
 		basePath = basePath.substring(0, lastIndex);
 		// 判断路径是以target还是WEB-INF结尾
 		String suffix = "";
 		if (basePath.endsWith("target")) {
 			suffix = "src/main/webapp/";
 		}
-		int secondIndex = basePath.lastIndexOf("/");
+		int secondIndex = basePath.lastIndexOf('/');
 		basePath = basePath.substring(0, secondIndex + 1);
 		basePath += suffix;
 		log.error("basePath finally is:" + basePath);
@@ -575,7 +574,7 @@ public class Compressor {
 		return value;
 	}
 
-	public static void testSingalFile(String[] args) {
+	public static void testSingalFile() {
 		String input = "src/main/webapp/resources/js/merge/electron-1.0.0.js";
 		String output = "";
 		String typeOverride = DEF_TYPE_JS;

@@ -120,4 +120,7 @@ public class Const {
 	 * 正则：正整数话费（单位：分）
 	 */
 	public static final String FEE_AMOUNT = "^[1-9]+[0-9]*0{2}$";
+	
+	//重复使用字符串归集
+	public static final String AREAID = "areaId";
 }
