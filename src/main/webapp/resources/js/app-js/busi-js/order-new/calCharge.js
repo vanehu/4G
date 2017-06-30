@@ -859,7 +859,6 @@ order.calcharge = (function(){
 			payUrl=response.data;
 			//var payUrl2="http://192.168.4.137:7001/pay_web/platpay/index?payToken="+payUrl.split("=")[1];
    		  // payUrl2="https://crm.189.cn:86/upay/platpay/index?payToken=5D0CB495B3DD59CAEC106F93EEBD13952F62C58C4A13445FB8AC378A32038E99";
-			setTimeout(function(){timeId=setInterval(order.calcharge.timeToFee,3000);},10000);//10秒后开始定时任务
 			common.callOpenPay(payUrl);//打开支付页面
 		}else if(response.code==1002){
 			$.alert("提示",response.data);
@@ -906,7 +905,6 @@ order.calcharge = (function(){
 									if (response.code == 0 && response.data!=null && response.data!="") {//已后台收费成功，直接提示，不走收费流程
 										var statusCd=response.data.statusCd;
 										if("201700"==statusCd || "201800"==statusCd || "201900"==statusCd ||"301200"==statusCd ||"201300"==statusCd){
-											clearInterval(order.calcharge.timeId);//查询成功定时任务取消
 											_showFinDialog("1","收费成功！");
 											return;
 										}				
@@ -985,7 +983,6 @@ order.calcharge = (function(){
 				"done": function(response) {
 					$.unecOverlay();
 					if (response.code == 0 && response.data!=null && response.data!="") {//支付成功，调用收费接口
-						clearInterval(order.calcharge.timeId);//查询成功定时任务取消
 						var val=_getCharge();
 						if(OrderInfo.actionFlag==112){//融合甩单传融合
 							val=val+order.broadband.broadbandCharge;
