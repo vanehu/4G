@@ -835,7 +835,7 @@ public class LoginController extends BaseController {
 					if (ResultCode.R_FAILURE.equals(msgMap.get("resultCode"))|msgMap.size()==0|msgMap==null) {
 						//如果发送短信异常 
 						String resultMsg=ERROR_MSG;
-						if(msgMap.get(RESULT_MSG)!=null){
+						if(msgMap!=null && msgMap.get(RESULT_MSG)!=null){
 							resultMsg=(String) msgMap.get(RESULT_MSG);
 						}	
 						return super.failed(resultMsg, 3);
@@ -2672,7 +2672,7 @@ public class LoginController extends BaseController {
 					if (ResultCode.R_FAILURE.equals(msgMap.get("resultCode"))|msgMap.size()==0|msgMap==null) {
 						//如果发送短信异常 
 						String resultMsg=ERROR_MSG;
-						if(msgMap.get(RESULT_MSG)!=null){
+						if(msgMap!=null && msgMap.get(RESULT_MSG)!=null){
 							resultMsg=(String) msgMap.get(RESULT_MSG);
 						}	
 						return super.failed(resultMsg, 3);
@@ -2685,7 +2685,7 @@ public class LoginController extends BaseController {
 				if (ResultCode.R_FAILURE.equals(msgMap.get("resultCode"))|msgMap.size()==0|msgMap==null) {
 					//如果发送短信异常 
 					String resultMsg=ERROR_MSG;
-					if(msgMap.get(RESULT_MSG)!=null){
+					if(msgMap!=null && msgMap.get(RESULT_MSG)!=null){
 						resultMsg=(String) msgMap.get(RESULT_MSG);
 					}	
 					return super.failed(resultMsg, 3);
