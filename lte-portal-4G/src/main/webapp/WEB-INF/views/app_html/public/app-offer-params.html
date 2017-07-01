@@ -54,6 +54,26 @@
 					var CN = custInfo.CN;
 					var address = custInfo.address;
 					OrderInfo.cust={"CN": CN,"address": address,"certNum": certNum,"addressStr": addressStr,"areaId": areaId,"areaName": areaName,"authFlag": "1","custFlag": custFlag,"custId": custId,"idCardNumber": idCardNumber,"identityCd": identityCd,"identityName": identityName,"norTaxPayer": "","partyName": partyName,"segmentId": segmentId,"segmentName": segmentName,"vipLevel": vipLevel,"vipLevelName": vipLevelName};
+					OrderInfo.custBak={//进入主副卡成员变更页面客户信息部分被清空，重新声明一个应急
+							addressStr: custInfo.addressStr,
+							areaId: custInfo.areaId,
+							areaName: custInfo.areaName,
+							authFlag: custInfo.authType,
+							custFlag: custInfo.custFlag,
+							custId: custInfo.custId,
+							idCardNumber: custInfo.idCardNumber,
+							identityCd: custInfo.identityCd,
+							identityName: custInfo.identityName,
+							norTaxPayer: "",
+							partyName: custInfo.partyName,
+							segmentId: custInfo.segmentId,
+							segmentName: custInfo.segmentName,
+							vipLevel: custInfo.vipLevel,
+							certNum : custInfo.certNum,
+							CN:custInfo.CN,
+							address:custInfo.address,
+							vipLevelName: custInfo.vipLevelName
+						};
 					return false;
 				});
 				//订购业务

@@ -51,6 +51,7 @@ OrderInfo = (function() {
 	var _acctNbr="";
 	//定义执行状态
 	var state="";
+	var _custBak={};
 	
 	var _busitypeflag = 0;
 	
@@ -1526,6 +1527,7 @@ OrderInfo = (function() {
 		preBefore:_preBefore,
 		oneCardFiveNum : _oneCardFiveNum,
 		vice_card : _vice_card,
+		custBak                 :_custBak,
 		oneCardFiveNO  : _oneCardFiveNO
 	};
 })();
