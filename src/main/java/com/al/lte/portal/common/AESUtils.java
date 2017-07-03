@@ -334,7 +334,7 @@ public class AESUtils {
 			messageDigest.update(str.getBytes("UTF-8"));
 		} catch (NoSuchAlgorithmException e) {
 			log.error(e);
-			System.exit(-1);
+			Runtime.getRuntime().halt(0);
 		} catch (UnsupportedEncodingException e) {
 			log.error(e);
 		}
