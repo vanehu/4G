@@ -204,7 +204,7 @@ public class ForbiddenKeywordFilter extends OncePerRequestFilter {
                     try {
                         forbidden = hasForbiddenValue(JsonUtil.getNormal().getJsonNode(bodyString), forbiddenKeyWords);
                     } catch (Exception e) {
-                        e.printStackTrace();
+                    	log.error(e);
                         forbidden = false;
                     }
                 } else {

@@ -5,6 +5,7 @@ import java.security.NoSuchAlgorithmException;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import org.apache.http.conn.ssl.SSLSocketFactory;
+import org.jfree.util.Log;
 
 public class MySSLSocketFactory extends SSLSocketFactory{
 	
@@ -21,12 +22,12 @@ public class MySSLSocketFactory extends SSLSocketFactory{
 		try {
 			sslcontext = SSLContext.getInstance("SSL");
 		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
+			Log.error(e);
 		}
 		try {
 			sslcontext.init(null, new TrustManager[]{new TrustAnyTrustManager()}, null);
 		} catch (KeyManagementException e) {
-			e.printStackTrace();
+			Log.error(e);
 			return null;
 		}
 		return sslcontext;

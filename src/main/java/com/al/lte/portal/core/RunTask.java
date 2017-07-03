@@ -8,6 +8,7 @@ import java.util.concurrent.Semaphore;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.HttpPost;
+import org.jfree.util.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.al.ecs.common.util.PropertiesUtils;
@@ -32,7 +33,7 @@ public class RunTask {
 					System.out.println("sc:"+buffer);
 					Thread.sleep(10);
 				} catch (InterruptedException e) {
-					e.printStackTrace();
+					Log.error(e);
 				}
 			}
 		}
@@ -48,7 +49,7 @@ public class RunTask {
 					//InsertLog((ServiceRunLog) buffer.take());
 					Thread.sleep(500);
 				} catch (Exception e) {
-					e.printStackTrace();
+					Log.error(e);
 				}
 			}
 		}
