@@ -3721,7 +3721,7 @@ order.cust = (function(){
 				$("#tips").html("提示：" + json.errorMsg);
 			}
 		}catch(e) {
-			throw new Error("camera driver (DoccameraOcx.exe) is not installed correctly.");
+			throw new Error("camera driver (DoccameraOcx.exe) is installed incorrectly.");
 		}
 	};
 	 var _callFaceVerify = function(){
@@ -4194,7 +4194,7 @@ order.cust = (function(){
 //				$.alert("错误", "关闭摄像头发生错误，请清空浏览器缓存，重新将拍照设备与电脑连接后再次尝试，错误信息：" + closeResultJsonObj.errorMsg);
 //			}
 		}catch(e) {
-			throw new Error("camera driver (DoccameraOcx.exe) is not installed correctly.");
+			throw new Error("camera driver (DoccameraOcx.exe) is installed incorrectly.");
 		}finally{
 			easyDialog.close();
 			$(".ZebraDialogOverlay").remove();
