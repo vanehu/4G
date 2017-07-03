@@ -750,10 +750,10 @@ public class InterfaceClient {
 						logObj.put("LOCAL_ADDR", InetAddress.getLocalHost().getHostAddress());
 						logObj.put("LOCAL_PORT", String.valueOf(request.getLocalPort()));
 					} catch(Exception e){
-						logObj.put("REMOTE_ADDR", "Exception");
-						logObj.put("REMOTE_PORT", "Exception");
-						logObj.put("LOCAL_ADDR", "Exception");
-						logObj.put("LOCAL_PORT", "Exception");
+						logObj.put("REMOTE_ADDR", e.getMessage());
+						logObj.put("REMOTE_PORT", e.getMessage());
+						logObj.put("LOCAL_ADDR", e.getMessage());
+						logObj.put("LOCAL_PORT", e.getMessage());
 					}
 				}else{
 					logObj.put("REMOTE_ADDR", "request is null");
@@ -816,17 +816,15 @@ public class InterfaceClient {
 				}
 				if (propertiesUtils.getMessage(SysConstant.PORTAL_SERVICE_LOG_Y).contains(serviceCode)) {
 					isDefaultLog = false;
-					
 					logSender.sendLog2DB(SysConstant.PORTAL_SERVICE_LOG_Y, logObj, logClobObj);
-					
-
 				}
 				if (propertiesUtils.getMessage(SysConstant.PORTAL_SERVICE_LOG_W).contains(serviceCode)) {
 					isDefaultLog = false;
 					logSender.sendLog2DB(SysConstant.PORTAL_SERVICE_LOG_W, logObj, logClobObj);
 				}
-				if (isDefaultLog)
+				if (isDefaultLog){
 					logSender.sendLog2DB(SysConstant.PORTAL_SERVICE_LOG, logObj, logClobObj);
+				}
 			}
 			String writelogFlag = MySimulateData.getInstance().getParam(dbKeyWord,SysConstant.WRITE_LOG_FLAG);
 			if (SysConstant.OFF.equals(writelogFlag)) {
@@ -2124,10 +2122,10 @@ public class InterfaceClient {
 					logObj.put("REMOTE_ADDR", 	serviceLog.getRemoteAddr());
 					logObj.put("REMOTE_PORT",	serviceLog.getRemotePort());
 				} catch(Exception e){
-					logObj.put("LOCAL_ADDR", 	"Exception");
-					logObj.put("LOCAL_PORT", 	"Exception");
-					logObj.put("REMOTE_ADDR", 	"Exception");
-					logObj.put("REMOTE_PORT", 	"Exception");
+					logObj.put("LOCAL_ADDR", 	e.getMessage());
+					logObj.put("LOCAL_PORT", 	e.getMessage());
+					logObj.put("REMOTE_ADDR", 	e.getMessage());
+					logObj.put("REMOTE_PORT", 	e.getMessage());
 				}
 			}else{
 				logObj.put("LOCAL_ADDR", 	"request is null");
