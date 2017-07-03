@@ -2283,7 +2283,7 @@
 	    {
 	    	'CERT_SIGNATURE_854':{
 	       		<!--即USBSIGNATURE 身份证阅读器省份开关 ON：开启校验  OFF不校验-->
-	       		'USB_SIGNATURE_CHECK':'ON',
+	       		'USB_SIGNATURE_CHECK':'OFF',
 	       		'VENDORS':{
 	       			<!--即USBVERSION_SIGNATURE 接入集团规范的身份证阅读器厂商版本及密钥-->
 		       		'10000':{'version':'1.0.3.2','appSecret':'<![CDATA[5xRx9H4#5fY3e28@]]>','name':'华旭金卡','isOpen':'ON'},
@@ -2301,7 +2301,7 @@
 	       		}
 		    },<!-- 西藏 -->
 	       'CERT_SIGNATURE_863':{
-	       		'USB_SIGNATURE_CHECK':'ON',
+	       		'USB_SIGNATURE_CHECK':'OFF',
 	       		'VENDORS':{
 		       		'10000':{'version':'1.0.3.2','appSecret':'<![CDATA[5xRx9H4#5fY3e28@]]>','name':'华旭金卡','isOpen':'ON'},
 		            '10001':{'version':'1.0.3.2','appSecret':'<![CDATA[1%x7H4#2UtPy52@d]]>','name':'深圳华视','isOpen':'ON'},
@@ -2318,7 +2318,7 @@
 	       		}
 		    },<!-- 青海 -->
 	       'CERT_SIGNATURE_815':{
-	       		'USB_SIGNATURE_CHECK':'ON',
+	       		'USB_SIGNATURE_CHECK':'OFF',
 	       		'VENDORS':{
 		       		'10000':{'version':'1.0.3.2','appSecret':'<![CDATA[5xRx9H4#5fY3e28@]]>','name':'华旭金卡','isOpen':'ON'},
 		            '10001':{'version':'1.0.3.2','appSecret':'<![CDATA[1%x7H4#2UtPy52@d]]>','name':'深圳华视','isOpen':'ON'},
@@ -2335,7 +2335,7 @@
 	       		}
 		    },<!-- 内蒙古 -->
 	       'CERT_SIGNATURE_823':{
-	       		'USB_SIGNATURE_CHECK':'ON',
+	       		'USB_SIGNATURE_CHECK':'OFF',
 	       		'VENDORS':{
 		       		'10000':{'version':'1.0.3.2','appSecret':'<![CDATA[5xRx9H4#5fY3e28@]]>','name':'华旭金卡','isOpen':'ON'},
 		            '10001':{'version':'1.0.3.2','appSecret':'<![CDATA[1%x7H4#2UtPy52@d]]>','name':'深圳华视','isOpen':'ON'},
@@ -2352,7 +2352,7 @@
 	       		}
 		    },<!-- 黑龙江 -->
 	       'CERT_SIGNATURE_845':{
-	       		'USB_SIGNATURE_CHECK':'ON',
+	       		'USB_SIGNATURE_CHECK':'OFF',
 	       		'VENDORS':{
 	       			'10000':{'version':'1.0.3.2','appSecret':'<![CDATA[5xRx9H4#5fY3e28@]]>','name':'华旭金卡','isOpen':'ON'},
 		            '10001':{'version':'1.0.3.2','appSecret':'<![CDATA[1%x7H4#2UtPy52@d]]>','name':'深圳华视','isOpen':'ON'},
@@ -2369,7 +2369,7 @@
 	       		}
 		    },<!-- 广西 -->
 	       'CERT_SIGNATURE_850':{
-	       		'USB_SIGNATURE_CHECK':'ON',
+	       		'USB_SIGNATURE_CHECK':'OFF',
 	       		'VENDORS':{
 		       		'10000':{'version':'1.0.3.2','appSecret':'<![CDATA[5xRx9H4#5fY3e28@]]>','name':'华旭金卡','isOpen':'ON'},
 		            '10001':{'version':'1.0.3.2','appSecret':'<![CDATA[1%x7H4#2UtPy52@d]]>','name':'深圳华视','isOpen':'ON'},
@@ -2386,7 +2386,7 @@
 	       		}
 			},<!-- 重庆 -->
 	       'CERT_SIGNATURE_861':{
-	       		'USB_SIGNATURE_CHECK':'ON',
+	       		'USB_SIGNATURE_CHECK':'OFF',
 	       		'VENDORS':{
 		       		'10000':{'version':'1.0.3.2','appSecret':'<![CDATA[5xRx9H4#5fY3e28@]]>','name':'华旭金卡','isOpen':'ON'},
 		            '10001':{'version':'1.0.3.2','appSecret':'<![CDATA[1%x7H4#2UtPy52@d]]>','name':'深圳华视','isOpen':'ON'},
@@ -2403,7 +2403,7 @@
 	       		}
 			},<!-- 陕西 -->
 	       'CERT_SIGNATURE_842':{
-	       		'USB_SIGNATURE_CHECK':'ON',
+	       		'USB_SIGNATURE_CHECK':'OFF',
 	       		'VENDORS':{
 	       			'10000':{'version':'1.0.3.2','appSecret':'<![CDATA[5xRx9H4#5fY3e28@]]>','name':'华旭金卡','isOpen':'ON'},
 		            '10001':{'version':'1.0.3.2','appSecret':'<![CDATA[1%x7H4#2UtPy52@d]]>','name':'深圳华视','isOpen':'ON'},
@@ -2420,7 +2420,7 @@
 	       		}
 			},<!-- 湖北 -->
 	       'CERT_SIGNATURE_835':{
-	       		'USB_SIGNATURE_CHECK':'ON',
+	       		'USB_SIGNATURE_CHECK':'OFF',
 	       		'VENDORS':{
 	       			'10000':{'version':'1.0.3.2','appSecret':'<![CDATA[5xRx9H4#5fY3e28@]]>','name':'华旭金卡','isOpen':'ON'},
 		            '10001':{'version':'1.0.3.2','appSecret':'<![CDATA[1%x7H4#2UtPy52@d]]>','name':'深圳华视','isOpen':'ON'},
@@ -2437,7 +2437,7 @@
 	       		}
 			},<!-- 福建 -->
 	       'CERT_SIGNATURE_832':{
-	       		'USB_SIGNATURE_CHECK':'ON',
+	       		'USB_SIGNATURE_CHECK':'OFF',
 	       		'VENDORS':{
 	       			'10000':{'version':'1.0.3.2','appSecret':'<![CDATA[5xRx9H4#5fY3e28@]]>','name':'华旭金卡','isOpen':'ON'},
 		            '10001':{'version':'1.0.3.2','appSecret':'<![CDATA[1%x7H4#2UtPy52@d]]>','name':'深圳华视','isOpen':'ON'},
@@ -2454,7 +2454,7 @@
 	       		}
 			},<!-- 江苏 -->	       
 	       'CERT_SIGNATURE_846':{
-	       		'USB_SIGNATURE_CHECK':'ON',
+	       		'USB_SIGNATURE_CHECK':'OFF',
 	       		'VENDORS':{
 	       			'10000':{'version':'1.0.3.2','appSecret':'<![CDATA[5xRx9H4#5fY3e28@]]>','name':'华旭金卡','isOpen':'ON'},
 		            '10001':{'version':'1.0.3.2','appSecret':'<![CDATA[1%x7H4#2UtPy52@d]]>','name':'深圳华视','isOpen':'ON'},
@@ -2471,7 +2471,7 @@
 	       		}
 			},<!-- 海南 -->
 	       'CERT_SIGNATURE_864':{
-	       		'USB_SIGNATURE_CHECK':'ON',
+	       		'USB_SIGNATURE_CHECK':'OFF',
 	       		'VENDORS':{
 	       			'10000':{'version':'1.0.3.2','appSecret':'<![CDATA[5xRx9H4#5fY3e28@]]>','name':'华旭金卡','isOpen':'ON'},
 		            '10001':{'version':'1.0.3.2','appSecret':'<![CDATA[1%x7H4#2UtPy52@d]]>','name':'深圳华视','isOpen':'ON'},
@@ -2488,7 +2488,7 @@
 	       		}
 			},<!-- 宁夏 -->
 	       'CERT_SIGNATURE_814':{
-	       		'USB_SIGNATURE_CHECK':'ON',
+	       		'USB_SIGNATURE_CHECK':'OFF',
 	       		'VENDORS':{
 	       			'10000':{'version':'1.0.3.2','appSecret':'<![CDATA[5xRx9H4#5fY3e28@]]>','name':'华旭金卡','isOpen':'ON'},
 		            '10001':{'version':'1.0.3.2','appSecret':'<![CDATA[1%x7H4#2UtPy52@d]]>','name':'深圳华视','isOpen':'ON'},
@@ -2505,7 +2505,7 @@
 	       		}
 			},<!-- 山西 -->
 	       'CERT_SIGNATURE_853':{
-	       		'USB_SIGNATURE_CHECK':'ON',
+	       		'USB_SIGNATURE_CHECK':'OFF',
 	       		'VENDORS':{
 	       			'10000':{'version':'1.0.3.2','appSecret':'<![CDATA[5xRx9H4#5fY3e28@]]>','name':'华旭金卡','isOpen':'ON'},
 		            '10001':{'version':'1.0.3.2','appSecret':'<![CDATA[1%x7H4#2UtPy52@d]]>','name':'深圳华视','isOpen':'ON'},
@@ -2522,7 +2522,7 @@
 	       		}
 			},<!-- 云南 -->
 	       'CERT_SIGNATURE_836':{
-	       		'USB_SIGNATURE_CHECK':'ON',
+	       		'USB_SIGNATURE_CHECK':'OFF',
 	       		'VENDORS':{
 	       			'10000':{'version':'1.0.3.2','appSecret':'<![CDATA[5xRx9H4#5fY3e28@]]>','name':'华旭金卡','isOpen':'ON'},
 		            '10001':{'version':'1.0.3.2','appSecret':'<![CDATA[1%x7H4#2UtPy52@d]]>','name':'深圳华视','isOpen':'ON'},
@@ -2539,7 +2539,7 @@
 	       		}
 		 	},<!-- 江西 -->
 	       'CERT_SIGNATURE_837':{
-	       		'USB_SIGNATURE_CHECK':'ON',
+	       		'USB_SIGNATURE_CHECK':'OFF',
 	       		'VENDORS':{
 	       			'10000':{'version':'1.0.3.2','appSecret':'<![CDATA[5xRx9H4#5fY3e28@]]>','name':'华旭金卡','isOpen':'ON'},
 		            '10001':{'version':'1.0.3.2','appSecret':'<![CDATA[1%x7H4#2UtPy52@d]]>','name':'深圳华视','isOpen':'ON'},
@@ -2556,7 +2556,7 @@
 	       		}
 			},<!-- 山东 -->
 	       'CERT_SIGNATURE_811':{
-	       		'USB_SIGNATURE_CHECK':'ON',
+	       		'USB_SIGNATURE_CHECK':'OFF',
 	       		'VENDORS':{
 	       			'10000':{'version':'1.0.3.2','appSecret':'<![CDATA[5xRx9H4#5fY3e28@]]>','name':'华旭金卡','isOpen':'ON'},
 		            '10001':{'version':'1.0.3.2','appSecret':'<![CDATA[1%x7H4#2UtPy52@d]]>','name':'深圳华视','isOpen':'ON'},
@@ -2573,7 +2573,7 @@
 	       		}
 			},<!-- 北京 -->
 	       'CERT_SIGNATURE_843':{
-	       		'USB_SIGNATURE_CHECK':'ON',
+	       		'USB_SIGNATURE_CHECK':'OFF',
 	       		'VENDORS':{
 	       			'10000':{'version':'1.0.3.2','appSecret':'<![CDATA[5xRx9H4#5fY3e28@]]>','name':'华旭金卡','isOpen':'ON'},
 		            '10001':{'version':'1.0.3.2','appSecret':'<![CDATA[1%x7H4#2UtPy52@d]]>','name':'深圳华视','isOpen':'ON'},
@@ -2590,7 +2590,7 @@
 	       		}
 			},<!-- 湖南 -->
 	       'CERT_SIGNATURE_851':{
-	       		'USB_SIGNATURE_CHECK':'ON',
+	       		'USB_SIGNATURE_CHECK':'OFF',
 	       		'VENDORS':{
 	       			'10000':{'version':'1.0.3.2','appSecret':'<![CDATA[5xRx9H4#5fY3e28@]]>','name':'华旭金卡','isOpen':'ON'},
 		            '10001':{'version':'1.0.3.2','appSecret':'<![CDATA[1%x7H4#2UtPy52@d]]>','name':'深圳华视','isOpen':'ON'},
@@ -2607,7 +2607,7 @@
 	       		}
 			},<!-- 四川 -->
 	       'CERT_SIGNATURE_844':{
-	       		'USB_SIGNATURE_CHECK':'ON',
+	       		'USB_SIGNATURE_CHECK':'OFF',
 	       		'VENDORS':{
 	       			'10000':{'version':'1.0.3.2','appSecret':'<![CDATA[5xRx9H4#5fY3e28@]]>','name':'华旭金卡','isOpen':'ON'},
 		            '10001':{'version':'1.0.3.2','appSecret':'<![CDATA[1%x7H4#2UtPy52@d]]>','name':'深圳华视','isOpen':'ON'},
@@ -2624,7 +2624,7 @@
 	       		}
 			},<!-- 广东 -->
 	       'CERT_SIGNATURE_831':{
-	       		'USB_SIGNATURE_CHECK':'ON',
+	       		'USB_SIGNATURE_CHECK':'OFF',
 	       		'VENDORS':{
 	       			'10000':{'version':'1.0.3.2','appSecret':'<![CDATA[5xRx9H4#5fY3e28@]]>','name':'华旭金卡','isOpen':'ON'},
 		            '10001':{'version':'1.0.3.2','appSecret':'<![CDATA[1%x7H4#2UtPy52@d]]>','name':'深圳华视','isOpen':'ON'},
@@ -2641,7 +2641,7 @@
 	       		}
 			},<!-- 上海 -->
 	       'CERT_SIGNATURE_812':{
-	       		'USB_SIGNATURE_CHECK':'ON',
+	       		'USB_SIGNATURE_CHECK':'OFF',
 	       		'VENDORS':{
 	       			'10000':{'version':'1.0.3.2','appSecret':'<![CDATA[5xRx9H4#5fY3e28@]]>','name':'华旭金卡','isOpen':'ON'},
 		            '10001':{'version':'1.0.3.2','appSecret':'<![CDATA[1%x7H4#2UtPy52@d]]>','name':'深圳华视','isOpen':'ON'},
@@ -2658,7 +2658,7 @@
 	       		}
 			},<!-- 天津 -->
 	       'CERT_SIGNATURE_813':{
-	       		'USB_SIGNATURE_CHECK':'ON',
+	       		'USB_SIGNATURE_CHECK':'OFF',
 	       		'VENDORS':{
 	       			'10000':{'version':'1.0.3.2','appSecret':'<![CDATA[5xRx9H4#5fY3e28@]]>','name':'华旭金卡','isOpen':'ON'},
 		            '10001':{'version':'1.0.3.2','appSecret':'<![CDATA[1%x7H4#2UtPy52@d]]>','name':'深圳华视','isOpen':'ON'},
@@ -2675,7 +2675,7 @@
 	       		}
 			},<!-- 河北 -->
 	       'CERT_SIGNATURE_841':{
-	       		'USB_SIGNATURE_CHECK':'ON',
+	       		'USB_SIGNATURE_CHECK':'OFF',
 	       		'VENDORS':{
 	       			'10000':{'version':'1.0.3.2','appSecret':'<![CDATA[5xRx9H4#5fY3e28@]]>','name':'华旭金卡','isOpen':'ON'},
 		            '10001':{'version':'1.0.3.2','appSecret':'<![CDATA[1%x7H4#2UtPy52@d]]>','name':'深圳华视','isOpen':'ON'},
@@ -2692,7 +2692,7 @@
 	       		}
 			},<!-- 河南 -->
 	       'CERT_SIGNATURE_821':{
-	       		'USB_SIGNATURE_CHECK':'ON',
+	       		'USB_SIGNATURE_CHECK':'OFF',
 	       		'VENDORS':{
 	       			'10000':{'version':'1.0.3.2','appSecret':'<![CDATA[5xRx9H4#5fY3e28@]]>','name':'华旭金卡','isOpen':'ON'},
 		            '10001':{'version':'1.0.3.2','appSecret':'<![CDATA[1%x7H4#2UtPy52@d]]>','name':'深圳华视','isOpen':'ON'},
@@ -2709,7 +2709,7 @@
 	       		}
 			},<!-- 辽宁 -->
 	       'CERT_SIGNATURE_822':{
-	       		'USB_SIGNATURE_CHECK':'ON',
+	       		'USB_SIGNATURE_CHECK':'OFF',
 	       		'VENDORS':{
 	       			'10000':{'version':'1.0.3.2','appSecret':'<![CDATA[5xRx9H4#5fY3e28@]]>','name':'华旭金卡','isOpen':'ON'},
 		            '10001':{'version':'1.0.3.2','appSecret':'<![CDATA[1%x7H4#2UtPy52@d]]>','name':'深圳华视','isOpen':'ON'},
@@ -2726,7 +2726,7 @@
 	       		}
 			},<!-- 吉林 -->
 	       'CERT_SIGNATURE_834':{
-	       		'USB_SIGNATURE_CHECK':'ON',
+	       		'USB_SIGNATURE_CHECK':'OFF',
 	       		'VENDORS':{
 	       			'10000':{'version':'1.0.3.2','appSecret':'<![CDATA[5xRx9H4#5fY3e28@]]>','name':'华旭金卡','isOpen':'ON'},
 		            '10001':{'version':'1.0.3.2','appSecret':'<![CDATA[1%x7H4#2UtPy52@d]]>','name':'深圳华视','isOpen':'ON'},
@@ -2743,7 +2743,7 @@
 	       		}
 			},<!-- 安徽 -->
 	       'CERT_SIGNATURE_833':{
-	       		'USB_SIGNATURE_CHECK':'ON',
+	       		'USB_SIGNATURE_CHECK':'OFF',
 	       		'VENDORS':{
 	       			'10000':{'version':'1.0.3.2','appSecret':'<![CDATA[5xRx9H4#5fY3e28@]]>','name':'华旭金卡','isOpen':'ON'},
 		            '10001':{'version':'1.0.3.2','appSecret':'<![CDATA[1%x7H4#2UtPy52@d]]>','name':'深圳华视','isOpen':'ON'},
@@ -2760,7 +2760,7 @@
 	       		}
 			},<!-- 浙江 -->
 	       'CERT_SIGNATURE_852':{
-	       		'USB_SIGNATURE_CHECK':'ON',
+	       		'USB_SIGNATURE_CHECK':'OFF',
 	       		'VENDORS':{
 	       			'10000':{'version':'1.0.3.2','appSecret':'<![CDATA[5xRx9H4#5fY3e28@]]>','name':'华旭金卡','isOpen':'ON'},
 		            '10001':{'version':'1.0.3.2','appSecret':'<![CDATA[1%x7H4#2UtPy52@d]]>','name':'深圳华视','isOpen':'ON'},
@@ -2777,7 +2777,7 @@
 	       		}
 			},<!-- 贵州 -->
 	       'CERT_SIGNATURE_862':{
-	       		'USB_SIGNATURE_CHECK':'ON',
+	       		'USB_SIGNATURE_CHECK':'OFF',
 	       		'VENDORS':{
 	       			'10000':{'version':'1.0.3.2','appSecret':'<![CDATA[5xRx9H4#5fY3e28@]]>','name':'华旭金卡','isOpen':'ON'},
 		            '10001':{'version':'1.0.3.2','appSecret':'<![CDATA[1%x7H4#2UtPy52@d]]>','name':'深圳华视','isOpen':'ON'},
@@ -2794,7 +2794,7 @@
 	       		}
 			},<!-- 甘肃 -->
 	       'CERT_SIGNATURE_865':{
-	       		'USB_SIGNATURE_CHECK':'ON',
+	       		'USB_SIGNATURE_CHECK':'OFF',
 	       		'VENDORS':{
 	       			'10000':{'version':'1.0.3.2','appSecret':'<![CDATA[5xRx9H4#5fY3e28@]]>','name':'华旭金卡','isOpen':'ON'},
 		            '10001':{'version':'1.0.3.2','appSecret':'<![CDATA[1%x7H4#2UtPy52@d]]>','name':'深圳华视','isOpen':'ON'},
@@ -2811,7 +2811,7 @@
 	       		}
 			},<!-- 新疆 -->
 	       'CERT_SIGNATURE_899':{
-	       		'USB_SIGNATURE_CHECK':'ON',
+	       		'USB_SIGNATURE_CHECK':'OFF',
 	       		'VENDORS':{
 	       			'10000':{'version':'1.0.3.2','appSecret':'<![CDATA[5xRx9H4#5fY3e28@]]>','name':'华旭金卡','isOpen':'ON'},
 		            '10001':{'version':'1.0.3.2','appSecret':'<![CDATA[1%x7H4#2UtPy52@d]]>','name':'深圳华视','isOpen':'ON'},
