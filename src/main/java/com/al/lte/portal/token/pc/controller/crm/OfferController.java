@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
+import org.jfree.util.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -504,9 +505,9 @@ public class OfferController extends BaseController {
 				String flag = MySimulateData.getInstance().getParam((String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),paramMap.get("areaid").toString());
 				jsonResponse = super.successed(flag,ResultConstant.SUCCESS.getCode());
 			} catch (UnsupportedEncodingException e) {
-				e.printStackTrace();
+				Log.error(e);
 			} catch (InterfaceException e) {
-				e.printStackTrace();
+				Log.error(e);
 			}
 		return jsonResponse;
     }
@@ -931,8 +932,7 @@ public class OfferController extends BaseController {
 							model.addAttribute("orderAttrFlag","C");//C非必填
 						}
 					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						Log.error(e);
 						model.addAttribute("orderAttrFlag","C");//C非必填
 					}
 				}else{//未传经办人信息

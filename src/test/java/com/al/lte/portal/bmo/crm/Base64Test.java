@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.apache.commons.codec.binary.Base64;
+import org.jfree.util.Log;
 
 public class Base64Test {
     public static void main(String[] args) {
@@ -25,10 +26,13 @@ public class Base64Test {
         try {
             in = new FileInputStream(imgFile);
             data = new byte[in.available()];
-            in.read(data);
+            int count = 0;
+            while ((count = in.read(data)) > 0) {
+            	in.read(data);
+            }
             in.close();
         } catch (IOException e) {
-            e.printStackTrace();
+           Log.error(e);
         }
         //对字节数组Base64编码
         Base64 base64 = new Base64();

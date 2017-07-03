@@ -17,6 +17,7 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.jfree.util.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -140,8 +141,7 @@ public class OrderController extends BaseController {
 						model.addAttribute("orderAttrFlag","Y");//Y必填
 					}
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					Log.error(e);
 					model.addAttribute("orderAttrFlag","Y");//Y必填
 				}
 			}else{//未传经办人信息
@@ -155,8 +155,7 @@ public class OrderController extends BaseController {
 		try {
 			isSkipPhoto = staffBmo.checkOperatSpec(SysConstant.TGJBRBTQX, sessionStaff);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Log.error(e);
 		}
 		if(isSkipPhoto.equals(SysConstant.STRING_0) && orderAttrFlag.equals("Y")){
 			model.addAttribute("orderAttrFlag","C");//C非必填
@@ -1020,14 +1019,14 @@ public class OrderController extends BaseController {
         							influx = Float.parseFloat(exitParam.get("inFlux").toString());
         							if(influx<1024){
         								influx_str = influx+"";
-        								if(influx_str.indexOf(".") > 0){  
+        								if(influx_str.indexOf(".") > -1){  
                     						influx_str = influx_str.replaceAll("0+?$", "");//去掉多余的0  
                     						influx_str = influx_str.replaceAll("[.]$", "");//如最后一位是.则去掉  
                     			        } 
         								influx_str = influx_str+"M";
         							}else{
         								influx_str = influx/1024+"";
-        								if(influx_str.indexOf(".") > 0){  
+        								if(influx_str.indexOf(".") > -1){  
                     						influx_str = influx_str.replaceAll("0+?$", "");//去掉多余的0  
                     						influx_str = influx_str.replaceAll("[.]$", "");//如最后一位是.则去掉  
                     			        } 

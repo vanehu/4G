@@ -17,6 +17,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
+import org.jfree.util.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -92,7 +93,7 @@ public class MktResController extends BaseController {
             String res=staffBmo.checkOperatSpec("CHOOSE_PNLEVEL", sessionStaff);
             model.addAttribute("can_change_level", res);
         } catch (Exception e1) {
-            e1.printStackTrace();
+        	Log.error(e1);
         }
 		if(!"".equals(phoneNumber)&&!"".equals(anTypeCd)){
 			param.putAll(getAreaInfos(""));
@@ -316,7 +317,7 @@ public class MktResController extends BaseController {
                 
             }
         } catch (Exception e1) {
-            e1.printStackTrace();
+        	Log.error(e1);
         }
 		model.addAttribute("subPage", subPage);
 		return "/pctoken/order/order-phonenumber-prepare";
@@ -734,7 +735,7 @@ public class MktResController extends BaseController {
 			}
         } catch (Exception e) {
         	log.error("查询卡类型失败", e);
-            e.printStackTrace();
+        	Log.error(e);
         }
 		return jsonResponse;
 	}

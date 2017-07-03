@@ -6,6 +6,9 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 import javax.servlet.http.HttpServletRequest;
+
+import org.jfree.util.Log;
+
 import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.lte.portal.bmo.crm.OfferBmo;
 import com.al.lte.portal.model.SessionStaff;
@@ -39,7 +42,7 @@ public class LoadInstThread extends Thread{
         	try {
 				resMap = offerBmo.loadInst(paramMap,null,sessionStaff);
 			} catch (Exception e) {
-				e.printStackTrace();
+				Log.error(e);
 			}
         	
         	//加载实例		
@@ -50,7 +53,7 @@ public class LoadInstThread extends Thread{
         	}
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			Log.error(e);
 		}
 		latch.countDown();
 	}

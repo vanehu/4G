@@ -12,6 +12,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.math.NumberUtils;
+import org.jfree.util.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -526,8 +527,7 @@ public class OrderProdModifyController extends BaseController {
         		jsonResponse = super.failed(queryConfig,ResultConstant.FAILD.getCode());
         	}
         }catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        	Log.error(e);
         }
 		return jsonResponse;
     }
@@ -562,8 +562,7 @@ public class OrderProdModifyController extends BaseController {
 				jsonResponse = super.failed(isValidateStr,ResultConstant.FAILD.getCode());
 			}
         }catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        	Log.error(e);
         }
 		return jsonResponse;
     }

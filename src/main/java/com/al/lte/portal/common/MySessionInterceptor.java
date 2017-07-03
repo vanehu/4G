@@ -231,7 +231,7 @@ public class MySessionInterceptor implements ISessionInterceptor {
 										}
 									}
 				                } catch (Exception e) {
-				                    e.printStackTrace();
+				                	log.error(e);
 				                }
 								
 								long l_end = Calendar.getInstance().getTimeInMillis();
