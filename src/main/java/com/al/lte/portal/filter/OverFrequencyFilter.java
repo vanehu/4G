@@ -155,8 +155,7 @@ public class OverFrequencyFilter extends OncePerRequestFilter{
 					httpSession.setAttribute(sessionStaff.getStaffCode()+type+"count", 1);
 				}
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				log.error(e);
 			} 
 		}else{
 			httpSession.setAttribute(sessionStaff.getStaffCode()+type+"time", endTime);

@@ -68,7 +68,7 @@ public class PortalDataSourceFilter extends OncePerRequestFilter {
     			dataSourceManager = (DataSourceManager) SpringContextUtil.getBean("dataSourceManager");
     		}
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e);
 		}
 	}
 
@@ -163,7 +163,7 @@ public class PortalDataSourceFilter extends OncePerRequestFilter {
 			
 		} catch (Exception e) {
 			setSessionDbKeyWordAttr(session, DataSourceManager.DEFAULT_DATASOURCE_KEY);
-			e.printStackTrace();
+			log.error(e);
 		}
 		log.debug("------PortalDataSourceFilter------ path:{} ,currentDatasourceKey:{}", request.getServletPath(),session.getAttribute(SysConstant.SESSION_DATASOURCE_KEY));
 		filterChain.doFilter(request, response);
@@ -183,7 +183,7 @@ public class PortalDataSourceFilter extends OncePerRequestFilter {
 				session.setAttribute(SysConstant.SESSION_KEY_LOGIN_STAFF, sessionStaff);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e);
 		}
 	}
 

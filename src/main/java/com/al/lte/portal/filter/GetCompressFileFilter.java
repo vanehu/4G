@@ -60,7 +60,7 @@ public class GetCompressFileFilter extends OncePerRequestFilter {
 		return resourcePrefix;
 	}
 
-	public void setJavascriptResourcePrefix(String javascriptResourcePrefix) {
+	public static void setJavascriptResourcePrefix(String javascriptResourcePrefix) {
 		if(javascriptResourcePrefix != null && javascriptResourcePrefix.startsWith(File.separator)){
 			javascriptResourcePrefix = javascriptResourcePrefix.substring(1);
 		}

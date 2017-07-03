@@ -39,9 +39,9 @@ public class DataEngine implements ServletContextAware{
 	
 	private static Log log = Log.getLog(DataEngine.class);
 	
-	private static volatile boolean initComplete = false; //临时方案，原先启动时服务层会加载两次，判断只加载一次
+	private volatile boolean initComplete = false; //临时方案，原先启动时服务层会加载两次，判断只加载一次
 	
-    private static ServletContext servletContext;
+    private static  ServletContext servletContext;
     @Autowired
 	PropertiesUtils propertiesUtils;
     
@@ -173,7 +173,7 @@ public class DataEngine implements ServletContextAware{
 	}
 	
     public void setServletContext(ServletContext servletContext) {
-        this.servletContext=servletContext;
+        DataEngine.servletContext=servletContext;
     }
 
     public ServletContext getServletContext() {
@@ -259,7 +259,7 @@ public class DataEngine implements ServletContextAware{
     			dbKeyWords = dataSourceManager.getDbKeyWords();
     		}
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e);
 		}
     	return dbKeyWords;
     }
