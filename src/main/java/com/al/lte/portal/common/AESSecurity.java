@@ -5,6 +5,8 @@ import java.security.Security;
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 
+import com.al.ecs.log.Log;
+
 public class AESSecurity {
     private static final int KEY_BIT = 128;
 
@@ -14,6 +16,8 @@ public class AESSecurity {
 
     private static final String DEFAULT_PADDING = "PKCS5Padding";
     // private static final String DEFAULT_PADDING = "ZeroBytePadding";
+    
+    private final static Log log = Log.getLog(AESSecurity.class);
 
     static {
         Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
@@ -45,7 +49,7 @@ public class AESSecurity {
             byte[] b = cipher.doFinal(str.getBytes());
             return byte2hex(b);
         } catch (Exception e) {
-            e.printStackTrace();
+        	log.error(e);
         }
         return str;
     }
@@ -59,7 +63,7 @@ public class AESSecurity {
             cipher.init(Cipher.DECRYPT_MODE, secretKey);
             return new String(cipher.doFinal(b));
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e);
         }
         return str;
     }
