@@ -8,13 +8,15 @@ import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.jfree.util.Log;
+
 import com.al.ecs.common.util.CryptoUtils;
 import com.ibm.icu.text.SimpleDateFormat;
 
 public class Testxx {
 
 	/** des加密解密所需要的秘钥. */
-	public static final byte[] keyBytes = { 64, 100, -32, 117, -3, -39, 22,
+	private static final byte[] keyBytes = { 64, 100, -32, 117, -3, -39, 22,
 			-63, 79, 76, 52, -3, 7, -116, -53, -65, 64, 100, -32, 117, -3, -39,
 			22, -63 };
 
@@ -53,7 +55,7 @@ public class Testxx {
 			host = ia.getHostName();// 获取计算机主机名
 			IP = ia.getHostAddress();// 获取计算机IP
 		} catch (UnknownHostException e) {
-			e.printStackTrace();
+			Log.error(e);
 		}
 
 		System.out.println(host);
@@ -90,8 +92,7 @@ public class Testxx {
 			testStr = new String(bytes,"UTF-8");
 			System.out.println(testStr);
 		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Log.error(e);
 		}
 	}
 }
