@@ -157,7 +157,7 @@ public class HTMLFile2PDF {
 		htmlStr1.append("<td colspan=\"3\" style=\"width: 130pt; word-wrap: break-word; \"><p style=\"overflow: hidden; line-height: 1.0; text-indent: 0px; \"><span style=\"font-family: 宋体; color: #000000; font-size: 10pt; font-weight: bold;\">申请人/经办人(签字)： </span></p></td>");
 		String str1=htmlStr1.toString().replaceAll("\t|\r|\n","");
 		String appHtml="</table><table style=\"width: 595pt; border-collapse: collapse; empty-cells: show\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" bgcolor=\"white\" id=\"ywSign\">";		
-		if(html.indexOf(str1)>0){
+		if(html.indexOf(str1)>-1){
 			html=html.replace(str1, appHtml.replaceAll("\t|\r|\n","")+str1);
 		}
 		StringBuffer htmlStr2=new StringBuffer();
@@ -165,7 +165,7 @@ public class HTMLFile2PDF {
 		htmlStr2.append("<td colspan=\"6\" style=\"width: 83pt; height: 14pt;\"></td>");
 		htmlStr2.append("<td colspan=\"5\" style=\"width: 130pt; word-wrap: break-word; \"><p style=\"overflow: hidden; line-height: 1.0; text-indent: 0px; \"><span style=\"font-family: 宋体; color: #000000; font-size: 10pt; font-weight: bold;\">申请人/经办人(签字)： </span></p></td>");
 		String str2=htmlStr2.toString().replaceAll("\t|\r|\n","");
-		if(html.indexOf(str2)>0){
+		if(html.indexOf(str2)>-1){
 			html=html.replace(str2, appHtml.replaceAll("\t|\r|\n","")+str2);
 		}
 		StringBuffer htmlStr3=new StringBuffer();
@@ -173,7 +173,7 @@ public class HTMLFile2PDF {
 		htmlStr3.append("<td colspan=\"4\" style=\"width: 83pt; height: 14pt;\"></td>");
 		htmlStr3.append("<td colspan=\"3\" style=\"width: 130pt; word-wrap: break-word; \"><p style=\"overflow: hidden; line-height: 1.0; text-indent: 0px; \"><span style=\"font-family: 宋体; color: #000000; font-size: 10pt; font-weight: bold;\">申请人/经办人(签字)： </span></p></td>");
 		String str3=htmlStr3.toString().replaceAll("\t|\r|\n","");
-		if(html.indexOf(str3)>0){
+		if(html.indexOf(str3)>-1){
 			html=html.replace(str3, appHtml.replaceAll("\t|\r|\n","")+str3);
 		}
 		return html;

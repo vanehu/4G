@@ -17,6 +17,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jfree.util.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -1521,8 +1522,7 @@ public class CustController extends BaseController {
         } catch (BusinessException be) {
             return super.failed(be);	
         } catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+        	Log.error(e);
 			return super.failed(resultMap, ResultConstant.FAILD.getCode());
 		}
         return jsonResponse;

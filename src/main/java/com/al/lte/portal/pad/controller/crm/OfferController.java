@@ -471,9 +471,9 @@ public class OfferController extends BaseController {
 				String flag = MySimulateData.getInstance().getParam((String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),paramMap.get("areaid").toString());
 				jsonResponse = super.successed(flag,ResultConstant.SUCCESS.getCode());
 			} catch (UnsupportedEncodingException e) {
-				e.printStackTrace();
+				log.error(e);
 			} catch (InterfaceException e) {
-				e.printStackTrace();
+				log.error(e);
 			}
 		return jsonResponse;
     }

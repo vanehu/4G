@@ -6,6 +6,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 
+import org.jfree.util.Log;
+
 import com.al.ecs.common.util.DateUtil;
 
 public class TestHashMap {
@@ -41,7 +43,7 @@ public class TestHashMap {
 			DateFormat dateFormat = DateFormat.getDateInstance();
 			dateFormat.parse("2016-08-23");
 		} catch (ParseException e) {
-			e.printStackTrace();
+			Log.error(e);
 		}
 	}
 }

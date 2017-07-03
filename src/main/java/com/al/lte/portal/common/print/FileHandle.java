@@ -193,7 +193,10 @@ public class FileHandle {
 		long length = fileJapser.length();// 获得文件的字节数
 		byte[] buffer = new byte[(int) length];
 		try(InputStream image = new FileInputStream(fileJapser);){
-			image.read(buffer);
+			int count = 0;
+		    while ((count = image.read(buffer)) > 0) {
+		    	image.read(buffer);
+		    }
 		}catch(Exception e){
 			log.error(e);
 		}

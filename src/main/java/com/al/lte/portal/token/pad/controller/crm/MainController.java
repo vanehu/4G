@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.collections.MapUtils;
+import org.jfree.util.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -106,8 +107,7 @@ public class MainController extends BaseController {
 							model.addAttribute("orderAttrFlag","Y");//Y必填
 						}
 					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						Log.error(e);
 						model.addAttribute("orderAttrFlag","Y");//Y必填
 					}
 				}else{//未传经办人信息
@@ -556,8 +556,7 @@ public class MainController extends BaseController {
 							model.addAttribute("orderAttrFlag","Y");//Y必填
 						}
 					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						Log.error(e);
 						model.addAttribute("orderAttrFlag","Y");//Y必填
 					}
 				}else{//未传经办人信息
@@ -571,8 +570,7 @@ public class MainController extends BaseController {
 			try {
 				isSkipPhoto = staffBmo.checkOperatSpec(SysConstant.TGJBRBTQX, sessionStaff);
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				Log.error(e);
 			}
 			if(isSkipPhoto.equals(SysConstant.STRING_0) && orderAttrFlag.equals("Y")){
 				model.addAttribute("orderAttrFlag","C");//C非必填
