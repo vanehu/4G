@@ -84,7 +84,7 @@ public class PdfPrintHelper {
             bytes = appendPrintControlScript(bytes);
             bAppend = true;//追加打印控制脚步成功
         } catch (Exception exp) {
-        	exp.printStackTrace();
+        	log.error(exp);
             strMsg = exp.getMessage();
             log.error(exp);
         }finally{

@@ -352,8 +352,7 @@ public class OrderQueryController extends BaseController {
 	    try {
             rList = (List<Map<String, Object>>)orderBmo.queryAgentPortalConfig(pMap, flowNum, sessionStaff).get("result");
         } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        	 log.error(e);
         }
 	    if(rList!=null&&rList.size()>0){
 	        model.addAttribute("area_list", rList.get(0));

@@ -629,11 +629,9 @@ public class OfferController extends BaseController {
 			map.put("net_vice_card", net_vice_card);
 			jsonResponse = super.successed(map,ResultConstant.SUCCESS.getCode());
 		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error(e);
 		} catch (InterfaceException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error(e);
 		}
 		return jsonResponse;
     }

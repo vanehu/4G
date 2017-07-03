@@ -515,7 +515,7 @@ public class SignController extends BaseController {
 			response.getWriter().write(backStr);
 			response.getWriter().close();
 		} catch (IOException e) {
-			e.printStackTrace();
+			 log.error(e);
 		}
 	}
     /**

@@ -237,7 +237,7 @@ public class PrintController extends BaseController {
 				return super.failed("根据url【" + voucherUrl + "】没有获取到pdf文件！", ResultConstant.FAILD.getCode());
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			 log.error(e);
 			return super.failed("根据url【" + voucherUrl + "】没有获取到pdf文件！", ResultConstant.FAILD.getCode());
 		}
 	}

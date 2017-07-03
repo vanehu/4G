@@ -387,13 +387,13 @@ public class CustController extends BaseController {
                 jsonResponse = super.failed(retMap, ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
             }
         } catch (BusinessException be) {
-        	 be.printStackTrace();
+        	log.error(be);
              jsonResponse = super.failed(be);
         } catch (InterfaceException ie) {
-        	ie.printStackTrace();
+        	log.error(ie);
 			return super.failed(ie, paramMap, ErrorCode.QUERY_ACCOUNT_USE_CUSTINFO);
         } catch (Exception e) {
-            e.printStackTrace();
+        	log.error(e);
             jsonResponse = super.failed(ErrorCode.QUERY_ACCOUNT_USE_CUSTINFO, e, paramMap);
         }
         //update by huangjj3  星级服务参数缓存客户选择定位的号码进行切换
