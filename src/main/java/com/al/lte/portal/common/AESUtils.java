@@ -16,6 +16,8 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
+import com.al.ecs.log.Log;
+
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
 
@@ -30,14 +32,13 @@ import sun.misc.BASE64Encoder;
  * 
  */
 public class AESUtils {
-
+	private final static Log log = Log.getLog(AESUtils.class);
 	/**
 	 * AES可以使用128、192、和256位密钥
 	 */
 	private static int keySize = 128;
 	
 	private final static String encoding = "UTF-8"; 
-
 	/**
 	 * AES+BASE64加密
 	 * 
@@ -74,12 +75,13 @@ public class AESUtils {
 	public static String ebotongEncrypto(String str) {
 		BASE64Encoder base64encoder = new BASE64Encoder();
 		String result = str;
+		
 		if (str != null && str.length() > 0) {
 			try {
 				byte[] encodeByte = str.getBytes(encoding);
 				result = base64encoder.encode(encodeByte);
 			} catch (Exception e) {
-				e.printStackTrace();
+				log.error(e);
 			}
 		}
 		// base64加密超过一定长度会自动换行 需要去除换行符
@@ -95,7 +97,7 @@ public class AESUtils {
 			byte[] encodeByte = base64decoder.decodeBuffer(str);
 			return new String(encodeByte);
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e);
 			return str;
 		}
 	}
@@ -132,17 +134,17 @@ public class AESUtils {
 			byte[] result = cipher.doFinal(byteContent);
 			return result; // 加密
 		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
+			log.error(e);
 		} catch (NoSuchPaddingException e) {
-			e.printStackTrace();
+			log.error(e);
 		} catch (InvalidKeyException e) {
-			e.printStackTrace();
+			log.error(e);
 		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
+			log.error(e);
 		} catch (IllegalBlockSizeException e) {
-			e.printStackTrace();
+			log.error(e);
 		} catch (BadPaddingException e) {
-			e.printStackTrace();
+			log.error(e);
 		}
 		return null;
 	}
@@ -178,17 +180,17 @@ public class AESUtils {
 			byte[] result = cipher.doFinal(byteContent);
 			return parseByte2HexStr(result); // 加密转字符串
 		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
+			log.error(e);
 		} catch (NoSuchPaddingException e) {
-			e.printStackTrace();
+			log.error(e);
 		} catch (InvalidKeyException e) {
-			e.printStackTrace();
+			log.error(e);
 		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
+			log.error(e);
 		} catch (IllegalBlockSizeException e) {
-			e.printStackTrace();
+			log.error(e);
 		} catch (BadPaddingException e) {
-			e.printStackTrace();
+			log.error(e);
 		}
 		return null;
 	}
@@ -224,15 +226,15 @@ public class AESUtils {
 			byte[] result = cipher.doFinal(content);
 			return result; // 加密
 		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
+			log.error(e);
 		} catch (NoSuchPaddingException e) {
-			e.printStackTrace();
+			log.error(e);
 		} catch (InvalidKeyException e) {
-			e.printStackTrace();
+			log.error(e);
 		} catch (IllegalBlockSizeException e) {
-			e.printStackTrace();
+			log.error(e);
 		} catch (BadPaddingException e) {
-			e.printStackTrace();
+			log.error(e);
 		}
 		return null;
 	}
@@ -269,15 +271,15 @@ public class AESUtils {
 			byte[] result = cipher.doFinal(decryptFrom);
 			return new String(result); // 加密
 		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
+			log.error(e);
 		} catch (NoSuchPaddingException e) {
-			e.printStackTrace();
+			log.error(e);
 		} catch (InvalidKeyException e) {
-			e.printStackTrace();
+			log.error(e);
 		} catch (IllegalBlockSizeException e) {
-			e.printStackTrace();
+			log.error(e);
 		} catch (BadPaddingException e) {
-			e.printStackTrace();
+			log.error(e);
 		}
 		return null;
 	}
@@ -331,10 +333,10 @@ public class AESUtils {
 			messageDigest.reset();
 			messageDigest.update(str.getBytes("UTF-8"));
 		} catch (NoSuchAlgorithmException e) {
-			System.out.println("NoSuchAlgorithmException caught!");
+			log.error(e);
 			System.exit(-1);
 		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
+			log.error(e);
 		}
 
 		byte[] byteArray = messageDigest.digest();

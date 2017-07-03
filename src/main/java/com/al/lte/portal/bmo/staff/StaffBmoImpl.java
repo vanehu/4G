@@ -796,7 +796,7 @@ public class StaffBmoImpl implements StaffBmo {
 
 		} catch (IOException e) {
 			log.debug("获取用户mac失败：");
-			e.printStackTrace(System.out);
+			log.error(e);
 			return "" ;
 		}
 
@@ -835,14 +835,14 @@ public class StaffBmoImpl implements StaffBmo {
 	                        sb.append(line);   
 	                    }   
 	                } catch (IOException e) {   
-	                    e.printStackTrace();   
+	                	log.error(e);
 	                } 
 	                response = sb.toString(); 
 					if(response.indexOf("404") != -1&&response.indexOf("<!DOCTYPE html SYSTEM><html>") != -1){
 						response = "服务不存在！可手动打开浏览器刷新查看详细信息,"+url;
 					}
 	            } catch (Exception e) {
-	            	e.printStackTrace();
+	            	log.error(e);
 	            } finally {
 	                instream.close();
 	            }
@@ -852,7 +852,7 @@ public class StaffBmoImpl implements StaffBmo {
 			response = "刷新失败，服务连接异常，异常信息："+e;
 		} catch (IOException e) {
 			response = "服务器端口异常，异常信息："+e;
-			e.printStackTrace();
+			log.error(e);
 		}finally {
 			httpClient.getConnectionManager().shutdown();
         }  

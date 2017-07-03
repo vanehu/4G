@@ -3212,9 +3212,7 @@ public class PrintBmoImpl implements PrintBmo {
 					}else{
 						attachOfferCont=buildOrderEvent_3_Cont(list);
 					}
-				} else if (event.get("orderEventCont") instanceof Map) {
-                    attachOfferCont = buildOrderEvent_3_Cont_normal((Map<String, Object>) event.get("orderEventCont"), relaAcceNbr);
-                } else {
+				} else {
 					attachOfferCont = buildOrderEvent_3_Cont((List<Map<String, Object>>) event.get("orderEventCont"));
 				}
 			}
@@ -6438,7 +6436,7 @@ public class PrintBmoImpl implements PrintBmo {
         os.flush();
         os.close();
 		}catch(Exception e){
-			e.printStackTrace();
+			log.error(e);
 		}
 		return str;
 	}
@@ -6456,7 +6454,7 @@ public class PrintBmoImpl implements PrintBmo {
 		    imageOutput.close();
 		    log.debug("path", path);
 	    } catch(Exception ex) {
-	      ex.printStackTrace();
+	    	log.error(ex);
 	    }
 	    return str;
 	  }
@@ -6482,9 +6480,9 @@ public class PrintBmoImpl implements PrintBmo {
 			}
 			buffer = bos.toByteArray();
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			log.error(e);
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e);
 		}finally{
 			try {
 				if(fis!=null){
@@ -6494,7 +6492,7 @@ public class PrintBmoImpl implements PrintBmo {
 					bos.close();
 				}
 			} catch (Exception e2) {
-				e2.printStackTrace();
+				log.error(e2);
 			}
 		}
 		return buffer;

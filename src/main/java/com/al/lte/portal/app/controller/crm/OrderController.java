@@ -880,7 +880,7 @@ public class OrderController extends BaseController {
         						try{
         							influx = Float.parseFloat(exitParam.get("inFlux").toString());
         							influx_str = influx+"";
-    								if(influx_str.indexOf(".") > 0){  
+    								if(influx_str.indexOf(".") > -1){  
                 						influx_str = influx_str.replaceAll("0+?$", "");//去掉多余的0  
                 						influx_str = influx_str.replaceAll("[.]$", "");//如最后一位是.则去掉  
                 			        } 
@@ -916,7 +916,7 @@ public class OrderController extends BaseController {
         						try{
         							inProvFlux = Float.parseFloat(exitParam.get("inProvFlux").toString());
         							inProvFlux_str = inProvFlux+"";
-    								if(inProvFlux_str.indexOf(".") > 0){  
+    								if(inProvFlux_str.indexOf(".") > -1){  
     									inProvFlux_str = inProvFlux_str.replaceAll("0+?$", "");//去掉多余的0  
     									inProvFlux_str = inProvFlux_str.replaceAll("[.]$", "");//如最后一位是.则去掉  
                 			        } 
@@ -1028,14 +1028,14 @@ public class OrderController extends BaseController {
         							influx = Float.parseFloat(exitParam.get("inFlux").toString());
         							if(influx<1024){
         								influx_str = influx+"";
-        								if(influx_str.indexOf(".") > 0){  
+        								if(influx_str.indexOf(".") > -1){  
                     						influx_str = influx_str.replaceAll("0+?$", "");//去掉多余的0  
                     						influx_str = influx_str.replaceAll("[.]$", "");//如最后一位是.则去掉  
                     			        } 
         								influx_str = influx_str+"M";
         							}else{
         								influx_str = influx/1024+"";
-        								if(influx_str.indexOf(".") > 0){  
+        								if(influx_str.indexOf(".") > -1){  
                     						influx_str = influx_str.replaceAll("0+?$", "");//去掉多余的0  
                     						influx_str = influx_str.replaceAll("[.]$", "");//如最后一位是.则去掉  
                     			        } 
@@ -2703,9 +2703,9 @@ public class OrderController extends BaseController {
 				feeTypeFag="1";
 			}
 		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
+			log.error(e);
 		} catch (InterfaceException e) {
-			e.printStackTrace();
+			log.error(e);
 		}
 		jsonResponse = super.successed(feeTypeFag,
 				ResultConstant.SUCCESS.getCode());

@@ -103,7 +103,7 @@ public class MktResController extends BaseController {
             String res = staffBmo.checkOperatSpec("CHOOSE_PNLEVEL", sessionStaff);
             model.addAttribute("can_change_level", res);
         } catch (Exception e1) {
-            e1.printStackTrace();
+        	log.error(e1);
         }
         if (!"".equals(phoneNumber) && !"".equals(anTypeCd)) {
             param.putAll(getAreaInfos(""));
@@ -266,7 +266,7 @@ public class MktResController extends BaseController {
             String res = staffBmo.checkOperatSpec("CHOOSE_PNLEVEL", sessionStaff);
             model.addAttribute("can_change_level", res);
         } catch (Exception e1) {
-            e1.printStackTrace();
+        	 log.error(e1);
         }
         model.addAttribute("subPage", subPage);
         return "/app/mktRes/phonenumber-prepare";
@@ -612,7 +612,7 @@ public class MktResController extends BaseController {
             }
         } catch (Exception e) {
             log.error("查询卡类型失败", e);
-            e.printStackTrace();
+            log.error(e);
         }
         return jsonResponse;
     }
