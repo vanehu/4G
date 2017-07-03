@@ -3,6 +3,8 @@ package com.al.lte.portal.common;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.jfree.util.Log;
+
 import com.al.crm.nosql.cache.ICache;
 import com.al.ecs.common.web.SpringContextUtil;
 
@@ -24,7 +26,7 @@ public class RedisUtil {
 				redisCache = (ICache) SpringContextUtil.getBean("cacheClient");
 			} catch (Exception e) {
 				disableRedisFunction(); //获取spring实例异常时关闭redis功能
-				e.printStackTrace();
+				Log.error(e);
 			}
 			initComplete = true;  //只加载一次
 		}
@@ -36,7 +38,7 @@ public class RedisUtil {
 			try {
 				return (String) redisCache.get(getPortalKey(key));
 			} catch (Exception e) {
-				e.printStackTrace();
+				Log.error(e);
 			}
 		}
 		return null;
@@ -46,7 +48,7 @@ public class RedisUtil {
 			try {
 				return redisCache.get(getPortalKey(key));
 			} catch (Exception e) {
-				e.printStackTrace();
+				Log.error(e);
 			}
 		}
 		return null;
@@ -56,7 +58,7 @@ public class RedisUtil {
 			try {
 				redisCache.put(getPortalKey(key), value, expireTime);
 			} catch (Exception e) {
-				e.printStackTrace();
+				Log.error(e);
 			}
 		}
 	}
@@ -65,7 +67,7 @@ public class RedisUtil {
 			try {
 				redisCache.put(getPortalKey(key), value, expireTime);
 			} catch (Exception e) {
-				e.printStackTrace();
+				Log.error(e);
 			}
 		}
 	}
@@ -74,7 +76,7 @@ public class RedisUtil {
 			try {
 				return redisCache.remove(getPortalKey(key));
 			} catch (Exception e) {
-				e.printStackTrace();
+				Log.error(e);
 			}
 		}
 		return false;
@@ -84,7 +86,7 @@ public class RedisUtil {
 			try {
 				return redisCache.remove(getPortalKey(key));
 			} catch (Exception e) {
-				e.printStackTrace();
+				Log.error(e);
 			}
 		}
 		return false;

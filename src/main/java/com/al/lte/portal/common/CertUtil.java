@@ -15,6 +15,8 @@ import java.security.cert.X509Certificate;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.codec.binary.Base64;
+
+import com.al.ecs.log.Log;
 /**
  * 
  * @author linm
@@ -31,7 +33,8 @@ public class CertUtil {
 	private static final int CACHE_SIZE = 2048;
 	private static String privateCert="/resources/cert/Usr.pfx";
 	private static String publicCert="/resources/cert/Usr.cer";
-    
+	private final static Log log = Log.getLog(CertUtil.class);
+	
     /**
      * <p>
      * 获得密钥库
@@ -228,8 +231,7 @@ public class CertUtil {
 			InputStream in=new  FileInputStream(file);
 			System.out.println(signFileToBase64(in,null));
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error(e);
 		}
        }
    }

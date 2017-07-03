@@ -25,7 +25,7 @@ import com.al.ecs.common.web.ServletUtils;
  */
 public class SessionCtrlUtil {
     //被终止的会话ID列表
-    public static String SESSION_LIST_KEY = "sessionList";
+    public static final String SESSION_LIST_KEY = "sessionList";
 
     /**
      * 记录被终止的会话到全局队列

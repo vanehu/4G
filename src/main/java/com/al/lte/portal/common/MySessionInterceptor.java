@@ -107,9 +107,9 @@ public class MySessionInterceptor implements ISessionInterceptor {
             try {
                 param = MySimulateData.getInstance().getParam((String) request.getSession().getAttribute(SysConstant.SESSION_DATASOURCE_KEY),"do_single_sign");
             } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
+            	log.error(e);
             } catch (InterfaceException e) {
-                e.printStackTrace();
+            	log.error(e);
             }
 			boolean needSingleSign = 	BooleanUtils.toBoolean(param);
 			if (needSingleSign && request.getRequestURI().startsWith(request.getContextPath() + mainUrl)) {//查看是否需要单点登录，配置项在simulate.property文件或者系统参数表中

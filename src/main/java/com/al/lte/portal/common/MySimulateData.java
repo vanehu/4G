@@ -34,7 +34,7 @@ public class MySimulateData {
 	private static Properties properties;
 	private static String resource = "/properties/simulate.properties";
 	private static String portalResource = "/portal/portal.properties";
-	private static String appDesc = "";
+	private String appDesc = "";
 	private static Timer timer = null;
 
 //	private static String absResource = "file:///D:/work/simulate.properties";
@@ -60,7 +60,7 @@ public class MySimulateData {
 		initConfig();
 	}
 
-	private void initConfig() {
+	private static void initConfig() {
 		try {
 			properties = getProperties(resource);
 //			properties.load(getStream(portalResource));
@@ -68,7 +68,7 @@ public class MySimulateData {
 			// rb = ResourceBundle.getBundle("D:/work/simulate");
 		} catch (Exception e) {
 			// "读取接口模拟数据文件异常";
-			e.printStackTrace();
+			log.error(e);
 		}
 	}
 
@@ -172,9 +172,9 @@ public class MySimulateData {
 						try {
 							propertyValue = (String) field.get(new MDA());
 						} catch (IllegalArgumentException e) {
-							e.printStackTrace();
+							log.error(e);
 						} catch (IllegalAccessException e) {
-							e.printStackTrace();
+							log.error(e);
 						}
 						isHasProperty = true;
 					}
@@ -184,9 +184,9 @@ public class MySimulateData {
 					try {
 						propertyMap = (Map<String, String>) field.get(new MDA());
 					} catch (IllegalArgumentException e) {
-						e.printStackTrace();
+						log.error(e);
 					} catch (IllegalAccessException e) {
-						e.printStackTrace();
+						log.error(e);
 					}
 					for (String key : propertyMap.keySet()) {
 						if (MDACode.equals(key)) {

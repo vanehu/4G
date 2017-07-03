@@ -7,6 +7,8 @@ import java.util.Hashtable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.jfree.util.Log;
+
 import freemarker.core.ParseException;
 
 public class IDCard {
@@ -75,9 +77,9 @@ public class IDCard {
                 return errorInfo;
             }
         } catch (NumberFormatException e) {
-            e.printStackTrace();
+        	Log.error(e);
         } catch (java.text.ParseException e) {
-            e.printStackTrace();
+        	Log.error(e);
         }
         if (Integer.parseInt(strMonth) > 12 || Integer.parseInt(strMonth) == 0) {
             errorInfo = "身份证月份无效";

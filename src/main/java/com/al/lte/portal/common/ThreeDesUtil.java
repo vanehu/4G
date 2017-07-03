@@ -8,6 +8,8 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESedeKeySpec;
 import javax.crypto.spec.IvParameterSpec;
 
+import org.jfree.util.Log;
+
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
 
@@ -182,7 +184,7 @@ public class ThreeDesUtil {
 			System.out.println("data:image/png;base64,"+RQCode);
 		} catch (Exception e) {
 			System.out.println("sss");
-			e.printStackTrace();
+			Log.error(e);
 		}
 		
 		

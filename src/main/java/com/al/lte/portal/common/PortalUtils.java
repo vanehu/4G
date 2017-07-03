@@ -129,7 +129,7 @@ public class PortalUtils {
 		if (headerHost != null) {
 			try {
 				String port = headerHost.substring(headerHost.indexOf(":") + 1, headerHost.length());
-				if (("93".equals(port) || "94".equals(port)) && (headerHost.indexOf("crm") > 0)) {
+				if (("93".equals(port) || "94".equals(port)) && (headerHost.indexOf("crm") > -1)) {
 					flag = true;
 				}
 			} catch (IndexOutOfBoundsException e) {

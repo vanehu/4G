@@ -16,6 +16,7 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import org.apache.commons.lang.StringUtils;
+import org.jfree.util.Log;
 
 public class RunShellUtil {
 	
@@ -38,7 +39,7 @@ public class RunShellUtil {
             result = sb.toString();   
             }   
         	catch (Exception e) {  
-        		e.printStackTrace();  
+        		Log.error(e); 
             }  
     	return result;
     }
@@ -60,7 +61,7 @@ public class RunShellUtil {
         }
         catch (final Exception e)
         {
-            e.printStackTrace();
+        	Log.error(e);
         }
         return file;
     }
@@ -84,7 +85,7 @@ public class RunShellUtil {
 			}
 			return out.toByteArray();
 		}catch(Exception e){
-			e.printStackTrace();
+			Log.error(e);
 		}		
 
 		return null;
@@ -202,7 +203,7 @@ public class RunShellUtil {
         }  
         catch(Exception e)  
         {  
-            e.printStackTrace();  
+        	Log.error(e);
         }
 		return data;  
     }
