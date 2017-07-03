@@ -319,8 +319,7 @@ public class MainController extends BaseController {
     				msg = msg.replaceAll(" ", "%20");
 //    				msg = msg.replaceAll("\n|\r", "");
     			} catch (Exception e) {
-    				// TODO Auto-generated catch block
-    				e.printStackTrace();
+    				log.error(e);
     			}
     			urlstr = url+"?msg="+msg;
         	}else{
@@ -523,10 +522,6 @@ public class MainController extends BaseController {
 			else if (resourceName.indexOf("购手机") >= 0)
 			{
 				iconPic = "&#xe6c8";
-			}
-			else if ("/app/order/broadband/prepare".equals(menuPath))//宽带甩单
-			{
-				iconPic = "&#xe6d7";
 			}
 			else if ("/app/order/prodoffer/offerchange/prepare".equals(menuPath))//套餐变更
 			{

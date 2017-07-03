@@ -424,7 +424,7 @@ public class SignBmoImpl implements SignBmo{
 					}
 
 		        } catch (Exception exp) {
-		        	exp.printStackTrace();
+		        	log.error(exp);
 		            response.setContentType("text/html; charset=GB18030");
 		            response.setHeader("Content-Language", "GB18030");
 		            response.setHeader("encoding", "GB18030");

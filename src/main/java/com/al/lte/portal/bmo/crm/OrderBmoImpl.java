@@ -3376,7 +3376,7 @@ public class OrderBmoImpl implements OrderBmo {
 						}else if(SysConstant.DEALER.equals(itemSpecId)){
 			    			String itemValue = (String)busiOrderAttr.get("value");
 			    			String staffId = collectionOrderInfo.get("staffId")+"";
-			    			if(StringUtils.isEmpty(itemValue)||StringUtils.isEmpty(itemValue)||!staffId.equals(itemValue)){
+			    			if(StringUtils.isEmpty(itemValue)||!staffId.equals(itemValue)){
 								resultMsg += "校验失败原因：新装结点发展人信息产品属性不存在，或发展人不为采集单受理人员，请确认发展人后重试。";
 								resultMap.put("resultMsg", resultMsg);
 								return resultMap;

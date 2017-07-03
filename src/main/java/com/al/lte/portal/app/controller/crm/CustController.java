@@ -1842,8 +1842,7 @@ public class CustController extends BaseController {
 					return "/cust/cust-list";
 				}
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				log.error(e);
 			}
 		}
 		List custInfos = new ArrayList();
@@ -2271,7 +2270,7 @@ public class CustController extends BaseController {
         	ie.printStackTrace();
 			return super.failed(ie, paramMap, ErrorCode.QUERY_ACCOUNT_USE_CUSTINFO);
         } catch (Exception e) {
-            e.printStackTrace();
+        	log.error(e);
             jsonResponse = super.failed(ErrorCode.QUERY_ACCOUNT_USE_CUSTINFO, e, paramMap);
         }
         //update by huangjj3  星级服务参数缓存客户选择定位的号码进行切换
@@ -2447,7 +2446,7 @@ public class CustController extends BaseController {
         } catch (InterfaceException e) {
             jsonResponse = super.failed(e, paramMap,ErrorCode.PRE_CHECK_CERT_NUMBER_REL);
         } catch (Exception e) {
-            e.printStackTrace();
+        	log.error(e);
         }
         return jsonResponse;
     }
@@ -2510,7 +2509,7 @@ public class CustController extends BaseController {
         } catch (InterfaceException e) {
             jsonResponse = super.failed(e, resultMap, ErrorCode.GET_SEQ);
         } catch (Exception e) {
-            e.printStackTrace();
+        	log.error(e);
         }
         return jsonResponse;
     }
@@ -2588,8 +2587,7 @@ public class CustController extends BaseController {
 						return "/app/cust/cust-list2";
 					}
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					log.error(e);
 				}
 			}
 		}
@@ -2631,8 +2629,7 @@ public class CustController extends BaseController {
 					return "/app/cust/cust-list2";
 				}
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				log.error(e);
 			}
 		}
 		List custInfos = new ArrayList();

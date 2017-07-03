@@ -157,14 +157,14 @@ public class AmalgamationController extends BaseController {
 	        							influx = Float.parseFloat(exitParam.get(inFluxStr).toString());
 	        							if(influx<1024){
 	        								influx_str = influx+"";
-	        								if(influx_str.indexOf(".") > 0){  
+	        								if(influx_str.indexOf(".") > -1){  
 	                    						influx_str = influx_str.replaceAll("0+?$", "");//去掉多余的0  
 	                    						influx_str = influx_str.replaceAll("[.]$", "");//如最后一位是.则去掉  
 	                    			        } 
 	        								influx_str = influx_str+"M";
 	        							}else{
 	        								influx_str = influx/1024+"";
-	        								if(influx_str.indexOf(".") > 0){  
+	        								if(influx_str.indexOf(".") > -1){  
 	                    						influx_str = influx_str.replaceAll("0+?$", "");//去掉多余的0  
 	                    						influx_str = influx_str.replaceAll("[.]$", "");//如最后一位是.则去掉  
 	                    			        } 
