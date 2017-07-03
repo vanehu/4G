@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.codec.binary.Base64;
+import org.jfree.util.Log;
 
 import com.lowagie.text.Document;
 import com.lowagie.text.Image;
@@ -176,9 +177,9 @@ public class PdfUtils {
 			}
 			buffer = bos.toByteArray();
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			Log.error(e);
 		} catch (IOException e) {
-			e.printStackTrace();
+			Log.error(e);
 		}finally{
 			try {
 				if(fis!=null){
@@ -188,7 +189,7 @@ public class PdfUtils {
 					bos.close();
 				}
 			} catch (Exception e2) {
-				e2.printStackTrace();
+				Log.error(e2);
 			}
 		}
 		return buffer;
@@ -207,20 +208,20 @@ public class PdfUtils {
 			bos = new BufferedOutputStream(fos);
 			bos.write(buf);
 		} catch (Exception e) {
-			e.printStackTrace();
+			Log.error(e);
 		} finally {
 			if (bos != null) {
 				try {
 					bos.close();
 				} catch (IOException e) {
-					e.printStackTrace();
+					Log.error(e);
 				}
 			}
 			if (fos != null) {
 				try {
 					fos.close();
 				} catch (IOException e) {
-					e.printStackTrace();
+					Log.error(e);
 				}
 			}
 		}

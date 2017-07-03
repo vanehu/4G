@@ -36,10 +36,10 @@ public class Const {
 	public static final String APP_SEARCH_OFFER_SYSFLAG = "10004";//翼销售查询主销售品与附属销售品的系统标识
 	
 	//发展人数据
-	public static final Object ASSISTANT_TYPE = null;
+	public static Object ASSISTANT_TYPE = null;
 	
 	//证件类型
-	public static final Object ID_CARD_TYPE=null;
+	public static Object ID_CARD_TYPE=null;
 
 	//20位长度的随机字符串
 	public static final int RANDOM_STRING_LENGTH = 20;

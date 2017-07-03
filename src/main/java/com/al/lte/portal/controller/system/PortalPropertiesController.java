@@ -75,9 +75,9 @@ public class PortalPropertiesController extends BaseController {
                     try {
                         o = field.get(new MDA());
                     } catch (IllegalArgumentException e) {
-                        e.printStackTrace();
+                    	log.error(e);
                     } catch (IllegalAccessException e) {
-                        e.printStackTrace();
+                    	log.error(e);
                     }
                 }
             }

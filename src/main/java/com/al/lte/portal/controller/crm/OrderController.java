@@ -1067,14 +1067,14 @@ public class OrderController extends BaseController {
                                         influx = Float.parseFloat(exitParam.get("inFlux").toString());
                                         if (influx < 1024) {
                                             influx_str = influx + "";
-                                            if (influx_str.indexOf(".") > 0) {
+                                            if (influx_str.indexOf(".") > -1) {
                                                 influx_str = influx_str.replaceAll("0+?$", "");//去掉多余的0  
                                                 influx_str = influx_str.replaceAll("[.]$", "");//如最后一位是.则去掉  
                                             }
                                             influx_str = influx_str + "M";
                                         } else {
                                             influx_str = influx / 1024 + "";
-                                            if (influx_str.indexOf(".") > 0) {
+                                            if (influx_str.indexOf(".") > -1) {
                                                 influx_str = influx_str.replaceAll("0+?$", "");//去掉多余的0  
                                                 influx_str = influx_str.replaceAll("[.]$", "");//如最后一位是.则去掉  
                                             }
@@ -1445,8 +1445,7 @@ public class OrderController extends BaseController {
 		try {
 			iseditOperation = this.staffBmo.checkOperatSpec(SysConstant.YCZJQX_TEST, sessionStaff2);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error(e);
 		}
         model.addAttribute("newCard", iseditOperation);
         return forward;
@@ -3273,7 +3272,7 @@ public class OrderController extends BaseController {
             } catch (InterfaceException ie) {
                 return super.failed(ie, param, ErrorCode.ORDER_SUBMIT);
             } catch (Exception e) {
-            	e.printStackTrace();
+            	log.error(e);
                 return super.failed(ErrorCode.ORDER_SUBMIT, e, param);
             }
         } else {
@@ -3468,9 +3467,9 @@ public class OrderController extends BaseController {
                 feeTypeFag = "1";
             }
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+        	log.error(e);
         } catch (InterfaceException e) {
-            e.printStackTrace();
+        	log.error(e);
         }
         jsonResponse = super.successed(feeTypeFag, ResultConstant.SUCCESS.getCode());
         return jsonResponse;
@@ -3502,7 +3501,7 @@ public class OrderController extends BaseController {
                 provOrderAttrFlag = "1";
             }
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+           log.error(e);
         } catch (InterfaceException e) {
             e.printStackTrace();
         }
@@ -3969,9 +3968,9 @@ public class OrderController extends BaseController {
                     code);
             jsonResponse = super.successed(param, ResultConstant.SUCCESS.getCode());
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+        	 log.error(e);
         } catch (InterfaceException e) {
-            e.printStackTrace();
+        	 log.error(e);
         }
         return jsonResponse;
     }
@@ -4515,7 +4514,7 @@ public class OrderController extends BaseController {
 		        outputStream.write(msg.getBytes());
 			}
 		}catch (Exception e) {
-			e.printStackTrace();
+			 log.error(e);
 			this.log.error(e);
 			msg += "，异常信息："+e;
 	        response.setContentType("text/html;charset=UTF-8");

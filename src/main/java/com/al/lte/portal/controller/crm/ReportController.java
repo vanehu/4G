@@ -941,7 +941,7 @@ public class ReportController extends BaseController {
                 ServletUtils.setSessionAttribute(super.getRequest(),SysConstant.CASHIER_CHANNEL_QUERY+"_"+sessionStaff.getStaffId(), qryChannelAuth);
             }
         } catch (Exception e) {
-        	e.printStackTrace();
+        	 log.error(e);
             qryChannelAuth = "-1";
         }
         model.addAttribute("QryChannelAuth", qryChannelAuth);

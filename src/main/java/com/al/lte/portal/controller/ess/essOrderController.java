@@ -7,6 +7,7 @@ import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -132,8 +133,7 @@ public class essOrderController extends BaseController {
 				sessionStaffBack.setCurrentAreaId(sessionStaff.getAreaId());
 				iseditOperation = this.staffBmo.checkOperatSpec(SysConstant.WRITECARD_TEST, sessionStaffBack);
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				 log.error(e);
 			}
 	        model.addAttribute("writeCard_test", iseditOperation);
 			if (pageFlag.equals("terminalInfoPage")) {// 终端回填
@@ -388,7 +388,7 @@ public class essOrderController extends BaseController {
 			return super.failed(ie, param, ErrorCode.ESS_ORDER_LIST_EXPORT);
 		} catch (Exception e) {
 			//return super.failedStr(model, ErrorCode.BATCH_IMP_LIST, e, param);
-			return super.failed(ErrorCode.ESS_ORDER_LIST_EXPORT, e.getStackTrace().toString(), param);
+			return super.failed(ErrorCode.ESS_ORDER_LIST_EXPORT, Arrays.toString(e.getStackTrace()), param);
 		}
 		return jsonResponse;
 	}
@@ -473,7 +473,7 @@ public class essOrderController extends BaseController {
 		try {
 			workbook.write(outputStream);
 		} catch (IOException e) {
-			e.printStackTrace();/////////////////////////////////////////////异常处理////////////////////////////////////
+			log.error(e);
 		}
 	}
 	

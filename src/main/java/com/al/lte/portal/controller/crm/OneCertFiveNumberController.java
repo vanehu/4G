@@ -90,7 +90,7 @@ public class OneCertFiveNumberController extends BaseController {
             List<Map<String, Object>> list = (List<Map<String, Object>>) rMap.get("result");
             model.addAttribute("list", list);
         } catch (Exception e) {
-            e.printStackTrace();
+        	log.error(e);
         }
         return "/certNumber/certNumber-prepare";
     }
@@ -326,7 +326,7 @@ public class OneCertFiveNumberController extends BaseController {
         } catch (InterfaceException e) {
             jsonResponse = failed(e, param, ErrorCode.UPLOAD_FILE);
         } catch (Exception e) {
-            e.printStackTrace();
+        	log.error(e);
         }
         return jsonResponse;
     }
@@ -355,7 +355,7 @@ public class OneCertFiveNumberController extends BaseController {
         } catch (InterfaceException e) {
             jsonResponse = failed(e, paramMap, ErrorCode.DOWN_FILE);
         } catch (Exception e) {
-            e.printStackTrace();
+        	log.error(e);
         }
         return jsonResponse;
     }

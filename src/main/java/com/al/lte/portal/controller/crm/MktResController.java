@@ -114,7 +114,7 @@ public class MktResController extends BaseController {
             String res=staffBmo.checkOperatSpec("CHOOSE_PNLEVEL", sessionStaff);
             model.addAttribute("can_change_level", res);
         } catch (Exception e1) {
-            e1.printStackTrace();
+        	log.error(e1);
         }
 		if(!"".equals(phoneNumber)&&!"".equals(anTypeCd)){
 			param.putAll(getAreaInfos(""));
@@ -338,7 +338,7 @@ public class MktResController extends BaseController {
                 
             }
         } catch (Exception e1) {
-            e1.printStackTrace();
+        	log.error(e1);
         }
 		model.addAttribute("subPage", subPage);
 		return "/order/order-phonenumber-prepare";
@@ -776,7 +776,7 @@ public class MktResController extends BaseController {
 			}
         } catch (Exception e) {
         	log.error("查询卡类型失败", e);
-            e.printStackTrace();
+        	log.error(e);
         }
 		return jsonResponse;
 	}
@@ -1691,8 +1691,7 @@ public class MktResController extends BaseController {
 			try {
 				mktResBmo.intcardNubInfoLog(logparam, flowNum, sessionStaff);
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				log.error(e);
 			}
 		}
 		return jsonResponse;
@@ -2540,14 +2539,14 @@ public class MktResController extends BaseController {
 		     baKeyword[i] = (byte) (0xff & Integer.parseInt(asciiStr.substring(  
 		       i * 2, i * 2 + 2), 16));  
 		    } catch (Exception e) {  
-		     e.printStackTrace();  
+		    	log.error(e);
 		    }  
 		 }  
 		try {  
 			   asciiStr = new String(baKeyword, "ASCII");
 			   rMap.put("asciiStr", asciiStr);
 		} catch (Exception e) {  
-		    e.printStackTrace();  
+			log.error(e);  
 		}  
 		jsonResponse = super.successed(rMap, ResultConstant.SUCCESS.getCode());
 		return jsonResponse;
@@ -2638,7 +2637,7 @@ public class MktResController extends BaseController {
         	staffCode =URLEncoder.encode(staffCode, "UTF-8");
         	channelCode =URLEncoder.encode(channelCode, "UTF-8");
         } catch (UnsupportedEncodingException e1) {
-            e1.printStackTrace();
+        	log.error(e1);
         }
         url.append("/businessBind.do?method=load&type=4g&productno=").append("&inputuid=").append(staffCode).append("&inputorg=").append(channelCode);
 	    log.debug("翼支付绑卡添益宝地址："+url.toString());
@@ -2646,7 +2645,7 @@ public class MktResController extends BaseController {
 	        response.setContentType("text/html;charset=UTF-8");
 	        response.getWriter().print("<iframe src='"+url+"' style='width: 100%;height: 100%' frameborder = '0'></iframe>");
         } catch (IOException e) {
-            e.printStackTrace();
+        	log.error(e);
         }
 	}
 	
@@ -2705,8 +2704,7 @@ public class MktResController extends BaseController {
 			try {
 				mktResBmo.intcardNubInfoLog(param, flowNum, sessionStaff);
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				log.error(e);
 			}
 	}
 
@@ -3132,7 +3130,7 @@ public class MktResController extends BaseController {
 			} catch (InterfaceException ie) {
 				return super.failed(ie, qryParam, ErrorCode.ECS_TERMDETAILSTATISTICSERVICE);
 			} catch (Exception e) {
-				return super.failed(ErrorCode.ECS_TERMDETAILSTATISTICSERVICE, e.getStackTrace().toString(), qryParam);
+				return super.failed(ErrorCode.ECS_TERMDETAILSTATISTICSERVICE, Arrays.toString(e.getStackTrace()), qryParam);
 			}
 		} else{
 			return super.failed(ErrorCode.PORTAL_INPARAM_ERROR, new Exception(errorMsg), qryParam);
@@ -3188,8 +3186,7 @@ public class MktResController extends BaseController {
 			try {
 				mktResBmo.writeCardLogInfo("WRITE_CARD_LOG_W",param, flowNum, sessionStaff);
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				log.error(e);
 			}
 	}
 	

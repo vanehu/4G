@@ -111,7 +111,7 @@ public class LoginController extends BaseController {
 	/** 登录验证错误次数上限. */
 	public static final int MAX_LOGIN_CHECK_ERROR_COUNT = 10;
 	/** des加密解密所需要的秘钥. */
-	public static final byte[] keyBytes = {64, 100, -32, 117, -3, -39, 22,
+	private static final byte[] keyBytes = {64, 100, -32, 117, -3, -39, 22,
 			-63, 79, 76, 52, -3, 7, -116, -53, -65, 64, 100, -32, 117, -3, -39,
 			22, -63};
 	/** des加密后储存的cookie名称 */
@@ -119,7 +119,7 @@ public class LoginController extends BaseController {
 	/** */
 	public static final String IMAGE_CODE = "image_code";
 	/** */
-	public static  List<String> CACHE_CLEAR_RESULT = new ArrayList<String>();
+	public List<String> CACHE_CLEAR_RESULT = new ArrayList<String>();
 	/** 短信验证前，登陆会话临时ID */
 	public static final String SESSION_KEY_TEMP_LOGIN_STAFF = "_session_key_tenm_sms";
 	/** 补换卡短信验证号码 */
@@ -194,11 +194,9 @@ public class LoginController extends BaseController {
 					String dbKeyWord = (String) request.getSession().getAttribute(SysConstant.SESSION_DATASOURCE_KEY);
 					flag = MySimulateData.getInstance().getParam(dbKeyWord,"UNIFYLOGIN");
 				} catch (UnsupportedEncodingException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					log.error(e);
 				} catch (InterfaceException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					log.error(e);
 				}
 				int port = request.getLocalPort();
 				if((port==10101 || port==10102 || port==10103) && "ON".equals(flag)){
@@ -1249,7 +1247,7 @@ public class LoginController extends BaseController {
 						}
 					}
                 } catch (Exception e) {
-                    e.printStackTrace();
+                	log.error(e);
                 }
 				
 				resData.put("token", token);
@@ -1420,11 +1418,9 @@ public class LoginController extends BaseController {
 				url = "/staff/login/page";
 			}
 		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error(e);
 		} catch (InterfaceException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error(e);
 		}
 		return super.redirect(url);
 	}
@@ -1519,7 +1515,7 @@ public class LoginController extends BaseController {
         		staffBmo.loginOutlog(null, sessionStaff);//登錄日誌bianxw
         	}
         } catch (Exception e) {
-            e.printStackTrace();
+        	log.error(e);
         }
         Map<String,Object> map=new HashMap<String,Object>();
         try {
@@ -1542,7 +1538,7 @@ public class LoginController extends BaseController {
         	ServletUtils.delCookie(response,  SessionInterceptor.SINGLE_SIGN_COOKIE_AREA,"/", request);
         	ServletUtils.delCookie(response,  SessionInterceptor.SINGLE_SIGN_COOKIE_TOKEN,"/", request);
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e);
 			map.put("resultCode", "1");
 			map.put("resultMsg", "登录会话注销异常："+e.getMessage());
 		}
@@ -1581,8 +1577,7 @@ public class LoginController extends BaseController {
 			response.getWriter().println(JsonUtil.toString(map));
 			response.getWriter().close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error(e);
 		}
 //		return JsonUtil.toString(map);
 	}
@@ -1604,8 +1599,7 @@ public class LoginController extends BaseController {
 			    json.append(line);
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error(e);
 		}
 		String xmlStr = json.toString();
 		String TransactionID=xmlStr.substring(xmlStr.indexOf("<TransactionID>")+"<TransactionID>".length(), xmlStr.lastIndexOf("</TransactionID>"));
@@ -2171,8 +2165,7 @@ public class LoginController extends BaseController {
 			try {
 				Thread.sleep(10000);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				log.error(e);
 			}
 			String level = propertiesUtils.getMessage(SysConstant.COMPRESS_JS_LEVEL);
 	    	String baseVersion = propertiesUtils.getMessage(SysConstant.BASE_VERSION);
@@ -2361,7 +2354,7 @@ public class LoginController extends BaseController {
 		            System.out.println("iplist.xml文件不存在！ ");
 	            }
 	        } catch (Exception e) {
-	            e.printStackTrace();
+	        	log.error(e);
 	        }
 	    	return ipList;
 	    }
@@ -2518,7 +2511,7 @@ public class LoginController extends BaseController {
 	    		try{
 	    			invalidTime = Long.parseLong(com.al.ecs.common.util.MDA.INVALID_TIME);
 	    		}catch(Exception e){
-	    			e.printStackTrace();
+	    			log.error(e);
 	    			invalidTime = 30 * 1000;
 	    		}
 		    	if( System.currentTimeMillis() - createTime >= invalidTime ){

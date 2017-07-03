@@ -5,6 +5,7 @@ import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -1235,7 +1236,7 @@ public class BatchOrderControllerPreviousVer  extends BaseController {
 		} catch (InterfaceException ie) {
 			return super.failed(ie, param, ErrorCode.BATCH_IMP_LIST);
 		} catch (Exception e) {
-			return super.failed(ErrorCode.BATCH_IMP_LIST, e.getStackTrace().toString(), param);
+			return super.failed(ErrorCode.BATCH_IMP_LIST, Arrays.toString(e.getStackTrace()), param);
 		}
 		
 		return super.successed("导出成功！");
@@ -1462,7 +1463,7 @@ public class BatchOrderControllerPreviousVer  extends BaseController {
 		} catch (InterfaceException ie) {
 			jsonResponse = super.failed(ie, param, ErrorCode.BATCH_IMP_LIST);
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e);
 		} catch (Exception e) {
 			jsonResponse = super.failed(ErrorCode.BATCH_IMP_LIST, e, param);
 		}
@@ -2678,7 +2679,7 @@ public class BatchOrderControllerPreviousVer  extends BaseController {
 		try {
 			workbook.write(outputStream);
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e);
 		}
 	}
 

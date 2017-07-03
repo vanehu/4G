@@ -659,8 +659,7 @@ public class OrderProdModifyController extends BaseController {
         		jsonResponse = super.failed(queryConfig,ResultConstant.FAILD.getCode());
         	}
         }catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        	 log.error(e);
         }
 		return jsonResponse;
     }
@@ -695,8 +694,7 @@ public class OrderProdModifyController extends BaseController {
 				jsonResponse = super.failed(isValidateStr,ResultConstant.FAILD.getCode());
 			}
         }catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        	 log.error(e);
         }
 		return jsonResponse;
     }

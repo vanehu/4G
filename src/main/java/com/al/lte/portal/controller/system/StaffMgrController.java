@@ -59,7 +59,7 @@ import com.al.lte.portal.model.SessionStaff;
 public class StaffMgrController extends BaseController {
 	
 	/** des加密解密所需要的秘钥*/
-	public static final byte[] keyBytes = {64, 100, -32, 117, -3, -39, 22, -63, 79, 76, 52, -3, 7, -116, -53, -65, 64, 100, -32, 117, -3, -39, 22, -63};
+	private static final byte[] keyBytes = {64, 100, -32, 117, -3, -39, 22, -63, 79, 76, 52, -3, 7, -116, -53, -65, 64, 100, -32, 117, -3, -39, 22, -63};
 	/** des加密后储存的cookie名称*/
 	public static final String desKey = "cookieUser";
 	
@@ -229,8 +229,7 @@ public class StaffMgrController extends BaseController {
     	try {
 			sendMsg(session,sessionStaff.getBindNumber(),sessionStaff.getAreaId());
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error(e);
 		} // 发短信 。。。
     	return "/staff/staff-pwd";
     }
@@ -439,7 +438,7 @@ public class StaffMgrController extends BaseController {
             staffname =URLEncoder.encode(staffname, "UTF-8");
             sourceChannel =URLEncoder.encode(sourceChannel, "UTF-8");
         } catch (UnsupportedEncodingException e1) {
-            e1.printStackTrace();
+        	log.error(e1);
         }
 	    String province=sessionStaff.getAreaId();
 	    if(province!=null&&province.length()>3){
@@ -461,7 +460,7 @@ public class StaffMgrController extends BaseController {
 	        response.setContentType("text/html;charset=UTF-8");
 	        response.getWriter().print("<script>window.location.href='"+url+"'</script>");
         } catch (IOException e) {
-            e.printStackTrace();
+        	log.error(e);
         }
 	}
 
@@ -487,7 +486,7 @@ public void toWarning(HttpServletRequest request,  HttpServletResponse response)
        staffname =URLEncoder.encode(staffname, "UTF-8");
        sourceChannel =URLEncoder.encode(sourceChannel, "UTF-8");
    } catch (UnsupportedEncodingException e1) {
-       e1.printStackTrace();
+	   log.error(e1);
    }
    String province=sessionStaff.getAreaId();
    if(province!=null&&province.length()>3){
@@ -507,7 +506,7 @@ public void toWarning(HttpServletRequest request,  HttpServletResponse response)
        response.setContentType("text/html;charset=UTF-8");
        response.getWriter().print("<script>window.location.href='"+url+"'</script>");
    } catch (IOException e) {
-       e.printStackTrace();
+	   log.error(e);
    }
 }
 
@@ -532,7 +531,7 @@ public void toAdvice(HttpServletRequest request,  HttpServletResponse response) 
        staffname =URLEncoder.encode(staffname, "UTF-8");
        sourceChannel =URLEncoder.encode(sourceChannel, "UTF-8");
    } catch (UnsupportedEncodingException e1) {
-       e1.printStackTrace();
+	   log.error(e1);
    }
    String province=sessionStaff.getAreaId();
    if(province!=null&&province.length()>3){
@@ -554,7 +553,7 @@ public void toAdvice(HttpServletRequest request,  HttpServletResponse response) 
        response.setContentType("text/html;charset=UTF-8");
        response.getWriter().print("<script>window.location.href='"+url+"'</script>");
    } catch (IOException e) {
-       e.printStackTrace();
+	   log.error(e);
    }
 }
 
@@ -579,7 +578,7 @@ public void toVote(HttpServletRequest request,  HttpServletResponse response) th
        staffname =URLEncoder.encode(staffname, "UTF-8");
        sourceChannel =URLEncoder.encode(sourceChannel, "UTF-8");
    } catch (UnsupportedEncodingException e1) {
-       e1.printStackTrace();
+	   log.error(e1);
    }
    String province=sessionStaff.getAreaId();
    if(province!=null&&province.length()>3){
@@ -599,7 +598,7 @@ public void toVote(HttpServletRequest request,  HttpServletResponse response) th
        response.setContentType("text/html;charset=UTF-8");
        response.getWriter().print("<script>window.location.href='"+url+"'</script>");
    } catch (IOException e) {
-       e.printStackTrace();
+	   log.error(e);
    }
 }
 
@@ -624,7 +623,7 @@ public void toPraise(HttpServletRequest request,  HttpServletResponse response) 
        staffname =URLEncoder.encode(staffname, "UTF-8");
        sourceChannel =URLEncoder.encode(sourceChannel, "UTF-8");
    } catch (UnsupportedEncodingException e1) {
-       e1.printStackTrace();
+	   log.error(e1);
    }
    String province=sessionStaff.getAreaId();
    if(province!=null&&province.length()>3){
@@ -644,7 +643,7 @@ public void toPraise(HttpServletRequest request,  HttpServletResponse response) 
        response.setContentType("text/html;charset=UTF-8");
        response.getWriter().print("<script>window.location.href='"+url+"'</script>");
    } catch (IOException e) {
-       e.printStackTrace();
+	   log.error(e);
    }
 }
 	/**

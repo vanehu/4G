@@ -3,6 +3,7 @@ package com.al.lte.portal.controller.crm;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -16,6 +17,7 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.jfree.util.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -484,7 +486,8 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 		} catch (InterfaceException ie) {
 			return super.failed(ie, param, ErrorCode.BATCH_IMP_LIST);
 		} catch (Exception e) {
-			return super.failed(ErrorCode.BATCH_IMP_LIST, e.getStackTrace().toString(), param);
+			Log.error(e);
+			return super.failed(ErrorCode.BATCH_IMP_LIST, Arrays.toString(e.getStackTrace()), param);
 		}
 		
 		return super.successed("导出成功！");
@@ -708,7 +711,7 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 		} catch (InterfaceException ie) {
 			jsonResponse = super.failed(ie, param, ErrorCode.BATCH_IMP_LIST);
 		} catch (IOException e) {
-			e.printStackTrace();
+			Log.error(e);
 		} catch (Exception e) {
 			jsonResponse = super.failed(ErrorCode.BATCH_IMP_LIST, e, param);
 		}
@@ -1539,7 +1542,7 @@ public class BatchOrderControllerLatestVer  extends BaseController {
 				}
 			}
 		} catch (Exception e) {
-			return super.failed(ErrorCode.BATCH_ECS_QUERY, e.getStackTrace().toString(), param);
+			return super.failed(ErrorCode.BATCH_ECS_QUERY, Arrays.toString(e.getStackTrace()), param);
 		}
 		
 		return super.successed("导出成功！");

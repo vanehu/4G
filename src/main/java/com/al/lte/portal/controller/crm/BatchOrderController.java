@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.jfree.util.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -147,7 +148,7 @@ public class BatchOrderController  extends BaseController {
 			try {
 				request.getRequestDispatcher("/order/batchOrder/latestVer/batchOrderChange").forward(request,response);
 			} catch (Exception e) {
-				e.printStackTrace();
+				Log.error(e);
 			}
 		}
 	}
@@ -173,7 +174,7 @@ public class BatchOrderController  extends BaseController {
 			try {
 				request.getRequestDispatcher("/order/batchOrder/latestVer/importBatchData").forward(request,response);
 			} catch (Exception e) {
-				e.printStackTrace();
+				Log.error(e);
 			}
 		}
 	}
@@ -188,7 +189,7 @@ public class BatchOrderController  extends BaseController {
 		try {
 			request.getRequestDispatcher("/order/batchOrder/latestVer/ecsBatchImport").forward(request,response);
 		} catch (Exception e) {
-			e.printStackTrace();
+			Log.error(e);
 		}
 	}
 	
@@ -197,7 +198,7 @@ public class BatchOrderController  extends BaseController {
 		try {
 			request.getRequestDispatcher("/order/batchOrder/latestVer/queryEcsBatchOrder").forward(request,response);
 		} catch (Exception e) {
-			e.printStackTrace();
+			Log.error(e);
 		}
 	}
 	
@@ -206,7 +207,7 @@ public class BatchOrderController  extends BaseController {
 		try {
 			request.getRequestDispatcher("/order/batchOrder/latestVer/queryEcsBatchOrderList").forward(request,response);
 		} catch (Exception e) {
-			e.printStackTrace();
+			Log.error(e);
 		}
 	}
 	
@@ -215,7 +216,7 @@ public class BatchOrderController  extends BaseController {
 		try {
 			request.getRequestDispatcher("/order/batchOrder/latestVer/queryEcsBatchOrderDetail").forward(request,response);
 		} catch (Exception e) {
-			e.printStackTrace();
+			Log.error(e);
 		}
 	}
 	
@@ -224,7 +225,7 @@ public class BatchOrderController  extends BaseController {
 		try {
 			request.getRequestDispatcher("/order/batchOrder/latestVer/queryEcsBatchOrderDetailList").forward(request,response);
 		} catch (Exception e) {
-			e.printStackTrace();
+			Log.error(e);
 		}
 	}
 	
@@ -233,7 +234,7 @@ public class BatchOrderController  extends BaseController {
 		try {
 			request.getRequestDispatcher("/order/batchOrder/latestVer/queryEcsRepository").forward(request,response);
 		} catch (Exception e) {
-			e.printStackTrace();
+			Log.error(e);
 		}
 	}
 	
@@ -242,7 +243,7 @@ public class BatchOrderController  extends BaseController {
 		try {
 			request.getRequestDispatcher("/order/batchOrder/latestVer/queryEcsRepositoryList").forward(request,response);
 		} catch (Exception e) {
-			e.printStackTrace();
+			Log.error(e);
 		}
 	}
 	
@@ -251,7 +252,7 @@ public class BatchOrderController  extends BaseController {
 		try {
 			request.getRequestDispatcher("/order/batchOrder/latestVer/ecsBatchfileImport").forward(request,response);
 		} catch (Exception e) {
-			e.printStackTrace();
+			Log.error(e);
 		}
 	}
 	
@@ -260,7 +261,7 @@ public class BatchOrderController  extends BaseController {
 		try {
 			request.getRequestDispatcher("/order/batchOrder/latestVer/ecsBatchOrderExport").forward(request,response);
 		} catch (Exception e) {
-			e.printStackTrace();
+			Log.error(e);
 		}
 	}
 	
@@ -298,7 +299,7 @@ public class BatchOrderController  extends BaseController {
 			request.getRequestDispatcher(forwardUri).forward(request,response);
 //			response.sendRedirect(response.encodeRedirectURL(contextPath + forwardUri));
 		} catch (Exception e) {
-			e.printStackTrace();
+			Log.error(e);
 		}
 	}
 	
