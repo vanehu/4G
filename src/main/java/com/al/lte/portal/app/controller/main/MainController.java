@@ -527,10 +527,6 @@ public class MainController extends BaseController {
 			{
 				iconPic = "&#xe6cb";
 			}
-			else if ("/app/order/attachoffer/prepare".equals(menuPath))//可选包变更
-			{
-				iconPic = "&#xe6cc";
-			}
 			else if ("/app/prodModify/prepare".equals(menuPath))//客户返档
 			{
 				iconPic = "&#xe677";
