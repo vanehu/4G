@@ -212,7 +212,7 @@ jQuery.ketchup
 	if(val.length == 14){
 		return (/^[0-9a-fA-F]{0,14}$/).test(val);
 	}else {
-		return (/^[0-9]{0,15}$/).test(val);
+		return (/^[0-9a-fA-F]{0,15}$/).test(val);
 	}
 	
 })
