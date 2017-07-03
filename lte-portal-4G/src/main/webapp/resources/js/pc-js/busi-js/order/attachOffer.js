@@ -776,14 +776,16 @@ AttachOffer = (function() {
 				}	
 				var contentAppend = "";
 				if(respnose !="" &&  respnose.data.resultCode == "0" && respnose.data.result.servSpec!=undefined && respnose.data.result.servSpec !=null && respnose.data.result.servSpec !=""){
-					$.each(respnose.data.result.servSpec,function(){
+					$.each(respnose.data.result.servSpec,function(index_0, respnoseOpenServ){
 						if(ec.util.isArray(AttachOffer.openServList)){
 							$.each(AttachOffer.openServList, function(index_1, openServ){
-								$.each(openServ.servSpecList, function(index_2, opendServSpec){
-									if(this.servSpecId == opendServSpec.servSpecId){
-										contentAppend = contentAppend + this.servSpecName +"<br>"; 
-									}
-								});
+								if(prodId == openServ.prodId){
+									$.each(openServ.servSpecList, function(index_2, opendServSpec){
+										if(respnoseOpenServ.servSpecId == opendServSpec.servSpecId){
+											contentAppend = contentAppend + respnoseOpenServ.servSpecName +"<br>"; 
+										}
+									});
+								}
 							});
 						}
 					});
