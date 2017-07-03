@@ -130,7 +130,7 @@ public class InterfaceClient {
 	private static Map<String,String> areas=new HashMap<String,String>();
 	
 	/** 是否使用CDATA元素封装SVCCONT */
-	public static boolean cdataSvcCont = true;
+	public static final boolean cdataSvcCont = true;
 	
 	public static final String CDATA_BEGIN = "<![CDATA[";
 	public static final String CDATA_END = "]]>";
@@ -410,7 +410,7 @@ public class InterfaceClient {
 					String xml2 = CommonUtils.jsontoXml(s2);
 					paramString = xml2.substring(xml2.indexOf("<proot"),
 							xml2.indexOf("<transactionId"));
-					if(paramString.indexOf("chargeItems")>0){
+					if(paramString.indexOf("chargeItems")>-1){
 						String s=paramString.substring(0,paramString.indexOf("<chargeItems class=\"array\">")+27)+"<![CDATA["+paramString.substring(paramString.indexOf("<chargeItems class=\"array\">")+27,paramString.indexOf("</chargeItems>"))+"]]>"+paramString.substring(paramString.indexOf("</chargeItems>"),paramString.length());
 						paramString=s;
 					}					
@@ -2317,7 +2317,7 @@ public class InterfaceClient {
 			queryParams=URLEncoder.encode(query,"UTF-8");
 			paramsBuffer.append("query="+queryParams);
 		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
+			log.error(e);
 		}
 		return paramsBuffer.toString();
 	}

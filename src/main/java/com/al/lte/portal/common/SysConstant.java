@@ -147,80 +147,80 @@ public final class SysConstant {
     /**默认皮肤*/
     public static final String THEME_DEFAULT = "default";
 
-    public static Integer OFFER_TYPE_MAIN = 1;//主销售品
+    public static final Integer OFFER_TYPE_MAIN = 1;//主销售品
     
-    public static String MAIN_OFFER_ROLE_TYPE = "400";
-    public static String VICE_OFFER_ROLE_TYPE = "401";
+    public static final String MAIN_OFFER_ROLE_TYPE = "400";
+    public static final String VICE_OFFER_ROLE_TYPE = "401";
     
     //是否记录接口日志 ON OFF
-    public static String WRITE_LOG_FLAG = "WRITE_LOG_FLAG";
+    public static final String WRITE_LOG_FLAG = "WRITE_LOG_FLAG";
     //app登录标识, o:打头 说明是公网登录    i:打头 说明是内网登录
-    public static String APP_LOGIN_FLAG = "APP_LOGIN_FLAG";
+    public static final String APP_LOGIN_FLAG = "APP_LOGIN_FLAG";
     //是否记录日志平台 ON OFF
-    public static String WRITE_ASYNCHRONOUS_FLAG = "WRITE_ASYNCHRONOUS_FLAG";
+    public static final String WRITE_ASYNCHRONOUS_FLAG = "WRITE_ASYNCHRONOUS_FLAG";
     //是否记录接口日志出入参，数据库字段类型为CLOB，N代表不记录，Y代表记录
-    public static String WRITE_LOG_DETAIL = "WRITE_LOG_DETAIL";
+    public static final String WRITE_LOG_DETAIL = "WRITE_LOG_DETAIL";
     //XSS过虑总开关  ON-开，OFF或者没有配置-关
-    public static String XSS_FILTER_FLAG = "XSS_FILTER_FLAG";
-    public static String LOG_PS = "PS";
-    public static String LOG_UNILOG = "UNILOG";
-    public static String LOG_NONE = "NONE";
+    public static final String XSS_FILTER_FLAG = "XSS_FILTER_FLAG";
+    public static final String LOG_PS = "PS";
+    public static final String LOG_UNILOG = "UNILOG";
+    public static final String LOG_NONE = "NONE";
     //对应统一日志平台的门户日志类型
-    public static String LOG_TYPE = "PortalTransLog";
+    public static final String LOG_TYPE = "PortalTransLog";
     //对应统一日志平台的门户日志默认表名
-    public static String PORTAL_SERVICE_LOG = "PORTAL_SERVICE_LOG";
+    public static final String PORTAL_SERVICE_LOG = "PORTAL_SERVICE_LOG";
     //对应统一日志平台的门户日志永久保存表名
-    public static String PORTAL_SERVICE_LOG_P = "PORTAL_SERVICE_LOG_P";
+    public static final String PORTAL_SERVICE_LOG_P = "PORTAL_SERVICE_LOG_P";
     //对应统一日志平台的门户日志保存一年表名
-    public static String PORTAL_SERVICE_LOG_Y = "PORTAL_SERVICE_LOG_Y";
+    public static final String PORTAL_SERVICE_LOG_Y = "PORTAL_SERVICE_LOG_Y";
     //对应统一日志平台的门户日志保存一周表名
-    public static String PORTAL_SERVICE_LOG_W = "PORTAL_SERVICE_LOG_W";
+    public static final String PORTAL_SERVICE_LOG_W = "PORTAL_SERVICE_LOG_W";
 
     /**刷新缓存动作参数分组分隔符*/
     public final static String CON_REF_PARAM_ACTION_GROUP = ",";
 
-    public static String CSB_FLAG = "CSB_FLAG";
-    public static String ASYNC_FLAG = "ASYNC_FLAG";
-    public static String FILE_PREFER_FLAG = "FILE_PREFER_FLAG";
-    public static String DEF_HTTP_FLAG = "DEF_HTTP_FLAG";
-    public static String ABS_DIRECTORY_FLAG = "ABS_DIRECTORY_FLAG";
-    public static String ABS_DIRECTORY_KEY = "ABS_DIRECTORY_KEY";
-    public static String COMPRESS_JS_LEVEL = "COMPRESS_JS_LEVEL";
-    public static String TOKENCOMPRESS_JS_LEVEL = "TOKENCOMPRESS_JS_LEVEL";
-    public static String COMPRESS_JS_LOGIN_LEVEL = "COMPRESS_JS_LOGIN_LEVEL";
-    public static String LEVEL_NONE = "NONE";
-    public static String LEVEL_BASE = "BASE";
-    public static String LEVEL_BUSI = "BUSI";
-    public static String LEVEL_LOGIN_BASE = "LOGIN_BASE";
-    public static String BASE_VERSION = "BASE_VERSION";
-    public static String LOGIN_BASE_VERSION = "LOGIN_BASE_VERSION";
-    public static String BUSI_VERSION = "BUSI_VERSION";
+    public static final String CSB_FLAG = "CSB_FLAG";
+    public static final String ASYNC_FLAG = "ASYNC_FLAG";
+    public static final String FILE_PREFER_FLAG = "FILE_PREFER_FLAG";
+    public static final String DEF_HTTP_FLAG = "DEF_HTTP_FLAG";
+    public static final String ABS_DIRECTORY_FLAG = "ABS_DIRECTORY_FLAG";
+    public static final String ABS_DIRECTORY_KEY = "ABS_DIRECTORY_KEY";
+    public static final String COMPRESS_JS_LEVEL = "COMPRESS_JS_LEVEL";
+    public static final String TOKENCOMPRESS_JS_LEVEL = "TOKENCOMPRESS_JS_LEVEL";
+    public static final String COMPRESS_JS_LOGIN_LEVEL = "COMPRESS_JS_LOGIN_LEVEL";
+    public static final String LEVEL_NONE = "NONE";
+    public static final String LEVEL_BASE = "BASE";
+    public static final String LEVEL_BUSI = "BUSI";
+    public static final String LEVEL_LOGIN_BASE = "LOGIN_BASE";
+    public static final String BASE_VERSION = "BASE_VERSION";
+    public static final String LOGIN_BASE_VERSION = "LOGIN_BASE_VERSION";
+    public static final  String BUSI_VERSION = "BUSI_VERSION";
     
     public static final String SERVER_NAME = "_server_name";
     public static final String SERVER_IP = "_server_ip";
-    public static String ASYNC_KEY = "-async";
-    public static String JSVERSION = "JSVERSION";
-    public static String APPDESC = "APPDESC";
-    public static String APPDESC_DEV = "DEV";
-    public static String APPDESC_LTE = "LTE";
-    public static String APPDESC_MVNO = "MVNO";
+    public static final String ASYNC_KEY = "-async";
+    public static final String JSVERSION = "JSVERSION";
+    public static final String APPDESC = "APPDESC";
+    public static final String APPDESC_DEV = "DEV";
+    public static final String APPDESC_LTE = "LTE";
+    public static final String APPDESC_MVNO = "MVNO";
     
-    public static String ON = "ON";
-    public static String OFF = "OFF";
+    public static final String ON = "ON";
+    public static final String OFF = "OFF";
 
-    public static String ORDER_SUBMIT_TOKEN = "token_1";
-    public static String LOG_BUSI_RUN_NBR = "log_busi_run_nbr";
+    public static final String ORDER_SUBMIT_TOKEN = "token_1";
+    public static final String LOG_BUSI_RUN_NBR = "log_busi_run_nbr";
     //营销资源图片地址定义
-    public static String MKT_RES_PIC_URL = "MKT_RES_PIC_URL";
-    public static String MKT_RES_STATUSCD_USABLE = "1001";	   // 可用
-    public static String MKT_RES_STATUSCD_HAVESALE = "1115";   // 已销售未补贴
-    public static String MKT_RES_ATTR_TERMINAL_PRICE = "65010057";
-    public static String MKT_RES_ATTR_TERMINAL_COLOUR = "60010004";
+    public static final String MKT_RES_PIC_URL = "MKT_RES_PIC_URL";
+    public static final String MKT_RES_STATUSCD_USABLE = "1001";	   // 可用
+    public static final String MKT_RES_STATUSCD_HAVESALE = "1115";   // 已销售未补贴
+    public static final String MKT_RES_ATTR_TERMINAL_PRICE = "65010057";
+    public static final String MKT_RES_ATTR_TERMINAL_COLOUR = "60010004";
     /**
      ***  发票打印相关常量定义  BEGIN ***
      */
-    public static boolean isAutoPrint = false; // 是否自动打印发票收据免填单（在需要打印的前提下）,默认为false
-	public static long previewTimes = 3000;    // 自动打印的情况下，预览的界面停留的时间，毫秒为单位,默认3秒钟
+    public static final boolean isAutoPrint = false; // 是否自动打印发票收据免填单（在需要打印的前提下）,默认为false
+	public static final long previewTimes = 3000;    // 自动打印的情况下，预览的界面停留的时间，毫秒为单位,默认3秒钟
 	
 	//字符编码
 	public final static String ENCODE_ISO = "iso-8859-1";
@@ -429,12 +429,12 @@ public final class SysConstant {
     /**登录超过90天未修改密码返回编码*/
     public static final String R_PW_UPDATE = "11";
     
-    public static String[] itemType={"未获取到订单类型","新装","套餐变更","主副卡成员变更","产品属性变更","挂失/解挂","停机保号/复机","预拆机","拆机","违章拆机","未激活拆机","欠费拆机","改客户资料返档","补换卡","可选包退订/订购","过户","改账务定制关系","改产品密码"}; 
+    public static final  String[] itemType={"未获取到订单类型","新装","套餐变更","主副卡成员变更","产品属性变更","挂失/解挂","停机保号/复机","预拆机","拆机","违章拆机","未激活拆机","欠费拆机","改客户资料返档","补换卡","可选包退订/订购","过户","改账务定制关系","改产品密码"}; 
     
     //公告附件地址
-    public static String NOTICE_URL = "NOTICE_URL";
+    public static final String NOTICE_URL = "NOTICE_URL";
     //操作手册附件地址
-    public static String MANUAL_URL = "MANUAL_URL";
+    public static final String MANUAL_URL = "MANUAL_URL";
     
     public static final String SESSION_KEY_REPORT_CHECK = "is_report_check_session_key";
     
@@ -513,7 +513,7 @@ public final class SysConstant {
 	public static final String ORI_SCHEME = "ORI_SCHEME";
 	
 	//身份证类型开关
-	public static String IDTYPE = "IDTYPE";
+	public static final String IDTYPE = "IDTYPE";
     
 	/** 产品规格属性--使用人，产品规格属性ID */
 	public static final String PROD_ITEM_SPEC_ID_USER = "800000011";

@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.jfree.util.Log;
 
 import com.al.ecs.common.util.JsonUtil;
 import com.al.ecs.exception.BusinessException;
@@ -37,23 +38,23 @@ import com.al.lte.portal.model.SessionStaff;
  */
 public class DataSignTool {
 
-	public static String DES_KEY_E = "hi asiainfo-linkage !!!";
+	public static final String DES_KEY_E = "hi asiainfo-linkage !!!";
 	/**
 	 * 加密密钥
 	 */
-	public static String DES_KEY = "Hello AL Key @0987!@#$%+<>{~!";
+	public static final String DES_KEY = "Hello AL Key @0987!@#$%+<>{~!";
 	/**
 	 * 原文与防篡改密文分隔符
 	 */
-	public static String SPLIT_1 = "&#&#";
+	public static final String SPLIT_1 = "&#&#";
 	/**
 	 * 每个内容字段的分隔符
 	 */
-	public static String SPLIT_2 = "&=&=";
+	public static final String SPLIT_2 = "&=&=";
 	/**
 	 * 字段名称跟值的分隔符
 	 */
-	public static String SPLIT_3 = "&-&-";
+	public static final String SPLIT_3 = "&-&-";
 
 	/**
 	 * 公章key
@@ -154,8 +155,7 @@ public class DataSignTool {
 		try {
 			md5Text = DigestUtils.md5Hex(messages[0].getBytes("UTF-8"));
 		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Log.error(e);
 		}
 		if (md5Text == null || md5Text.equals(messages[1]) == false) {
 			result.setParseSuccess(false);

@@ -10,6 +10,8 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.jfree.util.Log;
+
 import com.al.ecs.common.web.ServletUtils;
 import com.al.ecs.common.web.SpringContextUtil;
 import com.al.ecs.exception.BusinessException;
@@ -128,7 +130,7 @@ public class EhcacheUtil {
 				}
 			}
 		}catch(Exception e){
-			e.printStackTrace();
+			Log.error(e);
 		}
 		return false ;
 	}
@@ -157,7 +159,7 @@ public class EhcacheUtil {
 					}
 				}
 			}catch(Exception e){
-				e.printStackTrace();
+				Log.error(e);
 			}
 			return false ;
 		}
@@ -188,7 +190,7 @@ public class EhcacheUtil {
 				}
 			}
 		}catch(Exception e){
-			e.printStackTrace();
+			Log.error(e);
 		}
 		return "" ;
 	}
@@ -223,7 +225,7 @@ public class EhcacheUtil {
 				}
 			}
 		}catch(Exception e){
-			e.printStackTrace();
+			Log.error(e);
 		}
 		return "" ;
 	}
@@ -445,7 +447,7 @@ public class EhcacheUtil {
 				return authUrls;
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			Log.error(e);
 		}
 		return null;
 	}

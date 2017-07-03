@@ -10,7 +10,7 @@ package com.al.lte.portal.common;
  */
 public class DataConcealUtil {
 	
-	public static String SYMBOL = "*";
+	public static final String SYMBOL = "*";
 	
 	/**
 	 * 1:姓名脱敏

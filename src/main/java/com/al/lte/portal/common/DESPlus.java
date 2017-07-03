@@ -9,6 +9,9 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.jfree.util.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * DES加密
@@ -37,7 +40,7 @@ public class DESPlus
       this.decryptCipher = Cipher.getInstance("DES");
       this.decryptCipher.init(2, key);
     } catch (Exception e) {
-      e.printStackTrace();
+    	Log.error(e);
     }
   }
 
@@ -92,9 +95,9 @@ public class DESPlus
     try {
       s = this.encryptCipher.doFinal(arrB);
     } catch (IllegalBlockSizeException e) {
-      e.printStackTrace();
+    	Log.error(e);
     } catch (BadPaddingException e) {
-      e.printStackTrace();
+    	Log.error(e);
     }
     return s;
   }
@@ -110,9 +113,9 @@ public class DESPlus
     try {
       s = this.decryptCipher.doFinal(arrB);
     } catch (IllegalBlockSizeException e) {
-      e.printStackTrace();
+    	Log.error(e);
     } catch (BadPaddingException e) {
-      e.printStackTrace();
+    	Log.error(e);
     }
     return s;
   }
@@ -124,7 +127,7 @@ public class DESPlus
 	 try {
 		 result = new String(bs,"UTF-8");
 	} catch (UnsupportedEncodingException e) {
-		e.printStackTrace();
+		Log.error(e);
 	}
      return result;
   }
@@ -154,7 +157,7 @@ public class DESPlus
        //ml.setItemMap(ml.getItemMap());
     }
     catch (Exception e) {
-      e.printStackTrace();
+    	Log.error(e);
     }
   }
 }

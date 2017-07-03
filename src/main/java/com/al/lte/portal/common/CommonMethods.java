@@ -283,7 +283,7 @@ public class CommonMethods {
 				areaInfo = db.getReturnlmap();
 			}
 		}catch(Exception e ){
-			e.printStackTrace();
+			log.error(e);
 		}
 		return areaInfo;
 	}

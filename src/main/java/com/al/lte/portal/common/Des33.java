@@ -8,6 +8,8 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESedeKeySpec;
 import javax.crypto.spec.IvParameterSpec;
 
+import org.jfree.util.Log;
+
 /**
  * 3DES加密工具类
  * 
@@ -42,7 +44,7 @@ public class Des33 {
 //			 String str2 = decode("1/E/Ad4TrbO7AGoVsRRZezX3pIfsUVlKJ3V1gJsIVl7Q6Z6m/+mTNnx7mWx9 ZiKxWFN3ran+PbjctfnzdT1w9ObrvNPpl4PJlUVybBdgstpTbzKykYhPiPsn 1sfi7CbFfeDS3C3GYhhJTKRI8wpoEFCiJNqpX2+GBd87s0PTLKq8m83e8fvz WM0O8yvECzcjVGEMI4y2PV7cYu+TJX6QruYvlLMGnHNjrUb2iPOv78irgeXR NfSRFaSpcB8SY1a+cAbM7P8iIK2Hn+546sQlHsVmsEh4etlSQ7ymuNdk7/Mh ymcCkzBXMalvebp7/3gITzNTPny8u6jOSvizaOFjctsZ1gT3yDZC5qwoYN3T GLz4GZbMp6Un8o0ssCzvmOKPU0ekyOwP7Lkx5MMoauCEpjpg6QyLzRi3AYpG 1kOl148+OmY2x+VHwErxKVVZQJFVjLvJd0lrIsy6VEHbgSvIi14iZP/OWQhB nIDoVYw2uJ1VxSkiFJyNC6AY2bsZ7AL9M6JseM6Tsmbn8AjSx/4s0d+0sgA7 qnNhX8QffbY6ful7wN3yT8JKb0uVOfB/OgWlzZjOHDij4AlZvJN0WPzlfW4F Iw7NHG70kluP/XKFNzPPf6VEPaZM1PCJ0c8F82VgCqpXhavPaGpXqC2YAsVO ++4xQHnMX6h7OQDOB1Dv4wB3ndihjKZlWAnGAVrdrVVOPbo/Se3WDqFno9dz G2ngeiY1D+c97GFsBIeAKFUOks9ns9GRBlCuqXQT4zySMR7o7DMfGBF2CpOh YBAZJGva9N9KlU3R5Urkk1dAZuVFhXPIZksscORC7zVCMZBjocKOWQ8aD+rR PPMDVKUiig62Sw==");
 //			 System.out.println("str2~~~" + str2.trim() + ",,,,");
 		} catch (Exception e) {
-			e.printStackTrace();
+			Log.error(e);
 		}
 	}
 

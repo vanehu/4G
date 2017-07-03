@@ -256,10 +256,10 @@ public class XmlSendClient {
             }
         } catch (Exception e) {
             System.out.println("发送 POST 请求出现异常！"+e);
-            e.printStackTrace();
+            log.error(e);
         }
         }catch(Exception e){
-             e.printStackTrace();	
+        	log.error(e);
         }
         return result;
     }    

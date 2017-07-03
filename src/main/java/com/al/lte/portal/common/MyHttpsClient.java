@@ -127,11 +127,9 @@ public class MyHttpsClient {
 			};
 			ctx.init(null, new TrustManager[] { tm }, null);
 		} catch (KeyManagementException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error(e);
 		} catch (NoSuchAlgorithmException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			log.error(e);
 		}
 		SSLSocketFactory ssf = new SSLSocketFactory(ctx);
 

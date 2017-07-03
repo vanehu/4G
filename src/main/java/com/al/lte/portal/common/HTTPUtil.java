@@ -24,6 +24,7 @@ import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.jfree.util.Log;
 
 
 
@@ -126,20 +127,20 @@ public class HTTPUtil {
 				}
 				httpclient.getConnectionManager().shutdown();
 			} catch (ClientProtocolException e) {
-				e.printStackTrace();
+				Log.error(e);
 			} catch (IOException e1) {
-				e1.printStackTrace();
+				Log.error(e1);
 			} catch (IllegalStateException e2) {
-				e2.printStackTrace();
+				Log.error(e2);
 			} catch (Exception e) {
-				e.printStackTrace();
+				Log.error(e);
 			} finally {
 				if (null != in) {
 					try {
 						in.close();
 						in = null;
 					} catch (IOException e3) {
-						e3.printStackTrace();
+						Log.error(e3);
 					}
 				}
 			}
@@ -161,10 +162,10 @@ public class HTTPUtil {
   
             messageDigest.update(str.getBytes("UTF-8"));  
         } catch (NoSuchAlgorithmException e) {  
-            System.out.println("NoSuchAlgorithmException caught!");  
+        	Log.error("NoSuchAlgorithmException caught!");
             System.exit(-1);  
         } catch (UnsupportedEncodingException e) {  
-            e.printStackTrace();  
+        	Log.error(e);  
         }  
   
         byte[] byteArray = messageDigest.digest();  
@@ -214,7 +215,7 @@ public class HTTPUtil {
 			}
 			return sb.toString();
 		} catch( Exception e ) {
-			e.printStackTrace();
+			Log.error(e);
 		} finally {
 			tryClose( br );
 		}
@@ -232,7 +233,7 @@ public class HTTPUtil {
 				os = null;
 			}
 		} catch( Exception e ) {
-			e.printStackTrace();
+			Log.error(e);
 		}
 	}
 	
@@ -247,7 +248,7 @@ public class HTTPUtil {
 				writer = null;
 			}
 		} catch( Exception e ) {
-			e.printStackTrace();
+			Log.error(e);
 		}
 	}
 	
@@ -262,7 +263,7 @@ public class HTTPUtil {
 				reader = null;
 			}
 		} catch( Exception e ) {
-			e.printStackTrace();
+			Log.error(e);
 		}
 	}
 	
@@ -287,12 +288,12 @@ public class HTTPUtil {
 	        InputStream is = conn.getInputStream();
 	        result = stream2String( is );
 		} catch (MalformedURLException e) {
-			e.printStackTrace();
+			Log.error(e);
 			logger.error("result:"+result,e);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			logger.error("result:"+result,e);
-			e.printStackTrace();
+			Log.error(e);
 		}
 		return result;
         
@@ -371,20 +372,20 @@ public class HTTPUtil {
 				}
 				httpclient.getConnectionManager().shutdown();
 			} catch (ClientProtocolException e) {
-				e.printStackTrace();
+				Log.error(e);
 			} catch (IOException e1) {
-				e1.printStackTrace();
+				Log.error(e1);
 			} catch (IllegalStateException e2) {
-				e2.printStackTrace();
+				Log.error(e2);
 			} catch (Exception e) {
-				e.printStackTrace();
+				Log.error(e);
 			} finally {
 				if (null != in) {
 					try {
 						in.close();
 						in = null;
 					} catch (IOException e3) {
-						e3.printStackTrace();
+						Log.error(e3);
 					}
 				}
 			}

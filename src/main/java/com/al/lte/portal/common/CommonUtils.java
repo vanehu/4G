@@ -14,6 +14,7 @@ import net.sf.json.xml.XMLSerializer;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.MapUtils;
+import org.jfree.util.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -132,7 +133,7 @@ public class CommonUtils {
 				}
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			Log.error(e);
 		}
 		return isGov;
 	} 
@@ -143,7 +144,7 @@ public class CommonUtils {
 	            JSON jsonObject = JSONSerializer.toJSON(json);  
 	            return serializer.write(jsonObject);  
 	        } catch (Exception e) {  
-	            e.printStackTrace();  
+	        	Log.error(e);
 	        }  
 	        return null;  
 	    }  
