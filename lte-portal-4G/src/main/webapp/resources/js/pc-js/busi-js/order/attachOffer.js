@@ -749,13 +749,11 @@ AttachOffer = (function() {
 					});
 					if(ec.util.isArray(AttachOffer.openList)){
 						$.each(AttachOffer.openList, function(index_1, sthOpened){
-							if(sthOpened.prodId == prodId){
-								$.each(sthOpened.specList, function(index_2, openedServ){
-									if(openedServ.isdel == undefined || "Y" != openedServ.isdel){
-										_orderedOfferSpecIds.push(openedServ.offerSpecId);
-									}
-								});
-							}
+							$.each(sthOpened.specList, function(index_2, openedServ){
+								if(openedServ.isdel == undefined || "Y" != openedServ.isdel){
+									_orderedOfferSpecIds.push(openedServ.offerSpecId);
+								}
+							});
 						});
 					}
 					$("li[name='product']").each(function(){
@@ -766,13 +764,11 @@ AttachOffer = (function() {
 					
 					if(ec.util.isArray(AttachOffer.openServList)){
 						$.each(AttachOffer.openServList, function(index_1, opendServ){
-							if(opendServ.prodId == prodId){
-								$.each(opendServ.servSpecList, function(index_2, opendServSpec){
-									if(opendServSpec.isdel == undefined || "Y"!= opendServSpec.isdel){
-										_servSpecIds.push(opendServ.servSpecId);
-									}
-								});
-							}
+							$.each(opendServ.servSpecList, function(index_2, opendServSpec){
+								if(opendServSpec.isdel == undefined || "Y"!= opendServSpec.isdel){
+									_servSpecIds.push(opendServSpec.servSpecId);
+								}
+							});
 						});
 					}
 					
@@ -784,7 +780,7 @@ AttachOffer = (function() {
 						if(ec.util.isArray(AttachOffer.openServList)){
 							$.each(AttachOffer.openServList, function(index_1, openServ){
 								$.each(openServ.servSpecList, function(index_2, opendServSpec){
-									if(this.servSpecId == opendServ.servSpecId){
+									if(this.servSpecId == opendServSpec.servSpecId){
 										contentAppend = contentAppend + this.servSpecName +"<br>"; 
 									}
 								});
@@ -919,13 +915,11 @@ AttachOffer = (function() {
 				});
 				if(ec.util.isArray(AttachOffer.openList)){
 					$.each(AttachOffer.openList, function(index_1, sthOpened){
-						if(sthOpened.prodId == prodId){
-							$.each(sthOpened.specList, function(index_2, openedServ){
-								if(openedServ.isdel ==undefined || "Y"!= openedServ.isdel){
-									_orderedOfferSpecIds.push(openedServ.offerSpecId);
-								}
-							});
-						}
+						$.each(sthOpened.specList, function(index_2, openedServ){
+							if(openedServ.isdel ==undefined || "Y"!= openedServ.isdel){
+								_orderedOfferSpecIds.push(openedServ.offerSpecId);
+							}
+						});
 					});
 				}
 				$("li[name='product']").each(function(){
@@ -936,13 +930,11 @@ AttachOffer = (function() {
 				
 				if(ec.util.isArray(AttachOffer.openServList)){
 					$.each(AttachOffer.openServList, function(index_1, openServ){
-						if(openServ.prodId == prodId){
-							$.each(openServ.servSpecList, function(index_2, openServSpec){
-								if(opendServ.isdel ==undefined || "Y"!= opendServ.isdel){
-									_servSpecIds.push(opendServ.servSpecId);
-								}
-							});
-						}
+						$.each(openServ.servSpecList, function(index_2, openServSpec){
+							if(openServSpec.isdel ==undefined || "Y"!= openServSpec.isdel){
+								_servSpecIds.push(openServSpec.servSpecId);
+							}
+						});
 					});
 				}
 				respnose = AttachOffer.queryOfferAndServDependForCancel("",$("#del_"+prodId+"_"+servId).attr("servSpecId"));
