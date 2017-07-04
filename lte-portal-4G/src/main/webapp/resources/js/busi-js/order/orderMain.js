@@ -2403,8 +2403,24 @@ order.main = (function(){
 					}
 				});
 			}
-			$("#dealerChannel_"+objInstId).append($channelListOptions);
-			$("#dealer_"+objInstId).val($(this).attr("staffName")).attr("staffId", $(this).attr("staffId"));
+			if(objInstId == -99){
+				$("select[id^='dealerChannel_']").each(function(){
+					$(this).empty();
+					$(this).append($channelListOptions);
+				});
+			}else{
+				$("#dealerChannel_"+objInstId).append($channelListOptions);
+			}
+			
+			var staffName = $(this).attr("staffName");
+			var staffId = $(this).attr("staffId")
+			if(objInstId == -99){
+				$("#dealerTbody").find("input").each(function(){
+					$(this).val(staffName).attr("staffId", staffId);
+				});
+			}else{
+				$("#dealer_"+objInstId).val($(this).attr("staffName")).attr("staffId", $(this).attr("staffId"));
+			}
 		});
 		easyDialog.close();
 	}

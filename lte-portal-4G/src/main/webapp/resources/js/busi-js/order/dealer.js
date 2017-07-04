@@ -367,7 +367,10 @@ order.dealer = (function() {
 			$(select).val(value);
 		}
 	};
-	
+	//批量修改发展人
+	var _updateDealer = function(){
+		order.main.queryStaff(0,'dealer',-99)
+	};
 	//点击确认，添加附属销售品发展人
 	var _addAttachDealer = function(){
 		$("input[name=attach_dealer]:checked").each(function(){	
@@ -724,6 +727,7 @@ order.dealer = (function() {
 		checkAllAttach		: _checkAllAttach,
 		removeDealer		: _removeDealer,
 		removeAttDealer		: _removeAttDealer,
-		changeDealer		: _changeDealer
+		changeDealer		: _changeDealer,
+		updateDealer   : _updateDealer
 	};
 })();
