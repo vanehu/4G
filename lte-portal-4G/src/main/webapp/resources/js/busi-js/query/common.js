@@ -164,7 +164,7 @@ query.common = (function() {
         	}
 		} catch(e) {
 			window.console && window.console.log && (console.log("%c" + JSON.stringify(CommonUtils.getBrowserInfos()), "color:red"));
-			throw new Error("camera driver (DoccameraOcx.exe) is not installed correctly.");
+			throw new Error("camera driver (DoccameraOcx.exe) is installed incorrectly.");
 		}
 	};
 	

@@ -282,10 +282,10 @@ cert = (function() {
 					window.console && window.console.log && (console.log("%c读卡控件异常：" + result.errorMsg, "color:red"));
 				}
 			} catch(e){
-				window.console && window.console.log && (console.log("%ccert reader driver is not installed correctly.", "color:red"));
+				window.console && window.console.log && (console.log("%ccert reader driver is installed incorrectly.", "color:red"));
 			}
 		} else{
-			window.console && window.console.log && (console.log("%ccert reader driver is not installed correctly.", "color:red"));
+			window.console && window.console.log && (console.log("%ccert reader driver is installed incorrectly.", "color:red"));
 //			areaId = "8990000";//是否给默认值
 		}
 	};
@@ -351,14 +351,14 @@ cert = (function() {
 	};
 	var _fillupOrderInfoCertReaderCustInfos = function(){
 		try{
-			//老客户数据填充
-			_fillupPartyId2CertReaderCustInfos(OrderInfo.cust.idCardNumber, OrderInfo.cust.custId);
-			//新客户数据填充
 			if(ec.util.isArray(OrderInfo.certInfoKeys)){
+				//老客户数据填充
+				_fillupPartyId2CertReaderCustInfos(OrderInfo.cust.idCardNumber, OrderInfo.cust.custId);
+				//新客户数据填充
 				$.each(OrderInfo.certInfoKeys, function(index, certInfoKey){
 					if(!ec.util.isObj(certInfoKey.partyId)){
 						//没有partyId，使用报文中C1节点的虚拟客户ID替代
-						$.each(OrderInfo.orderData.orderList, function(index, busiOrder){
+						$.each(OrderInfo.orderData.orderList.custOrderList[0].busiOrder, function(index, busiOrder){
 							if(busiOrder.boActionType.boActionTypeCd == "C1"){
 								if(busiOrder.data.boCustIdentities[0].identityNum == certInfoKey.certNumber){
 									certInfoKey.partyId = busiOrder.busiObj.instId;

@@ -1429,7 +1429,29 @@ OrderInfo = (function() {
 	};
 			
 	var _oneCardFiveNO={"usedNum":{},"checkNum":{}};//一证五号校验缓存
+	//读卡信息
+	var _certInfoKeys = [];
+	//读卡信息
+	var _pushCertInfoKeys = function(certInfoKeys){
+		var ifReapted = false;
+		
+		if(ec.util.isArray(OrderInfo.certInfoKeys)){
+			$.each(OrderInfo.certInfoKeys, function(index, custInfo){
+				if(custInfo.certNumber == certInfoKeys.certNumber){
+					ifReapted = true;
+					return;
+				}
+			});
+		}
+		
+		if(!ifReapted){
+			OrderInfo.certInfoKeys.push(certInfoKeys);
+		}
+	};
+	
 	return {
+		certInfoKeys			:_certInfoKeys,
+		pushCertInfoKeys		:_pushCertInfoKeys,
 		state:state,
 		delViceCard:delViceCard,
 		newClothes:newClothes,

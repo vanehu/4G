@@ -1366,7 +1366,30 @@ var _boPartyContactInfo = {
 		order.cust.tmpChooseUserInfo = {};
 		OrderInfo.choosedUserInfos = [];
 	};
+	
+	//读卡信息
+	var _certInfoKeys = [];
+	//读卡信息
+	var _pushCertInfoKeys = function(certInfoKeys){
+		var ifReapted = false;
+		
+		if(ec.util.isArray(OrderInfo.certInfoKeys)){
+			$.each(OrderInfo.certInfoKeys, function(index, custInfo){
+				if(custInfo.certNumber == certInfoKeys.certNumber){
+					ifReapted = true;
+					return;
+				}
+			});
+		}
+		
+		if(!ifReapted){
+			OrderInfo.certInfoKeys.push(certInfoKeys);
+		}
+	};
+	
 	return {
+		certInfoKeys			:_certInfoKeys,
+		pushCertInfoKeys		:_pushCertInfoKeys,
 		order					: _order,
 		acctId                  : _acctId,
 		acctCd                  : _acctCd,

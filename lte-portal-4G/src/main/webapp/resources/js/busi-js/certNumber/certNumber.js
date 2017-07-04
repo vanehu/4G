@@ -730,7 +730,7 @@ oneFive.certNumber = (function () {
         try {
             cert.closeVideo();
         } catch (e) {
-            throw new Error("camera driver (DoccameraOcx.exe) is not installed correctly.");
+            throw new Error("camera driver (DoccameraOcx.exe) is installed incorrectly.");
         } finally {
             easyDialog.close();
             $(".ZebraDialogOverlay").remove();
@@ -890,7 +890,7 @@ oneFive.certNumber = (function () {
                 $("#tips15").html("提示：" + json.errorMsg);
             }
         } catch (e) {
-            throw new Error("camera driver (DoccameraOcx.exe) is not installed correctly.");
+            throw new Error("camera driver (DoccameraOcx.exe) is installed incorrectly.");
         }
     }
 
