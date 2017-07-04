@@ -2781,7 +2781,7 @@ AttachOffer = (function() {
 	};
 	
 	var _checkTerminalVal = function(val){
-		return (/(^([a-fA-F0-9]{14})$)|(^\d{15}$)/).test(val);
+		return (/(^([a-fA-F0-9]{14})$)|(^([a-fA-F0-9]{15})$)/).test(val);
 		
 //		if(val.length>15 || val.length < 14)
 //			return false;
@@ -2836,7 +2836,7 @@ AttachOffer = (function() {
 			return;
 		}
 		if(!_checkTerminalVal($.trim(instCode))){
-			$.alert("提示信息","请输入合法的终端串码，串码对应的组合为15位的数字或者14位的数字与A到F之间的字母组合，字母不限大小写！");
+			$.alert("提示信息","请输入合法的终端串码<br/>--必须为14位或者15位的纯数字或字母（A-F）与数字的组合,不限大小写");
 			return;
 		}
 		if(_checkData(objInstId,instCode)){
