@@ -476,6 +476,10 @@ oneFive.certNumber = (function () {
             return;
         }
 
+        //设置流水号和上传类型
+        $("#uploadAttachment" + id).find("#soNbr").val(_getOneFiveSoNbr());
+        $("#uploadAttachment" + id).find("#type").val(id);
+
         var options = {
             type: 'post',
             dataType: 'json',
