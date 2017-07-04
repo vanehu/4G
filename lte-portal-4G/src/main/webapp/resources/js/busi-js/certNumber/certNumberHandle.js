@@ -382,13 +382,13 @@ oneFive.certNumberHandle = (function () {
      * @param type 文件类型      "F,E4",    "E1",   "E2",     "E3",   "E4"
      */
     function createAttachmentHtml(files, title, type) {
-        var attachmentHtml = $("<div>").append($("<h5 class='s_title'>").append(title));
+        var attachmentHtml = $("<div></div>").append($("<h5 class='s_title'></h5>").append(title));
         $.each(files, function () {
             if ($.inArray(this.picFlag, type.split(',')) != -1) {
                 if (this.picFlag == 'F') {
-                    $(attachmentHtml).append($("<div>").append("<embed style='width: 800px;height: 600px;' src='" + "data:application/pdf;base64," + this.orderInfo + "'/>"));
+                    $(attachmentHtml).append($("<div></div>").append("<embed style='width: 800px;height: 600px;' src='" + "data:application/pdf;base64," + this.orderInfo + "'/>"));
                 } else {
-                    $(attachmentHtml).append($("<div>").append("<img style='width: auto;height: auto;'src='" + "data:application/jpeg;base64," + this.orderInfo + "'/>"));
+                    $(attachmentHtml).append($("<div></div>").append("<img style='width: auto;height: auto;'src='" + "data:application/jpeg;base64," + this.orderInfo + "'/>"));
                 }
             }
         });
