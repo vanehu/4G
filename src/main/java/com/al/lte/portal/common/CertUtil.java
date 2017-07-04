@@ -24,7 +24,7 @@ import com.al.ecs.log.Log;
  *
  */
 public class CertUtil {
-	private static String password = "sads";
+	private static String mima = "sads";
 	private static String alias="usr";
 	private static String exStr = "thisisatest";
 	private static String ssl = "sha1WithRSA";
@@ -123,11 +123,11 @@ public class CertUtil {
         String keyStorePath=privateCert;
         InputStream in1 = request.getSession().getServletContext().getResourceAsStream(keyStorePath);
         // 获得证书
-        X509Certificate x509Certificate = (X509Certificate) getCertificate(keyStorePath, alias, password,request);
+        X509Certificate x509Certificate = (X509Certificate) getCertificate(keyStorePath, alias, mima,request);
         // 获取私钥
-        KeyStore keyStore = getKeyStore(in1, password);
+        KeyStore keyStore = getKeyStore(in1, mima);
         // 取得私钥
-        PrivateKey privateKey = (PrivateKey) keyStore.getKey(alias, password.toCharArray());
+        PrivateKey privateKey = (PrivateKey) keyStore.getKey(alias, mima.toCharArray());
         // 构建签名
         Signature signature = Signature.getInstance(x509Certificate.getSigAlgName());
         signature.initSign(privateKey);

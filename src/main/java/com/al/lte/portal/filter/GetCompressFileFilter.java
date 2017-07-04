@@ -51,7 +51,7 @@ public class GetCompressFileFilter extends OncePerRequestFilter {
 	public String[] getExcludeUrls() {
 		return excludeUrls;
 	}
-
+ 
 	public void setExcludeUrls(String[] excludeUrls) {
 		this.excludeUrls = excludeUrls;
 	}
