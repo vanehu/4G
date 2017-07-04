@@ -197,7 +197,7 @@ custQuery = (function(){
 					return;
 				}
 				if(response.data.indexOf("false") >=0) {
-					if(home.menuData.isSecond == "N"){
+					if(OrderInfo.actionFlag == 111 || (home.menuData.isSecond == "N" && OrderInfo.actionFlag != "115")){
 						$.confirm("确认","没有定位到客户，是否新建客户",{ 
 							yes:function(){
 								$("#cust-nav-tab-1").removeClass("active in");
