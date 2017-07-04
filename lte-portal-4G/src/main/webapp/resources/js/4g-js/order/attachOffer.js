@@ -657,12 +657,25 @@ AttachOffer = (function() {
 								$.each(OrderInfo.oldofferSpec,function(){
 									if(this.accNbr==oldoffer.accNbr){
 										param.offerSpecIds.push(this.offerSpec.offerSpecId);	
-										$.each(this.offerSpec.offerRoles,function(){
-											if(this.memberRoleCd==CONST.MEMBER_ROLE_CD.VICE_CARD || this.memberRoleCd==CONST.MEMBER_ROLE_CD.COMMON_MEMBER){
-												param.offerRoleId = this.offerRoleId;
-												return false;
-											}
-										});
+//										$.each(this.offerSpec.offerRoles,function(){
+//											if(this.memberRoleCd==CONST.MEMBER_ROLE_CD.VICE_CARD || this.memberRoleCd==CONST.MEMBER_ROLE_CD.COMMON_MEMBER){
+//												param.offerRoleId = this.offerRoleId;
+//												return false;
+//											}
+//										});
+										
+										for ( var i = 0; i < OrderInfo.offerSpec.offerRoles.length; i++) {
+											var offerRole = OrderInfo.offerSpec.offerRoles[i];
+											if(offerRole && offerRole.memberRoleCd==CONST.MEMBER_ROLE_CD.VICE_CARD){ //副卡
+//												if(offerRole.prodInsts!=undefined && offerRole.prodInsts.length>0){
+//													for ( var j = 0; j < offerRole.prodInsts.length; j++) {
+//														var prodInst = offerRole.prodInsts[j];
+												        param.offerRoleId = offerRole.offerRoleId;
+														break;
+//													}		
+//												}
+											} 
+										}
 									}
 								});
 							}
