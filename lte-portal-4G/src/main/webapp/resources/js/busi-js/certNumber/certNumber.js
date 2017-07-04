@@ -404,6 +404,14 @@ oneFive.certNumber = (function () {
      * @private
      */
     var _selectUploadFiles = function (uploadFiles, type) {
+        //清空上次文件名
+        var $trs = $("#tab_oneFiveFileUpload").find("tbody").find("tr");
+        $.each($trs, function () {
+            if (type == $(this).find("td:eq(2)").text()) {
+                $(this).remove();
+            }
+        });
+
         var $tbody = $("#tab_oneFiveFileUpload").find("tbody");
         if (isLowIE10()) {
             var tmpTR = $("<tr>").append($("<td>").append(uploadFiles.value)).append($("<td>").append("未知")).append($("<td>").append(type));
@@ -664,7 +672,7 @@ oneFive.certNumber = (function () {
             var $trs = $("#tab_oneFiveFileUpload").find("tbody").find("tr");
             $.each($trs, function () {
                 if (TYPES[id] == $(this).find("td:eq(2)").text()) {
-                    this.remove();
+                    $(this).remove();
                 }
             })
         } else {
