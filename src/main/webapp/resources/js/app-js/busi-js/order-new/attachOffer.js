@@ -1057,13 +1057,31 @@ AttachOffer = (function() {
 		}
 	};
 	
+	//二次业务翼支付是否已订购
+	var _isYzfOpened = function(prodId){
+		var servList = CacheData.getServList(prodId);//过滤已订购
+		$.each(servList,function(){
+			if(this.servSpecId == CONST.YZFservSpecId1 || this.servSpecId == CONST.YZFservSpecId){
+				if(this.isdel != 'Y'){
+					hasShowTip = true;
+					return;
+				}
+			}
+		});
+	}
+	
 	//开通功能产品
 	var _openServ = function(prodId,serv){
+		hasShowTip = false;
 		if(!_checkUser(prodId,serv.servSpecId)){
 			$("#input_"+prodId+"_"+serv.servId).removeAttr("checked");
-			$.alert("提示","当前客户证件类型无权限开通翼支付及其相关功能产品!");
+			if(!hasShowTip){
+				hasShowTip = true;
+				$.alert("提示","当前客户证件类型无权限开通翼支付及其相关功能产品!");
+			}
 			return;
 		}
+		_isYzfOpened(prodId);
 		$.confirm("信息确认","取消关闭【"+serv.servSpecName+"】功能产品",{ 
 			yesdo:function(){
 				if(serv!=undefined){   //在可订购功能产品里面 
