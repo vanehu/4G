@@ -222,8 +222,7 @@ public class OfferMainController extends BaseController {
 							model.addAttribute("orderAttrFlag","Y");//Y必填
 						}
 					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						log.error(e);
 						model.addAttribute("orderAttrFlag","Y");//Y必填
 					}
 				}else{//未传经办人信息
@@ -237,8 +236,7 @@ public class OfferMainController extends BaseController {
 			try {
 				isSkipPhoto = staffBmo.checkOperatSpec(SysConstant.TGJBRBTQX, sessionStaff);
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				log.error(e);
 			}
 			if(isSkipPhoto.equals(SysConstant.STRING_0) && orderAttrFlag.equals("Y")){
 				model.addAttribute("orderAttrFlag","C");//C非必填

@@ -163,7 +163,6 @@ public class HTTPUtil {
             messageDigest.update(str.getBytes("UTF-8"));  
         } catch (NoSuchAlgorithmException e) {  
         	Log.error("NoSuchAlgorithmException caught!");
-            System.exit(-1);  
         } catch (UnsupportedEncodingException e) {  
         	Log.error(e);  
         }  

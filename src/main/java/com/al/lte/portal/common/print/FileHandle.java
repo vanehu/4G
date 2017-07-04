@@ -195,7 +195,6 @@ public class FileHandle {
 		try(InputStream image = new FileInputStream(fileJapser);){
 			int count = 0;
 		    while ((count = image.read(buffer)) > 0) {
-		    	image.read(buffer);
 		    }
 		}catch(Exception e){
 			log.error(e);

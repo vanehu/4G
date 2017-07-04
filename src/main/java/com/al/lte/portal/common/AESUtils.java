@@ -334,7 +334,6 @@ public class AESUtils {
 			messageDigest.update(str.getBytes("UTF-8"));
 		} catch (NoSuchAlgorithmException e) {
 			log.error(e);
-			Runtime.getRuntime().halt(0);
 		} catch (UnsupportedEncodingException e) {
 			log.error(e);
 		}
@@ -357,9 +356,9 @@ public class AESUtils {
 
 		//String content = "{\"staffCode\":\"HUANGYI\",\"staffName\":\"测试\",\"areaId\":\"8330100\",\"areaCode\":\"\",\"areaName\":\"\",\"cityName\":\"杭州市\",\"cityCode\":\"\",\"provinceName\":\"浙江省\",\"provinceCode\":\"8110000\",\"channelCode\":\"89461\",\"systemId\":\"systemId\"}";
 		String content = "{\"fromProvFlag\":\"0\",\"provIsale\":\"provIsale\",\"provCustIdentityCd\":\"1\",\"custNumber\":\"custNumber\",\"provCustIdentityNum\":\"352222201505151234\",\"provCustAreaId\":\"provCustAreaId\",\"mainProdOfferId\":\"mainProdOfferId\",\"actionFlag\":\"1\",\"reloadFlag\":\"Y\",\"redirectUri\":\"http://sh.189.cn/redirect\",\"mainPhoneNum\":\"18989898989\",\"newSubPhoneNum\":\"18912345678\",\"oldSubPhoneNum\":\"18911223344,18922334455\",\"isFee\":\"1\"}";
-		String password = "TOKEN_8110000_KEY";
+		String tokenKey = "TOKEN_8110000_KEY";
 		//加密
-		String encryptStr = AESUtils.encryptToString(content, password);
+		String encryptStr = AESUtils.encryptToString(content, tokenKey);
 		System.out.println("加密后密文："+encryptStr);
 		/*String decryptStr = AESUtils.decryptToString(content, password);
 		System.out.println("解密后明文："+decryptStr);*/

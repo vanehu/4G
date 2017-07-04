@@ -28,7 +28,7 @@ public class Base64Test {
             data = new byte[in.available()];
             int count = 0;
             while ((count = in.read(data)) > 0) {
-            	in.read(data);
+            	
             }
             in.close();
         } catch (IOException e) {
