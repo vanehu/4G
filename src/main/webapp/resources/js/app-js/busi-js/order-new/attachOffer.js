@@ -51,6 +51,7 @@ AttachOffer = (function() {
 	
 	var _hasYzfTd=false;//二次业务是否已提示翼支付退订
 	
+	var hasShowTip = false;//由于记录退订翼支付以及相关产品提示信息是否已弹出
 	
 	//初始化附属销售页面
 	var _init = function(){
@@ -1433,6 +1434,7 @@ AttachOffer = (function() {
 	
 	//开通功能产品
 	var _openServSpec = function(prodId,servSpecId,specName,ifParams){
+		hasShowTip = false;
 		if(!_checkUser(prodId,servSpecId)){
 			$("#input_"+prodId+"_"+servSpecId).removeAttr("checked");
 			$.alert("提示","当前客户证件类型无权限开通翼支付及其相关功能产品!");
@@ -1580,7 +1582,10 @@ AttachOffer = (function() {
 	var _addOpenServList = function(prodId,servSpecId,servSpecName,ifParams){
 		if(!_checkUser(prodId,servSpecId)){
 			$("#input_"+prodId+"_"+servSpecId).removeAttr("checked");
-			$.alert("提示","当前客户证件类型无权限开通翼支付及其相关功能产品!");
+			if(!hasShowTip){
+				hasShowTip = true;
+				$.alert("提示","当前客户证件类型无权限开通翼支付及其相关功能产品!");
+			}
 		} else {
 			AttachOffer.offerSpecIds.push(parseInt(servSpecId));//加入已选择缓存，用于过滤搜索
 			//从已开通功能产品中找
@@ -1895,6 +1900,7 @@ AttachOffer = (function() {
 	};
 	//添加到开通列表
 	var _addOpenList = function(prodId,offerSpecId){
+		
 		AttachOffer.offerSpecIds.push(parseInt(offerSpecId));//加入已选择缓存，用于过滤搜索
 		if(!_manyPhoneFilter(prodId,offerSpecId)){
 			return;
