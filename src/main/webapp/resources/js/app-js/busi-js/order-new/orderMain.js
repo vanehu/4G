@@ -104,6 +104,11 @@ order.main = (function(){
 				return;
 			}
 		}
+		if(OrderInfo.actionFlag == 6){
+			//初始化
+			$("#tab-change-list").empty();
+			$("#cx_tab_flag").children("a:gt(0)").remove();
+		}
 		//构造副卡内容滚动页
 		for(var i=1;i<=num;i++){//每个副卡一个滚动tab li
 			$("#tab-change-list").append('<li class="tab-list" name="tab-li" id="attachSecondary'+i+'"></li>');

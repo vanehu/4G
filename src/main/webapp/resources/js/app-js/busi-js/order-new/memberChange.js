@@ -123,7 +123,7 @@ var _removeSecondCard=function(obj){
 			$("#span_"+obj).addClass("font-orange del-line");
 			$("#delBtn_"+obj).hide();
 			$("#cancelDelBtn_"+obj).show();
-			_memberDelList.push(obj);
+			order.memberChange.memberDelList.push(obj);
 		},
 		no:function(){	
 			return;
@@ -136,26 +136,26 @@ var _cancelRemoveSecondCard=function(obj){
 	$("#span_"+obj).removeClass("font-orange del-line");
 	$("#delBtn_"+obj).show();
 	$("#cancelDelBtn_"+obj).hide();
-	$.each(_memberDelList, function(index, item) {
+	$.each(order.memberChange.memberDelList, function(index, item) {
 		// index是索引值（即下标） item是每次遍历得到的值；
 		if (item == obj) {
-			_memberDelList.splice(index, 1);
+			order.memberChange.memberDelList.splice(index, 1);
 		}
 	});
 };
 
 	// 点击下一步判断是拆除副卡或者新装副卡
 	var _buildMainView = function() {
-		if(_memberDelList.length==0 && _memberAddList.length==0){//未进行任何业务，直接返回
+		if(order.memberChange.memberDelList.length==0 && order.memberChange.memberAddList.length==0){//未进行任何业务，直接返回
 			$.alert("提示","您还未进行任何业务！");
 			return;
 		}
-		if(_memberDelList.length>0){//拆副卡
+		if(order.memberChange.memberDelList.length>0){//拆副卡
 		     OrderInfo.actionFlag=21;
 		     order.memberChange.viceparam=[];
 		 	order.memberChange.ooRoles=[];
 		 	var offerMemberInfos=OrderInfo.offer.offerMemberInfos;
-		 	$.each(_memberDelList, function(index, item) {
+		 	$.each(order.memberChange.memberDelList, function(index, item) {
 		 		// index是索引值（即下标） item是每次遍历得到的值；
 		 			$.each(offerMemberInfos,function(){
 		 				if (this.roleCd == CONST.MEMBER_ROLE_CD.VICE_CARD && item==this.accessNumber) {//拆除的副卡信息
@@ -273,7 +273,7 @@ var _queryCardAttachOffer = function(param) {
 //点击加号新增副卡，需要进行一五校验
 var _addNewCard=function(){
 	OrderInfo.actionFlag==6;
-	if(_memberDelList.length>0){//存在拆除的副卡不许新增副卡
+	if(order.memberChange.memberDelList.length>0){//存在拆除的副卡不许新增副卡
 		$.alert("提示","不允许同时办理拆机和新增副卡！");
 		return;
 	}
