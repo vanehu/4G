@@ -178,48 +178,33 @@ public class OrderController extends BaseController {
 						SysConstant.SESSION_KEY_LOGIN_STAFF);
 		Map<String, Object> rMap = null;
 		JsonResponse jsonResponse = null;
-		String propertiesKey = "NEWPAYFLAG_"+ (sessionStaff.getCurrentAreaId() + "").substring(0, 3);
-		// 支付开关
-		String payFlag = propertiesUtils.getMessage(propertiesKey);
-		boolean chargeFlag = true;// 默认允许调用收费接口
-		if ("ON".equals(payFlag)) {
-			HttpSession session = request.getSession();
-			String key = param.get("olId").toString() + "_payCode";// 支付成功唯一标志
-			if (session.getAttribute(key) != null) {
-				chargeFlag = true;
-			} else {
-				chargeFlag = false;// 信息可能被篡改，不允许调用收费接口
-			}
-		}
-		if (chargeFlag) {//调用收费接口
-			try {
-				if (commonBmo.checkToken(request,SysConstant.ORDER_SUBMIT_TOKEN)) {
-					log.debug("param={}", JsonUtil.toString(param));
-					param.put("areaId", sessionStaff.getCurrentAreaId());
-					rMap = orderBmo.chargeSubmit(param, flowNum, sessionStaff);
-					log.debug("return={}", JsonUtil.toString(rMap));
-					if (rMap != null && ResultCode.R_SUCCESS.equals(rMap.get("code").toString())) {
-						jsonResponse = super.successed("收费成功",
-								ResultConstant.SUCCESS.getCode());
-					} else {
-						jsonResponse = super.failed(rMap.get("msg"),
-								ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
-					}
+		
+		//调用收费接口
+		try {
+			if (commonBmo.checkToken(request,SysConstant.ORDER_SUBMIT_TOKEN)) {
+				log.debug("param={}", JsonUtil.toString(param));
+				param.put("areaId", sessionStaff.getCurrentAreaId());
+				rMap = orderBmo.chargeSubmit(param, flowNum, sessionStaff);
+				log.debug("return={}", JsonUtil.toString(rMap));
+				if (rMap != null && ResultCode.R_SUCCESS.equals(rMap.get("code").toString())) {
+					jsonResponse = super.successed("收费成功",
+							ResultConstant.SUCCESS.getCode());
 				} else {
-					jsonResponse = super.failed("订单已经建档成功,不能重复操作!",
+					jsonResponse = super.failed(rMap.get("msg"),
 							ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
 				}
-			} catch (BusinessException e) {
-				return super.failed(e);
-			} catch (InterfaceException ie) {
-				return super.failed(ie, param, ErrorCode.CHARGE_SUBMIT);
-			} catch (Exception e) {
-				return super.failed(ErrorCode.CHARGE_SUBMIT, e, param);
+			} else {
+				jsonResponse = super.failed("订单已经建档成功,不能重复操作!",
+						ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
 			}
-		} else {
-			jsonResponse = super.failed("收费信息可能被篡改,请退出重新操作!",
-					ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+		} catch (BusinessException e) {
+			return super.failed(e);
+		} catch (InterfaceException ie) {
+			return super.failed(ie, param, ErrorCode.CHARGE_SUBMIT);
+		} catch (Exception e) {
+			return super.failed(ErrorCode.CHARGE_SUBMIT, e, param);
 		}
+	
 		return jsonResponse;
 	}
 	/**
