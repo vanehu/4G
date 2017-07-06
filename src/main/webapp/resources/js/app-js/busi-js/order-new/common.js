@@ -4,6 +4,7 @@
  */
 CommonUtils.regNamespace("common");
 common = (function($) { 
+	var _info="";//传给客户端爱运维需要的客户信息
 	
 	var _callOrderServer=function(staffInfos,custInfos,prodIdInfos,url,from_cust){
 //		var custInfosTemp = custInfos;
@@ -1759,6 +1760,19 @@ common = (function($) {
 		}
 	
 	};
+	
+	 //跳转爱运维
+	var _gotoOtherApp=function(){
+		var arr=new Array(1);
+		arr[0]=common.info;
+		MyPlugin.gotoOtherApp(arr,
+            function(result) {
+            },
+            function(error) {
+            }
+		);
+	}
+	
 	return {
 		relocationCust		:	_relocationCust,
 		setCalendar			:	_setCalendar,
@@ -1786,7 +1800,9 @@ common = (function($) {
 		CallNativeButtonClick:_CallNativeButtonClick,
 		goKuandai:_goKuandai,
 		setListTop :_setListTop,
-		goGroupHome:_goGroupHome
+		goGroupHome:_goGroupHome,
+		gotoOtherApp:_gotoOtherApp,
+		info       :_info
 	};
 })(jQuery);
 
