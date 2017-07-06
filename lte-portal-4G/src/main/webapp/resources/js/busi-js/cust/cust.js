@@ -4867,7 +4867,8 @@ order.cust = (function(){
 	        targetObjNbr : order.prodModify.choosedProdInfo.accNbr,
 	        resultNbr : $("#result_"+id+"_"+activityId).val(),
 	        resultDes : $("#result_"+id+"_"+activityId).find("option:selected").text(),
-	        isContact : 1
+	        isContact : 1,
+	        activityId:activityId
 		};
     	var queryUrl=contextPath+"/cust/saveMktContactResult";
 		var response = $.callServiceAsJson(queryUrl, param, {"before":function(){}});
