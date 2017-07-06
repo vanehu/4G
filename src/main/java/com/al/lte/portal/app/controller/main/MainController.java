@@ -1,6 +1,8 @@
 package com.al.lte.portal.app.controller.main;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -216,6 +218,33 @@ public class MainController extends BaseController {
 		model.addAttribute("haveMenu", "Y");
 		String app_version=(String) ServletUtils.getSessionAttribute(request,SysConstant.SESSION_KEY_APP_VERSION);
 		model.addAttribute("app_version",app_version);//客户端版本号
+		//爱运维菜单需要给原生传秘钥
+		Map<String, Object> infoMap = new HashMap<String, Object>();
+		infoMap.put("staffId", sessionStaff.getStaffId());
+		String staffName="";
+		String channelName="";
+		if(sessionStaff.getStaffName()!=null){
+			try {
+				staffName=URLEncoder.encode(sessionStaff.getStaffName(), "utf-8");
+			} catch (UnsupportedEncodingException e) {
+				log.error(e);
+			}
+		}
+		if(sessionStaff.getCurrentChannelName()!=null){
+			try {
+				channelName=URLEncoder.encode(sessionStaff.getCurrentChannelName(), "utf-8");
+			} catch (UnsupportedEncodingException e) {
+				log.error(e);
+			}
+		}
+		infoMap.put("staffName", staffName);
+		infoMap.put("channelId", sessionStaff.getCurrentChannelId());
+		infoMap.put("channelName", channelName);
+		infoMap.put("areaId", sessionStaff.getAreaId());
+		JSONArray area = JSONArray.fromObject(infoMap);
+		String info=AESUtils.encryptToString(area.toString(), "c0e9fcff59ecc3b8b92939a1a2724a44");
+		String a=AESUtils.decryptToString(info, "c0e9fcff59ecc3b8b92939a1a2724a44");
+		model.addAttribute("info",info);//加密用户信息
 		for (int i=0; i< menu.size(); i++) 
 		{
 			Map oneMap = (Map)menu.get(i);
