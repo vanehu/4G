@@ -85,14 +85,13 @@ order.service = (function(){
 				prodSpecIds=prodSpecIds.substring(1, prodSpecIds.length);
 				params.prodSpecId=prodSpecIds;
 			}
-			//3G老套餐只能变更成4G新套餐，不支持3转3
-//			var prodClass = order.prodModify.choosedProdInfo.prodClass;
-//			if(prodClass==CONST.PROD_CLASS.THREE){
-//				params.prodOfferFlag = "4G";
-//			}
 		}else if(CONST.getAppDesc()==0){
 			params.prodOfferFlag = "4G";
 		}
+		
+		//套餐变更，如果3转4，则必传Y，用于后台过滤
+		params.If3up4 = order.prodModify.choosedProdInfo.is3G;
+		
 		var url = contextPath+"/order/offerSpecList";
 		$.callServiceAsHtmlGet(url,params, {
 			"before":function(){
