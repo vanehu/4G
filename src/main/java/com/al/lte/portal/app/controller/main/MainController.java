@@ -241,8 +241,8 @@ public class MainController extends BaseController {
 		infoMap.put("channelId", sessionStaff.getCurrentChannelId());
 		infoMap.put("channelName", channelName);
 		infoMap.put("areaId", sessionStaff.getAreaId());
-		JSONArray area = JSONArray.fromObject(infoMap);
-		String info=AESUtils.encryptToString(area.toString(), "c0e9fcff59ecc3b8b92939a1a2724a44");
+		JSONObject obj = JSONObject.fromObject(infoMap);
+		String info=AESUtils.encryptToString(obj.toString(), "c0e9fcff59ecc3b8b92939a1a2724a44");
 		//String a=AESUtils.decryptToString(info, "c0e9fcff59ecc3b8b92939a1a2724a44");
 		model.addAttribute("info",info);//加密用户信息
 		for (int i=0; i< menu.size(); i++) 
