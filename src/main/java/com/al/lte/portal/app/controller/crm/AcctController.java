@@ -214,10 +214,10 @@ public class AcctController extends BaseController {
     	
     	SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
     	
-    	Map<String, Object> empty = new HashMap<>();
+    	Map<String, Object> empty = new HashMap<String, Object>();
 		String serviceName = "后台服务service/intf.acctService/queryExistAcctByCond的回参缺少";
 		
-		Map<String, Object> resultMap = new HashMap<>();
+		Map<String, Object> resultMap = new HashMap<String, Object>();
     	
     	try{
     		resultMap = acctBmo.queryAccount(param, flowNum, sessionStaff);    		    	    			
@@ -275,10 +275,10 @@ public class AcctController extends BaseController {
     	
     	SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
     	
-    	Map<String, Object> empty = new HashMap<>();
+    	Map<String, Object> empty = new HashMap<String, Object>();
 		String serviceName = "后台服务service/intf.acctService/queryAcctDetailInfo的回参缺少";
 		
-		Map<String, Object> resultMap = new HashMap<>();
+		Map<String, Object> resultMap = new HashMap<String, Object>();
     	
     	try{
     		resultMap = acctBmo.queryAcctDetail(param, flowNum, sessionStaff);    		    	    			
