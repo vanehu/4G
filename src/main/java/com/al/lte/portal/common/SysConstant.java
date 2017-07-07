@@ -429,7 +429,7 @@ public final class SysConstant {
     /**登录超过90天未修改密码返回编码*/
     public static final String R_PW_UPDATE = "11";
     
-    private static final  String[] itemType={"未获取到订单类型","新装","套餐变更","主副卡成员变更","产品属性变更","挂失/解挂","停机保号/复机","预拆机","拆机","违章拆机","未激活拆机","欠费拆机","改客户资料返档","补换卡","可选包退订/订购","过户","改账务定制关系","改产品密码"}; 
+    public static final  String[] itemType={"未获取到订单类型","新装","套餐变更","主副卡成员变更","产品属性变更","挂失/解挂","停机保号/复机","预拆机","拆机","违章拆机","未激活拆机","欠费拆机","改客户资料返档","补换卡","可选包退订/订购","过户","改账务定制关系","改产品密码"}; 
     
     //公告附件地址
     public static final String NOTICE_URL = "NOTICE_URL";
