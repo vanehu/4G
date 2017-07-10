@@ -720,7 +720,7 @@ order.main = (function(){
 						yesdo:function(){
 							for ( var j = 0; j < yiPaySpec.prodSpecParams.length; j++) {							
 								var prodSpecParam = yiPaySpec.prodSpecParams[j];
-								if (CONST.YZFitemSpecId4 == obj.itemSpecId && "ON" != offerChange.queryPortalProperties("AGENT_" + (OrderInfo.staff.soAreaId+"").substring(0,3))) {
+								if (CONST.YZFitemSpecId4 == prodSpecParam.itemSpecId && "ON" != offerChange.queryPortalProperties("AGENT_" + (OrderInfo.staff.soAreaId+"").substring(0,3))) {
 									prodSpecParam.setValue = "";
 								} else {
 									prodSpecParam.setValue = prodSpecParam.value;
