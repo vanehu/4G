@@ -131,12 +131,21 @@ oneFive.certNumberQuery = (function () {
                 "startDt": startDt,
                 "endDt": endDt,
                 "nowPage": curPage,
-                "staffId": OrderInfo.staff.staffId,
                 "pageSize": 10
             };
         }
         param.ifFilterAreaId = "Y";
         param.ifFilterItem = "N";
+        if (ec.util.isObj(telNumber) || ec.util.isObj(certNumber)) {
+            if (ec.util.isObj(telNumber)) {
+                param.telNumber = telNumber;
+            }
+            if (ec.util.isObj(certNumber)) {
+                param.certNumber = certNumber;
+            }
+        } else {
+            param.staffId = OrderInfo.staff.staffId;
+        }
         $.callServiceAsHtmlGet(contextPath + "/certNumber/queryOneFiveOrderList", param, {
             "before": function () {
                 $.ecOverlay("一证五卡订单查询中，请稍等...");
