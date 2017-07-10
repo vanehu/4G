@@ -368,7 +368,16 @@ cert = (function() {
 					}
 				});
 				
-				OrderInfo.orderData.orderList.orderListInfo.certInfoKeys = OrderInfo.certInfoKeys;
+				//过滤partyId仍为空的节点
+				$.each(OrderInfo.certInfoKeys, function(index, certInfoKey){
+					if(!ec.util.isObj(certInfoKey.partyId)){
+						OrderInfo.certInfoKeys.splice(index, 1);
+					}
+				});
+				
+				if(ec.util.isArray(OrderInfo.certInfoKeys)){
+					OrderInfo.orderData.orderList.orderListInfo.certInfoKeys = OrderInfo.certInfoKeys;
+				}
 			}
 		} catch(e){
 			window.console && window.console.log && (console.log("%cfillupOrderInfoCertReaderCustInfos异常：" + e, "color:red"));
