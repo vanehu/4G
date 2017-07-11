@@ -1341,6 +1341,10 @@ SoOrder = (function() {
 		
 		//封装付费方式
 		var paytype=$("#payType_"+prodId).val();
+		//新装的副卡付费方式与主卡保持一致
+		if(OrderInfo.actionFlag==1 && prodId!=-1){
+			paytype=$("#payType_-1").val();
+		}
 		if(paytype!= undefined){
 			busiOrder.data.boProdFeeTypes.push({
 				feeType : paytype,
