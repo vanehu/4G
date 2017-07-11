@@ -44,7 +44,7 @@
 			</div>
 		</li>
 		
-		<div class="choice-box m-t-10" id="div_payType">
+		<div class="choice-box m-t-10" id="div_payType" <#if main.actionFlag==1 && prodId!=-1>style="display: none;"</#if>>
 			<i class="iconfont pull-left p-l-10">&#xe61a;</i> <#assign
 			feeType_read = "0"> <#if main.actionFlag==6> <#assign feeType_read =
 			"1"> <#else> <#if offerSpec.feeType?? && offerSpec.feeType!="" > <#if
