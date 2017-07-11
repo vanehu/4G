@@ -874,6 +874,8 @@ order.calcharge = (function(){
 		failCount=0;//初始化
 		if ("1" == status) { // 原生返回成功，收费按钮不可点
 			$("#toCharge").attr("disabled","disabled");
+		}else{
+			return;//非成功状态不处理
 		}
 		if(order.calcharge.busiUpType==CONST.APP_ORDER_BUSI_UP_TYPE){
 			if(OrderInfo.actionFlag!=112){//非融合，先查订单收费状态，未收费继续流程，否则直接提示
