@@ -1548,7 +1548,8 @@ order.cust = (function(){
 							prodInstId : order.prodModify.choosedProdInfo.prodInstId,
 							acctNbr : order.prodModify.choosedProdInfo.accNbr,
 							prodSpecId : order.prodModify.choosedProdInfo.productId,
-							areaId : order.prodModify.choosedProdInfo.areaId
+							areaId : order.prodModify.choosedProdInfo.areaId,
+							prodBigClass:order.prodModify.choosedProdInfo.prodBigClass
 						};
 						order.cust.initUserInfos(param);
 					}

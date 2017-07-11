@@ -2105,6 +2105,7 @@ public class CustController extends BaseController {
         resquestMap.put("acctNbr", request.getParameter("acctNbr"));
         resquestMap.put("prodSpecId", request.getParameter("prodSpecId"));
         resquestMap.put("areaId", request.getParameter("areaId"));
+        resquestMap.put("prodBigClass", request.getParameter("prodBigClass"));
         try {
             Map responseMap = orderBmo.prodInstParam(resquestMap, null, sessionStaff);
             if (responseMap != null && ResultCode.R_SUCC.equals(responseMap.get("resultCode"))) {
