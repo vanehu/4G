@@ -13,3 +13,8 @@ clone a new repository
 git clone https://git.asiainfo.org/CRM-4G/unifyLogin.git
 ```
 
+Note：
+-----------------------
+```
+JDK1.6 is required for this project
+```
