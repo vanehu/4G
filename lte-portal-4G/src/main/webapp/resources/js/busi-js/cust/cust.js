@@ -3727,20 +3727,19 @@ order.cust = (function(){
 			throw new Error("camera driver (DoccameraOcx.exe) is installed incorrectly.");
 		}
 	};
-	 var _callFaceVerify = function(){
-    	 var result =  query.common.queryPropertiesMapValue("FACE_VERIFY_FLAG", "FACE_VERIFY_"+String(OrderInfo.staff.areaId).substr(0, 3));
+	var _callFaceVerify = function(){
+	 	 var request_id = "";
+         var result =  query.common.queryPropertiesMapValue("FACE_VERIFY_FLAG", "FACE_VERIFY_"+String(OrderInfo.staff.areaId).substr(0, 3));
 		 if(ec.util.isObj(OrderInfo.bojbrCustIdentities.identidiesPic) && result.FACE_VERIFY_SWITCH == "ON" && !query.common.checkOperateSpec(CONST.RZBDGN)){
 			 var param={
 				 "ContractRoot":{
 						   "SvcCont":{
 							     "params":{
-							    	  "olid":"",
-									  "busi_type": OrderInfo.busitypeflag,
-									  
-									
-								      "cust_id":OrderInfo.cust.custId,
-                                      "image_best":encodeURIComponent($("#img_Photo").data("identityPic"))
-	                             }
+									    	"olid":"",
+											  "busi_type": OrderInfo.busitypeflag,
+											  "cust_id":OrderInfo.cust.custId
+                    },
+	                   "image_best":encodeURIComponent($("#img_Photo").data("identityPic"))
 						    },
 						    "TcpCont": {
 						    	
@@ -3772,7 +3771,10 @@ order.cust = (function(){
 				      }
 				}
 			 }else if(response.code == 1 && response.data && !CONST.isForcePassfaceVerify){
-				$.alert("错误", "人证比对失败，错误原因：" + response.data);
+				 	if(response.data.request_id){
+						  request_id = response.data.request_id;
+					}
+				$.alert("错误", "人证比对失败，请求流水【"+ request_id +"】错误原因：" + response.data);
 				return;
 			}else if(response.code == -2 && response.data){
 				$.alertM(response.data);
@@ -3785,7 +3787,10 @@ order.cust = (function(){
 				 if(OrderInfo.confidence == 0){  
 					 $("#tips").empty();
 					 if(response && response.code == 1 && response.data){
-					  $("#tips").html("提示："+ "人证不符，原因为" + response.data + ",建议重新拍摄");
+					 if(response.data.request_id){
+					 		request_id = response.data.request_id;
+					 	}
+					  $("#tips").html("提示："+ "人证不符，请求流水【"+ request_id +"】原因为：" + response.data + ",建议重新拍摄");
 					 }
 				 }
 				 $("#confirmAgree").removeClass("btna_g").addClass("btna_o");
@@ -3795,7 +3800,7 @@ order.cust = (function(){
 			  $("#confirmAgree").removeClass("btna_g").addClass("btna_o");
 			  $("#confirmAgree").off("click").on("click",function(){_uploadImage();});
 		 }
-    };
+   };
 	var _rePhotos = function(){
 		//初始化页面
 		$("#tips").html("");
