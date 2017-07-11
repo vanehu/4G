@@ -394,6 +394,7 @@ public class ReportController extends BaseController {
             pageSize = Integer.parseInt(request.getParameter("pageSize").toString());
             param.put("nowPage", nowPage);
             param.put("pageSize", pageSize);
+            param.put("ifChansfer", request.getParameter("ifChansfer"));
             Map<String, Object> map = cartBmo.queryCarts(param, null, sessionStaff);
             if (map != null && map.get("orderLists") != null) {
                 list = (List<Map<String, Object>>) map.get("orderLists");
