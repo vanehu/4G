@@ -93,7 +93,7 @@ marketingRecommend = (function(){
 	                if(response.code == 0) {
 	                	var stats = response.data.result.result.prodInstStats;
 	                	for(var i=0;i<stats.length;i++){
-	                		if(stats[i].instSstatsAttrId=="20170501000001"){
+	                		if(stats[i].statsAttrId=="2017050001"){
 	                			var sa = stats[i].statsAttValue.split(".");
 	                			if(sa[1].length==1 && sa[1]!="0") sa[1] = sa[1]+"0";
 	                			stats[i].statsAttValue = sa[1]+"%";
@@ -125,11 +125,13 @@ marketingRecommend = (function(){
 	//营销任务（接触）反馈结果记录服务
 	var _saveMktContactResult = function(mktmodelCode,targetObjNbr,resultNbr,activityId){
 			var param = {
+					"pushType":"3000",
 		            "targetObjType": "3",
 		            "mktmodelCode":mktmodelCode,
 		            "targetObjType":"3",
 		            "targetObjNbr":targetObjNbr,
 		            "resultNbr":$("#"+resultNbr).val(),
+		            "resultDes":$("#"+resultNbr).find("option:selected").text(),
 		            "isContact":1,
 		            "contactChlId":OrderInfo.staff.channelId,
 		            "contactStaff":OrderInfo.staff.staffId,
