@@ -52,8 +52,8 @@
         border-right: 1px solid #ddd;
     }
     .oneFiveBottomLeftDiv .tit{
-        border-bottom: 1px dotted #ddd;
-        display: block;
+        border-bottom: 1px dotted #ddd; 
+        display: block; 
         height: 30px;
         line-height: 30px;
         text-align: center;
@@ -62,7 +62,7 @@
         border: 1px solid #ddd;
         width: 170px;
         height: 25px;
-        line-height: 25px;
+        line-height: 25px; 
         margin-left: 10px;
     }
     .oneFiveBottomLeftDiv input[type="file"]{
@@ -257,7 +257,7 @@
                         <span style="position: relative;" class="file">
                             <input type="file" id="mFileUpload"
                                name="mFileUpload" accept="image/jpg"
-                               onchange="oneFive.certNumber.selectUploadFiles(this,'正面');$(this).parents('.file').prev('.input-file').val($(this).val())"/>
+                               onchange="oneFive.certNumber.selectUploadFiles(this,'正面');$(this).parents('.file').prev('.input-file').val($(this).val())"/> 
                             <a class="btn_h30" style="margin: 2px 0 0 3px; padding-left: 12px;"><span style="padding-right: 12px;">选择</span></a>
                             <a class="btn_h30" style="margin: 2px 0 0 3px; padding-left: 12px;" onclick="oneFive.certNumber.uploadAttachment('Front')"><span style="padding-right: 12px;">上传正面照</span></a>
                         </span>
@@ -269,7 +269,7 @@
                         <span style="position: relative;" class="file">
                             <input type="file" id="mFileUpload" name="mFileUpload" accept="image/jpg" onchange="oneFive.certNumber.selectUploadFiles(this,'反面');$(this).parents('.file').prev('.input-file').val($(this).val())"/>
                             <a class="btn_h30" style="margin: 2px 0 0 3px; padding-left: 12px;"><span style="padding-right: 12px;">选择</span></a>
-                            <a class="btn_h30" style="margin: 2px 0 0 3px; padding-left: 12px;" onclick="oneFive.certNumber.uploadAttachment('Back')"><span style="padding-right: 12px;">上传反面照</span></a>
+                            <a class="btn_h30" style="margin: 2px 0 0 3px; padding-left: 12px;" onclick="oneFive.certNumber.uploadAttachment('Back')"><span style="padding-right: 12px;">上传反面照</span></a>                     
                         </span>
                     </form>
                     <form method="post" id="uploadAttachmentJbr" style="margin: 8px auto 5px;" enctype="multipart/form-data">
@@ -290,7 +290,7 @@
                                name="mFileUpload" accept="image/jpg"
                                onchange="oneFive.certNumber.selectUploadFiles(this,'其它');;$(this).parents('.file').prev('.input-file').val($(this).val())" multiple/>
                             <a class="btn_h30" style="margin: 2px 0 0 3px; padding-left: 19px;"><span style="padding-right: 12px;">选择</span></a>
-                            <a class="btn_h30" style="margin: 2px 0 0 3px; padding-left: 19px;" onclick="oneFive.certNumber.uploadAttachment('Other')"><span style="padding-right: 12px;">上传其它</span></a>
+                            <a class="btn_h30" style="margin: 2px 0 0 3px; padding-left: 19px;" onclick="oneFive.certNumber.uploadAttachment('Other')"><span style="padding-right: 12px;">上传其它</span></a>                            
                         </span>
                     </form>
                 </div>
