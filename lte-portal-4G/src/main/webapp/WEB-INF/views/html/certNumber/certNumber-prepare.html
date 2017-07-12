@@ -46,14 +46,35 @@
         width: 350px;
         height: 300px;
         float: left;
-        border: 1px solid;
+        border-right: 1px solid #ddd;
     }
-
+    .oneFiveBottomLeftDiv .tit{
+        border-bottom: 1px dotted #ddd; 
+        display: block; 
+        height: 30px;
+        line-height: 30px;
+    }
+    .oneFiveBottomLeftDiv .input-file{
+        border: 1px solid #ddd;
+        width: 170px;
+        height: 25px;
+        line-height: 25px; 
+        margin-left: 10px;
+    }
+    .oneFiveBottomLeftDiv input[type="file"]{
+        width: 72px;
+        height: 27px;
+        font-size: 14px;
+        position: absolute;
+        z-index: 1;
+        opacity: 0;
+        left: 0;
+        filter:alpha(opacity=0);
+    }
     .oneFiveBottomRightDiv {
         width: 440px;
         height: 300px;
         float: left;
-        border: 1px solid;
     }
 
     .jbrInfoDiv {
@@ -68,14 +89,18 @@
     .oneFiveBottomRightDiv table thead tr th {
         font-size: 16px;
         font-weight: bold;
-        border-bottom: 2px solid black;
-        border-left: 1px solid black;
-        border-right: 1px solid black;
+        border-bottom: 1px solid #ddd;
+        border-right: 1px solid #ddd;
         text-align: center;
+        height: 30px;
+        background-color: rgb(248, 248, 248);
     }
 
     .oneFiveBottomRightDiv table tbody tr td {
-        border: 1px solid black;
+        border: 1px solid #ddd;
+        border-left: 0;
+        height: 25px;
+        line-height: 25px;
         text-align: center;
     }
 </style>
@@ -206,52 +231,67 @@
         </table>
         <div class="oneFiveBottomDiv">
             <div class="oneFiveBottomLeftDiv">
-                <div align="left" style="margin: 10px auto;">
-                    <form method="post" id="uploadAttachmentPdf" enctype="multipart/form-data">
-                        <label>上传用户签署超“一证五卡”号码确认登记单并加盖营业厅专用章</label>
-                        <input type="file" style="width: 165px;height: 28px;font-size: 14px;" id="mFileUpload"
+                <div align="left" style="margin: 0px auto 10px;">
+                    <label class="tit">上传用户签署超“一证五卡”号码确认登记单并加盖营业厅专用章</label>
+                    <form method="post" id="uploadAttachmentPdf" style="margin: 8px auto 5px;" enctype="multipart/form-data">
+                        <input type="hidden" id="soNbr" name="soNbr"/>
+                        <input type="hidden" id="type" name="type"/>
+                        <input type="text" class="input-file">
+                        <span style="position: relative;" class="file">
+                            <input type="file" id="mFileUpload"
                                name="mFileUpload" accept="application/pdf,image/jpg"
-                               onchange="oneFive.certNumber.selectUploadFiles(this,'回执')"/>
+                               onchange="oneFive.certNumber.selectUploadFiles(this,'回执');$(this).parents('.file').prev('.input-file').val($(this).val())"/>
+                            <a class="btn_h30" style="margin: 2px 0 0 3px; padding-left: 12px;"><span style="padding-right: 12px;">选择</span></a>
+                            <a class="btn_h30" style="margin: 2px 0 0 3px; padding-left: 19px;" onclick="oneFive.certNumber.uploadAttachment('Pdf')"><span style="padding-right: 19px;">上传回执</span></a>
+                        </span>
+
+                    </form>
+                    <form method="post" id="uploadAttachmentFront" style="margin: 8px auto 5px;" enctype="multipart/form-data">
                         <input type="hidden" id="soNbr" name="soNbr"/>
                         <input type="hidden" id="type" name="type"/>
-                        <a class="btna_o" onclick="oneFive.certNumber.uploadAttachment('Pdf')"><span>上传回执</span></a>
-                    </form>
-                    <form method="post" id="uploadAttachmentFront" enctype="multipart/form-data">
-                        <input type="file" style="width: 165px;height: 28px;font-size: 14px;" id="mFileUpload"
+                        <input type="text" class="input-file">
+                        <span style="position: relative;" class="file">
+                            <input type="file" id="mFileUpload"
                                name="mFileUpload" accept="image/jpg"
-                               onchange="oneFive.certNumber.selectUploadFiles(this,'正面')"/>
+                               onchange="oneFive.certNumber.selectUploadFiles(this,'正面');$(this).parents('.file').prev('.input-file').val($(this).val())"/> 
+                            <a class="btn_h30" style="margin: 2px 0 0 3px; padding-left: 12px;"><span style="padding-right: 12px;">选择</span></a>
+                            <a class="btn_h30" style="margin: 2px 0 0 3px; padding-left: 12px;" onclick="oneFive.certNumber.uploadAttachment('Front')"><span style="padding-right: 12px;">上传正面照</span></a>
+                        </span>
+                    </form>
+                    <form method="post" id="uploadAttachmentBack" style="margin: 8px auto 5px;" enctype="multipart/form-data">
                         <input type="hidden" id="soNbr" name="soNbr"/>
                         <input type="hidden" id="type" name="type"/>
-                        <a class="btna_o" onclick="oneFive.certNumber.uploadAttachment('Front')"><span>上传正面照</span></a>
+                        <input type="text" class="input-file">
+                        <span style="position: relative;" class="file">
+                            <input type="file" id="mFileUpload" name="mFileUpload" accept="image/jpg" onchange="oneFive.certNumber.selectUploadFiles(this,'反面');$(this).parents('.file').prev('.input-file').val($(this).val())"/>
+                            <a class="btn_h30" style="margin: 2px 0 0 3px; padding-left: 12px;"><span style="padding-right: 12px;">选择</span></a>
+                            <a class="btn_h30" style="margin: 2px 0 0 3px; padding-left: 12px;" onclick="oneFive.certNumber.uploadAttachment('Back')"><span style="padding-right: 12px;">上传反面照</span></a>                     
+                        </span>
                     </form>
-                    <form method="post" id="uploadAttachmentBack" enctype="multipart/form-data">
-                        <input type="file" style="width: 165px;height: 28px;font-size: 14px;" id="mFileUpload"
-                               name="mFileUpload" accept="image/jpg"
-                               onchange="oneFive.certNumber.selectUploadFiles(this,'反面')"/>
-                        <input type="hidden" id="soNbr" name="soNbr"/>
-                        <input type="hidden" id="type" name="type"/>
-                        <a class="btna_o" onclick="oneFive.certNumber.uploadAttachment('Back')"><span>上传反面照</span></a>
-                    </form>
-                    <form method="post" id="uploadAttachmentJbr" enctype="multipart/form-data">
-                        <div class="jbrInfoDiv"><span id="jbr_info"></span></div>
+                    <form method="post" id="uploadAttachmentJbr" style="margin: 8px auto 5px;" enctype="multipart/form-data">
+                        <div class="jbrInfoDiv" style="height: 32px; line-height: 32px; margin-left: 10px;"><span id="jbr_info"></span></div>
                         <input type="hidden" id="certImg" name="certImg"/>
                         <input type="hidden" id="photograph" name="photograph"/>
                         <input type="hidden" id="soNbr" name="soNbr"/>
                         <input type="hidden" id="type" name="type"/>
-                        <a class="btna_o" onclick="oneFive.certNumber.uploadJbrAttachment('Jbr')"
-                           multiple><span>上传经办人照</span></a>
+                        <a class="btn_h30" style="margin-left: 18px; padding-left: 35px;" onclick="oneFive.certNumber.uploadJbrAttachment('Jbr')"
+                           multiple><span style="padding-right:35px;">上传经办人照</span></a>
                     </form>
-                    <form method="post" id="uploadAttachmentOther" enctype="multipart/form-data">
-                        <input type="file" style="width: 165px;height: 28px;font-size: 14px;" id="mFileUpload"
-                               name="mFileUpload" accept="image/jpg"
-                               onchange="oneFive.certNumber.selectUploadFiles(this,'其它')" multiple/>
+                    <form method="post" id="uploadAttachmentOther" style="margin: 8px auto 5px;" enctype="multipart/form-data">
                         <input type="hidden" id="soNbr" name="soNbr"/>
                         <input type="hidden" id="type" name="type"/>
-                        <a class="btna_o" onclick="oneFive.certNumber.uploadAttachment('Other')"><span>上传其它</span></a>
+                        <input type="text" class="input-file">
+                        <span style="position: relative;" class="file">
+                            <input type="file" id="mFileUpload"
+                               name="mFileUpload" accept="image/jpg"
+                               onchange="oneFive.certNumber.selectUploadFiles(this,'其它');;$(this).parents('.file').prev('.input-file').val($(this).val())" multiple/>
+                            <a class="btn_h30" style="margin: 2px 0 0 3px; padding-left: 19px;"><span style="padding-right: 12px;">选择</span></a>
+                            <a class="btn_h30" style="margin: 2px 0 0 3px; padding-left: 19px;" onclick="oneFive.certNumber.uploadAttachment('Other')"><span style="padding-right: 12px;">上传其它</span></a>                            
+                        </span>
                     </form>
                 </div>
                 <!--操作工具条-->
-                <div align="left" style="margin: 10px auto;">
+                <div align="left" style="margin: 0px auto 10px; padding-top: 10px; border-top: 1px dotted #ddd;">
                     <a style=" margin-left:30px;" class="btna_o"
                        onclick="oneFive.certNumber.oneCertFiveNumberPrint()"><span>打印</span></a>
                     <a style=" margin-left:30px;" class="btna_o"
@@ -262,9 +302,9 @@
                 <table id="tab_oneFiveFileUpload">
                     <thead>
                     <tr>
-                        <th width="345">文件名</th>
-                        <th width="40">大小</th>
-                        <th width="40">类型</th>
+                        <th width="290">文件名</th>
+                        <th width="70">大小</th>
+                        <th width="70">类型</th>
                     </tr>
                     </thead>
                     <tbody>
