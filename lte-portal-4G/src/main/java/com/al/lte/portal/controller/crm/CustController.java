@@ -2223,14 +2223,15 @@ public class CustController extends BaseController {
   		paramsMap.put("staff_code", sessionStaff.getStaffCode());
   		paramsMap.put("channel_nbr", sessionStaff.getCurrentChannelCode());
   		paramsMap.put("channel_type", sessionStaff.getCurrentChannelType());
-  		
+  		paramsMap.put("province_code",sessionStaff.getProvinceCode()==null?sessionStaff.getAreaId() : sessionStaff.getProvinceCode());
+  		paramsMap.put("busi_type","1");
   		String image_best = EncodeUtils.urlDecode(svcContMap.get("image_best") + "");
   		String imageFormat2 = ImageUtil.getImageFormat(image_best);
   		if(imageFormat2 != null){
   			image_best = ImageUtil.filterBase64ImageStr(image_best, imageFormat2);
   		}
-  		paramsMap.put("image_best",image_best);
-  		
+  		svcContMap.put("image_best", image_best);
+  		//paramsMap.put("image_best",image_best);
   		
   		log.debug("param={}", JsonUtil.toString(svcContMap.get("params")));
   		
@@ -2256,12 +2257,12 @@ public class CustController extends BaseController {
   					jsonResponse = super.successed(rMap,
   							ResultConstant.SUCCESS.getCode());
   				} else {
-  					jsonResponse = super.failed(rMap.get("msg"),
+  					jsonResponse = super.failed(rMap,
   							ResultConstant.FAILD.getCode());
   				}
   			} else {
   				if(rMap !=null){
-  					jsonResponse = super.failed(rMap.get("msg"),
+  					jsonResponse = super.failed(rMap,
   							ResultConstant.FAILD.getCode());
   				}else{
   					jsonResponse = super.failed("人证平台无返回值，可能原因为 调用人平台出现错误 。",
