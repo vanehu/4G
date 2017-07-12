@@ -1544,34 +1544,60 @@ var _saveHtml2Pdf=function(){
 			$.alert("提示","请填写联系电话！");
 			return;
 		}
-		var busiUpType="2";
-		order.calcharge.busiUpType="2";
-		var params={
-				"olId":$("#TransactionID").val(),
-				"soNbr":$("#TransactionID").val(),
-				"busiUpType":busiUpType,
-				"charge":ssfy*100+""//"1"
+		//先查询，如果支付过直接提交
+		var checkUrl = contextPath + "/app/order/getPayOrdStatus";
+		var olId=OrderInfo.orderResult.olId;
+		if(OrderInfo.actionFlag==112){//融合甩单传融合id
+			var AttrInfos=OrderInfo.orderData.orderList.orderListInfo.custOrderAttrs;
+			var uId="";//融合id
+			for(var i=0; i<AttrInfos.length; i++){
+	             var id=AttrInfos[i].AttrSpecId;
+	             if(id=="40010037"){
+	            	 uId=AttrInfos[i].AttrValue; 
+	             }
+	        }   
+			olId=uId;
+		}
+		var checkParams = {
+				"olId" : $("#TransactionID").val()
+				
 		};
-		var url = contextPath+"/app/order/getPayUrl";
-		$.callServiceAsJson(url, params, {
-			"before":function(){
-				$.ecOverlay("<strong>正在加载中,请稍等...</strong>");
-			},
-			"done" : function(response){
-//				alert(JSON.stringify(response.data));
-				$.unecOverlay();
-				if(response.code == 0) {
-					payUrl=response.data;
-					common.callOpenPay(payUrl);//打开支付页面
-				}else if(response.code==1002){
-//					$.alert("提示","接口异常，请稍后再试！");
-					$.alertM(response.data);
+		var response = $.callServiceAsJson(checkUrl, checkParams);
+		if (response.code != 0) {// 支付平台购物车id查询未支付成功才打开支付页面，否则直接提交订单
+			var busiUpType="2";
+			order.calcharge.busiUpType="2";
+			var params={
+					"olId":$("#TransactionID").val(),
+					"soNbr":$("#TransactionID").val(),
+					"busiUpType":busiUpType,
+					"charge":ssfy*100+""//"1"
+			};
+			var url = contextPath+"/app/order/getPayUrl";
+			$.callServiceAsJson(url, params, {
+				"before":function(){
+					$.ecOverlay("<strong>正在加载中,请稍等...</strong>");
+				},
+				"done" : function(response){
+//					alert(JSON.stringify(response.data));
+					$.unecOverlay();
+					if(response.code == 0) {
+						payUrl=response.data;
+						common.callOpenPay(payUrl);//打开支付页面
+					}else if(response.code==1002){
+						$.alert("提示",response.data);
+					}else{
+						$.alertM(response.data);
+					}
+				},fail:function(response){
+					$.unecOverlay();
+					$.alert("提示","系统异常，请稍后再试！");
 				}
-			},fail:function(response){
-				$.unecOverlay();
-				$.alert("提示","系统异常，请稍后再试！");
-			}
-		});
+			});
+		}else{
+			//获取支付方式
+			payType=response.data.payCode+"";
+			_orderSubmit();
+		}
 //		if(response.code==0){
 //			payUrl=response.data;
 //			common.callOpenPay(payUrl);//打开支付页面
