@@ -270,6 +270,10 @@ custQuery = (function(){
 	
 	//客户列表点击
 	var _showCustAuth = function(scope) {
+		if($(scope).attr("addressStr")=="" || $(scope).attr("addressStr").length<1){
+			$.alert("提示","该客户缺失证件地址，不能进行业务受理！");
+			return false;
+		}
 		_choosedCustInfo = {
 			extCustId : $(scope).attr("extCustId"),
 			custId : $(scope).attr("custId"), //$(scope).find("td:eq(3)").text(),

@@ -13,6 +13,7 @@ cust = (function(){
 	var _queryForChooseUser = false;
 	var authFlag = null; 
 	var _orderBtnflag="";
+	var _custCatsh = {};//读卡的客户缓存
 	
 	var _choosedCustInfo = {};
 	var _checkUserInfo = {
@@ -600,6 +601,12 @@ cust = (function(){
 		}
 		$("#testBtn").click();
 		_form_custInfomodify_btn();
+		
+		if(cust.custCatsh.idcard != undefined){
+			$("#cmCustName").val(cust.custCatsh.name);
+			$("#cmCustIdCard").val(cust.custCatsh.idcard);
+			$("#cmAddressStr").val(cust.custCatsh.address);
+		}
 	};
 	
 	//翼销售-经办人-客户类型选择事件
@@ -1268,6 +1275,12 @@ cust = (function(){
 	};
 	
 	var _getGenerationInfos=function(name,idcard,address,identityPic){
+		cust.custCatsh = {};
+		cust.custCatsh.name = name;
+		cust.custCatsh.idcard = idcard;
+		cust.custCatsh.address = address;
+		cust.custCatsh.identityPic = identityPic;
+		
 		$("#cm_identidiesTypeCd").val("1");
 		$("#cm_identidiesTypeCd").change();
 		$("#cmCustIdCard").val(idcard);
@@ -2843,6 +2856,7 @@ cust = (function(){
 		newUIFalg					:		_newUIFalg,
 		preCheckCertNumberRel       :       _preCheckCertNumberRel,
 		getCustInfo415              :       _getCustInfo415,
+		custCatsh					:		_custCatsh,
 		getCustInfo415Flag          :       _getCustInfo415Flag
 	};	
 })();
