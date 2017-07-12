@@ -227,15 +227,19 @@ cart.main = (function(){
 					pageSize:10
 			};
 		}else{
-			if($("#p_startDt").val()==""){
+			var startDt = $("#p_startDt").val().replace(/-/g,'');
+			if($("#p_startDt").val()=="" && !$("#if_p_qryNumber").attr("checked")){
 				$.alert("提示","请选择受理时间");
 				return;
+			}
+			if($("#if_p_qryNumber").attr("checked")){
+				startDt = "";
 			}
 			var couponNumber = $("#p_couponNumber").val();
 			if(couponNumber == null || couponNumber == undefined)
 				couponNumber = "";
 			param = {
-					"startDt":$("#p_startDt").val().replace(/-/g,''),
+					"startDt":startDt,
 					"endDt":$("#p_endDt").val().replace(/-/g,''),
 					"qryNumber":qryNumber,
 					"olStatusCd":$("#p_olStatusCd").val(),//购物车状态
@@ -304,6 +308,7 @@ cart.main = (function(){
 		}
 		*/
 		param.pageType = $("#pageType").val();
+		param.ifChansfer = $('#timeZones input[name=ifChansfer]:checked').val();;
 		if(pageType=="link"){
 			param.permissionsType = $("#permissionsType").val();
 			if (pageType4EC == "link4EC") {
@@ -1346,6 +1351,16 @@ $(function(){
 		});
 		
 		cart.main.initDic();
+		$("#if_p_qryNumber").change(function(){
+			if($("#if_p_qryNumber").attr("checked")){
+				$("#p_startDt").css("background-color","#E8E8E8").attr("disabled", true) ;
+				$("#p_qryNumber").css("background-color","white").attr("disabled", false) ;
+			}else{
+				$("#p_startDt").css("background-color","white").attr("disabled", false) ;
+				$("#p_qryNumber").css("background-color","#E8E8E8").attr("disabled", true) ;
+			}
+		});	
+		
 		
 		$("#if_p_olNbr").change(function(){
 			if($("#if_p_olNbr").attr("checked")){
@@ -1353,6 +1368,13 @@ $(function(){
 				$("#p_startDt").css("background-color","#E8E8E8").attr("disabled", true) ;
 				$("#p_endDt").css("background-color","#E8E8E8").attr("disabled", true) ;
 				$("#p_qryNumber").css("background-color","#E8E8E8").attr("disabled", true) ;
+				if($("#if_p_qryNumber").attr("checked")){
+					$("#p_startDt").css("background-color","#E8E8E8").attr("disabled", true) ;
+					$("#p_qryNumber").css("background-color","white").attr("disabled", false) ;
+				}else{
+					$("#p_startDt").css("background-color","white").attr("disabled", false) ;
+					$("#p_qryNumber").css("background-color","#E8E8E8").attr("disabled", true) ;
+				}
 				$("#p_olStatusCd").css("background-color","#E8E8E8").attr("disabled", true) ;
 				$("#p_busiStatusCd").css("background-color","#E8E8E8").attr("disabled", true) ;
 				$("#qureyChannelList").css("background-color","#E8E8E8").attr("disabled", true);
@@ -1372,6 +1394,15 @@ $(function(){
 				$("#p_startDt").css("background-color","white").attr("disabled", false) ;
 				$("#p_endDt").css("background-color","white").attr("disabled", false) ;
 				$("#p_qryNumber").css("background-color","white").attr("disabled", false) ;
+				
+				if($("#if_p_qryNumber").attr("checked")){
+					$("#p_startDt").css("background-color","#E8E8E8").attr("disabled", true) ;
+					$("#p_qryNumber").css("background-color","white").attr("disabled", false) ;
+				}else{
+					$("#p_startDt").css("background-color","white").attr("disabled", false) ;
+					$("#p_qryNumber").css("background-color","#E8E8E8").attr("disabled", true) ;
+				}
+				
 				$("#p_olStatusCd").css("background-color","white").attr("disabled", false) ;
 				$("#p_busiStatusCd").css("background-color","white").attr("disabled", false) ;
 				$("#qureyChannelList").css("background-color","white").attr("disabled", false) ;

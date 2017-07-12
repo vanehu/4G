@@ -278,10 +278,12 @@ SoOrder = (function() {
 				value : OrderInfo.cust.vipLevel
 			});
 		}
-		 custOrderAttrs.push({
-			itemSpecId : CONST.BUSI_ORDER_ATTR.PORTAL_ORDER_ID,//前台订单ID
-			value : OrderInfo.order.portalId
-		});
+		if(ec.util.isObj(OrderInfo.order) && ec.util.isObj(OrderInfo.order.portalId)){
+			custOrderAttrs.push({
+				itemSpecId : CONST.BUSI_ORDER_ATTR.PORTAL_ORDER_ID,//前台订单ID
+				value : OrderInfo.order.portalId
+			});
+		}
 		custOrderAttrs.push({
 			itemSpecId : CONST.BUSI_ORDER_ATTR.THRETOFOUR_ITEM,//3转4标志
 			value : itemValue

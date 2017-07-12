@@ -2029,8 +2029,24 @@ order.main = (function(){
 					}
 				});
 			}
-			$("#dealerChannel_"+objInstId).append($channelListOptions);
-			$("#dealer_"+objInstId).val($(this).attr("staffName")).attr("staffId", $(this).attr("staffId"));
+			if(objInstId == -99){
+				$("select[id^='dealerChannel_']").each(function(){
+					$(this).empty();
+					$(this).append($channelListOptions);
+				});
+			}else{
+				$("#dealerChannel_"+objInstId).append($channelListOptions);
+			}
+			
+			var staffName = $(this).attr("staffName");
+			var staffId = $(this).attr("staffId")
+			if(objInstId == -99){
+				$("#dealerTbody").find("input").each(function(){
+					$(this).val(staffName).attr("staffId", staffId);
+				});
+			}else{
+				$("#dealer_"+objInstId).val($(this).attr("staffName")).attr("staffId", $(this).attr("staffId"));
+			}
 		});
 		easyDialog.close();
 	}
@@ -2761,7 +2777,7 @@ order.main = (function(){
 	
 	var _isCustomers=function(id){
 		  //政企客户
-		  if(id==6|| id==7 || id== 15|| id==34 || id==43){
+		  if(CacheData.isGov(id)){
 			  return true;
 		  }
 		  else{

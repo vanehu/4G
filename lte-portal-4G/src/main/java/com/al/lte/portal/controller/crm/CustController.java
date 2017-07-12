@@ -2224,7 +2224,7 @@ public class CustController extends BaseController {
   		paramsMap.put("channel_nbr", sessionStaff.getCurrentChannelCode());
   		paramsMap.put("channel_type", sessionStaff.getCurrentChannelType());
   		
-  		String image_best = EncodeUtils.urlDecode(paramsMap.get("image_best") + "");
+  		String image_best = EncodeUtils.urlDecode(svcContMap.get("image_best") + "");
   		String imageFormat2 = ImageUtil.getImageFormat(image_best);
   		if(imageFormat2 != null){
   			image_best = ImageUtil.filterBase64ImageStr(image_best, imageFormat2);

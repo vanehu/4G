@@ -568,6 +568,21 @@ query.offer = (function() {
 	 */
 	var _searchAttachOfferSpec = function(param) {
 		addParam(param);  //添加基本参数
+		if(ec.util.isArray(OrderInfo.oldprodInstInfos) && (OrderInfo.actionFlag==6)){
+			for(var i=0;i<OrderInfo.oldprodInstInfos.length;i++){
+				if(param.acctNbr==OrderInfo.oldprodInstInfos[i].accNbr){
+					param.mainOfferSpecId=OrderInfo.offerSpec.offerSpecId;
+					param.offerSpecIds.push(OrderInfo.offerSpec.offerSpecId);	
+					if(ec.util.isObj(OrderInfo.offerSpec.offerRoles)){
+						$.each(OrderInfo.offerSpec.offerRoles,function(){
+							if(this.memberRoleCd==CONST.MEMBER_ROLE_CD.VICE_CARD){
+								param.offerRoleId = this.offerRoleId;
+							}
+						});
+					}
+				}
+			}
+		}
 		if(OrderInfo.menuName == "ZXHYBL"){
 		    OrderInfo.preliminaryInfo.mainOfferSpecId = param.mainOfferSpecId;
 		};

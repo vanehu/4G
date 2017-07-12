@@ -2500,7 +2500,7 @@ order.cust = (function(){
 	};
 	var _isCustomers=function(id){
 		  //政企客户
-		  if(id==6|| id==7 || id== 15|| id==34 || id==43){
+		  if(CacheData.isGov(id)){
 			  return 1000;
 		  }
 		  else{
@@ -3774,6 +3774,8 @@ order.cust = (function(){
 				response.data.prodId = param.prodInstId;
 				OrderInfo.oldUserInfos.push(response.data);
 			}
+        } else if (response.code == 1002) {
+            console.debug("该产品下没有查询到属性！");
 		}else if (response.code==-2){
 			$.alertM(response.data);
 		}else {

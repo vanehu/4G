@@ -388,7 +388,7 @@ order.dealer = (function() {
 				$newTr.append("<td>"+$tr.children().eq(2).text()+"</td>");
 				$newTr.append($tdType);
 				
-				var dealer = $("#tr_"+prodId).find("input"); //产品协销人
+				var dealer = $("#dealerTbody").find("input"); //产品协销人
 				var staffId = 1;
 				var staffName = "";
 				if(dealer[0]==undefined){

@@ -929,7 +929,7 @@ CacheData = (function() {
 								newSpec.isdel = "N";
 							}
 						}else {
-							if(OrderInfo.actionFlag==2){
+							if(OrderInfo.actionFlag==2 || OrderInfo.actionFlag==6){
 								offerSpec.isdel = "C";
 								CacheData.setOfferSpec(prodId,offerSpec);
 								var param = CacheData.getExcDepOfferParam(prodId,offerSpec.offerSpecId);
@@ -1083,7 +1083,7 @@ CacheData = (function() {
 								newSpec.isdel = "N";
 							}
 						}else {
-							if(OrderInfo.actionFlag==2||OrderInfo.actionFlag==21 ||OrderInfo.actionFlag==22){
+							if(OrderInfo.actionFlag==2|| OrderInfo.actionFlag==6|| OrderInfo.actionFlag==21 ||OrderInfo.actionFlag==22){
 								offerSpec.isdel = "C";
 								CacheData.setOfferSpec(prodId,offerSpec);
 								var param = CacheData.getExcDepOfferParam(prodId,offerSpec.offerSpecId);
