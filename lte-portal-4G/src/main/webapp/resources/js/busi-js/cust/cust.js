@@ -3737,12 +3737,12 @@ order.cust = (function(){
 							     "params":{
 									    	"olid":"",
 											  "busi_type": OrderInfo.busitypeflag,
-											  "cust_id":OrderInfo.cust.custId
-                    },
-	                   "image_best":encodeURIComponent($("#img_Photo").data("identityPic"))
+											  "cust_id":OrderInfo.cust.custId,
+											  "area_id" : OrderInfo.getAreaId()
+                                          },
+	                             "image_best":encodeURIComponent($("#img_Photo").data("identityPic"))
 						    },
 						    "TcpCont": {
-						    	
 						    }
 					    }
 			 };
