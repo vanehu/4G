@@ -3281,6 +3281,9 @@ order.cust = (function(){
     			certAddressEnc : queryCustInfo.data.custInfos[0].address,
 				isOldCust : "Y"
 			};
+			if(orderIdentidiesTypeCd == 1){
+				cert.fillupPartyId2CertReaderCustInfos(identityNum, queryCustInfo.data.custInfos[0].custId);
+			}
         }else{//定位不到客户C1
         	userSubInfo = {
         			prodId : user_prodId,
@@ -3529,9 +3532,9 @@ order.cust = (function(){
 		var queryCustInfo = $.callServiceAsJson(contextPath+"/token/pc/cust/queryCustInfo", custParam);
 		OrderInfo.queryCustInfo = queryCustInfo;
 		
-		if(OrderInfo.queryCustInfo.code == 0){
-			var custId = OrderInfo.queryCustInfo.data.custInfos[0].custId;
-			cert.fillupPartyId2CertReaderCustInfos(identityNum, custId);
+		//这里可以拿到完整的identityNum，而不是脱敏后的identityNum
+		if(queryCustInfo.code == 0 && orderIdentidiesTypeCd == 1){
+			cert.fillupPartyId2CertReaderCustInfos(identityNum, queryCustInfo.data.custInfos[0].custId);
 		}
 	};
 	/**

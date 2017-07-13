@@ -290,7 +290,7 @@ cert = (function() {
 		}
 	};
 	
-	//处理订单数据
+	//读卡信息采集
 	var _recordCertReaderCustInfos = function(certInfo){
 		if(ec.util.isObj(certInfo)){
 			var param = {"certInfos":[certInfo]};
@@ -310,7 +310,6 @@ cert = (function() {
 			}
 		}
 	};
-	//OrderInfo.certInfoKeys补充数据
 	var _fillupOrderInfoCertInfoKeys = function(certResults){
 		if(ec.util.isArray(certResults)){
 			$.each(certResults, function(index, certResult){
