@@ -41,6 +41,7 @@ import com.al.ecs.spring.annotation.session.AuthorityValid;
 import com.al.ecs.spring.controller.BaseController;
 import com.al.lte.portal.bmo.crm.CustBmo;
 import com.al.lte.portal.bmo.crm.OrderBmo;
+import com.al.lte.portal.common.AESUtil;
 import com.al.lte.portal.common.AESUtils;
 import com.al.lte.portal.common.Des33;
 import com.al.lte.portal.common.HTTPUtil;
@@ -162,15 +163,27 @@ public class AppCommonOutInterfinceController extends BaseController{
 	 * @throws AuthorityException
 	 */
 	@RequestMapping(value = "/pic/verify", method = RequestMethod.POST)
-	public @ResponseBody JsonResponse verify(@RequestBody Map<String, Object> reqMap, String optFlowNum,
+	public @ResponseBody JsonResponse verify(@RequestBody Map<String, Object> param, String optFlowNum,
 			HttpServletResponse response,HttpServletRequest request){
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
                 SysConstant.SESSION_KEY_LOGIN_STAFF);
 		JsonResponse jsonResponse = null;
 		Map<String, Object> rMap = null;
+		Map<String, Object> reqMap = new HashMap<String, Object>();
+		String imageBest = (String) param.get("image_best");
+		System.out.println("++++++人证比对壳子入参"+JsonUtil.toString(param));
+		param.remove("image_best");
+		param.put("channel_type", sessionStaff.getCurrentChannelType());
+		param.put("busi_type", "1");
+		param.put("area_id", sessionStaff.getCurrentAreaId());
+		param.put("province_code", sessionStaff.getCurrentAreaId().substring(0, 3)+"0000");
+		System.out.println("++++++人证比对入参params"+JsonUtil.toString(param));
 		String areaid = sessionStaff.getAreaId();//区
 			try {
-//				System.out.println("++++++++++++reqMap="+JsonUtil.toString(reqMap));
+				reqMap.put("app_id",AESUtil.encryptToString("crm", MDA.FACE_VERIFY_APP_ID_SECRET));
+				reqMap.put("params", AESUtil.encryptToString(JsonUtil.toString(param),MDA.FACE_VERIFY_PARAMS_SECRET));
+				reqMap.put("image_best", imageBest);
+				System.out.println("++++++人证比对入参reqMap="+JsonUtil.toString(reqMap));
 				rMap = custBmo.verify(reqMap, optFlowNum, sessionStaff);
 //	 			log.debug("return={}", JsonUtil.toString(rMap));
 	 			if (rMap != null&& ResultCode.R_SUCCESS.equals(rMap.get("code").toString())) {
@@ -185,10 +198,10 @@ public class AppCommonOutInterfinceController extends BaseController{
 				this.log.error("人证比对查询失败", be);
 				return super.failed(be);
 			} catch (InterfaceException ie) {
-				return super.failed(ie, reqMap, ErrorCode.PIC_VERIFY);
+				return super.failed(ie, param, ErrorCode.PIC_VERIFY);
 			} catch (Exception e) {
 				log.error("人证比对查询失败", e);
-				return super.failed(ErrorCode.PIC_VERIFY, e, reqMap);
+				return super.failed(ErrorCode.PIC_VERIFY, e, param);
 			}
 			return jsonResponse;
 	}
@@ -252,8 +265,12 @@ public class AppCommonOutInterfinceController extends BaseController{
 	@AuthorityValid(isCheck = false)
 	@RequestMapping(value = "/goProvPage", method = RequestMethod.POST)
 	public @ResponseBody JSONObject goProvPage(@RequestBody Map<String, Object> reqMap,HttpServletResponse response,HttpServletRequest request){
+		JSONObject jo = new JSONObject();
+		String msg = "";
+		try {
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
                 SysConstant.SESSION_KEY_LOGIN_STAFF);
+		System.out.println("++++++++sessionStaff.getAreaId():"+sessionStaff.getAreaId());
 		Map<String, Object> menu_cfg = MDA.PROVENCE_MENU.get(PROV_MENU_CONST+(sessionStaff.getAreaId() + "").substring(0, 3));
 		Map<String, Object> custInfo = new HashMap<String, Object>();
 		if(reqMap!=null){
@@ -266,34 +283,37 @@ public class AppCommonOutInterfinceController extends BaseController{
 			custInfo.put("custType", reqMap.get("custFlag"));
 			
 		}
-//		custInfo.put("custName", "张三");
-//		custInfo.put("certAddress", "福建省福州市鼓楼区");
-//		custInfo.put("certNumber", "350321201704241234");
+		System.out.println("++++++++custInfo:"+JsonUtil.toString(custInfo));
+//		custInfo.put("custName", "卢**");
+//		custInfo.put("certAddress", "天津市南开区******");
+//		custInfo.put("certNumber", "320882********3235");
 //		custInfo.put("certType", "1");
-//		custInfo.put("custId", "123456789");
+//		custInfo.put("custId", "290000577732");
 //		custInfo.put("custType", "1100");
+//		custInfo.put("extCustId", "225004643985");
 		
 		Map<String, Object> busiDetail = new HashMap<String, Object>();
 		busiDetail.put("menuId", reqMap.get("menuId"));
 		busiDetail.put("menuName", reqMap.get("menuName"));
 		busiDetail.put(STAFF_ID, sessionStaff.getStaffId());
-		String msg = "";
-		JSONObject jo = new JSONObject();
 		jo.put(RESULT_CODE, "0");
 		jo.put(RESULT_MSG, "");
 		JSONObject req = new JSONObject();
 		req.put(TOKEN, RedisUtil.get(sessionStaff.getStaffId()));
 		req.put("busiDetail", busiDetail);
 		req.put("custInfo", custInfo);
-			try {
+		System.out.println("token:"+req+"----msg:"+msg);
+		System.out.println("++++++++busiDetail:"+JsonUtil.toString(busiDetail));
+		System.out.println("++++++++SECRET_KEY:"+(String) menu_cfg.get(SECRET_KEY));
 				msg = Des33.encode(req.toString(),(String) menu_cfg.get(SECRET_KEY));//加密随机数
-				System.out.println("token:"+req+"----msg:"+msg);
 				msg = msg.replaceAll("\\+", "plus");
 //				HTTPUtil httpClient = new HTTPUtil();
 //				String result = httpClient.doPost("http://10.6.10.86:8080/yxs_service/service/gotoPage?msg="+msg, msg);
 //				System.out.println(result);
 	        }  catch (Exception e) {
+	        	System.out.println("+++++++跳转到省份页面失败"+e.toString());
 				log.error("跳转到省份页面失败", e);
+				jo.put("Exception", e);
 				jo.put(RESULT_CODE, "1");
 				jo.put(RESULT_MSG, "跳转到省份页面失败");
 				return jo;
