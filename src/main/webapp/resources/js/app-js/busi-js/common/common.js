@@ -330,6 +330,12 @@ common = (function($) {
 		if($(".modal-backdrop").length>0 && $("#overlay-modal").length>0){
 			$.unecOverlay();//网络出现故障或手机出现故障时按返回关闭“加载中”提示框
 		}
+		if($("#order-error").is(":visible")){//错误页面不允许返回
+			return;
+		}
+		if($(".modal-dialog").is(":visible")){//有弹出层不允许返回
+			return;
+		}
 		//如果收费成功  安卓手机返回按钮不可返回
 		if($("#toCharge").length>0){
 			if(OrderInfo.order.step==4 && OrderInfo.actionFlag==111){
