@@ -91,10 +91,11 @@ public class Des33 {
 	 * @return 加密后的密文 
 	 */  
 	public static byte[] FormateData(String str) throws UnsupportedEncodingException {
-
-			if((str.length()%8)==0){
-				return str.getBytes(encoding);
-			}
+		System.out.println("str.length()~~"+str.length());
+		System.out.println("str.length()%8~~"+str.length()%8);
+//			if((str.length()%8)==0){
+//				return str.getBytes(encoding);
+//			}
 		
 			byte[] data = str.getBytes(encoding);
 			int size = 8- data.length%8;
