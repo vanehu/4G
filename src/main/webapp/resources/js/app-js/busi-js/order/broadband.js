@@ -1570,7 +1570,7 @@ var _saveHtml2Pdf=function(){
 					"olId":$("#TransactionID").val(),
 					"soNbr":$("#TransactionID").val(),
 					"busiUpType":busiUpType,
-					"charge":ssfy*100+""//"1"
+					"charge":common.numMul(ssfy,100)+""//"1"					
 			};
 			var url = contextPath+"/app/order/getPayUrl";
 			$.callServiceAsJson(url, params, {
@@ -1714,10 +1714,10 @@ var _saveHtml2Pdf=function(){
 			var val = $(this).attr("id");
 			if(val!=undefined&&val!=''){
 //				val=val.substr(5,val.length);
-				var realmoney=($("#realhidden_"+val).val())*100+'';
-				var amount=$("#feeAmount_"+val).val()*100+'';
-				ssfy = ssfy + $("#realhidden_"+val).val();
-				ysfy = ysfy + $("#feeAmount_"+val).val();
+				var realmoney=common.numMul($("#realhidden_"+val).val(), 100)+'';
+				var amount=common.numMul($("#feeAmount_"+val).val(), 100)+'';	
+				ssfy=common.numAdd(ssfy,$("#realhidden_"+val).val());
+				ysfy=common.numAdd(ysfy,$("#feeAmount_"+val).val());
 				var feeAmount="";
 				if(amount!=undefined&&amount!=''){
 					feeAmount=amount+'';
