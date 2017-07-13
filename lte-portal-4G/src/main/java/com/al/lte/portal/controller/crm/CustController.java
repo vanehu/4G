@@ -2188,7 +2188,7 @@ public class CustController extends BaseController {
   						SysConstant.SESSION_KEY_LOGIN_STAFF);
   		JsonResponse jsonResponse = null;
   		Map<String, Object> rMap = null;
-  		String areaid = sessionStaff.getAreaId();
+  		//String areaid = sessionStaff.getAreaId();
   		Map<String, Object> contractRootMap = (Map<String, Object>) reqMap
   				.get("ContractRoot");
   		Map<String, Object> svcContMap = (Map<String, Object>) contractRootMap
@@ -2220,19 +2220,30 @@ public class CustController extends BaseController {
   			image_idcard = ImageUtil.filterBase64ImageStr(image_idcard, imageFormat);
   			paramsMap.put("image_idcard",image_idcard);
   		}
-  		paramsMap.put("area_id", areaid);
+  		
+  		String areaId = MapUtils.getString(paramsMap, "area_id");
+  		if(areaId != null){
+  			paramsMap.put("area_id", areaId.substring(0, 5) + "00");
+  		}
+  	
   		paramsMap.put("staff_code", sessionStaff.getStaffCode());
   		paramsMap.put("channel_nbr", sessionStaff.getCurrentChannelCode());
   		paramsMap.put("channel_type", sessionStaff.getCurrentChannelType());
   		
+  		paramsMap.put("province_code",sessionStaff.getProvinceCode());
+  		
+  		if(StringUtils.isEmpty(sessionStaff.getProvinceCode()) && sessionStaff.getCurrentAreaId() !=null){
+  			paramsMap.put("province_code",sessionStaff.getCurrentAreaId().substring(0, 3) + "0000");
+  		}
+  		
+  		//paramsMap.put("busi_type","1");
   		String image_best = EncodeUtils.urlDecode(svcContMap.get("image_best") + "");
   		String imageFormat2 = ImageUtil.getImageFormat(image_best);
   		if(imageFormat2 != null){
   			image_best = ImageUtil.filterBase64ImageStr(image_best, imageFormat2);
   		}
-  		paramsMap.put("image_best",image_best);
-  		
-  		
+  		svcContMap.put("image_best", image_best);
+  		//paramsMap.put("image_best",image_best);
   		log.debug("param={}", JsonUtil.toString(svcContMap.get("params")));
   		
   		svcContMap.put("params",
@@ -2257,12 +2268,12 @@ public class CustController extends BaseController {
   					jsonResponse = super.successed(rMap,
   							ResultConstant.SUCCESS.getCode());
   				} else {
-  					jsonResponse = super.failed(rMap.get("msg"),
+  					jsonResponse = super.failed(rMap,
   							ResultConstant.FAILD.getCode());
   				}
   			} else {
   				if(rMap !=null){
-  					jsonResponse = super.failed(rMap.get("msg"),
+  					jsonResponse = super.failed(rMap,
   							ResultConstant.FAILD.getCode());
   				}else{
   					jsonResponse = super.failed("人证平台无返回值，可能原因为 调用人平台出现错误 。",

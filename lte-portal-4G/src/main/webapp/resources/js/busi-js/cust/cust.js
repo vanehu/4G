@@ -3738,12 +3738,12 @@ order.cust = (function(){
 							     "params":{
 									    	"olid":"",
 											  "busi_type": OrderInfo.busitypeflag,
-											  "cust_id":OrderInfo.cust.custId
-                    },
-	                   "image_best":encodeURIComponent($("#img_Photo").data("identityPic"))
+											  "cust_id":OrderInfo.cust.custId,
+											  "area_id" : OrderInfo.getAreaId()
+                                          },
+	                             "image_best":encodeURIComponent($("#img_Photo").data("identityPic"))
 						    },
 						    "TcpCont": {
-						    	
 						    }
 					    }
 			 };
@@ -3775,7 +3775,7 @@ order.cust = (function(){
 				 	if(response.data.request_id){
 						  request_id = response.data.request_id;
 					}
-				$.alert("错误", "人证比对失败，请求流水【"+ request_id +"】错误原因：" + response.data);
+				$.alert("错误", "人证比对失败，请求流水【"+ request_id +"】错误原因：" + response.data.msg);
 				return;
 			}else if(response.code == -2 && response.data){
 				$.alertM(response.data);
@@ -3791,7 +3791,7 @@ order.cust = (function(){
 					 if(response.data.request_id){
 					 		request_id = response.data.request_id;
 					 	}
-					  $("#tips").html("提示："+ "人证不符，请求流水【"+ request_id +"】原因为：" + response.data + ",建议重新拍摄");
+					  $("#tips").html("提示："+ "人证不符，请求流水【"+ request_id +"】原因为：" + response.data.msg + ",建议重新拍摄");
 					 }
 				 }
 				 $("#confirmAgree").removeClass("btna_g").addClass("btna_o");
