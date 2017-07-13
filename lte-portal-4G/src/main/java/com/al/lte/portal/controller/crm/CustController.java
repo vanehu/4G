@@ -2233,7 +2233,7 @@ public class CustController extends BaseController {
   		paramsMap.put("province_code",sessionStaff.getProvinceCode());
   		
   		if(StringUtils.isEmpty(sessionStaff.getProvinceCode()) && sessionStaff.getCurrentAreaId() !=null){
-  			paramsMap.put("province_code",sessionStaff.getCurrentAreaId().substring(0, 5) + "00");
+  			paramsMap.put("province_code",sessionStaff.getCurrentAreaId().substring(0, 3) + "0000");
   		}
   		
   		//paramsMap.put("busi_type","1");
