@@ -1773,13 +1773,32 @@ common = (function($) {
 		);
 	}
 
-//通过，数字相乘方法，防止js进行浮点计算，出现多个小数点
+//通用，数字相乘方法，防止js进行浮点计算，出现多个小数点
 	var _numMul=function(num1,num2){
 	    var m=0,s1=num1.toString(),s2=num2.toString(); 
 	    try{m+=s1.split(".")[1].length}catch(e){};
 	    try{m+=s2.split(".")[1].length}catch(e){};
 	    return Number(s1.replace(".",""))*Number(s2.replace(".",""))/Math.pow(10,m);
-	 }
+	 };
+
+		 
+	// 通用，数字相加方法，防止js进行浮点计算，出现多个小数点
+	var _numAdd = function(num1, num2) {
+		var r1, r2, m;
+		try {
+			r1 = num1.toString().split('.')[1].length;
+		} catch (e) {
+			r1 = 0;
+		}
+		try {
+			r2 = num2.toString().split(".")[1].length;
+		} catch (e) {
+			r2 = 0;
+		}
+		m = Math.pow(10, Math.max(r1, r2));
+		// return (num1*m+num2*m)/m;
+		return Math.round(num1 * m + num2 * m) / m;
+	};
 	
 	return {
 		relocationCust		:	_relocationCust,
@@ -1811,7 +1830,8 @@ common = (function($) {
 		goGroupHome:_goGroupHome,
 		gotoOtherApp:_gotoOtherApp,
 		info       :_info,
-		numMul     :_numMul
+		numMul     :_numMul,
+		numAdd     :_numAdd
 	};
 })(jQuery);
 

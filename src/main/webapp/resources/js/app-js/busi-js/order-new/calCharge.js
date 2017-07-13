@@ -1032,7 +1032,7 @@ order.calcharge = (function(){
 			if(val!=undefined&&val!=''){
 				val=val.substr(5,val.length);
 				var aa=($("#realMoney_"+val).html())*1;
-				realAmount=realAmount+aa;
+				realAmount=common.numAdd(realAmount,aa);
 			}
 		});
 		return common.numMul(realAmount,100);
