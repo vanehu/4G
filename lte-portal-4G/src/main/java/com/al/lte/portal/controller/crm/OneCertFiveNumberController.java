@@ -149,6 +149,28 @@ public class OneCertFiveNumberController extends BaseController {
     }
 
     /**
+     * 跨省一证五卡报表
+     */
+    @RequestMapping(value = "/certNumberReport", method = RequestMethod.GET)
+    public String certNumberReport(Model model) {
+
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+                SysConstant.SESSION_KEY_LOGIN_STAFF);
+
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd");
+        String endTime = f.format(c.getTime());
+        String startTime = f.format(c.getTime());
+        Map<String, Object> defaultAreaInfo = CommonMethods.getDefaultAreaInfo_MinimumC3(sessionStaff);
+
+        model.addAttribute("p_startDt", startTime);
+        model.addAttribute("p_endDt", endTime);
+        model.addAttribute("p_areaId", defaultAreaInfo.get("defaultAreaId"));
+        model.addAttribute("p_areaId_val", defaultAreaInfo.get("defaultAreaName"));
+        return "/certNumber/certNumber-report-main";
+    }
+
+    /**
      * 跨省一证五卡订单列表
      */
     @RequestMapping(value = "/queryOneFiveOrderList", method = RequestMethod.GET)
