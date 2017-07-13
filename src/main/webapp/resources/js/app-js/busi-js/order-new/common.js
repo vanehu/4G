@@ -1772,6 +1772,14 @@ common = (function($) {
             }
 		);
 	}
+
+//通过，数字相乘方法，防止js进行浮点计算，出现多个小数点
+	var _numMul=function(num1,num2){
+	    var m=0,s1=num1.toString(),s2=num2.toString(); 
+	    try{m+=s1.split(".")[1].length}catch(e){};
+	    try{m+=s2.split(".")[1].length}catch(e){};
+	    return Number(s1.replace(".",""))*Number(s2.replace(".",""))/Math.pow(10,m);
+	 }
 	
 	return {
 		relocationCust		:	_relocationCust,
@@ -1802,7 +1810,8 @@ common = (function($) {
 		setListTop :_setListTop,
 		goGroupHome:_goGroupHome,
 		gotoOtherApp:_gotoOtherApp,
-		info       :_info
+		info       :_info,
+		numMul     :_numMul
 	};
 })(jQuery);
 

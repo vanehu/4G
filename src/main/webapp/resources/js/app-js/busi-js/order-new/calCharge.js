@@ -189,8 +189,8 @@ order.calcharge = (function(){
 		$("#calChargeDiv ul").each(function() {
 			var val = $(this).attr("id");
 			if(val!=undefined&&val!=''){
-				val=val.substr(5,val.length);
-				var realmoney=($("#realMoney_"+val).html())*100+'';
+				val=val.substr(5,val.length);				
+				var realmoney=common.numMul($("#realMoney_"+val).html(),100)+'';
 				var amount=$("#feeAmount_"+val).val();
 				var feeAmount="";
 				if(amount!=undefined&&amount!=''){
@@ -622,8 +622,8 @@ order.calcharge = (function(){
 		}
 	};
 	
-	var _commitParam=function(val){
-		var realmoney=($("#realAmount_"+val).val())*100+'';
+	var _commitParam=function(val){		
+		var realmoney=common.numMul($("#realAmount_"+val).val(),100)+'';
 		var amount=$("#feeAmount_"+val).val();
 		var feeAmount="";
 		if(amount!=undefined&&amount!=''){
@@ -1031,11 +1031,11 @@ order.calcharge = (function(){
 			var val = $(this).attr("id");
 			if(val!=undefined&&val!=''){
 				val=val.substr(5,val.length);
-					var aa=($("#realMoney_"+val).html())*1;
-					realAmount=realAmount+aa;
+				var aa=($("#realMoney_"+val).html())*1;
+				realAmount=realAmount+aa;
 			}
 		});
-		return realAmount*100;
+		return common.numMul(realAmount,100);
 	};
 
 	// 显示费用减免窗口
