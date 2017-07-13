@@ -41,7 +41,6 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.xml.sax.InputSource;
 
-import com.al.common.utils.MapUtil;
 import com.al.crm.asynframe.integration.IAsynClient;
 import com.al.crm.log.sender.ILogSender;
 import com.al.ec.serviceplatform.client.CsbDataMap;
@@ -138,14 +137,6 @@ public class InterfaceClient {
 	public static final String CDATA_END = "]]>";
 	public static final String CDATA_END_REPLACEMENT = "]]&gt;";
 	
-	
-	// private static final String INVOKEWAY = HTTPWAY;
-
-	// private static List<String> simulateList = new ArrayList<String>();
-//
-//	@Autowired
-//	PropertiesUtils propertiesUtils;
-//	
 	static {
 		getPropertiesUtils();
 		getLogSender();
@@ -1387,24 +1378,6 @@ public class InterfaceClient {
 		} catch (IOException e) {
 
 		}
-		// String serviceCode = "orderParamQuery";
-		// String str = getInvokeWay(serviceCode);
-		// System.out.println(str);
-
-		// String ret = "";
-		// try {
-		// Service service = new Service();
-		// Call call = (Call) service.createCall();
-		//
-		// call.setTargetEndpointAddress( new java.net.URL(url) );
-		// //设置命名空间与调用方法
-		// call.setOperationName(new QName(qName, methodName)); //前置机命名空间、方法名
-		// //把加密好的ss2作为入参，ret为返回值
-		// ret = (String) call.invoke( new Object[] { str } );
-		// } catch (Exception e) {
-		// System.err.println(e.toString());
-		// }
-		// System.out.println(ret);
 	}
 	/**
 	 * 调用日志平台记录SP_BUSI_RUN_LOG日志
@@ -1503,7 +1476,6 @@ public class InterfaceClient {
 		request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
 		String paramString = "";
 		paramString = JsonUtil.toString(dataBusMap);
-		System.out.println("++++++++++++接口入参paramString="+paramString);
 		String paramJson="";
 		String retnJson = "";
 		String rawRetn = "";
@@ -1540,7 +1512,6 @@ public class InterfaceClient {
 		        String sys = "一证五号系统";
 				String contentType = JSON_CONTENT_TYPE;
 				db = httpCall(sys, serviceCode, paramString, intfUrl, contentType, optFlowNum, sessionStaff, beginTime, logSeqId);
-				System.out.println("++++++++++++接口回参="+JsonUtil.toString(db));
 				rawRetn = db.getResultMsg();
 //				Node svcCont = checkCSBXml(serviceCode, rawRetn, paramString);	
 //				retnJson = svcCont.getText();
@@ -1688,7 +1659,6 @@ public class InterfaceClient {
 		request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
 		String paramString = "";
 		paramString = JsonUtil.toString(dataBusMap);
-		System.out.println("++++++++++++接口入参paramString="+paramString);
 		String paramJson="";
 		String retnJson = "";
 		String rawRetn = "";
@@ -1719,7 +1689,6 @@ public class InterfaceClient {
 		try {
 		        String contentType = JSON_CONTENT_TYPE;
 				db = httpCall(sys, serviceCode, paramString, intfUrl, contentType, optFlowNum, sessionStaff, beginTime, logSeqId);
-				System.out.println("++++++++++++接口回参="+JsonUtil.toString(db));
 				rawRetn = db.getResultMsg();
 //				Node svcCont = checkCSBXml(serviceCode, rawRetn, paramString);	
 //				retnJson = svcCont.getText();
@@ -1874,7 +1843,6 @@ public class InterfaceClient {
 		request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
 		String paramString = "";
 		paramString = JsonUtil.toString(dataBusMap);
-		System.out.println("++++++++++++中台接口入参paramString="+paramString);
 		String paramJson="";
 		String retnJson = "";
 		String rawRetn = "";
@@ -1902,7 +1870,6 @@ public class InterfaceClient {
 				String sys = "翼管店系统";
 				String contentType = JSON_CONTENT_TYPE;
 				db = httpCall(sys, serviceCode, paramString, intfUrl, contentType, optFlowNum, sessionStaff, beginTime, logSeqId);
-				System.out.println("++++++++++++中台接口回参="+JsonUtil.toString(db));
 				rawRetn = db.getResultMsg();
 //				Node svcCont = checkCSBXml(serviceCode, rawRetn, paramString);
 //				retnJson = svcCont.getText();
