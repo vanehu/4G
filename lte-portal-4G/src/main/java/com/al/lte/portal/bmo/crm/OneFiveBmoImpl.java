@@ -80,4 +80,29 @@ public class OneFiveBmoImpl implements OneFiveBmo {
         }
         return resultMap;
     }
+
+    /**
+     * 一证五卡报表统计查询
+     * @param param 入参主要为时间段
+     * @param sessionStaff 当前登录的工号
+     * @return 报表统计结果
+     */
+    @Override
+    public Map<String, Object> queryReport(Map<String, Object> param, SessionStaff sessionStaff) throws Exception {
+        Map<String, Object> resultMap = new HashMap<String, Object>();
+        DataBus db = InterfaceClient.callService(param, PortalServiceCode.CERT_NUMBER_REPORT, null, sessionStaff);
+        try {
+            if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db.getResultCode()))) {
+                resultMap = db.getReturnlmap();
+                resultMap.put("code", ResultCode.R_SUCCESS);
+            } else {
+                resultMap.put("code", ResultCode.R_FAIL);
+                resultMap.put("msg", db.getResultMsg());
+            }
+        } catch (Exception e) {
+            log.error("门户处理营业受理后台的service/intf.detailService/queryCollectionOrderItemCount服务返回的数据异常", e);
+            throw new BusinessException(ErrorCode.ONE_CERT_REPORT, param, db.getReturnlmap(), e);
+        }
+        return resultMap;
+    }
 }
