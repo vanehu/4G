@@ -246,10 +246,6 @@ public class OneCertFiveNumberController extends BaseController {
                             String acceptDate = MapUtils.getString(item, "acceptDate");
                             if (currentDateStr.equals(acceptDate)) {
                                 resultlist.add(item);
-                                item.put("pcount", MapUtils.getLongValue(item, "initialOrderCnt", 0)
-                                        + MapUtils.getLongValue(item, "doingOrderCnt", 0)
-                                        + MapUtils.getLongValue(item, "cancelOrderCnt", 0)
-                                        + MapUtils.getLongValue(item, "finishOrderCnt", 0));
                                 exist = true;
                             }
                         }
@@ -260,7 +256,7 @@ public class OneCertFiveNumberController extends BaseController {
                             emptyItem.put("doingOrderCnt", 0);
                             emptyItem.put("cancelOrderCnt", 0);
                             emptyItem.put("finishOrderCnt", 0);
-                            emptyItem.put("pcount", 0);
+                            emptyItem.put("totalCnt", 0);
                             resultlist.add(emptyItem);
                         }
                         startDate.add(Calendar.DATE, 1);
@@ -282,7 +278,7 @@ public class OneCertFiveNumberController extends BaseController {
                         totalCount.put("doingOrderCnt", doingOrderCnt);
                         totalCount.put("cancelOrderCnt", cancelOrderCnt);
                         totalCount.put("finishOrderCnt", finishOrderCnt);
-                        totalCount.put("pcount", initialOrderCnt + doingOrderCnt + cancelOrderCnt + finishOrderCnt);
+                        totalCount.put("totalCnt", initialOrderCnt + doingOrderCnt + cancelOrderCnt + finishOrderCnt);
                         resultlist.add(totalCount);
                     }
                 }
