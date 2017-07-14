@@ -474,6 +474,7 @@ public class OneCertFiveNumberController extends BaseController {
         param.put("areaId", sessionStaff != null ? sessionStaff.getCurrentAreaId() : "");
         param.put("soNbr", soNbr);
         param.put("olId", soNbr);
+        param.put("operateStaffId", sessionStaff.getStaffId());
         param.put("srcFlag", SysConstant.ONE_FIVE_SRC_FLAG_REAL);
 
 
