@@ -31,4 +31,13 @@ public interface OneFiveBmo {
      */
     Map<String, Object> downFile(Map<String, Object> param, SessionStaff sessionStaff) throws Exception;
 
+
+    /**
+     * 一证五卡报表统计查询
+     * @param param 入参主要为时间段
+     * @param sessionStaff 当前登录的工号
+     * @return 报表统计结果
+     */
+    Map<String, Object> queryReport(Map<String, Object> param, SessionStaff sessionStaff) throws Exception;
+
 }

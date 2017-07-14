@@ -1,0 +1,34 @@
+<table class="numberList" id="tab_orderList">
+    <thead>
+    <tr>
+        <td width="80">日期</td>
+        <td width="60">未处理工单数</td>
+        <td width="60">已接单工单数</td>
+        <td width="60">已取消工单数</td>
+        <td width="60">已完成工单数</td>
+        <td width="60">总计</td>
+    </tr>
+    </thead>
+    <tbody>
+    <#if (pageModel.list)?? &&((pageModel.list)?size>0)>
+        <#list pageModel.list as item >
+        <tr>
+            <td>${item.acceptDate}</td>
+            <td>${item.initialOrderCnt}</td>
+            <td>${item.doingOrderCnt}</td>
+            <td>${item.cancelOrderCnt}</td>
+            <td>${item.finishOrderCnt}</td>
+            <td>${item.totalCnt}</td>
+        </tr>
+        </#list>
+    <#else>
+    <tr>
+        <td colspan="6">没有查询到结果</td>
+    </tr>
+    </#if>
+    </tbody>
+</table>
+<!--页码-->
+<@portal.simplifyModelPagination pageModel "oneFive.certNumberQuery.queryOneFiveReportList"/>
+<script src="${contextPath}/js/our-js/ec.pagination.js?${jsversion}" type="text/javascript"></script>
+<!--页码 end-->
