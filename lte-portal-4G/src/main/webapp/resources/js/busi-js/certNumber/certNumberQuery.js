@@ -243,7 +243,7 @@ oneFive.certNumberQuery = (function () {
                         $.alert("提示", "没有附件");
                     }
                 } else {
-                    $.alertM("提示", response.data);
+                    $.alertM(response.data);
                 }
             },
             fail: function () {
