@@ -41,6 +41,7 @@ import com.al.ecs.spring.annotation.session.AuthorityValid;
 import com.al.ecs.spring.controller.BaseController;
 import com.al.lte.portal.bmo.crm.CustBmo;
 import com.al.lte.portal.bmo.crm.OrderBmo;
+import com.al.lte.portal.bmo.staff.StaffBmo;
 import com.al.lte.portal.common.AESUtil;
 import com.al.lte.portal.common.AESUtils;
 import com.al.lte.portal.common.Des33;
@@ -67,6 +68,10 @@ public class AppCommonOutInterfinceController extends BaseController{
 	@Autowired
 	@Qualifier("com.al.lte.portal.bmo.crm.CustBmo")
 	private CustBmo custBmo;
+	
+	@Autowired
+	@Qualifier("com.al.lte.portal.bmo.staff.StaffBmo")
+	private StaffBmo staffBmo;
 	
 	private String  PROV_MENU_CONST="PROVENCE_MENU_";
 	
@@ -192,11 +197,27 @@ public class AppCommonOutInterfinceController extends BaseController{
 				rMap = custBmo.verify(reqMap, optFlowNum, sessionStaff);
 //	 			log.debug("return={}", JsonUtil.toString(rMap));
 	 			if (rMap != null&& ResultCode.R_SUCCESS.equals(rMap.get("code").toString())) {
-	 				jsonResponse = super.successed(rMap,
-	 						ResultConstant.SUCCESS.getCode());
+	 				Map<String, Object> verify_cfg = MDA.PROV_AUTH_SWITH.get((sessionStaff.getAreaId() + "").substring(0, 3));
+	 				Float FZ = Float.parseFloat((String) verify_cfg.get("FZ"));//相似度最低要求（阀值）
+	 				Map<String, Object> res = (Map<String, Object>) rMap.get("result");
+	 				Float XSD = Float.parseFloat((String) res.get("confidence"));//相似度
+					if(FZ>XSD){
+						String QZSHQX = "1";// 是否有强制审核权限
+						QZSHQX = staffBmo.checkOperatBySpecCd("QZSHQX", sessionStaff);
+						//相似度不足，且没有权限，返回失败
+						if("0".equals(QZSHQX)){
+							jsonResponse = super.successed(rMap,ResultConstant.SUCCESS.getCode());
+						}else{
+							rMap.remove("result");
+							rMap.put("code", "POR-2004");
+							rMap.put("msg", "人证比对相似度低于"+FZ+"%,无强制审核权限！");
+							jsonResponse = super.failed(rMap,ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+						}
+					}else{
+						jsonResponse = super.successed(rMap,ResultConstant.SUCCESS.getCode());
+					}
 	 			} else {
-	 				jsonResponse = super.failed(rMap,
-	 						ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+	 				jsonResponse = super.failed(rMap,ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
 	 			}
 //				DataBus db = InterfaceClient.callService(reqMap, PortalServiceCode.BORAD_BAND_QUERYCHARGECONFIG,optFlowNum, sessionStaff);
 	        }  catch (BusinessException be) {
