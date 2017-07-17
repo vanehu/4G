@@ -45,6 +45,7 @@ import com.al.lte.portal.common.AESUtil;
 import com.al.lte.portal.common.AESUtils;
 import com.al.lte.portal.common.Des33;
 import com.al.lte.portal.common.HTTPUtil;
+import com.al.lte.portal.common.ImgReSIze;
 import com.al.lte.portal.common.RedisUtil;
 import com.al.lte.portal.common.SysConstant;
 import com.al.lte.portal.model.SessionStaff;
@@ -162,6 +163,7 @@ public class AppCommonOutInterfinceController extends BaseController{
 	 * @return
 	 * @throws AuthorityException
 	 */
+	@SuppressWarnings("deprecation")
 	@RequestMapping(value = "/pic/verify", method = RequestMethod.POST)
 	public @ResponseBody JsonResponse verify(@RequestBody Map<String, Object> param, String optFlowNum,
 			HttpServletResponse response,HttpServletRequest request){
@@ -178,8 +180,11 @@ public class AppCommonOutInterfinceController extends BaseController{
 		param.put("area_id", sessionStaff.getCurrentAreaId());
 		param.put("province_code", sessionStaff.getCurrentAreaId().substring(0, 3)+"0000");
 		System.out.println("++++++人证比对入参params"+JsonUtil.toString(param));
-		String areaid = sessionStaff.getAreaId();//区
+//		String areaid = sessionStaff.getAreaId();//区
 			try {
+				String imgsrc = request.getRealPath("/resources/soFile/")+"orgimageBest.jpg";
+				String imgdist = request.getRealPath("/resources/soFile/")+"newimageBest.jpg";
+				imageBest = ImgReSIze.reSizeImg(imgsrc, imageBest, imgdist, 1000, 1000, 1f);
 				reqMap.put("app_id",AESUtil.encryptToString("crm", MDA.FACE_VERIFY_APP_ID_SECRET));
 				reqMap.put("params", AESUtil.encryptToString(JsonUtil.toString(param),MDA.FACE_VERIFY_PARAMS_SECRET));
 				reqMap.put("image_best", imageBest);
