@@ -219,32 +219,37 @@ public class MainController extends BaseController {
 		String app_version=(String) ServletUtils.getSessionAttribute(request,SysConstant.SESSION_KEY_APP_VERSION);
 		model.addAttribute("app_version",app_version);//客户端版本号
 		//爱运维菜单需要给原生传秘钥
-		Map<String, Object> infoMap = new HashMap<String, Object>();
-		infoMap.put("staffId", sessionStaff.getStaffId());
-		String staffName="";
-		String channelName="";
-		if(sessionStaff.getStaffName()!=null){
-			try {
-				staffName=URLEncoder.encode(sessionStaff.getStaffName(), "utf-8");
-			} catch (UnsupportedEncodingException e) {
-				log.error(e);
+		String propertiesKey = (sessionStaff.getCurrentAreaId() + "").substring(0, 3);
+		// 需要展示爱运维菜单的省份
+		if(MDA.AYW_MENU_PRO.contains(propertiesKey)){
+			Map<String, Object> infoMap = new HashMap<String, Object>();
+			infoMap.put("staffId", sessionStaff.getStaffId());
+			String staffName="";
+			String channelName="";
+			if(sessionStaff.getStaffName()!=null){
+				try {
+					staffName=URLEncoder.encode(sessionStaff.getStaffName(), "utf-8");
+				} catch (UnsupportedEncodingException e) {
+					log.error(e);
+				}
 			}
-		}
-		if(sessionStaff.getCurrentChannelName()!=null){
-			try {
-				channelName=URLEncoder.encode(sessionStaff.getCurrentChannelName(), "utf-8");
-			} catch (UnsupportedEncodingException e) {
-				log.error(e);
+			if(sessionStaff.getCurrentChannelName()!=null){
+				try {
+					channelName=URLEncoder.encode(sessionStaff.getCurrentChannelName(), "utf-8");
+				} catch (UnsupportedEncodingException e) {
+					log.error(e);
+				}
 			}
+			infoMap.put("staffName", staffName);
+			infoMap.put("channelId", sessionStaff.getCurrentChannelId());
+			infoMap.put("channelName", channelName);
+			infoMap.put("areaId", sessionStaff.getAreaId());
+			infoMap.put("staffCode", sessionStaff.getStaffCode());
+			JSONObject obj = JSONObject.fromObject(infoMap);
+			String info=AESUtils.encryptToString(obj.toString(), "c0e9fcff59ecc3b8b92939a1a2724a44");
+			//String a=AESUtils.decryptToString(info, "c0e9fcff59ecc3b8b92939a1a2724a44");
+			model.addAttribute("info",info);//加密用户信息
 		}
-		infoMap.put("staffName", staffName);
-		infoMap.put("channelId", sessionStaff.getCurrentChannelId());
-		infoMap.put("channelName", channelName);
-		infoMap.put("areaId", sessionStaff.getAreaId());
-		JSONObject obj = JSONObject.fromObject(infoMap);
-		String info=AESUtils.encryptToString(obj.toString(), "c0e9fcff59ecc3b8b92939a1a2724a44");
-		//String a=AESUtils.decryptToString(info, "c0e9fcff59ecc3b8b92939a1a2724a44");
-		model.addAttribute("info",info);//加密用户信息
 		for (int i=0; i< menu.size(); i++) 
 		{
 			Map oneMap = (Map)menu.get(i);
