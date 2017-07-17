@@ -1,0 +1,20 @@
+ <div class="ui-grid-c">
+     <div class="ui-block-a">
+          <label for="recommend" id="uim_lable">UIM卡号：</label>
+     </div>
+     <div class="ui-block-b">
+          <input style="font-weight: bold;" type="text" id="uim_txt_${prodId}">
+     </div>
+     <div class="ui-block-c">
+          <button data-mini="ture" id="uim_check_btn_${prodId}" onclick="prod.uim.checkUim(${prodId});">校验</button>
+     </div>
+     <div class="ui-block-d">
+          <button data-mini="ture" id="uim_release_btn_${prodId}" disabled onclick="prod.uim.releaseUim(${prodId});">释放</button>
+     </div>
+     <div class="ui-block-d" style="display: none;">
+         <button data-mini="ture" onclick="order.writeCard.writeReadCard(${prodId});">写卡</button>
+         <input type="hidden" id="isMIFI_${prodId}" value="no"/>
+		 <label class="f_red">*</label>
+     </div>
+</div>
+<@extends name="/order/write-card.html"/>

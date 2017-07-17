@@ -1,0 +1,167 @@
+
+<html lang="zh-cn">
+
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, target-densityDpi=device-dpi" name="viewport" />
+		<title></title>
+		<!-- <link rel="stylesheet" type="text/css" href="${staticResPath}/js/third-js/jquery/zebra-dialog/css/zebra_dialog.css" />
+		<link href="${staticResPath}/css/base-1.0.0.min.css?${jsversion}" rel="stylesheet" type="text/css" />
+		<link href="${staticResPath}/css/busi-1.0.0.min.css?${jsversion}" rel="stylesheet" type="text/css" />
+        <script src="${contextPath}/js/third-js/jquery/zebra-dialog/zebra_dialog.src.js?${jsversion}" type="text/javascript"></script> -->
+		<!-- Bootstrap -->
+		<script>
+			$(function() {
+				OrderInfo.order.step=1;
+				prod.changeUim.initAgent();
+				$(".noUiSlidera").noUiSlider({
+					range: [0, 500],
+					start: [0, 500],
+					step: 10,
+					slide: function() {
+						var values = $(this).val();
+						$("#numa01").val(values[0]);
+						$("#numa02").val(values[1]);
+					}
+				});
+				$(".noUiSliderb").noUiSlider({
+					range: [0, 500],
+					start: [0, 500],
+					step: 10,
+					slide: function() {
+						var values = $(this).val();
+						$("#numb01").val(values[0]);
+						$("#numb02").val(values[1]);
+					}
+				});
+				$(".noUiSliderc").noUiSlider({
+					range: [0, 500],
+					start: [0, 500],
+					step: 10,
+					slide: function() {
+						var values = $(this).val();
+						$("#numc01").val(values[0]);
+						$("#numc02").val(values[1]);
+					}
+				});
+				$(".noUiSliderd").noUiSlider({
+					range: [0, 500],
+					start: [0, 500],
+					step: 10,
+					slide: function() {
+						var values = $(this).val();
+						$("#numd01").val(values[0]);
+						$("#numd02").val(values[1]);
+					}
+				});
+				$(".noUiSlidere").noUiSlider({
+					range: [0, 500],
+					start: [0, 500],
+					step: 10,
+					slide: function() {
+						var values = $(this).val();
+						$("#nume01").val(values[0]);
+						$("#nume02").val(values[1]);
+					}
+				});
+			});
+		</script>
+	</head>
+
+	<body>
+	<!-- UIM卡效验主页面begin -->
+	  <div>
+		<nav class="navbar navbar-default navbar-fixed-top">
+			<div class="container-fluid">
+				<!-- Brand and toggle get grouped for better mobile display -->
+				<div class="navbar-header">
+					<!--<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+						<span class="sr-only">Toggle navigation</span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					--><a class="navbar-brand" onclick="common.callReturnBack();"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>返回</a>
+					<h4 class="header-title">UIM卡信息</h4>
+				</div>
+
+				<!-- Collect the nav links, forms, and other content for toggling -->
+				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+
+					<ul class="nav navbar-nav">
+						<!-- <li class="bottomline"><a href="index.html">首页</a></li>
+						<li><a href="t.phoneList.html">购手机</a></li>
+						<li class="bottomline"><a href="t.numberOrderFill.html">办号卡</a></li>
+						<li><a href="t.packageChangeSearch.html">套餐变更</a></li>
+						<li><a href="t.cardFillSearch.html">补换卡</a></li>
+						<li class="bottomline"><a href="t.nameRealScan.html">快销卡返档</a></li>
+						<li><a href="t.orderNotSearch.html">暂存单查询</a></li>
+						<li><a href="t.orderSearch.html">订单查询</a></li> -->
+					</ul>
+
+				</div>
+				<!-- /.navbar-collapse -->
+			</div>
+			<!-- /.container-fluid -->
+		</nav>
+		<input type="hidden" id="isOut" name="isOut" value="0"/>
+		<div id="order_fill_content" class="container-fluid form-list">
+		</div>
+		<div id="order-content" class="container-fluid form-list">
+		</div>
+		<div id="btn_next_checkUim">
+		<nav class="navbar navbar-default navbar-fixed-bottom">
+			<div class="container-fluid" id="btn_checkUim_submit_div" style="display:none">
+				<div class="btn-group btn-group-justified navbar-btn" role="group" aria-label="...">
+					<div class="btn-group" role="group">
+						<button type="button" class="btn btn-primary btn-lg" onClick="javascript:prod.changeUim.submit()" > <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> 下一步 </button>
+					</div>
+				</div>
+			</div>
+		</nav>
+		</div>
+	</div>
+	<!-- UIM卡效验主页面end -->
+	    <div id="attach" style="display:none">
+	    </div>
+		<!-- 订单确认--提单提交页面begin -->
+		<div id="order-confirm">
+		<!-- 订单确认end -->
+		</div>
+		
+		<!-- 订单提交--收费界面begin -->
+		<div id="step-order-confirm">
+		<!-- 订单确认end -->
+		</div>
+		
+		<div id="order-print"></div>
+		<div id="checkRuleDiv" style="display:none">
+		</div>
+	<div class="container-fluid" id="error_rule_div" style="display:none">
+		<div class="row">
+			<div class="panel panel-default paneltop">
+				<!-- Default panel contents -->
+				<div class="panel-heading">
+					<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>规则校验提示
+				</div>
+				<div class="panel-body">
+					<p>规则校验未通过</p>
+				</div>
+				<table class="table table-striped table-bordered tablecenter">
+					<thead>
+						<tr>
+							<th>规则编码</th>
+							<th>规则等级</th>
+							<th style="width:200px">校验结果</th>
+						</tr>
+					</thead>
+					<tbody class="panel-group" id="accordion">
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+	</body>
+
+</html>

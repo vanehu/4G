@@ -1,0 +1,49 @@
+<@override name="title">客户化账单打印</@override>
+<@override name="header">
+<#include "/busi-js-tpl.html"/>
+
+<script src="${contextPath}/js/busi-js/bill/billQuery.js" type="text/javascript"></script>
+</@override>
+<@override name="content">
+<div class="main_div"> 
+  <div class=" main_warp">
+  	<div class="ordercon">	
+      <div class="order_confirmation ordertabcon">
+        <h2 class="h2_title"><span>客户化账单打印</span><span class="showhide"></span></h2>
+        <div class="main_body">
+          <h5 class="s_title">查询条件</h5>
+          <br/>
+          <ul class="fillin show billSearch" style="height:96px">
+            <li class="full">
+              <label>手机号码：</label>
+              <input type="text" class="inputWidth315px" id="phoneNumber" value="${prePhoneNumber}"/>
+              <label class="f_red">*</label>
+              <label>账单方式：</label>
+              <input id="query_flag_0" name="query_flag" type="radio" value="0" />
+              <label for="query_flag_0" class="radioinput">账户账单</label>
+              <input id="query_flag_1" name="query_flag" type="radio" value="1" checked="checked" />
+              <label for="query_flag_1" class="radioinput">用户账单</label>
+            </li>
+            <li class="full noBorder">
+              <label>账单月份：</label>
+              <#list billingDates as billingDate>
+              <input id="bc_inp_${billingDate_index}" name="billingMonth" type="radio" value="${billingDate.billingCycle}" <#if billingDate.billingCycle==billingCycleChked>checked="checked"</#if>/>
+              <label for="bc_inp_${billingDate_index}" class="radioinput">${billingDate.billingMonth}</label>
+              </#list>
+               <a class="btn_h30" id="customizeBillPrintA" href="javascript:bill.query.customizeBillPrint()" style="margin-left:60px;"><span>打印</span></a>              
+            </li>
+          </ul>
+          <ul id="billList" class="billSearch" style="margin-top:10px;display:none;">
+  	
+          </ul>
+        </div>
+      </div>    
+	</div>
+  </div>
+</div>
+</@override>
+<#if Session["_session_portal_type"]?? && Session["_session_portal_type"]=="MVNO" >
+<@extends name="/mvno-template.html"/>
+<#else>
+<@extends name="/content-template.html"/>
+</#if>

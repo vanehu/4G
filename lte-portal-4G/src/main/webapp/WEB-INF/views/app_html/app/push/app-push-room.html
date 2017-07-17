@@ -1,0 +1,123 @@
+<!--
+<script src="${contextPath}/js/app-js/busi-js/push/monitor_app.js?${jsversion}" type="text/javascript"></script>
+-->
+<meta charset="utf-8">
+<div id="">
+	<input type="hidden" id="number"/>
+	
+	<input type="hidden" id="username" value=""/>
+	<input type="hidden" id="msg" value=""/>
+	<input type="hidden" id="rid" value=""/>
+	<input type="hidden" id="tag_username" value=""/>
+	
+	<input type="hidden" id="custname" value=""/>
+	<input type="hidden" id="idcard" value=""/>
+	<input type="hidden" id="address" value=""/>
+	<input type="hidden" id="identityPic" value=""/>
+	<input type="hidden" id="signature" value=""/>
+	
+	<div style="display:none;">
+		<button type="button" class="btn btn-primary btn-lg" id="senNum" onClick="senNum();">
+			<span class="glyphicon glyphicon-ok" aria-hidden="true" >确认</span>
+		</button>
+	</div>
+	<div style="display:none;">
+		<button type="button" class="btn btn-primary btn-lg" id="readCard" onClick="readCard();">
+			<span class="glyphicon glyphicon-ok" aria-hidden="true" >确认</span>
+		</button>
+	</div>
+	<div style="display:none;">
+		<button type="button" class="btn btn-primary btn-lg" id="disConnect" onClick="outRoom();">
+			<span class="glyphicon glyphicon-ok" aria-hidden="true" >确认</span>
+		</button>
+	</div>
+	<div id="duihua" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+	  <div class="modal-dialog modal-sm" style="display:block;">
+	    <div class="modal-content">
+	    	<div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		        <h4 class="modal-title">读取身份证</h4>
+		    </div>
+	      <div class="panel-body">
+	
+	  <!-- Tab panes -->
+	  <div class="tab-content">
+	    <div role="tabpanel" id="" style="display:block;">
+	    		<form class="form-list">
+	    			<div class="form-group">
+					<div style="display:inline;" id="readCertBtnID2">
+						<ul style="list-style-type:none;display:inline;">
+			            	<li style="display:inline;"><img onClick="common.callGenerationRec('common.getGenerationInfos','1')" style=" height: 40px; margin-left: 15px;"src="${contextPath}/image/app-image/shebeisaomiao-xxhdpi_03.png"/></li>
+			            	<li id="nfc" style="display:inline;"><img onClick="common.callGenerationRec('common.getGenerationInfos','2')" style=" height: 40px; margin-left: 15px;" src="${contextPath}/image/app-image/shebeisaomiao-xxhdpi_05.png"/></li>
+			            	<li id="otg" style="display:inline;"><img onClick="common.callGenerationRec('common.getGenerationInfos','3')" style=" height: 40px; margin-left: 15px;" src="${contextPath}/image/app-image/otg@2x_03.png"/></li>
+			            </ul>
+					</div>
+					</div>
+				</form>
+	    </div>
+	  </div>
+	          </div>
+	    </div>
+	  </div>
+	</div>
+</div>
+<div style="position: relative; padding: 5px 10px;">
+	<div style=" width: 60%; margin: 50% 20%;">
+		<img src="${contextPath}/image/pc.png" alt="" style=" width: 80%; margin-left: 10%;">
+		<p style=" width: 100%; text-align: center; color:#000;">翼销售双屏互动</p>
+	</div>
+</div>
+<script type="text/javascript">
+$(document).ready(function() {
+	var username = '${name}';//本机名称
+	var	rid = '${channel}';//本机频道
+	var tag_username = "";//对方名称
+	pomelo.on('onChat', function(data) {
+		if(data.from != username){
+			//$.alert("提示",data.msg.pushType);
+			var route = "chat.chatHandler.send";
+			var tag_username = data.from;
+			var msg = {};
+			msg.req = data.msg;
+			msg.result = null;
+			$("#username").val(username);
+			$("#rid").val(rid);
+			//$("#msg").val(data.msg);
+			webreq = data.msg;
+			$("#tag_username").val(tag_username);
+			if(data.msg.pushType == "2" || data.msg.pushType == "3"){
+				//msg.result = "123456789";
+				common.callScanning('common.scaningCallBack','-888');//扫描UIM卡、终端串号
+			}
+			if(data.msg.pushType == "1"){
+				var ua = navigator.userAgent.toLowerCase();	
+				if (/iphone|ipad|ipod/.test(ua)) {
+					    //alert("iphone");
+					    $("#nfc").hide();
+						$("#otg").hide();
+				} else if (/android/.test(ua)) {
+					    //alert("android");	
+				}
+				$('#duihua').modal('show');
+			}
+		}
+	});
+
+	//update user list
+	//pomelo.on('onAdd', function(data) {
+		//$.alert("提示",data.user+"上线了");
+	//});
+
+	//update user list
+	pomelo.on('onLeave', function(data) {
+		//$.alert("提示",data.user+"下线了");
+		common.callCloseWebview();
+	});
+
+
+	//handle disconect message, occours when the client is disconnect with servers
+	//pomelo.on('disconnect', function(reason) {
+		//showLogin();
+	//});
+});
+</script>

@@ -1,0 +1,7 @@
+<#if transCustAuth.isValidate=="true" >
+<li style="white-space: nowrap" class="full" id="litransCustId" transAddressStr="${transCustAuth.custInfo.addressStr}" transCustId="${transCustAuth.custInfo.custId}" transCustName="${transCustAuth.custInfo.partyName}" CN="${transCustAuth.custInfo.CN}">姓名 &nbsp:&nbsp${transCustAuth.custInfo.partyName}</li>
+<li style="white-space: nowrap" class="full" id="litransidCardNumber" transidCardNumber="${transCustAuth.custInfo.idCardNumber}">证件&nbsp:&nbsp${transCustAuth.custInfo.identityName}/${transCustAuth.custInfo.idCardNumber}</li>
+<li style="white-space: nowrap" class="full" >地区&nbsp:&nbsp${transCustAuth.custInfo.areaName}</li>
+<#else>
+false
+</#if>

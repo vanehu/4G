@@ -1,0 +1,68 @@
+<!--终端列表-->
+<input type="hidden" id="termSpecCode" value="${(pageModel.termSpecCode)?default('')}" />
+<#if (pageModel.list)?? &&((pageModel.list)?size>0)>
+<div class="phone_warp">
+	<div class="phone_list">
+		<ul class="goodsListInfor">
+			<#list pageModel.list as mkt>
+			<li class="goodsLi">
+				<#assign intf_pic = false>
+				<#assign p_pic = ''>
+				<#assign brand = ''>
+				<#assign phoneType = ''>
+				<#assign phoneColor = ''>
+				<#if (mkt.attrList)??>
+					<#list mkt.attrList as attrList>
+						<#if mktResPicUrl?? && (attrList.attrId)?? && (attrList.attrId) =='60019454'>
+							<#assign p_pic = mktResPicUrl+attrList.attrValue>
+							<#assign intf_pic = true>
+						</#if>
+						<#if (attrList.attrId)?? && (attrList.attrId) =='2100161'>
+							<#assign brand = attrList.attrValue>
+						</#if>
+						<#if (attrList.attrId)?? && (attrList.attrId) =='2100162'>
+							<#assign phoneType = attrList.attrValue>
+						</#if>
+						<#if (attrList.attrId)?? && (attrList.attrId) =='17'>
+							<#assign phoneColor = attrList.attrValue>
+						</#if>
+						<#if (attrList.attrId)?? && (attrList.attrId) =='60010005'>
+							<#assign mktSpecCode = attrList.attrValue>
+						</#if>
+						<#if (attrList.attrId)?? && (attrList.attrId) =='60010004'>
+							<#assign color = attrList.attrValue>
+						</#if>
+					</#list>
+				</#if>
+				<a class="goodsImg" href="javascript:void(0);" onclick="javascript:mktRes.terminal.selectTerminalzdyy(this)" class="phone_btn" mktResTypeCd="${mkt.mktResTypeCd}" mktResId="${mkt.mktResId}" mktResCd="${mkt.mktResCd}" brand="${brand}" phoneType="${phoneType}" phoneColor="${phoneColor}" mktName="${mkt.mktResName}" mktPrice="${(mkt.contractPrice)}" mktPicA="${p_pic}" mktSpecCode="${mktSpecCode}" color="${color}">
+					<img src="${p_pic}" width="170" height="170" />
+				</a>
+				<p class="mobileGoodsName">${(mkt.mktResName)?default("--")}</p>
+				<!--市场价
+				<p class="hot_sale_price ">市场价:
+				<label class="cDarkRed">￥5999.0元</label>
+				</p>
+				-->
+				<p class="hot_web_price">
+					天翼价: <label class="cDarkRed">￥<#if (mkt.salePrice)?default(0) != 0>${mkt.salePrice / 100}<#else>--</#if>元</label>
+				</p>
+				<p>
+					<a href="javascript:void(0);" onclick="javascript:mktRes.terminal.selectTerminalzdyy(this)" class="phone_btn" mktResTypeCd="${mkt.mktResTypeCd}" mktResId="${mkt.mktResId}" brand="${brand}" phoneType="${phoneType}" phoneColor="${phoneColor}" mktName="${mkt.mktResName}" mktPrice="${(mkt.contractPrice)}" mktLjPrice="${(mkt.salePrice)}" mktPicA="${p_pic}" mktSpecCode="${mktSpecCode}" color="${color}">立刻订购</a>
+				</p>
+			</li>
+			</#list>
+		</ul>
+	</div>
+	<!--页码-->
+	<@portal.terminalModelPagination pageModel 5 "mktRes.terminal.btnQueryTerminal"/>
+	<!--页码 end-->
+	<script src="${contextPath}/js/our-js/ec.pagination.js?${jsversion}" type="text/javascript"></script>
+</div>
+<#else>
+<div class="no_search"> 
+	<div class="h1">
+		<img style="vertical-align:middle" src="${contextPath}/image/common/query_search.gif" />&nbsp;&nbsp;抱歉，没有找到相关的手机，请尝试其他筛选条件。
+	</div>
+</div>
+</#if>
+<!--终端列表 end--> 

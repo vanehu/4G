@@ -1,0 +1,89 @@
+<#if (xinkongAttrs)?? && ((xinkongAttrs)?size>0) && (newOfferFeeTypes)?? && ((newOfferFeeTypes)?size>0)>
+<div class="main_warp">
+<div class="ordercon">
+<!--订单确认-->
+
+  <div class="">
+<h2 class="h2_title"><span>修改付费类型</span>
+</h2>
+<div class="main_body">
+
+<div class="cardtabcon">
+<div class="pdcardcon show">
+<h5 class="s_title">产品信息</h5>
+
+<ul id="item_order_${prodId}" class="fillin show">
+	<li>
+		<label>付费类型：</label> 
+		<!-- newOfferFeeTypes 新套餐付费类型，原子类型-->
+		<select class="inputWidth183px" prodId="${prodId}" name="pay_type_${prodId}" id="offerChangeFeeTypeSelect">
+		<#if newOfferFeeTypes?? &&(newOfferFeeTypes?size>0)>
+			<!--  修改后的付费类型为后付费时，“是否信控”才可以修改。修改后的付费类型为预付费时，“是否信控”是固定的值“是” -->
+			<#list newOfferFeeTypes as newOfferFeeType>
+				<option value="${newOfferFeeType.paymentModeCd}">${newOfferFeeType.paymentModeName}</option>
+			</#list>
+		<#else>
+			<option value="">无</option>
+		</#if>
+		</select>
+	</li>
+	<li>
+		<label>是否信控：</label> 
+		<!-- xinkongAttrs 是否信控 属性列表-->
+		<select class="inputWidth183px" prodId="${prodId}" name="xinkong_${prodId}" oldValue="${isXinkongValue}" id="offerChangeXinkongSelect">
+		<#if newOfferFeeTypes?? &&(newOfferFeeTypes?size>0) && xinkongAttrs?? &&(xinkongAttrs?size>0)>
+			<!-- 修改后的付费类型为后付费时，“是否信控”才可以修改。修改后的付费类型为预付费时，“是否信控”是固定的值“是” -->
+			<#list xinkongAttrs as xinkongAttr>
+				<option value="${xinkongAttr.attrValue}">${xinkongAttr.attrName}</option>
+			</#list>
+		<#else>
+			<option value="">无</option>
+		</#if>
+		</select>
+	</li>
+	
+	<li class="full" id="li_order_remark">
+		<label>订单备注：</label> 
+		<textarea rows="4" id="order_remark" cols="" class="order-remark" name="beizhu"></textarea>
+	</li>
+</ul>
+
+</div>
+
+</div>
+<div class="height18"></div>
+<!--购物车订单属性展示-->
+<div id="orderAttrDiv">
+	<@block name="orderAttr">
+		<#include "/order/order-attr.html" />
+	</@block>
+</div>
+</div>
+
+</div>
+   
+</div>
+<!--订单填写 end-->
+
+<div align="right" style="margin: 20px auto; padding:0 20px;"> 
+<a class="btna_o" href="javascript:order.prodModify.cancel();"><span >取消</span></a> 
+<a style=" margin-left:20px;" class="btna_o" href="javascript:order.prodModify.spec_parm_change_fee_type_save()" ><span>下一步</span></a>
+</div>
+
+</div>
+
+<script>
+	//初始化 付费类型 和 是否信控
+	order.prodModify.initChangeProdAttrs();
+</script>
+<#else>
+	<script>
+		$("#order_fill_content").empty();
+		OrderInfo.order.step = 0;//订单初始页面
+		order.prepare.hideStep();
+		$("#orderedprod").show();
+		$("#order_prepare").show();
+		//没有使用人信息，或者查询使用人详情失败，退出，页面变动
+		$.alert('提示','查询产品实例详情、配置数据或者主套餐可选付费类型返回为空');
+	</script>
+</#if>

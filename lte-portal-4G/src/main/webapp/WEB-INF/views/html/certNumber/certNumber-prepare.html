@@ -1,0 +1,285 @@
+<@override name="title">跨省一证五号受理</@override>
+
+<@override name="header">
+<script>
+    $.extend($, {
+        httpData: function (xhr, type, s) {
+            var ct = xhr.getResponseHeader("content-type"),
+                    xml = type == "xml" || !type && ct && ct.indexOf("xml") >= 0,
+                    data = xml ? xhr.responseXML : xhr.responseText;
+
+            if (xml && data.documentElement.tagName == "parsererror")
+                throw "parsererror";
+            if (s && s.dataFilter)
+                data = s.dataFilter(data, type);
+            if (typeof data === "string") {
+                if (type == "script")
+                    jQuery.globalEval(data);
+                if (type == "json")
+                    data = window["eval"]("(" + data + ")");
+            }
+            return data;
+        },
+        handleError: function (s, xhr, status, e) {
+            if (s.error)
+                s.error(xhr, status, e);
+            else if (xhr.responseText)
+                console.log(xhr.responseText);
+        }
+    });
+</script>
+<script src="${contextPath}/js/third-js/jquery/jquery.form.js" type="text/javascript"></script>
+<script src="${contextPath}/js/4g-js/order/orderInfo.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/busi-js/certNumber/certNumber.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/4g-js/cert/cert.js?${jsversion}" type="text/javascript"></script>
+<object id="CertCtl" type="application/cert-reader" width="0" height="0"></object>
+</@override>
+
+<@override name="content">
+
+<style>
+    .oneFiveBottomDiv {
+        width: 800px;
+    }
+
+    .oneFiveBottomLeftDiv {
+        width: 350px;
+        height: 300px;
+        float: left;
+        border: 1px solid;
+    }
+
+    .oneFiveBottomRightDiv {
+        width: 440px;
+        height: 300px;
+        float: left;
+        border: 1px solid;
+    }
+
+    .jbrInfoDiv {
+        width: 160px;
+        height: 28px;
+        float: left;
+        text-align: center;
+        font-weight: bold;
+        line-height: 44px;
+    }
+
+    .oneFiveBottomRightDiv table thead tr th {
+        font-size: 16px;
+        font-weight: bold;
+        border-bottom: 2px solid black;
+        border-left: 1px solid black;
+        border-right: 1px solid black;
+        text-align: center;
+    }
+
+    .oneFiveBottomRightDiv table tbody tr td {
+        border: 1px solid black;
+        text-align: center;
+    }
+</style>
+<div class="main_div" id="div_query">
+
+    <div class="main_warp" id="d_one_five_main">
+        <h2 class="h2_title">跨省一证五号受理<span></span></h2>
+        <div class="order">
+            <div class="order_content" style="border:none; padding:10px">
+                <div class="order_tab_panel" style="display:block;">
+                    <form id="certNumRelForm">
+                        <div class="selectList">
+                            <dl>
+                                <dt>证件类型：</dt>
+                                <dd>
+                                    <select id="identidiesTypeCd" disabled="disabled"
+                                            onchange="oneFive.certNumber.identidiesTypeCdChoose(this,'certNumber')">
+                                        <#list list as item>
+                                            <option value="${item.certTypeCd}">${item.name}</option>
+                                        </#list>
+                                    </select>
+                                </dd>
+                                <dt>证件号码：</dt>
+                                <dd>
+                                    <input id="certNumber" placeHolder="请输入证件号码" class="inputWidth250px"
+                                           maxlength="50" type="text">
+                                    <label class="f_red">*</label>
+                                </dd>
+                                <dd>
+                                    <#if isHand??&&isHand==-1>
+                                        <input type="button" value="读卡" class="numberSearch" id="certNumberReadCertBtn"
+                                               onclick="javascript:oneFive.certNumber.readCard()"/>
+                                    <#else>
+                                        <input type="button" value="拍照" class="numberSearch" id="certNumberCamera"
+                                               onclick="javascript:oneFive.certNumber.showCameraView()"/>
+                                    </#if>
+                                    <input type="button" value="查询" class="numberSearch" id="bt_Qry"/>
+                                </dd>
+                            </dl>
+                            <dl>
+                                <dt>证件姓名：</dt>
+                                <dd>
+                                    <input id="certCustName" placeHolder="请输入证件姓名" class="inputWidth150px"
+                                           maxlength="10" type="text" <#if isHand??&&isHand==-1>
+                                           disabled="disabled"</#if>/>
+                                    <label class="f_red">*</label>
+                                </dd>
+                                <dt>证件地址：</dt>
+                                <dd>
+                                    <input id="certAddress" placeHolder="请输入证件地址" class="inputWidth315px"
+                                           maxlength="100" type="text" <#if isHand??&&isHand==-1>
+                                           disabled="disabled"</#if>/>
+                                    <label class="f_red">*</label>
+                                </dd>
+                            </dl>
+                        </div>
+                    </form>
+                    <!--关系列表-->
+                    <div class="phone_warp" id="certNumberlist">
+                        <table class="numberList">
+                            <thead>
+                            <tr>
+                                <td width="40"><input type="checkbox"
+                                                      onclick="oneFive.certNumber.selectAll(this)"/><span>全选</span>
+                                </td>
+                                <td width="80">省</td>
+                                <td width="200">地区</td>
+                                <td width="100">号码</td>
+                                <td width="50">状态</td>
+                                <td width="100">处理状态</td>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!--操作工具条-->
+                    <div align="right" style="margin: 20px auto;">
+                        <a style=" margin-left:20px;" class="btna_o" id="selectConfirmBtn"
+                           href="javascript:oneFive.certNumber.selectConfirm()"><span>确认选择</span></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--一证五号号码选择确认弹出窗 start-->
+<div class="easyDialogdiv" style="display: none;width: 800px;height: 510px;" id="selectConfirmDivMain">
+    <div class="easyDialogclose" id="selectConfirmDivClose" onclick="easyDialog.close()"></div>
+    <div style="text-align: center;line-height: 34px;margin: 0;padding-left: 12px;"><h1
+            style="font-size: 16px;font-weight: bold;color: #71ab5a;">号码选择确认</h1></div>
+    <div class="phone_warp" style="height: 300px;overflow-y: auto;" id="selectCertNumberList">
+        <table class="numberList" id="tab_selectConfirmList">
+            <thead>
+            <tr>
+                <td width="80">省</td>
+                <td width="200">地区</td>
+                <td width="100">号码</td>
+                <td width="50">状态</td>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="oneFiveBottomDiv">
+        <table class="network" id="tab_custInfoList">
+            <tbody>
+            <tr>
+                <td width="60" align="right" style="text-align: right;"> 联系方式：</td>
+                <td width="160" id="td_phoneNum">
+                    <input type="text" placeholder="请准确填写联系方式" class="inputWidth183px"
+                           maxlength="12" id="phoneNumber"><label
+                        class="f_red">*</label>
+                </td>
+                <td width="50" align="right" style="text-align: right;"> 流水号：</td>
+                <td width="170">
+                    <label id="soNbr"></label>
+                </td>
+                <td width="60" align="right" style="text-align: right;"> 附件个数：</td>
+                <td width="20"><label id="fileNumbers" style="color: red;"></label>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="oneFiveBottomDiv">
+            <div class="oneFiveBottomLeftDiv">
+                <div align="left" style="margin: 10px auto;">
+                    <form method="post" id="uploadAttachmentPdf" enctype="multipart/form-data">
+                        <label>上传用户签署超“一证五卡”号码确认登记单并加盖营业厅专用章</label>
+                        <input type="file" style="width: 165px;height: 28px;font-size: 14px;" id="mFileUpload"
+                               name="mFileUpload" accept="application/pdf,image/jpg"
+                               onchange="oneFive.certNumber.selectUploadFiles(this,'回执')"/>
+                        <input type="hidden" id="soNbr" name="soNbr"/>
+                        <input type="hidden" id="type" name="type"/>
+                        <a class="btna_o" onclick="oneFive.certNumber.uploadAttachment('Pdf')"><span>上传回执</span></a>
+                    </form>
+                    <form method="post" id="uploadAttachmentFront" enctype="multipart/form-data">
+                        <input type="file" style="width: 165px;height: 28px;font-size: 14px;" id="mFileUpload"
+                               name="mFileUpload" accept="image/jpg"
+                               onchange="oneFive.certNumber.selectUploadFiles(this,'正面')"/>
+                        <input type="hidden" id="soNbr" name="soNbr"/>
+                        <input type="hidden" id="type" name="type"/>
+                        <a class="btna_o" onclick="oneFive.certNumber.uploadAttachment('Front')"><span>上传正面照</span></a>
+                    </form>
+                    <form method="post" id="uploadAttachmentBack" enctype="multipart/form-data">
+                        <input type="file" style="width: 165px;height: 28px;font-size: 14px;" id="mFileUpload"
+                               name="mFileUpload" accept="image/jpg"
+                               onchange="oneFive.certNumber.selectUploadFiles(this,'反面')"/>
+                        <input type="hidden" id="soNbr" name="soNbr"/>
+                        <input type="hidden" id="type" name="type"/>
+                        <a class="btna_o" onclick="oneFive.certNumber.uploadAttachment('Back')"><span>上传反面照</span></a>
+                    </form>
+                    <form method="post" id="uploadAttachmentJbr" enctype="multipart/form-data">
+                        <div class="jbrInfoDiv"><span id="jbr_info"></span></div>
+                        <input type="hidden" id="certImg" name="certImg"/>
+                        <input type="hidden" id="photograph" name="photograph"/>
+                        <input type="hidden" id="soNbr" name="soNbr"/>
+                        <input type="hidden" id="type" name="type"/>
+                        <a class="btna_o" onclick="oneFive.certNumber.uploadJbrAttachment('Jbr')"
+                           multiple><span>上传经办人照</span></a>
+                    </form>
+                    <form method="post" id="uploadAttachmentOther" enctype="multipart/form-data">
+                        <input type="file" style="width: 165px;height: 28px;font-size: 14px;" id="mFileUpload"
+                               name="mFileUpload" accept="image/jpg"
+                               onchange="oneFive.certNumber.selectUploadFiles(this,'其它')" multiple/>
+                        <input type="hidden" id="soNbr" name="soNbr"/>
+                        <input type="hidden" id="type" name="type"/>
+                        <a class="btna_o" onclick="oneFive.certNumber.uploadAttachment('Other')"><span>上传其它</span></a>
+                    </form>
+                </div>
+                <!--操作工具条-->
+                <div align="left" style="margin: 10px auto;">
+                    <a style=" margin-left:30px;" class="btna_o"
+                       onclick="oneFive.certNumber.oneCertFiveNumberPrint()"><span>打印</span></a>
+                    <a style=" margin-left:30px;" class="btna_o"
+                       onclick="oneFive.certNumber.orderSubmit()"><span>订单提交</span></a>
+                </div>
+            </div>
+            <div class="oneFiveBottomRightDiv">
+                <table id="tab_oneFiveFileUpload">
+                    <thead>
+                    <tr>
+                        <th width="345">文件名</th>
+                        <th width="40">大小</th>
+                        <th width="40">类型</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<!--一证五号号码选择确认弹出窗 end-->
+
+<#--拍照弹出窗口 start-->
+    <#include "/cert-number-camera-box.html" />
+<#--拍照弹出窗口 end-->
+
+<input type="hidden" id="isHand" value="${isHand}"/>
+</@override>
+<@extends name="/content-template.html"/>

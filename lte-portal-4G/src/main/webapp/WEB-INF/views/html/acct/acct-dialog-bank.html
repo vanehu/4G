@@ -1,0 +1,61 @@
+<div class="easyDialogclose" id="bank_dialog_close" onclick="easyDialog.close()"></div>
+<table class="contract_list">
+	<thead>
+   		<tr>
+        	<td>选择银行</td>
+			<td align="right" style="width:100px">
+				<input type="button" class="numberSearch" value="确 认" style="margin-right: 30px" onclick="acct.acctModify.fillBankInfo()"/>
+			</td>
+     	</tr>                                                    
+ 	</thead>
+</table>
+<div class="form-content">
+	<div class="selectList">
+      	<dl>
+        	<dt>选择地区：</dt>
+        	<dd>
+        		&nbsp;<input id="p_bank_areaId_val" class="numberTextBox" type="text" placeholder="请选择地区" value="${Session["_ecs_login_session_key"].currentAreaAllName}" onclick="acct.acctModify.queryAllArea()" readonly="readonly" style="margin-left:5px; width:100px">
+          		<input id="p_bank_areaId" type="hidden" value="${Session["_ecs_login_session_key"].currentAreaId}">
+        	</dd>
+        	<dt>银行名称：</dt>
+        	<dd>
+          		&nbsp;<input type="text" class="inputWidth150px" id="p_bandkname" >
+        	</dd>
+        	<dt>银行简称：</dt>
+        	<dd>
+          		&nbsp;<input type="text" class="inputWidth150px" id="p_simpleSpell">
+        	</dd>
+        	<dd>
+          		&nbsp;<input type="button" class="numberSearch" value="查 询" onclick="acct.acctModify.queryBank(1)" >
+        	</dd>
+      	</dl>
+ 	</div>
+    <div class="phone_warp">
+      	<table class="contract_list numberList222">
+        	<thead>
+          		<tr>
+          			<td class="borderLTB" style="width:40px">&nbsp;</td>
+            		<td class="borderLTB">地区名称</td>
+            		<td class="borderLTB">银行名称</td>
+            		<td class="borderLTB">描述</td>
+          		</tr>
+        	</thead>
+        	<tbody id="bank_list">
+        		<#if (pageModel.list)?? &&((pageModel.list)?size>0)>
+        		<#list pageModel.list as bankInfo >
+        		<tr id="${bankInfo.bankId}">
+          			<td></td>
+            		<td>${bankInfo.regionName}</td>
+            		<td>${bankInfo.name}</td>
+            		<td>${bankInfo.description}</td>
+          		</tr>
+        		</#list>
+        		</#if>
+        	</tbody>
+      	</table>                        
+        <!--页码-->
+		<@portal.modelPagination pageModel 5 "acct.acctModify.queryBank"/>		
+		<script src="${contextPath}/js/our-js/ec.pagination.js?${jsversion}" type="text/javascript"></script>
+		<!--页码 end-->
+	</div>
+</div>

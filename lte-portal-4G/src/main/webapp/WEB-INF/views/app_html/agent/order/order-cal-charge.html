@@ -1,0 +1,334 @@
+<style>
+.scroll-y{ overflow-y: hidden; overflow-x: scroll;}
+@media screen and (max-width: 320px){
+	.scroll-y{ max-width: 130px;}
+}
+@media screen and (min-width: 321px) and ( max-width: 375px){
+	.scroll-y{ max-width: 161px;}
+}
+@media screen and (min-width: 376px){
+	.scroll-y{ max-width: 178px;}
+}
+	
+</style>
+<nav class="navbar navbar-default navbar-fixed-top">
+	<div class="container-fluid">
+		<!-- Brand and toggle get grouped for better mobile display -->
+		<div class="navbar-header">
+			<a id="slwc" data-toggle="modal" class="navbar-brand pull-right"  onclick="order.calcharge.orderComplete();"><span class="glyphicon glyphicon glyphicon glyphicon-ok" aria-hidden="true"></span> 受理完成</a>
+			<a  data-toggle="modal" class="navbar-brand" id="calChargeBack" onclick ="order.calcharge.chargeBack();"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>返回</a>
+			<h4 class="header-title">收银台</h4>
+		</div>
+	</div>
+	<!-- /.container-fluid -->
+</nav>
+<div class="container-fluid" id="cal_main_content">
+	<div class="row">
+		<div class="panel panel-default paneltop">
+			<div class="panel-heading">收银台</div>
+				<div class="panel-body">
+					<p>购物车流水：${olNbr}</p>
+				</div>
+				<div class="panel-body">
+					<div class="form-group" id="payTypeDiv">
+						<label for="exampleInputEmail1">付费方式</label>
+						<select id="idtype" class="selectpicker show-tick form-control shouyintai_payType">
+							<#if payMethodInfo??&&(payMethodInfo?size>0)>
+							        <#list payMethodInfo as payMethodInfoList>
+							          <option value="${payMethodInfoList.payMethodCd}">${payMethodInfoList.payMethodName}</option>
+							        </#list>
+							<#else>
+							        <option value="100000">现金</option>
+							</#if>
+						</select>
+					</div>
+      	     <p class="col-xs-6" id="feeAmount"></p>
+      	     <p class="col-xs-6">实收：<span id="realMoney"></span></p>
+				</div>
+			<div class="panel-body">
+			<button class="btn btn-info  btn-group-justified" id="toCharge" onClick="order.calcharge.updateChargeInfoForCheck('1')" ><span class="glyphicon glyphicon-yen" aria-hidden="true"></span> 收费</button>
+			<input type="hidden" id="orderStatus" value="0">
+			<input type="hidden" id="calchargeStatus" value="0">
+			<input type="hidden" id="printStatus" value="0">
+			<input type="hidden" id="imgData">
+			</div>
+			<div class="table-responsive">
+				<table class="table table-striped table-bordered tablecenter" id="calChangeTab">
+					<thead>
+						<tr>
+							<th>产品</th>
+							<th>费用名称</th>
+							<th>应收费用</th>
+							<th>实收费用</th>
+						</tr>
+					</thead>
+					<tbody class="form-inline">
+						<#assign amount=0 />  
+               <#assign amount2=0 />
+               <#if prodInfo??&&(prodInfo?size>0)>
+               	    <#assign count=0 />
+               	    <#assign boIds=""/>
+                	<#list prodInfo as prodInfoList>
+                		
+                		 <#if (prodInfoList.busiOrders)??&&((prodInfoList.busiOrders)?size>0)>
+                		    <!--  <tr style="display:none">
+                		     <td colspan="6">	
+                		     	<div id="pro_${prodInfoList.prodId}">
+                 		     	<table class="contract_list">
+						            <thead>
+						                <tr>
+						                    <td width="100" colspan="4">增加费用</td>
+						                </tr> 
+						                <tr class="dialog_tittle2">
+						                  <td width="50%">销售品</td>
+						                  <td width="20%">动作</td>
+						                  <td width="30%">产品名称</td>
+						                </tr>
+						            </thead>
+						            <tbody> 
+						                <#list prodInfoList.busiOrders as busiList>
+							                <tr <#if isAddOperation?? && isAddOperation=="0" && (refundType?? && refundType==0) >onclick="order.calcharge.addSubmit('${busiList.boId}','${busiList.boActionTypeCd}','${busiList.objType}','${busiList.objId}','${busiList.objName}','${busiList.boActionTypeName}','${busiList.objInstId}','${prodInfoList.prodId}');"</#if> >
+							                  <td>${busiList.objName}</td>
+							                  <td>${busiList.boActionTypeName}</td>
+							                  <td>${prodInfoList.prodSpecName}</td>
+							                </tr>
+						                </#list>
+						             </tbody>
+						         </table>
+                 		     	</div>
+                 		     </td>
+                 		     </tr> -->
+                 		     <#assign i=0 />
+                 		 	 <#list prodInfoList.busiOrders as busiList>
+                 		 	    <#assign boId="${busiList.boId}"/>
+                 		 	 	<#if busiList.objType!="7"||(busiList.objType=="7"&&boIds?index_of(boId)==-1)>
+	                 		 	 	<#if chargeItems??&&(chargeItems?size>0)>
+		                   		 		<#list chargeItems as itemList>
+			                   		 		<#assign trid="${itemList.boId}_${itemList.acctItemId}_${prodInfoList.prodId}_old" />
+			                   				<#if busiList.boId==itemList.boId>
+				                   				<#if busiList.objType=="7">
+				                   				 	<#assign boIds=boIds+"${busiList.boId}_"/>
+				                   				</#if>
+		                  					 	 <tr id="item_${trid}" class="item_fee" onclick="order.calcharge.showEditPage('${prodInfoList.accessNumber}','${trid}','${((itemList.realAmount)?number / 100)?string('0.00')}')" <#if itemList.paymentAmount?? && (itemList.paymentAmount==0) >style="display:none"</#if> >
+							                       <#if prodInfoList.accessNumber??&&prodInfoList.accessNumber!="">
+						                				<td class="scroll-y">${prodInfoList.accessNumber}</td>
+						                			</#if>
+							                        <!-- 产品信息 <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>${busiList.boActionTypeName}</strong>&nbsp;&nbsp;[${busiList.objName}]</td>-->
+							                        <!-- 费用名称 --><td>${itemList.acctItemTypeName}</td>
+							                        <!-- 应收费用 --><td>${((itemList.feeAmount)?number / 100)?string('0.00')}</td>
+							                        <!-- 实收费用 --><td id="ssfy_${trid}">${((itemList.feeAmount)?number / 100)?string('0.00')}</td>
+							                       <span id="payMethodText_${trid}" style="display:none">
+							                        <#if (refundType??&&(refundType>0) || itemList.payMethodCd == '140000') && itemList.payMethodCd != '110102'>
+							                        	${itemList.payMethodName}
+							                        <#elseif  (isAddOperation?? && isAddOperation=="0") && (iseditOperation?? && iseditOperation=="0")>
+							                        	<a href="javascript:void(0)" onclick="order.calcharge.changePayMethod('${itemList.acctItemTypeId}','${trid}','${itemList.payMethodCd}',this);">${itemList.payMethodName}</a>
+							                        <#else>
+							                            ${itemList.payMethodName}
+							                        </#if>
+							                        </span>
+							                        <span id="realAmountText_${trid}" style="display:none">
+								                        <!-- 撤单返销 不能修改实收费用 -->
+								                        <#if refundType??&&(refundType>0)>
+								                        		
+								                        <#else>
+								                               <input type="text" disabled value="${((itemList.realAmount)?number / 100)?string('0.00')}" disabled="disabled" onblur="order.calcharge.editMoney(this,'${trid}','old');" class="form-control" onfocus="order.calcharge.setGlobeMoney(this);">
+								                         </#if>
+							                        </span>
+							                        
+							                      </tr>
+							                        <input type="hidden" id="feeAmount_${trid}" value="${itemList.feeAmount}" />
+				                        			<input type="hidden" id="paymentAmount_${trid}" value="${itemList.paymentAmount}" />
+		                  					 		<input type="hidden" id="objId_${trid}" value="${itemList.objId}" />
+		                  					 		<input type="hidden" id="objType_${trid}" value="${itemList.objType}" />
+		                  					 		<input type="hidden" id="realhidden_${trid}" value="${((itemList.realAmount)?number / 100)?string('0.00')}" />
+		                  					 		<input type="hidden" id="acctItemId_${trid}" value="${itemList.acctItemId}" />
+		                  					 		<input type="hidden" id="acctItemTypeId_${trid}" value="${itemList.acctItemTypeId}" />
+		                  					 		<input type="hidden" id="boId_${trid}" value="${itemList.boId}" />
+		                  					 		<input type="hidden" id="payMethodCd_${trid}" value="${itemList.payMethodCd}"/>
+		                  					 		<input type="hidden" id="acctItemTypeName_${trid}" value="${itemList.acctItemTypeName}" />
+		                  					 		<input type="hidden" id="objInstId_${trid}" value="${busiList.objInstId}" />
+		                  					 		<input type="hidden" id="prodId_${trid}" value="${prodInfoList.prodId}" />
+		                  					 		<input type="hidden" id="boActionType_${trid}" value="${itemList.boActionType}" />
+		                  					 		<#if iseditOperation?? && iseditOperation=="0" && refundType??&&(refundType==0) >
+		                  					 		     <#if acctItemTypeId?? && (itemList.acctItemTypeId == acctItemTypeId)  &&  isEditAdjustOperation?? && isEditAdjustOperation!="0">
+														 <#else>
+														 <span id="editBtn_${trid}" style="display:none">
+														 <button type="button" class="btn btn-primary btn-lg" onclick="order.calcharge.changePayMethod('${itemList.acctItemTypeId}','${trid}','${itemList.payMethodCd}',this);">减免费用</button>
+		                  					 		        <!--  <a class="charge_add money_upd money_edit_gray" style="background-color:#95B27B;" href="javascript:void(0);"  onclick="order.calcharge.changePayMethod('${itemList.acctItemTypeId}','${trid}','${itemList.payMethodCd}',this);">修改费用</a>-->
+													        <!-- <a class="charge_add money_cut" href="javascript:void(0);"  onclick="order.calcharge.delItems2(this,'${itemList.acctItemTypeId}','${trid}','old');">&nbsp;&nbsp;</a>-->
+													    </span>
+													    </#if>
+													</#if>
+							                      
+							                     <#if itemList.paymentAmount?? && (itemList.paymentAmount==0) >
+							                     
+							                     <#else>
+							                     <#assign amount=amount+((itemList.realAmount)?number / 100) />
+			                   					 <#assign amount2=amount2+((itemList.realAmount)?number / 100*-1) />
+			                   					 <#assign i=i+1 />
+							                     </#if>
+				                   			 </#if>
+			                   			 <#assign count=count+1 />
+			                   		 </#list>
+	                   		 		</#if>
+                   		 		</#if>
+                  		 	</#list>
+                 		 </#if>
+               	</#list>
+				<#elseif chargeItems??&&(chargeItems?size>0)>
+					<#list chargeItems as itemList>
+					<#assign trid="${itemList.boId}_${itemList.acctItemId}" />
+					<tr id="item_${trid}"  class="item_fee" onclick="order.calcharge.showEditPage('${itemList.accessNumber}','${trid}','${((itemList.realAmount)?number / 100)?string('0.00')}')" <#if itemList.paymentAmount?? && (itemList.paymentAmount==0) >style="display:none"</#if> >
+						<td class="scroll-y">${businessName}</td>
+						<td>${itemList.acctItemTypeName}</td>
+						<td>${((itemList.feeAmount)?number / 100)?string('0.00')}</td>
+						<td id="ssfy_${trid}">${((itemList.feeAmount)?number / 100)?string('0.00')}</td>
+						<span id="payMethodText_${trid}" style="display:none">
+	                        <#if (refundType??&&(refundType>0) || itemList.payMethodCd == '140000') && itemList.payMethodCd != '110102'>
+	                        	${itemList.payMethodName}
+	                        <#elseif  (isAddOperation?? && isAddOperation=="0") && (iseditOperation?? && iseditOperation=="0")>
+	                        	<a href="javascript:void(0)" onclick="order.calcharge.changePayMethod('${itemList.acctItemTypeId}','${trid}','${itemList.payMethodCd}',this);">${itemList.payMethodName}</a>
+	                        <#else>
+	                            ${itemList.payMethodName}
+	                        </#if>
+						</span>
+					</tr>
+						    <input type="hidden" id="feeAmount_${trid}" value="${itemList.feeAmount}" />
+							<input type="hidden" id="paymentAmount_${trid}" value="${itemList.paymentAmount}" />
+							<input type="hidden" id="objId_${trid}" value="${itemList.objId}" />
+							<input type="hidden" id="objType_${trid}" value="${itemList.objType}" />
+							<input type="hidden" id="realhidden_${trid}" value="${((itemList.realAmount)?number / 100)?string('0.00')}" />
+							<input type="hidden" id="acctItemId_${trid}" value="${itemList.acctItemId}" />
+							<input type="hidden" id="acctItemTypeId_${trid}" value="${itemList.acctItemTypeId}" />
+							<input type="hidden" id="boId_${trid}" value="${itemList.boId}" />
+							<input type="hidden" id="payMethodCd_${trid}" value="${itemList.payMethodCd}"/>
+							<input type="hidden" id="acctItemTypeName_${trid}" value="${itemList.acctItemTypeName}" />
+							<input type="hidden" id="objInstId_${trid}" value="" />
+							<input type="hidden" id="prodId_${trid}" value="" />
+							<input type="hidden" id="boActionType_${trid}" value="${itemList.boActionType}" />
+							<#if (iseditOperation?? && iseditOperation=="0") && (refundType?? && refundType==0) >
+							   <#if acctItemTypeId?? && (itemList.acctItemTypeId == acctItemTypeId)  &&  isEditAdjustOperation?? && isEditAdjustOperation!="0">
+							   <#else>
+							   <span id="editBtn_${trid}" style="display:none">
+							      <button  type="button" class="btn btn-primary btn-lg" onclick="order.calcharge.changePayMethod('${itemList.acctItemTypeId}','${trid}','${itemList.payMethodCd}',this);">减免费用</button>
+							      <!-- <a class="charge_add money_upd money_edit_gray" style="background-color:#95B27B;" href="javascript:void(0);"  onclick="order.calcharge.changePayMethod('${itemList.acctItemTypeId}','${trid}','${itemList.payMethodCd}',this);">修改费用</a> -->
+							  <!-- <a class="charge_add money_cut" href="javascript:void(0);"  onclick="order.calcharge.delItems2(this,'${itemList.acctItemTypeId}','${trid}','old');">&nbsp;&nbsp;</a> -->
+							    </span>
+							  </#if>
+							</#if>
+						
+					
+					<#if itemList.paymentAmount?? && (itemList.paymentAmount==0) >
+							                     
+					<#else>
+					<#assign amount=amount+((itemList.feeAmount)?number / 100) />
+					<#assign amount2=amount2+((itemList.realAmount)?number / 100*-1) />
+					<#assign i=i+1 />                     
+					</#if>
+					<#assign count=count+1 />
+					</#list>
+				</#if>
+					</tbody>
+				</table>
+			</div>
+			<div class="panel-body" style="display:none;">
+      	     	<p class="col-xs-6" id="yingshou">应收：${amount?string('0.00')}</p>
+      	     	<p class="col-xs-6">实收：<span id="shishou">${amount?string('0.00')}</span></p>
+      		</div>
+		</div>
+	</div>
+</div>
+<nav class="navbar navbar-default navbar-fixed-bottom">
+	<div class="container-fluid">
+		<div class="btn-group btn-group-justified navbar-btn" role="group" aria-label="...">
+			<div class="btn-group" role="group">
+				<button type="button" class="btn btn-primary btn-lg" id="printVoucherA" > <span class="glyphicon glyphicon glyphicon-print" aria-hidden="true"></span> 回执 </button>
+			</div>
+			<div class="btn-group" role="group">
+				<button type="button" class="btn btn-primary btn-lg" id="printEQCode"> <span class="glyphicon glyphicon glyphicon-qrcode" aria-hidden="true"></span> 生成二维码 </button>
+			</div>
+		</div>
+	</div>
+</nav>
+<div class="modal fade" id="TipModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal_wrapper">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+							<h4 class="modal-title" id="myModalLabel">提示</h4>
+						</div>
+						<div class="modal-body">
+							您将要放弃订单
+						</div>
+						<div class="modal-footer">
+							<div class="btn-group btn-group-justified" role="group" aria-label="...">
+								<div class="btn-group" role="group">
+									<button type="button" class="btn btn-default btn-lg" onclick="" data-dismiss="modal" >确认</button>
+								</div>
+								<div class="btn-group" role="group">
+									<button type="button" class="btn btn-default btn-lg" data-dismiss="modal" >取消</button>
+								</div>
+
+							</div>
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Modal -->
+<div  id="qrcode" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" style="display: none;"; aria-hidden="true" class="modal">
+  <div class="modal_wrapper">
+  	<div class="modal-dialog">
+    <div class="modal-content">
+      
+      <div class="modal-body text-center" id="alertMessage">
+        
+      </div>
+      <div class="modal-footer">
+      	<div class="btn-group btn-group-justified" role="group" aria-label="...">
+          
+          <div class="btn-group" role="group">
+            <button type="button" data-dismiss="modal" class="btn btn-primary btn-lg" onclick="$('#qrcode').css('display','none')">返回</button>
+          </div>
+        </div>       
+      </div>
+    </div>
+  </div>
+  </div>
+</div>
+<div id="edit_content" style="display:none"></div>
+<script type="text/javascript">
+  $("#feeAmount").html($("#yingshou").html());
+  $("#realMoney").html($("#shishou").html());
+  $(function() {
+		//查分省支付开关
+	    var propertiesKey = "NEWPAYFLAG_"+(OrderInfo.staff.soAreaId+"").substring(0,3);
+	    var isNewPay = offerChange.queryPortalProperties(propertiesKey);
+	    if(isNewPay == "ON"){//开关打开收费方式隐藏，点收费跳转支付平台，否则默认调用原收费方式
+				order.calcharge.myFlag=true;
+//			    $("#idtype").empty();
+//				    $("#idtype").append("<option value='100000'>现金</option>");
+//				    $("#idtype").append("<option value='120100'>翼支付</option>");
+//				    $("#idtype").append("<option value='120200'>支付宝</option>");
+//				    $("#idtype").append("<option value='120400'>微信</option>");
+	            $("#payTypeDiv").css("display","none");
+			}		
+		//特殊权限工号
+		var staffId=OrderInfo.staff.staffId;
+		var staffIds=["5244776","30035134709","30035134730","5176843","3053296","30035026690","30035163588","30035179425","30035179437","30035179443","30035179458","30033905872"];//工号id,配置的工号只展示现金和支付宝、微信、翼支付等支付方式
+		for(var i in staffIds){
+			if(staffId==staffIds[i]){
+				order.calcharge.myFlag=true;
+//			    $("#idtype").empty();
+//				    $("#idtype").append("<option value='100000'>现金</option>");
+//				    $("#idtype").append("<option value='120100'>翼支付</option>");
+//				    $("#idtype").append("<option value='120200'>支付宝</option>");
+//				    $("#idtype").append("<option value='120400'>微信</option>");
+	            $("#payTypeDiv").css("display","none");
+				break;
+			}		
+		}
+	});
+</script>

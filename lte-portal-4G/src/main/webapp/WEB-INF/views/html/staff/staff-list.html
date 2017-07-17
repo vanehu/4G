@@ -1,0 +1,75 @@
+<table class="order_list">
+	<thead> 
+		<tr>
+			<td class="borderLTB" width="15%">
+				员工工号
+			</td>
+			<td >
+				员工姓名
+			</td>
+			<td width="20%">
+				联系电话
+			</td>
+			<td width="20%">
+				E-mail
+			</td>
+			<td width="10%">
+				状态
+			</td>
+			<td class="borderRTB" width="10%">
+				操作
+			</td>
+		</tr>
+	</thead>
+	<tbody>
+		<#if ((pageModel.list)?? && (pageModel.list)?size>0)>
+		<#list pageModel.list as staff>
+		<tr>
+			<td>${staff.STAFF_NUM}</td>
+			<td>${staff.STAFF_NAME}</td>
+			<td>${staff.TELE_ID}</td>
+			<td>${staff.EMAIL}</td>
+			<td>${staff.STAFF_STATUS_NAME}</td>
+			<td>
+			<#if staff.STAFF_STATUS_CD=='6'>
+				<a href="#" class="phone_btn_h">信息修改</a>
+				<!--<a href="#" class="phone_btn_h">密码修改</a>-->
+			<#else>
+				<a href="${contextPath}/staffMgr/preUpdateStaff/${staff.STAFF_NUM}" onclick="validateCheck(event,'${staff.STAFF_HAV_APP}')" class="phone_btn">信息修改</a>
+				<!--<a href="${contextPath}/staffMgr/preUpdatePwd/${staff.STAFF_NUM}" class="phone_btn">密码修改</a>-->
+			</#if>
+			</td>
+		</tr>
+		<#if staff.STAFF_STATUS_CD=='6'>
+		<tr>
+		<td colspan="6" style="text-align: right"><span class="simpleTip" style="display: inline;">提示：抱歉，该员工还未审核通过，不允许修改员工资料，请审核通过后，再尝试修改！</span></td>
+		</tr>
+		</#if>
+		</#list>
+		</#if>
+	</tbody>
+</table>
+<#if (pageModel.list)?? &&((pageModel.list)?size>0)>
+ <!--页码-->
+<@portal.modelPagination pageModel 5 "terminal.exchange.queryOrderList"/>
+<script src="${contextPath}/js/our-js/ec.pagination.js?${jsversion}" type="text/javascript"></script>
+<!--页码 end-->
+<#else>
+<div class="no_search"> 
+    <div class="h1">
+		<img style="vertical-align:middle" src="${contextPath}/image/common/query_search.gif" />&nbsp;&nbsp;抱歉，没有找到相关的人员，请尝试其他筛选条件。
+	</div>
+</div>
+</#if>
+<script>
+function validateCheck(event,staffHavApp) {
+	event = event||window.event;
+	//验证查询的工号是否有提交修改的审核单 1.有 0.没有
+	if(staffHavApp == "1") {
+		event.preventDefault();
+		$.alert("温馨提示","抱歉,查询工号已经修改,正在审核中,暂不能再次修改");
+		
+	}
+}
+</script>
+<script src="${contextPath}/js/busi-js/staff/staffMgr.js?${jsversion}" type="text/javascript"></script>

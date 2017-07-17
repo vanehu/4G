@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContractRoot>
+	<TcpCont>
+		<Response>
+			<RspCode>0000</RspCode>
+			<RspDesc>成功</RspDesc>		
+		</Response>
+	</TcpCont>
+	<SvcCont>
+		<Service_Information>
+		    <Service_Result_Code></Service_Result_Code>
+		    <Para_Field_Result></Para_Field_Result>
+		<Write_Off_Information>
+			<Bill_Serial_Nbr>232223</Bill_Serial_Nbr>
+			<Payment_Serial_Nbr>3232</Payment_Serial_Nbr>
+			<Billing_Cycle_Group>
+			    <Billing_Cycle_ID>20001111</Billing_Cycle_ID>
+			</Billing_Cycle_Group>
+			<Billing_Cycle_Group>
+			    <Billing_Cycle_ID>20001211</Billing_Cycle_ID>
+			</Billing_Cycle_Group>			
+			<Sum_Charge>10000</Sum_Charge>
+			<Previous_Change>8000</Previous_Change>
+			<Current_Change>7000</Current_Change>
+			<Invioce_Information_Detail>
+		    	<Fee_Billing_Cycle>
+		    	    <Billing_Cycle_ID>20001111</Billing_Cycle_ID>
+		    	    <Invioce_Item_Detail>
+		    	        <Invioce_Item_Name>发票</Invioce_Item_Name>
+		    	        <Invioce_Item_Money>2000</Invioce_Item_Money>
+		    	    </Invioce_Item_Detail>
+		    	    <Invioce_Item_Detail>
+		    	        <Invioce_Item_Name>发票2</Invioce_Item_Name>
+		    	        <Invioce_Item_Money>3000</Invioce_Item_Money>
+		    	    </Invioce_Item_Detail>		    	    
+		    	</Fee_Billing_Cycle>
+			</Invioce_Information_Detail>
+		   </Write_Off_Information>
+		</Service_Information>
+	</SvcCont>
+</ContractRoot>

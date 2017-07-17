@@ -1,0 +1,42 @@
+<div id="order-content">
+	<div class="container-fluid form-list">	
+		<#assign offerSpec = main.offerSpec />
+		<!-- 套餐名称 -->
+		<ul class="list-group">
+		  <li class="list-group-item">原套餐: <small class="text-warning">${main.oldOfferSpecName}</small></li>
+		  <li class="list-group-item">新套餐: <small class="text-warning">${offerSpec.offerSpecName}</small>
+		  <#if offerSpec.offerSpecParams?? && (offerSpec.offerSpecParams?size>0)>
+		  <span class="btn-span" id="offerCanBtn"><button type="button" class="btn btn-info" onclick="AttachOffer.offer_showMainParam();">参</button></span>
+		  </#if>
+		  </li>
+		</ul>
+		<!-- 产品信息-->
+		<!-- <div class="carousel-inner"> -->
+			<#include "/agent/offer/attach-offer-template.html"/>
+		<!-- </div> -->
+		<div id="terminalDiv_${prodId}" style="display: none;padding: 10px;">
+		</div>
+	</div>
+	<nav class="navbar navbar-default navbar-fixed-bottom">
+		<div class="container-fluid">
+			<div class="btn-group btn-group-justified navbar-btn" role="group" aria-label="...">
+				<div class="btn-group" role="group">
+					<button id="fillNextStep" type="button" class="btn btn-primary btn-lg"> <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span> 下一步 </button>
+				</div>
+			</div>
+		</div>
+	</nav>
+</div>
+
+<!-- 订单确认页面、收银台页面 -->
+<div id="order-confirm" style="display: none;">
+</div>
+<!-- 回执内容显示页面 -->
+<div id="order-print" style="display: none;">
+</div>
+<!-- 协销人展示（强商去掉） -->
+<div id="order-dealer" style="display: none;">
+	<@block name="dealer">
+		<#include "/agent/order/order-dealer.html" />
+	</@block>
+</div>

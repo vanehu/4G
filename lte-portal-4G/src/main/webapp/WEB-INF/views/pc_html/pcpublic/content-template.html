@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8"/>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<title><@block name="title"></@block><#if Session["_server_ip"]?? >[${Session["_server_ip"]}]</#if></title>
+		<META HTTP-EQUIV="Pragma" CONTENT="no-cache"> 
+		<META HTTP-EQUIV="Cache-Control" CONTENT="no-store,no-cache,must-revalidate"> 
+		<META HTTP-EQUIV="Expires" CONTENT="0">
+		<META name="keywords" content="电信集团">
+		<META name="description" content="电信集团">
+		<#include "/common-css-tpl.html"/>
+		<#include "/pcpublic/common-js-tpl.html"/>
+		<script src="${contextPath}/js/busi-js/common/const.js?${jsversion}" type="text/javascript"></script>
+	     <script>
+			$(function() {
+				OrderInfo.staff = {
+					staffId : $("#_session_staff_info").attr("staffId"),
+					staffCode : $("#_session_staff_info").attr("staffCode"),
+					staffName : $("#_session_staff_info").attr("staffName"),
+					channelId : $("#_session_staff_info").attr("channelId"),
+					channelName : $("#_session_staff_info").attr("channelName"),
+					areaId : $("#_session_staff_info").attr("areaId"),
+					areaCode : $("#_session_staff_info").attr("areaCode"),
+					areaName : $("#_session_staff_info").attr("areaName"),
+					areaAllName : $("#_session_staff_info").attr("areaAllName"),
+					orgId : $("#_session_staff_info").attr("orgId"),
+					distributorId : $("#_session_staff_info").attr("partnerId"),
+					operatorsId : $("#_session_staff_info").attr("operatorsId"),
+					operatorsName : $("#_session_staff_info").attr("operatorsName"),
+					operatorsNbr : $("#_session_staff_info").attr("operatorsNbr"),
+					soAreaId : $("#_session_staff_info").attr("areaId"),
+					soAreaCode : $("#_session_staff_info").attr("areaCode"),
+					soAreaName : $("#_session_staff_info").attr("areaName"),
+					soAreaAllName : $("#_session_staff_info").attr("areaAllName"),
+					channelType:$("#_session_staff_info").attr("channelType"),
+					idType :$("#_session_staff_info").attr("idType")
+				};
+			});
+	     </script>
+		<@block name="header"></@block>
+	</head>
+	<body style="padding:0px;">
+		<#if Session["_ecs_login_session_key"].currentChannelId ?? && (Session["_ecs_login_session_key"].currentChannelId!="") >
+             	<input type="hidden" id="_session_staff_info"
+					staffId="${Session["_ecs_login_session_key"].staffId}" 
+					staffCode="${Session["_ecs_login_session_key"].staffCode}" 
+					staffName="${Session["_ecs_login_session_key"].staffName}" 
+					channelId='${Session["_ecs_login_session_key"].currentChannelId}' 
+					channelName='${Session["_ecs_login_session_key"].currentChannelName}' 
+					areaId='${Session["_ecs_login_session_key"].currentAreaId}'
+					areaCode='${Session["_ecs_login_session_key"].currentAreaCode}'
+					areaName='${Session["_ecs_login_session_key"].currentAreaName}'
+					areaAllName='${Session["_ecs_login_session_key"].currentAreaAllName}'
+					orgId='${Session["_ecs_login_session_key"].orgId}' 
+					operatorsId = '${Session["_ecs_login_session_key"].currentOperatorsId}' 
+					operatorsName = '${Session["_ecs_login_session_key"].currentOperatorsName}' 
+					operatorsNbr = '${Session["_ecs_login_session_key"].currentOperatorsNbr}'
+					channelType = '${Session["_ecs_login_session_key"].currentChannelType}' 
+					idType = '${Session["_ecs_login_session_key"].idType}'
+                	/>
+                </a>
+            	</span>
+             <#else>
+            	<input type="hidden" id="_session_staff_info"
+					staffId="${Session["_ecs_login_session_key"].staffId}" 
+					staffCode="${Session["_ecs_login_session_key"].staffCode}" 
+					staffName="${Session["_ecs_login_session_key"].staffName}" 
+					channelId='' 
+					channelName='' 
+					areaId=''
+					areaCode=''
+					areaName=''
+					orgId='${Session["_ecs_login_session_key"].orgId}' 
+					operatorsId = '' 
+					operatorsName = '' 
+					operatorsNbr = ''  />
+           		</span>
+            </#if>
+		<!--  <div class="main_div">-->
+			<!-- 内容菜单-->
+			<@block name="content">
+			<#include "/main-content.html"/>
+			</@block>
+		<!-- </div>-->
+		<!--内容 end-->
+		<!-- 操作次数过多验证 -->
+			<#include "/validate-window.html"/>
+		<!--  -->
+		<!--登录弹出框-->
+			<div>
+				<#include "/login-window.html"/>
+			</div>
+			<!--登录弹出框结束-->
+	</body>
+</html>

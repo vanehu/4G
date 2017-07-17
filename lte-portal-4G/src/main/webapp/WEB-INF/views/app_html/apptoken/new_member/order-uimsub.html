@@ -1,0 +1,27 @@
+<div class="form-group" id="uimDiv_${prodId}" style="display: none;">
+	<label for="exampleInputFile">UIM卡号</label>
+	<div class="input-group">
+      <input type="tel" width="500px;" class="form-control" id="uim_txt_${prodId}">
+      <div class="input-group-btn">
+       
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">操作 <span class="caret"></span></button>
+        <ul class="dropdown-menu dropdown-menu-right" role="menu">
+          <li><button class="btn btn-uim" type="button" id= "uim_check_btn_${prodId}" onclick="prod.uim.checkUim(${prodId},'delViceCard',2);"><span style="float:left;">校验</span></button></li>
+          <li class="divider"></li>
+          <li>
+          	  <button class="btn btn-uim" id="uim_release_btn_${prodId}" disabled="disabled" onclick="prod.uim.releaseUim(${prodId});"  type="button">
+				<span style="float:left;">释放</span>
+			  </button>
+		  </li>
+        </ul>
+        
+      </div><!-- /btn-group -->
+    </div><!-- /input-group -->
+</div>
+<div id="terminalDiv_${prodId}" style="display: none;">
+</div>
+<br>
+<br>
+<br>
+<br>
+<br>
