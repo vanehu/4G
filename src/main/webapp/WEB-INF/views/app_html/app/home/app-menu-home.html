@@ -76,10 +76,12 @@
 				<!-- ================== BEGIN 首页菜单 功能菜单 ================== -->
 				<div class="g-menu-box m-t">
 					<ul class="menu-box">
+					    <#if info??>
 					   	<li id="ys_rzbd" name="爱运维" onclick="common.gotoOtherApp()" style="border: 1px solid #dedede;">
 								<i class="iconfont">&#xe641</i>
 								<p id="rzP">爱运维</p>
 						</li>
+						</#if>
 						<#if haveMenu?? && (haveMenu=="N")>
 							<span>无受理权限，无法受理业务！</span>
 						</#if>
