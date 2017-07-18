@@ -2230,11 +2230,11 @@ public class CustController extends BaseController {
   		paramsMap.put("channel_nbr", sessionStaff.getCurrentChannelCode());
   		paramsMap.put("channel_type", sessionStaff.getCurrentChannelType());
   		
-  		paramsMap.put("province_code",sessionStaff.getProvinceCode());
+  		//paramsMap.put("province_code",sessionStaff.getProvinceCode());
   		
-  		if(StringUtils.isEmpty(sessionStaff.getProvinceCode()) && sessionStaff.getCurrentAreaId() !=null){
+  		//if(StringUtils.isEmpty(sessionStaff.getProvinceCode()) && sessionStaff.getCurrentAreaId() !=null){
   			paramsMap.put("province_code",sessionStaff.getCurrentAreaId().substring(0, 3) + "0000");
-  		}
+  		//}
   		
   		//paramsMap.put("busi_type","1");
   		String image_best = EncodeUtils.urlDecode(svcContMap.get("image_best") + "");

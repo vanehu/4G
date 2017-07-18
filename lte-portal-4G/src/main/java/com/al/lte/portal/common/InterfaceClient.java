@@ -16,8 +16,6 @@ import java.util.Random;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import net.sf.json.xml.XMLSerializer;
-
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
@@ -61,6 +59,8 @@ import com.al.lte.portal.bmo.log.LogContainer;
 import com.al.lte.portal.core.DataRepository;
 import com.al.lte.portal.model.ServiceLog;
 import com.al.lte.portal.model.SessionStaff;
+
+import net.sf.json.xml.XMLSerializer;
 
 
 
@@ -1378,6 +1378,24 @@ public class InterfaceClient {
 		} catch (IOException e) {
 
 		}
+		// String serviceCode = "orderParamQuery";
+		// String str = getInvokeWay(serviceCode);
+		// System.out.println(str);
+
+		// String ret = "";
+		// try {
+		// Service service = new Service();
+		// Call call = (Call) service.createCall();
+		//
+		// call.setTargetEndpointAddress( new java.net.URL(url) );
+		// //设置命名空间与调用方法
+		// call.setOperationName(new QName(qName, methodName)); //前置机命名空间、方法名
+		// //把加密好的ss2作为入参，ret为返回值
+		// ret = (String) call.invoke( new Object[] { str } );
+		// } catch (Exception e) {
+		// System.err.println(e.toString());
+		// }
+		// System.out.println(ret);
 	}
 	/**
 	 * 调用日志平台记录SP_BUSI_RUN_LOG日志
@@ -1624,12 +1642,22 @@ public class InterfaceClient {
 		String AppKey = SysConstant.CSB_SRC_SYS_ID_LTE;
 		String TransactionID = "";
 		String ymdStr = DateFormatUtils.format(new Date(), "yyyyMMdd");
-		String str10 = "";
-		String nonce = RandomStringUtils.randomNumeric(5); //随机字符串
-		DataBus _db = null;
-		_db = ServiceClient.callService(new HashMap(), PortalServiceCode.SERVICE_GET_LOG_SEQUENCE, null, sessionStaff);
-		str10 = nonce + String.format("%05d", _db.getReturnlmap().get("logSeq"));
-		TransactionID = AppKey+ymdStr+str10;
+		String tranid = "";
+		Map tranMap = new HashMap();
+		DataBus db = null;
+		try{
+			db = ServiceClient.callService(dataBusMap, PortalServiceCode.SERVICE_GET_TRANID, null, sessionStaff);
+			if("POR-0000".equals(db.getResultCode().toString())){
+				tranMap = db.getReturnlmap();
+				tranid = (String.valueOf(tranMap.get("TranId")));
+			}else{
+				throw new InterfaceException(ErrType.ECSP, PortalServiceCode.SERVICE_GET_TRANID, String.valueOf(db.getResultMsg()), JsonUtil.toString(dataBusMap));
+			}
+		}catch (Exception e) {
+			throw new InterfaceException(ErrType.ECSP, PortalServiceCode.SERVICE_GET_TRANID, String.valueOf(db.getResultMsg()), JsonUtil.toString(dataBusMap));
+        }
+		
+		TransactionID = AppKey+ymdStr+tranid;
 	    TcpCont.put("TransactionID", TransactionID);
 		String ReqTime = DateFormatUtils.format(new Date(), "yyyyMMddHHmmss");
 		TcpCont.put("AppKey", AppKey);
@@ -1643,59 +1671,26 @@ public class InterfaceClient {
 		TcpCont.put("Method", serviceCode);
 		TcpCont.put("Version", "V1.0");
 		//签名串结束
-		DataBus db = new DataBus();
-		db = ServiceClient.initDataBus(sessionStaff);
 		long beginTime = System.currentTimeMillis();
-//		String appDesc = propertiesUtils.getMessage(SysConstant.APPDESC);
-//		if (sessionStaff != null && SysConstant.APPDESC_MVNO.equals(appDesc)) {
-//			dataBusMap.put("distributorId", sessionStaff.getPartnerId());
-//		}
-//		String transactionId = UIDGenerator.getRand();
-//		dataBusMap.put("transactionId", transactionId);
-//		if (StringUtils.isEmpty(optFlowNum)) {
-//			optFlowNum = transactionId;
-//		}
-		// 开始调用
+
+	    // 开始调用
 		request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
 		String paramString = "";
 		paramString = JsonUtil.toString(dataBusMap);
 		String paramJson="";
 		String retnJson = "";
 		String rawRetn = "";
-		//String intfUrl = "";
-		String csbFlag = propertiesUtils.getMessage(SysConstant.CSB_FLAG);
-		String asyncFlag = propertiesUtils.getMessage(SysConstant.ASYNC_FLAG);
-		boolean asyncWay = false;
-//		if (SysConstant.ON.equals(csbFlag)) {
-//			intfUrl = propertiesUtils.getMessage(URL_KEY + "." + CSB_HTTP);
-//		}else {
-//			intfUrl = getNeeded(dbKeyWord,URL_KEY, CMP_PREFIX);
-//			if(serviceCode == PortalServiceCode.QRY_CERTPHONENUM_REL){
-//				serviceCode = "/queryCmcCertNumRel";
-//			}else if(serviceCode ==PortalServiceCode.MOD_CERTPHONENUM_REL){
-//				serviceCode = "/changeCmcCertNumRel";
-//			}
-//			intfUrl += serviceCode;
-       /// }
-      //  String method = serviceCode;
-      //  serviceCode = intfUrl;
 		String resultCode = "";
 		String resultMsg = "";
-//		String errCode = "";
-//		String errorStack = "";
-		String prefix = "";
+        String prefix = "";
 		String logSeqId = "";
 		Map<String, Object> rootMap =  new HashMap();
 		try {
 		        String contentType = JSON_CONTENT_TYPE;
 				db = httpCall(sys, serviceCode, paramString, intfUrl, contentType, optFlowNum, sessionStaff, beginTime, logSeqId);
-				rawRetn = db.getResultMsg();
-//				Node svcCont = checkCSBXml(serviceCode, rawRetn, paramString);	
-//				retnJson = svcCont.getText();
-				retnJson = rawRetn;
-			//	log.debug("retnJson:{}", retnJson.length() > 3000 ? retnJson.substring(0, 3000) : retnJson);
-				
-				if (StringUtils.isBlank(retnJson)) {
+			    rawRetn = db.getResultMsg();
+                retnJson = rawRetn;
+			    if (StringUtils.isBlank(retnJson)) {
 					db.setResultCode(ResultCode.R_INTERFACE_EXCEPTION);
 					db.setResultMsg("接口返回为空");
 					return db;
@@ -1712,6 +1707,7 @@ public class InterfaceClient {
 						svcContMap = (Map<String, Object>) rootMap.get("SvcCont");
 					}
 					if(MapUtils.isNotEmpty(tcpContMap)){
+						svcContMap.put("tranId",tcpContMap.get("TransactionID"));
 						Map respMap=(Map) tcpContMap.get("Response");
 						String respCode=(String) respMap.get("RspCode");
 						if(ResultCode.RES_SUCCESS.equals(respCode)){
