@@ -31,6 +31,13 @@
                         <input type="radio" value="2" name="query_flag_01" onclick="order.phoneNumber.pswChange(true)"/>是
                        </dd>
                        <dd id="pswInfo" style="color: #ff0000; display: none;">&nbsp;&nbsp;&nbsp;&nbsp;请在【号码自定义】栏输入全位号码才可查询出来</dd>
+                       <div id="areaDiv">     
+                                  <dt>选择地区：</dt>
+                                  <dd>
+                                    <input type="text" class="numberTextBox width198" readonly="readonly" id="p_areaId_val" onclick="order.phoneNumber.chooseAreaPr()" value="${p_areaId_val}" placeholder="请选择地区" />
+                                  	<input type="hidden" id="p_areaId" value="${p_areaId}">
+                                  </dd>    
+                      </div>           
                  </dl>
                  <dl>
                        <dt>号码自定义：</dt>
