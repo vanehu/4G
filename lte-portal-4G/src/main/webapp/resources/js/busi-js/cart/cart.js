@@ -234,6 +234,8 @@ cart.main = (function(){
 			}
 			if($("#if_p_qryNumber").attr("checked")){
 				startDt = "";
+			}else{
+				qryNumber = "";
 			}
 			var couponNumber = $("#p_couponNumber").val();
 			if(couponNumber == null || couponNumber == undefined)
@@ -308,7 +310,10 @@ cart.main = (function(){
 		}
 		*/
 		param.pageType = $("#pageType").val();
-		param.ifChansfer = $('#timeZones input[name=ifChansfer]:checked').val();;
+		if($("#if_p_qryNumber").attr("checked")){
+			param.ifTransfer = $('#timeZones input[name=ifChansfer]:checked').val();
+		}
+		
 		if(pageType=="link"){
 			param.permissionsType = $("#permissionsType").val();
 			if (pageType4EC == "link4EC") {
@@ -1355,9 +1360,13 @@ $(function(){
 			if($("#if_p_qryNumber").attr("checked")){
 				$("#p_startDt").css("background-color","#E8E8E8").attr("disabled", true) ;
 				$("#p_qryNumber").css("background-color","white").attr("disabled", false) ;
+				  $("#ifChansferN").css("background-color","#E8E8E8").attr("disabled", false) ;
+			     $("#ifChansferY").css("background-color","#E8E8E8").attr("disabled", false) ;
 			}else{
 				$("#p_startDt").css("background-color","white").attr("disabled", false) ;
 				$("#p_qryNumber").css("background-color","#E8E8E8").attr("disabled", true) ;
+				  $("#ifChansferN").css("background-color","#E8E8E8").attr("disabled", true) ;
+			     $("#ifChansferY").css("background-color","#E8E8E8").attr("disabled", true) ;
 			}
 		});	
 		

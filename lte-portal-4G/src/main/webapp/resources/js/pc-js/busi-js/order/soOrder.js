@@ -55,6 +55,7 @@ SoOrder = (function() {
 			if(OrderInfo.order.token!=""){
 				url = contextPath+"/token/pc/order/orderSubmit?token="+OrderInfo.order.token;
 			}
+			cert.fillupOrderInfoCertReaderCustInfos();
 			$.callServiceAsJson(url,JSON.stringify(OrderInfo.orderData), {
 				"before":function(){
 					$.ecOverlay("<strong>订单提交中，请稍等...</strong>");
