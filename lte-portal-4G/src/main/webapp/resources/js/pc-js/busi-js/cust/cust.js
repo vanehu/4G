@@ -1948,19 +1948,6 @@ order.cust = (function(){
 			$.alertM(response.data);
 			return false;
 		}
-		//一证五号校验
-		 var inParam = {
-	                "certType": OrderInfo.cust.identityCd,
-	                "certNum":OrderInfo.cust.idCardNumber, 
-	                "certAddress": OrderInfo.cust.addressStr,
-	                "custName": OrderInfo.cust.partyName,
-	                "custNameEnc": OrderInfo.cust.CN,
-	                "certNumEnc": OrderInfo.cust.certNum,
-	                "certAddressEnc": OrderInfo.cust.address
-	            };
-       if(OrderInfo.actionFlag ==0 && !order.cust.preCheckCertNumberRel("-1", inParam)){
-           return false;
-       }
 		return true;
 	};
 	

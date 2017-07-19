@@ -1366,19 +1366,6 @@ cust = (function(){
 			$.alertM(response.data);
 			return false;
 		}
-		//一证五号校验
-		 var inParam = {
-	                "certType": OrderInfo.cust.identityCd,
-	                "certNum":OrderInfo.cust.idCardNumber, 
-	                "certAddress": OrderInfo.cust.addressStr,
-	                "custName": OrderInfo.cust.partyName,
-	                "custNameEnc": OrderInfo.cust.CN,
-	                "certNumEnc": OrderInfo.cust.certNum,
-	                "certAddressEnc": OrderInfo.cust.address
-	            };
-      if(OrderInfo.busitypeflag ==1 && !cust.preCheckCertNumberRel("-1", inParam)){
-          return false;
-      }
 		return true;
 	};
 	//客户鉴权--证件类型
