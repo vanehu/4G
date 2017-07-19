@@ -1256,5 +1256,8 @@ public final class PortalServiceCode {
 
 	/** 查询云平台身份证信息 */
 	public static final String QUERY_CLOUD_CERT = "/api/v1/queryCert?";
+	
+	/** 一证五号报表 */
+	public static final String CERT_NUMBER_REPORT = "biz-service/intf.detailService/queryCollectionOrderItemCount";
 
 }
