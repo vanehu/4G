@@ -15,12 +15,8 @@ question.term = (function() {
 	// 获取问卷
 	myd.get_term = function() {
 		$.ajaxSettings.async = false;
-<<<<<<< HEAD
-		$.getJSON("/ltePortal/user/questionnaire/queryTerm",
-=======
 		var URL = contextPath + "/user/questionnaire/queryTerm";
 		$.getJSON(URL,
->>>>>>> ynhuang
 				function(data) {
 					if (data.successed) {
 
