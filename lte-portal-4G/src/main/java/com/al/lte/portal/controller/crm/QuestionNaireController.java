@@ -80,18 +80,19 @@ public class QuestionNaireController extends BaseController {
 			// 2、员工本季度是否已填写过 0- 否（答题） 1- 是（进入系统） 2- 样本数已达标，无须填写（进入系统）
 			if ("0".equals(userList.get("state").toString())) {
 				return "/questionnaire/demo";
+			} else if ("2".endsWith(userList.get("state").toString())) {
+				return "/questionnaire/notanswer";
 			} else {
-				String contextPath = request.getContextPath();
-				contextPath = contextPath + "/main/home";
-				java.io.PrintWriter out = response.getWriter();
-				out.println("<html>");
-				out.println("<script>");
-				out.println("window.open ('" + contextPath + "','_top')");
-				out.println("</script>");
-				out.println("</html>");
-				// return "/main/home";
-				// return super.failedStr(model, ErrorCode.QUERY_QUESTION_EMP,
-				// param, param);
+				// String contextPath = request.getContextPath();
+				// contextPath = contextPath + "/main/home";
+				// java.io.PrintWriter out = response.getWriter();
+				// out.println("<html>");
+				// out.println("<script>");
+				// out.println("window.open ('" + contextPath + "','_top')");
+				// out.println("</script>");
+				// out.println("</html>");
+				return "/questionnaire/success";
+
 			}
 		} catch (BusinessException e) {
 			this.log.error("查询信息失败", e);
@@ -143,6 +144,7 @@ public class QuestionNaireController extends BaseController {
 				out.println("window.open ('" + contextPath + "','_top')");
 				out.println("</script>");
 				out.println("</html>");
+				out.close();
 			}
 		} catch (BusinessException e) {
 			this.log.error("题目查询失败", e);
@@ -200,6 +202,13 @@ public class QuestionNaireController extends BaseController {
 		}
 		// 2、问卷结果回写
 		return super.successed(dataMap, ResultConstant.SUCCESS.getCode());
+
+	}
+
+	@RequestMapping(value = "/forwardSuccess", method = RequestMethod.GET)
+	public String forwardSuccess() {
+
+		return "/questionnaire/success";
 
 	}
 
