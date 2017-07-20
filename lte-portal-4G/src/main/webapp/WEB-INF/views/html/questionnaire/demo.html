@@ -6,9 +6,16 @@
 
 <#include "/common-js-tpl.html"/>
 <#include "/common-css-tpl.html"/>
+<a id="_session_staff_info"
+	staffId='${Session["_ecs_login_session_key"].staffId}'
+	staffCode='${Session["_ecs_login_session_key"].staffCode}'
+	staffName='${Session["_ecs_login_session_key"].staffName}'
+	areaId='${Session["_ecs_login_session_key"].currentAreaId}'
+	inPhoneNum='${Session["_ecs_login_session_key"].inPhoneNum}'></a>
+
+
 <link href="${contextPath}/css/question/bootstrap.min.css"
 	rel="stylesheet">
-<link href="${contextPath}/css/question/style.css" rel="stylesheet">
 <link href="${contextPath}/js/busi-js/icheck/skins/all.css"
 	rel="stylesheet">
 <link href="${contextPath}/css/skins/blue.css" rel="stylesheet">
