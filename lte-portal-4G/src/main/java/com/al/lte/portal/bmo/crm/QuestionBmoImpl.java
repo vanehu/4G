@@ -78,7 +78,6 @@ public class QuestionBmoImpl implements QuestionBmo {
 		// PortalServiceCode.QUESTION_INFO;
 
 		String sr = HttpRequest.sendPost("http://10.140.28.122:8070/ses_intf/queryTerm.do", "param=" + paramString);
-		System.out.println("返回的sr的值为：" + sr);
 		// String sr =
 		// "{'message':null,'data':{'term':{'create_date':'2017-07-12
 		// 17:07:57','term_id':'1','system_id':'102','term_welcome':'您好，感谢您参与由集团企业信息化事业部发起的IT系统用户满意度问卷调查，想邀请您用几分钟时间帮忙填写这份问卷。本问卷实行匿名制，所有数据只用于统计分析，请您根据实际情况填写，您的建议将帮助我们持续优化改进IT系统，提升集团集约运营水平，再次感谢！','term_name':'逆向考核满意度分析系统测试问卷'},'notsatisfy_option':[{'notsatisfy_option_name':'不满意原因1','notsatisfy_option_id':'1','option_id':'3','question_id':'2'},{'notsatisfy_option_name':'不满意原因2','notsatisfy_option_id':'2','option_id':'3','question_id':'2'},{'notsatisfy_option_name':'不满意原因3','notsatisfy_option_id':'3','option_id':'3','question_id':'2'}],'question':[{'parent_question_id':'0','question_type':'1','is_request':'0','question_name':'一、多级标题测试','question_id':'1'},{'parent_question_id':'0','question_type':'2','is_request':'1','question_name':'二、单选题测试','question_id':'2'},{'parent_question_id':'0','question_type':'3','is_request':'0','question_name':'三、多选题加非必填测试','question_id':'3'},{'parent_question_id':'0','question_type':'4','is_request':'0','question_name':'四、纯文本框测试','question_id':'4'},{'parent_question_id':'1','question_type':'2','is_request':'1','question_name':'1、子题目1','question_id':'5'},{'parent_question_id':'1','question_type':'3','is_request':'1','question_name':'2、子题目2','question_id':'6'}],'option':[{'option_name':'单选测试选项1','option_id':'1','question_id':'2','not_satisfy':'0'},{'option_name':'单选测试选项2','option_id':'2','question_id':'2','not_satisfy':'0'},{'option_name':'单选测试选项3(不满意)','option_id':'3','question_id':'2','not_satisfy':'1'},{'option_name':'多选测试选项1','option_id':'1','question_id':'3','not_satisfy':'0'},{'option_name':'多选测试选项2','option_id':'2','question_id':'3','not_satisfy':'0'},{'option_name':'多选测试选项3','option_id':'3','question_id':'3','not_satisfy':'0'},{'option_name':'子题目1选项1','option_id':'1','question_id':'5','not_satisfy':'0'},{'option_name':'子题目1选项2','option_id':'2','question_id':'5','not_satisfy':'0'},{'option_name':'子题目2选项1','option_id':'1','question_id':'6','not_satisfy':'0'},{'option_name':'子题目2选项2','option_id':'2','question_id':'6','not_satisfy':'0'}]},'success':true}";
@@ -117,7 +116,6 @@ public class QuestionBmoImpl implements QuestionBmo {
 			Map<String, Object> returnMap = new HashMap<String, Object>();
 			returnMap.put("code", flag);
 			returnMap.put("message", Msg);
-			System.out.println("提交成功.......");
 			return returnMap;
 		} catch (Exception e) {
 			log.error("门户处理系统管理的问卷结果写会异常", e);

@@ -292,6 +292,7 @@ question.term = (function() {
 			base_info.staff_name = myd.staff_name;
 			base_info.phone_number = myd.phone_number;
 			base_info.term_id = myd.term_id;
+			base_info.Term_id = myd.term_id;
 			base_info.staff_code = myd.staff_code;
 			base_info.area_id = myd.area_id;
 
@@ -336,13 +337,14 @@ question.term = (function() {
 				question_obj.question_type = myd.question[i].question_type;
 				question_obj.is_request = myd.question[i].is_request;
 				question_obj.parent_question_id = myd.question[i].parent_question_id;
+				question_obj.parent_questionId = myd.question[i].parent_question_id;
 				question.push(question_obj);
 			}
 
 			result.option = option;
 			result.notsatisfy_option = notsatisfy_option;
 			result.question = question;
-
+			result.areaId = myd.area_id;
 			// 调用回写接口
 			var question_params = JSON.stringify(result);
 			console.log(question_params);
