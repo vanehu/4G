@@ -9,11 +9,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import com.al.ecs.log.Log;
 import com.sun.image.codec.jpeg.JPEGCodec;
 import com.sun.image.codec.jpeg.JPEGImageEncoder;
 
 public class ImgReSIze {
-
+	
+	private final static Log log = Log.getLog(ImgReSIze.class);
 	/** 
      * 采用指定宽度、高度或压缩比例 的方式对图片进行压缩 
      * @param imgsrc 源图片地址 
@@ -80,7 +82,7 @@ public class ImgReSIze {
             System.out.println("压缩后图片大小:" + file_imgdist.length()); 
             file_imgdist.delete();
         } catch (IOException ex) {  
-            ex.printStackTrace();  
+        	log.error(ex); 
         }
         return base64imgdist;
     }
@@ -103,7 +105,7 @@ public class ImgReSIze {
             result[1] = src.getHeight(null); // 得到源图高  
             is.close();  
         } catch (Exception e) {  
-            e.printStackTrace();  
+           log.error(e);
         }  
         return result;  
     }

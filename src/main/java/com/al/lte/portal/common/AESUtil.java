@@ -15,8 +15,10 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
-public class AESUtil {
+import com.al.ecs.log.Log;
 
+public class AESUtil {
+	private final static Log log = Log.getLog(AESUtil.class);
 	static final public String KEY_VI = "1234567812345678";
 	public static final String bm = "UTF-8";
 	private static String WAYS = "AES";
@@ -38,7 +40,7 @@ public class AESUtil {
 			byte[] enCodeFormat = secretKey.getEncoded();
 			return new SecretKeySpec(enCodeFormat, WAYS);
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e);
 		}
 		return null;
 	}
@@ -55,19 +57,19 @@ public class AESUtil {
 			byte[] encryptedData = cipher.doFinal(cleartext.getBytes(bm));
 			return new String(parseByte2HexStr(encryptedData));
 		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
+			log.error(e);
 		} catch (NoSuchPaddingException e) {
-			e.printStackTrace();
+			log.error(e);
 		} catch (InvalidKeyException e) {
-			e.printStackTrace();
+			log.error(e);
 		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
+			log.error(e);
 		} catch (IllegalBlockSizeException e) {
-			e.printStackTrace();
+			log.error(e);
 		} catch (BadPaddingException e) {
-			e.printStackTrace();
+			log.error(e);
 		} catch (InvalidAlgorithmParameterException e) {
-			e.printStackTrace();
+			log.error(e);
 		}
 		return null;
 	}
@@ -82,19 +84,19 @@ public class AESUtil {
 			byte[] decryptedData = cipher.doFinal(byteMi);
 			return new String(decryptedData, bm);
 		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
+			log.error(e);
 		} catch (NoSuchPaddingException e) {
-			e.printStackTrace();
+			log.error(e);
 		} catch (InvalidKeyException e) {
-			e.printStackTrace();
+			log.error(e);
 		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
+			log.error(e);
 		} catch (IllegalBlockSizeException e) {
-			e.printStackTrace();
+			log.error(e);
 		} catch (BadPaddingException e) {
-			e.printStackTrace();
+			log.error(e);
 		} catch (InvalidAlgorithmParameterException e) {
-			e.printStackTrace();
+			log.error(e);
 		}
 		return null;
 	}
