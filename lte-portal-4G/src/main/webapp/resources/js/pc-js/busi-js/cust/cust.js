@@ -2714,8 +2714,10 @@ order.cust = (function(){
 		}
     	if(auditSwitch == "ON" && !auditOperateSpec){
     	    _qryOperateSpecStaffList();
-    	    $("#checkType").val("-1");
-		    $("#auditPersonnel").val("-1");
+//    	    $("#checkType").val("-1");
+    	    $("#checkType").val("");
+//		    $("#auditPersonnel").val("-1");
+		    $("#auditPersonnel").val("");
 		    $("#auditDiv").hide();
 		    $("#photoDiv").show();
     	}else{
