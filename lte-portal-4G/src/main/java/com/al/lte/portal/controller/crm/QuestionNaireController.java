@@ -182,7 +182,7 @@ public class QuestionNaireController extends BaseController {
 		param.put("token", token);
 
 		Map<String, Object> tempMap = param;
-		tempMap.remove("question");
+		// tempMap.remove("question");
 
 		String paramString = JsonUtil.toString(tempMap);
 		String sr = HttpRequest.sendPost("http://10.140.28.122:8070/ses_intf/return_result.do", "param=" + paramString);
