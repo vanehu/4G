@@ -1359,6 +1359,7 @@ var _saveHtml2Pdf=function(){
 //								"AttrInfos":[],
 							"DetailAddr":$("#addressName").val()+"（"+$.trim($("#addbeizhu").val())+"）",
 							"FormatAddr":$("#addressName").val(),
+							"RegionId":$("#area").val(),
 							"ProdInstId":"-1",
 							"ProductNbr":$("#prodNbr").val(),//"00102005000000000000",
 							"AccessModeId":$("#AccessModeId").val(),
