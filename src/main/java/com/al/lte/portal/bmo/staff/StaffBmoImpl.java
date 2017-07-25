@@ -108,7 +108,7 @@ public class StaffBmoImpl implements StaffBmo {
 	public Map<String, Object> updateStaffPwd(Map<String, Object> dataBusMap, String optFlowNum, SessionStaff sessionStaff)
 			throws Exception {
 		
-		DataBus db = InterfaceClient.callService(dataBusMap, PortalServiceCode.STAFF_PASSWORD, optFlowNum, sessionStaff);
+		DataBus db = InterfaceClient.callService(dataBusMap, PortalServiceCode.STAFF_PWD, optFlowNum, sessionStaff);
 		
 		try{	
 			Integer flag = Integer.parseInt((StringUtils.defaultString(db.getResultCode())));
@@ -1055,7 +1055,7 @@ public class StaffBmoImpl implements StaffBmo {
 	public Map<String, Object> updatePassword(Map<String, Object> param, String optFlowNum,
 			SessionStaff sessionStaff)throws Exception {
 		// TODO Auto-generated method stub
-		DataBus db = InterfaceClient.callService(param, PortalServiceCode.UPDATTEPASSWORD, null, null);
+		DataBus db = InterfaceClient.callService(param, PortalServiceCode.UPDATTEPWD, null, null);
 		Map<String, Object> retnMap = new HashMap<String, Object>();
 		if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db
 				.getResultCode()))) {

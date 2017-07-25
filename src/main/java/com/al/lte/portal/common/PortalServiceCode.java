@@ -16,7 +16,7 @@ public final class PortalServiceCode {
 	/** 平台角色 */
 	public static final String SERVICE_PORTAL_ROLE_CODE = "LtePortal";
 	/** 平台密码 */
-	public static final String SERVICE_PORTAL_PASSWORD = "111111";
+	public static final String SERVICE_PORTAL_PWD = "111111";
 	/** 登录验证账号和密码 */
 	public static final String LOGIN_VALIDATE_ACCONT = "";
 	/**
@@ -106,7 +106,7 @@ public final class PortalServiceCode {
 	/**
 	 * 工号密码修改/密码重置服务编码
 	 */
-	public static final String SERVICE_UPDATE_PASSWORD = "com.linkage.portal.service.ess.core.system.UpdatePassword";
+	public static final String SERVICE_UPDATE_PWD = "com.linkage.portal.service.ess.core.system.UpdatePassword";
 	/**
 	 * 工号信息查询服务编码
 	 */
@@ -625,7 +625,7 @@ public final class PortalServiceCode {
     public static final String INTF_PNUIMBATCHVAL_SERVICE="res-PnPiReserveService";
     
     /*员工密码修改或重置*/
-    public static final String STAFF_PASSWORD = "sys-updatePassword";
+    public static final String STAFF_PWD = "sys-updatePassword";
     /*客户列表查询*/
     public static final String INTF_QUERY_CUST = "biz-service/intf.custService/queryCust";
     /*产品密码鉴权*/
@@ -1229,7 +1229,7 @@ public final class PortalServiceCode {
     /**员工身份信息验证*/
     public static final String CHECKSTAFFMESSAGE = "sys-checkStaffMessage";
     /**员工密码修改*/
-    public static final String UPDATTEPASSWORD = "sys-updatePassword";
+    public static final String UPDATTEPWD = "sys-updatePassword";
     /**销售品打包礼包查询*/
     public static final String QUERY_GIFT_PACKAGE_OFFER = "biz-service/intf.prodOfferService/queryGiftPackageList";
     /**销售品打包礼包成员查询*/

@@ -301,7 +301,7 @@ public class ServiceClient {
 		DataBus db = new DataBus();
 		db.setPortalCode(PortalServiceCode.SERVICE_PORTAL_CODE);
 		db.setRoleCode(PortalServiceCode.SERVICE_PORTAL_ROLE_CODE);
-		db.setPassword(PortalServiceCode.SERVICE_PORTAL_PASSWORD);
+		db.setPassword(PortalServiceCode.SERVICE_PORTAL_PWD);
 		if(sessionStaff!=null){
 			db.setOperatStaff(sessionStaff.getStaffCode());
 			db.setOperatChannel(sessionStaff.getCurrentChannelId());

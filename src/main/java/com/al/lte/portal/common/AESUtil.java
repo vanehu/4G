@@ -139,11 +139,11 @@ public class AESUtil {
 	}
 
 	public static void main(String[] a) throws Exception {
-		String content = "crm";
-		String password = "FACEKEY_20170210";
-		String encryptStr = AESUtil.encryptToString(content,password);
-		System.out.println("加密后密文：" + encryptStr);
-		String decryptStr = AESUtil.decryptToString(encryptStr,password);
-		System.out.println("解密后明文：" + decryptStr);
+//		String content = "crm";
+//		String password = "FACEKEY_20170210";
+//		String encryptStr = AESUtil.encryptToString(content,password);
+//		System.out.println("加密后密文：" + encryptStr);
+//		String decryptStr = AESUtil.decryptToString(encryptStr,password);
+//		System.out.println("解密后明文：" + decryptStr);
 	}
 }

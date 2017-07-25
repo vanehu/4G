@@ -73,7 +73,10 @@ public class ImgReSIze {
             out.close();
             InputStream is = new FileInputStream(imgdist);
             byte[] data = new byte[is.available()];
-            is.read(data);
+            int n=0;
+		    while((n=is.read(data))>=0){
+		    	is.read(data);
+		    }           
             is.close();
             base64imgdist = Base64.encode(data).replaceAll("\n|\r", "");
             System.out.println("+++++++压缩后的base64图片字符串"+base64imgdist);
