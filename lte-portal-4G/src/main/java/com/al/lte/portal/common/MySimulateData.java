@@ -262,7 +262,14 @@ public class MySimulateData {
 	public static Properties getProperties(String resource) {
 		Properties properties = new Properties();
 		try {
-			properties.load(new BufferedInputStream(new FileInputStream(getClassLoader().getResource(resource).getPath())));
+            if (getClassLoader().getClass().getName().startsWith("org.apache.catalina")) {
+                if (StringUtils.isNotBlank(resource) && resource.startsWith("/")) {
+                    resource = resource.substring(1);
+                }
+                properties.load(new BufferedInputStream(new FileInputStream(getClassLoader().getResource(resource).getPath())));
+            } else {
+                properties.load(new BufferedInputStream(new FileInputStream(getClassLoader().getResource(resource).getPath())));
+            }
 		} catch (IOException e) {
 			throw new RuntimeException("couldn't load properties file '"
 					+ resource + "'", e);
