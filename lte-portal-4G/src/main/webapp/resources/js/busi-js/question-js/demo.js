@@ -15,29 +15,34 @@ question.term = (function() {
 	// 获取问卷
 	myd.get_term = function() {
 		$.ajaxSettings.async = false;
-		$.getJSON("/ltePortal/user/questionnaire/queryTerm", function(data) {
-			if (data.successed) {
+		var URL = contextPath + "/user/questionnaire/queryTerm";
+		$.getJSON(URL,
+				function(data) {
+					if (data.successed) {
 
-				// 以下信息通过接口获得
-				myd.term = data.data.term;
-				myd.notsatisfy_option = data.data.notsatisfy_option;
-				myd.option = data.data.option;
-				myd.question = data.data.question;
-				myd.system_id = data.data.term.system_id;
-				myd.term_id = data.data.term.term_id;
-				// 以下信息请源系统设置
-				myd.staff_code = '15308007255';
-				myd.area_id = 'SC';
-				myd.staff_name = '雷健';
-				myd.phone_number = '15308007255';
-				// 以下信息请源系统提交到后台后进行设置
-				myd.timestamp = '';
-				myd.token = '';
-				$.ajaxSettings.async = true;
-			} else {
-				$.alert('错误');
-			}
-		});
+						// 以下信息通过接口获得
+						myd.term = data.data.term;
+						myd.notsatisfy_option = data.data.notsatisfy_option;
+						myd.option = data.data.option;
+						myd.question = data.data.question;
+						myd.system_id = data.data.term.system_id;
+						myd.term_id = data.data.term.term_id;
+						// 以下信息请源系统设置
+						myd.staff_code = $("#_session_staff_info").attr(
+								"staffCode");
+						myd.area_id = $("#_session_staff_info").attr("areaId");
+						myd.staff_name = $("#_session_staff_info").attr(
+								"staffName");
+						myd.phone_number = $("#_session_staff_info").attr(
+								"inPhoneNum");
+						// 以下信息请源系统提交到后台后进行设置
+						myd.timestamp = '';
+						myd.token = '';
+						$.ajaxSettings.async = true;
+					} else {
+						$.alert('错误');
+					}
+				});
 	};
 
 	// 设置标题和欢迎词
@@ -287,6 +292,7 @@ question.term = (function() {
 			base_info.staff_name = myd.staff_name;
 			base_info.phone_number = myd.phone_number;
 			base_info.term_id = myd.term_id;
+			base_info.Term_id = myd.term_id;
 			base_info.staff_code = myd.staff_code;
 			base_info.area_id = myd.area_id;
 
@@ -331,13 +337,14 @@ question.term = (function() {
 				question_obj.question_type = myd.question[i].question_type;
 				question_obj.is_request = myd.question[i].is_request;
 				question_obj.parent_question_id = myd.question[i].parent_question_id;
+				question_obj.parent_questionId = myd.question[i].parent_question_id;
 				question.push(question_obj);
 			}
 
 			result.option = option;
 			result.notsatisfy_option = notsatisfy_option;
 			result.question = question;
-
+			result.areaId = myd.area_id;
 			// 调用回写接口
 			var question_params = JSON.stringify(result);
 			console.log(question_params);
@@ -352,8 +359,10 @@ question.term = (function() {
 				},
 				"done" : function(response) {
 					if (response.code == 0) {
-						$.alert("提示", "提交成功");
+						// $.alert("提示", "提交成功");
 						// _queryUserInfo();
+						window.location.href = contextPath
+								+ "/user/questionnaire/forwardSuccess";
 					} else if (response.code == -2) {
 						$.alertM(response.data);
 					} else {

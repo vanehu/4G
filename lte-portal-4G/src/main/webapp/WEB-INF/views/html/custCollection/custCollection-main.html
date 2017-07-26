@@ -52,12 +52,14 @@
                             <dl>
                              	  <dt style="width:100px"><input type="checkbox" id="if_p_olNbr" >采集单号：</dt>
                                   <dd>
-                                    <input type="text" class="numberTextBox width198" id="p_olNbr" value="" disabled="disabled" style="width:160px;background-color: #E8E8E8;" />
-                                  	<label class="f_red" >&nbsp;&nbsp;</label>
+                                    <input type="text" class="numberTextBox width198" id="p_olNbr" value="" disabled="disabled" style="width:170px;background-color: #E8E8E8;" />
+                                  	<label class="f_red" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
                                   </dd>
+                             
                                   <dt>受理工号：</dt>
 	                        	 <dd>
-                          			<input id="qureyStaffCode" class="numberTextBox width100" type="text" readonly="readonly" value="${Session["_ecs_login_session_key"].staffCode}" />
+                          			<input id="qureyStaffCode" class="numberTextBox width100" type="text" readonly="readonly" style="width:160px" value="${Session["_ecs_login_session_key"].staffCode}" />
+                          			<label class="f_red" >&nbsp;&nbsp;&nbsp;&nbsp;</label>
                           			<input id="bt_resetStaffCode" type="button" value="重  置" class="numberSearch" />
                           			<input id="p_staffId" class="numberTextBox width100" type="hidden" readonly="readonly" value="${Session["_ecs_login_session_key"].staffId}" />						
                                   	<input id="p_QryChannelAuth" type="hidden" readonly="readonly" value="${QryChannelAuth}" />

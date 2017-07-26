@@ -8251,7 +8251,7 @@ public class PrintBmoImpl implements PrintBmo {
 		int speCustInfoLen = 0;
 		Map<String, Object> orderListInfo = MapUtils.getMap(dataMap, "orderListInfo");
 		if (MapUtils.isNotEmpty(orderListInfo)) {
-			if (MapUtils.getString(orderListInfo, "olType").equals(SysConstant.OL_TYPE_LTE_ESS)) {
+			if (SysConstant.OL_TYPE_LTE_ESS.equals(MapUtils.getString(orderListInfo, "olType"))) {
 				olNbr = MapUtils.getString(orderListInfo, "extCustOrderId");
 			} else {
 				olNbr = MapUtils.getString(orderListInfo, "olNbr");

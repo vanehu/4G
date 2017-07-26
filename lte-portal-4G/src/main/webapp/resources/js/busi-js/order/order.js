@@ -90,7 +90,7 @@ order.service = (function(){
 		}
 		
 		//套餐变更，如果3转4，则必传Y，用于后台过滤
-		params.If3up4 = order.prodModify.choosedProdInfo.is3G;
+		params.if3up4 = order.prodModify.choosedProdInfo.is3G;
 		
 		var url = contextPath+"/order/offerSpecList";
 		$.callServiceAsHtmlGet(url,params, {
