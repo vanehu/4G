@@ -1440,7 +1440,20 @@ AttachOffer = (function() {
 			return;
 		}
 		param.offerSpecName = offerSepcName;
-		param.specIds = AttachOffer.offerSpecIds;
+		var specIds = [];
+		if(AttachOffer.offerSpecIds.length>0){
+			var pro = prodId+"";
+			for(var i=0;i<AttachOffer.offerSpecIds.length;i++){
+				var off = AttachOffer.offerSpecIds[i];
+				var specObj = off.split("_");
+				var cachId = specObj[1]+"";
+				var cachPro = specObj[0]+"";
+				if(pro == cachPro){
+					specIds.push(parseInt(cachId));
+				}
+			}
+		}
+		param.specIds = specIds;
 		query.offer.searchAttachOfferSpec(param, function(data) {
 			if (data != undefined) {
 				var $ul = $("#canChooseUl_"+prodId);		
@@ -1605,7 +1618,7 @@ AttachOffer = (function() {
 				$.alert("提示","当前客户证件类型无权限开通翼支付及其相关功能产品!");
 			}
 		} else {
-			AttachOffer.offerSpecIds.push(parseInt(servSpecId));//加入已选择缓存，用于过滤搜索
+			AttachOffer.offerSpecIds.push(prodId+"_"+servSpecId);//加入已选择缓存，用于过滤搜索
 			//从已开通功能产品中找
 			var serv = CacheData.getServBySpecId(prodId,servSpecId); 
 			if(serv != undefined){
@@ -1919,7 +1932,7 @@ AttachOffer = (function() {
 	//添加到开通列表
 	var _addOpenList = function(prodId,offerSpecId){
 		
-		AttachOffer.offerSpecIds.push(parseInt(offerSpecId));//加入已选择缓存，用于过滤搜索
+		AttachOffer.offerSpecIds.push(prodId+"_"+offerSpecId);//加入已选择缓存，用于过滤搜索
 		if(!_manyPhoneFilter(prodId,offerSpecId)){
 			return;
 		}
