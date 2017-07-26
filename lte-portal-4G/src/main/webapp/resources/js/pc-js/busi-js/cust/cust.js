@@ -1577,7 +1577,7 @@ order.cust = (function(){
 	};
 	//定位客户时读卡
 	var _readCert = function() {
-		var man = cert.readCert();
+		var man = cert.readCert(CONST.CERT_READER_QUERY_CUST);
 		if (man.resultFlag != 0){
 			$.alert("提示", man.errorMsg);
 			return;
@@ -1615,7 +1615,7 @@ order.cust = (function(){
 	}
 	//新建客户时读卡
 	var _readCertWhenCreate = function() {
-		var man = cert.readCert();
+		var man = cert.readCert(CONST.CERT_READER_CREATE_CUST);
 		if (man.resultFlag != 0){
 			$.alert("提示", man.errorMsg);
 			return;
@@ -1633,7 +1633,7 @@ order.cust = (function(){
 	};
 	//用户鉴权时读卡
 	var _readCertWhenAuth = function() {
-		var man = cert.readCert();
+		var man = cert.readCert(CONST.CERT_READER_AUTH_CUSTOMER);
 		if (man.resultFlag != 0){
 			$.alert("提示", man.errorMsg);
 			return;
@@ -2518,7 +2518,7 @@ order.cust = (function(){
 	};
 	// 填单页面经办人读卡
 	var _readCertWhenOrder = function() {
-		var man = cert.readCert();
+		var man = cert.readCert(CONST.CERT_READER_HANDLE_CUST);
 		if (man.resultFlag != 0){
 			$.alert("提示", man.errorMsg);
 			return;
@@ -3236,7 +3236,7 @@ order.cust = (function(){
     
     // 使用人读卡
 	var _readCertWhenUser = function() {
-		var man = cert.readCert();
+		var man = cert.readCert(CONST.CERT_READER_USER);
 		if (man.resultFlag != 0){
 			$.alert("提示", man.errorMsg);
 			return;
@@ -3504,6 +3504,8 @@ order.cust = (function(){
 			$("#li_order_attr span").text("");
 			$("#li_order_remark2 span").text("");
 			$("#li_order_remark3 span").text("");
+			
+			cert.deleteCertReaderCustInfosByServCode(CONST.CERT_READER_HANDLE_CUST);
 		}else{
 			//初始化页面
 			$("#orderAttrReset").hide();
