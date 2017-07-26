@@ -764,11 +764,11 @@ public class OrderProdModifyController extends BaseController {
 		paramMap.put("custId", sessionStaff.getCustId());
 		 HttpSession session = request.getSession();
 		String areaId = (String) session.getAttribute("pointareaId");
-		Map<String, Object> areaInfo = CommonMethods.getAreaInfo(areaId);
-		if("1300".equals(MapUtils.getString(areaInfo, "regionType"))){
-			paramMap.put("areaId", areaId); 
-		} else {
-			paramMap.put("areaId", areaId.substring(0, 5) + "00"); 
+		if(!"".equals(areaId) && areaId !=null){
+			paramMap.put("areaId", areaId.substring(0, 5) + "00");
+		}else{
+			 areaId = sessionStaff.getAreaId();
+			 paramMap.put("areaId",areaId.substring(0, 5) + "00");
 		}
 		String comPreFlag = propertiesUtils.getMessage("COMANDFXPRECHECK_"+areaId.substring(0, 3));
 		try {
