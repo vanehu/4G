@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.collections.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -32,7 +33,6 @@ import com.al.ecs.exception.ResultConstant;
 import com.al.ecs.spring.controller.BaseController;
 import com.al.lte.portal.bmo.crm.QuestionBmo;
 import com.al.lte.portal.common.Base64;
-import com.al.lte.portal.common.PortalServiceCode;
 import com.al.lte.portal.common.SysConstant;
 import com.al.lte.portal.model.SessionStaff;
 
@@ -78,7 +78,7 @@ public class QuestionNaireController extends BaseController {
 			userList = questionBmo.queryStaff(param, sessionStaff);
 			// model.addAttribute("userList", userList);
 			// 2、员工本季度是否已填写过 0- 否（答题） 1- 是（进入系统） 2- 样本数已达标，无须填写（进入系统）
-			if ("0".equals(userList.get("state").toString())) {
+			if ("0".equals(MapUtils.getString(userList, "state"))) {
 				return "/questionnaire/demo";
 			} else if ("2".endsWith(userList.get("state").toString())) {
 				return "/questionnaire/notanswer";
@@ -131,9 +131,9 @@ public class QuestionNaireController extends BaseController {
 
 		try {
 			termMap = questionBmo.queryTerm(param);
-			// model.addAttribute("termList", termList);
+			// model.addAttribute("termList", termList);MapUtils.getString
 
-			if (ResultCode.R_SUCCESS.equals(termMap.get("state").toString())) {
+			if (ResultCode.R_SUCCESS.equals(MapUtils.getString(termMap, "state"))) {
 				return super.successed(termMap, ResultConstant.SUCCESS.getCode());
 			} else {
 				String contextPath = request.getContextPath();
@@ -160,7 +160,7 @@ public class QuestionNaireController extends BaseController {
 	}
 
 	// 提交问卷处理,问卷结果回写接口,接口名: return_result
-	@RequestMapping(value = "/return_result", method = RequestMethod.POST)
+	@RequestMapping(value = "/returnResult", method = RequestMethod.POST)
 	@ResponseBody
 	public JsonResponse commitQuestion(@RequestBody Map<String, Object> param, Model model, HttpServletRequest request,
 			HttpServletResponse response, HttpSession httpSession) {
@@ -190,7 +190,7 @@ public class QuestionNaireController extends BaseController {
 		Map<String, Object> resultMap = JsonUtil.toObject(sr, Map.class);
 		Map<String, Object> dataMap = null;
 		try {
-			if ("true".equals(resultMap.get("success").toString())) {
+			if ("true".equals(MapUtils.getString(resultMap, "success"))) {
 				// 表示接口调用
 				dataMap = questionBmo.return_result(param, sessionStaff);
 			} else {
