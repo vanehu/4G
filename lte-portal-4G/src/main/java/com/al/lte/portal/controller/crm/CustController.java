@@ -953,6 +953,7 @@ public class CustController extends BaseController {
                         	membershipLevelInfoMap.putAll((Map<String, Object>) objmembershipLevelInfo);
                         }
                         model.addAttribute("membershipLevel", membershipLevelInfoMap.get("membershipLevel"));
+					    httpSession.setAttribute("memberLevel",membershipLevelInfoMap.get("membershipLevel"));
 				}
         	} catch (BusinessException be) {
 			} catch (InterfaceException ie) {
