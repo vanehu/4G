@@ -3633,6 +3633,29 @@ order.cust = (function(){
         }
         return checkResult;
     };
+
+    /**
+     * 证号关系预校验接口,只查询数据不校验
+     */
+    var _preCheckCertNumberRelQueryOnly = function (inParam) {
+        var isON = query.common.queryPropertiesStatus("ONE_CERT_5_NUMBER_" + OrderInfo.cust.areaId.substr(0, 3));
+        if (isON) {
+            var param = $.extend(true, {"certType": "", "certNum": "", "certAddress": "", "custName": ""}, inParam);
+            if (CacheData.isGov(param.certType)) {//过滤政企的证件类型，政企的证件不调用一证五号校验
+                return true;
+            }
+            var response = $.callServiceAsJson(contextPath + "/cust/preCheckCertNumberRel", JSON.stringify(param));
+            if (response.code == 0) {
+                var result = response.data;
+                if (ec.util.isObj(result)) {
+                    ec.util.mapPut(OrderInfo.oneCardFiveNum.usedNum, _getCustInfo415Flag(inParam), result.usedNum);
+                }
+            } else {
+                $.alertM(response.data);
+            }
+        }
+    };
+
     /**
      * 获取一证五号客户信息唯一标识，新客户或者老用户
      * @private 有脱敏信息的客户信息中脱敏证件号不具有唯一性，用加密字段做唯一标识，
@@ -3859,6 +3882,7 @@ order.cust = (function(){
 		orderAttrReset:_orderAttrReset,
 		getCustInfo415 : _getCustInfo415,
 		preCheckCertNumberRel : _preCheckCertNumberRel,
+		preCheckCertNumberRelQueryOnly:_preCheckCertNumberRelQueryOnly,
 		getCustInfo415Flag : _getCustInfo415Flag,
 		confirmAgreeSmsResend : _confirmAgreeSmsResend,
 		auditFailure : _auditFailure,
