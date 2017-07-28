@@ -348,7 +348,7 @@ question.term = (function() {
 			// 调用回写接口
 			var question_params = JSON.stringify(result);
 			console.log(question_params);
-			var url = contextPath + "/user/questionnaire/return_result";
+			var url = contextPath + "/user/questionnaire/returnResult";
 
 			$.callServiceAsJson(url, question_params, {
 				"before" : function() {

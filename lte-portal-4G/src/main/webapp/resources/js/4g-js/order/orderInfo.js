@@ -1735,7 +1735,7 @@ OrderInfo = (function() {
 			if(ec.util.isObj(isInitOrderData)){//如果是初始化订单数据，不能清理，上一步或取消需要清理缓存
 				OrderInfo.isHandleCustNeeded  = false;
 			}
-			
+
 			OrderInfo.virOlId				  = "";		//拍照上传虚拟购物车ID
 			OrderInfo.handleCust			  = {};		//针对经办人老客户缓存一些数据
 			OrderInfo.certInfoKeys	  		  = [];		//读卡客户信息列表
@@ -1751,6 +1751,8 @@ OrderInfo = (function() {
 			OrderInfo.bojbrCustIdentities	  = $.extend(true, {}, _bojbrCustIdentities);	//经办人：客户证件节点
 			OrderInfo.bojbrPartyContactInfo   = $.extend(true, {}, _bojbrPartyContactInfo);	//经办人：客户证件节点
 			OrderInfo.boUserPartyContactInfo  = $.extend(true, {}, _boUserPartyContactInfo);//使用人：联系人节点
+
+			cert.deleteCertReaderCustInfosByServCode(CONST.CERT_READER_HANDLE_CUST);
 		}
 	};
 	

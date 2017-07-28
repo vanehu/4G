@@ -113,6 +113,25 @@
 	if(hintCode == "4"){
 		$.alert("提示","您超过60天未修改密码，请移步【密码修改】界面修改密码.");
 	}
+	
+	var isQuestion = '${isQuestion}';
+	if (isQuestion == "0") {
+		//$.alert("提示", "请您移步到【问卷调查】界面完成答题.");
+		$.question_confirm("提示", "为更好的提升使用感知，诚邀您填写系统问卷调查", {
+			yes : function() {
+			},
+			yesdo : function() {
+				//newWin(contextPath + "/user/questionnaire/queryTerm", 1);
+				window.parent.main.home.addTab('main_tab_5281', '问卷调查',
+						contextPath + '/user/questionnaire/main');
+			},
+			no : function() {
+			}
+		});
+	}
+	if (isQuestion == "2") {
+		$.alert("提示", "有一份最新的调查问卷，诚邀您移步【工作支持】【问卷调查】填写宝贵建议.");
+	}
 
     OrderInfo.specialtestauth = '${specialtestauth}' == '0'? true:false;
     OrderInfo.dzjbakqx = '${dzjbakqx}' == '0'? true:false;

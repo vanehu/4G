@@ -29,6 +29,11 @@ public class MDA {
 	 * 问卷调查 key值定义
 	 */
 	public static final String QESTION_KEY = new String("");
+	
+	/**
+	 * 问卷调查 菜单访问权限
+	 */
+	public static final String IS_QUESTION_MENU = new String("");
 
 //	/**
 //	 * 问卷调查 题目查询

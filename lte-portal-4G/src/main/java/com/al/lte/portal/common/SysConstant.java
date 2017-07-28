@@ -816,6 +816,9 @@ public final class SysConstant {
 	/** 专用测试权限 */
 	public static final String SPECIALTESTQX = "ZYCSK";
 
+	/** 问卷调查菜单权限 **/
+	public static final String QUESTION_MUNE = "WJDC";
+
 	/** 专用测试权限 */
 	public static final String DZJBAKQX = "DZJBAKQX";
 
