@@ -311,7 +311,7 @@ cart.main = (function(){
 		*/
 		param.pageType = $("#pageType").val();
 		if($("#if_p_qryNumber").attr("checked")){
-			param.ifTransfer = $('#timeZones input[name=ifChansfer]:checked').val();
+			param.ifChansfer = $('#timeZones input[name=ifChansfer]:checked').val();
 		}
 		
 		if(pageType=="link"){
