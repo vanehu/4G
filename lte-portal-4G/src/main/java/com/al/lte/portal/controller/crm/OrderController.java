@@ -1558,16 +1558,18 @@ public class OrderController extends BaseController {
                         boolean checkFlag = false;//标识判断是否查权益
                         HttpSession session = request.getSession();
                         String membershipLevel = (String)session.getAttribute("memberLevel");
-                        String[] arr = membershipLevel.split("星");
                         String isChecked = "N";
-                        try {
-                            if(arr.length>0){
-                                int lev = Integer.parseInt(arr[0]);
-                                if(2<=lev && lev<=7){
-                                    isChecked = "Y";
+                        if(!StringUtil.isEmpty(membershipLevel)){
+                            String[] arr = membershipLevel.split("星");
+                            try {
+                                if(arr.length>0){
+                                    int lev = Integer.parseInt(arr[0]);
+                                    if(2<=lev && lev<=7){
+                                        isChecked = "Y";
+                                    }
                                 }
+                            }catch (Exception e){
                             }
-                        }catch (Exception e){
                         }
                         model.addAttribute("isChecked", isChecked);
                         int sumAmount = 0;
