@@ -1,6 +1,8 @@
 CommonUtils.regNamespace("prod", "telnum");
 
 var phoneNum_level="";
+var selectedObj=null;
+var _queryFlag="0";
 prod.telnum = (function(){
 	var _boProdAn = {
 			accessNumber : "", //接入号
@@ -32,10 +34,15 @@ prod.telnum = (function(){
 		var phoneNumberVal="";
 		//按钮查询
 		var _btnQueryPhoneNumber=function(param){
+            selectedObj=null;//初始化原先选中的号码
 			//收集参数
 			param = _buildInParam(param);
 			if (param == false) {
 				return;
+              }
+              param.isReserveFlag=_queryFlag;
+              if(_queryFlag=='1'){//预约选号
+                   param.queryFlag="1";
 			}
 			$.callServiceAsHtmlGet(url,param,{
 				"before":function(){
@@ -164,6 +171,7 @@ prod.telnum = (function(){
 				_boProdAn.preStore=preStoreFare;
 				_boProdAn.minCharge=pnPrice;
 				order.service.boProdAn = _boProdAn;
+                   //_qryOfferInfoByPhoneNumFee();
 				_nextStep();
 				
 			} else {
@@ -218,7 +226,7 @@ prod.telnum = (function(){
 			}
 		};
 		var _qryOfferInfoByPhoneNumFee=function(){
-			var param={};
+              var param={"numsubflag":"number"};
 			$.callServiceAsHtmlGet(contextPath+"/order/prodoffer/prepare",param,{
 				"before":function(){
 					$.ecOverlay("<strong>正在查询中,请稍等会儿....</strong>");
@@ -243,7 +251,7 @@ prod.telnum = (function(){
 			});
 		};
 		//号码预占
-		var _btnPurchase=function(obj){
+          var _btnPurchase=function(obj,needPsw){
 			phoneNumberVal = $(obj).attr("numberVal"); 
 			var memberRoleCd=CONST.MEMBER_ROLE_CD.MAIN_CARD;
 			//选号类型：新装主卡选号、新装副卡选号 Y1、Y2
@@ -274,7 +282,13 @@ prod.telnum = (function(){
 			}
 			var orgLevel=phoneNumberVal.split("_")[5];//初始等级
 			if(phoneNumber){
-				var params={"phoneNumber":phoneNumber,"actionType":"E","anTypeCd":anTypeCd,"areaId":OrderInfo.getProdAreaId(order.prodModify.choosedProdInfo.prodInstId)};
+                   //var params={"phoneNumber":phoneNumber,"actionType":"E","anTypeCd":anTypeCd,"areaId":OrderInfo.getProdAreaId(order.prodModify.choosedProdInfo.prodInstId)};
+                var params={};
+                   if(needPsw){
+                         params={"phoneNumber":phoneNumber,"actionType":"E","anTypeCd":anTypeCd,"areaId":OrderInfo.getProdAreaId(order.prodModify.choosedProdInfo.prodInstId),"attrList":[{"attrId":"65010036","attrValue":needPsw}]};
+                   }else{
+                         params={"phoneNumber":phoneNumber,"actionType":"E","anTypeCd":anTypeCd,"areaId":OrderInfo.getProdAreaId(order.prodModify.choosedProdInfo.prodInstId)};
+                   }
 				var oldrelease=false;
 				var oldPhoneNumber="";
 				var oldAnTypeCd="";
@@ -295,7 +309,12 @@ prod.telnum = (function(){
 						}
 					}
 					if(oldrelease){
-						params={"phoneNumber":phoneNumber,"oldPhoneNumber":oldPhoneNumber,"anTypeCd":anTypeCd,"oldAnTypeCd":oldAnTypeCd,"areaId":OrderInfo.getProdAreaId(order.prodModify.choosedProdInfo.prodInstId)};
+                             if(needPsw){
+                                  params={"newPhoneNumber":phoneNumber,"oldPhoneNumber":oldPhoneNumber,"newAnTypeCd":anTypeCd,"oldAnTypeCd":oldAnTypeCd,"areaId":OrderInfo.getProdAreaId(order.prodModify.choosedProdInfo.prodInstId),"attrList":[{"attrId":"65010036","attrValue":needPsw}]};
+                             }else{
+                                  params={"newPhoneNumber":phoneNumber,"oldPhoneNumber":oldPhoneNumber,"newAnTypeCd":anTypeCd,"oldAnTypeCd":oldAnTypeCd,"areaId":OrderInfo.getProdAreaId(order.prodModify.choosedProdInfo.prodInstId)};
+                             }
+                             //params={"phoneNumber":phoneNumber,"oldPhoneNumber":oldPhoneNumber,"anTypeCd":anTypeCd,"oldAnTypeCd":oldAnTypeCd,"areaId":OrderInfo.getProdAreaId(order.prodModify.choosedProdInfo.prodInstId)};
 					}
 				}
 				var purchaseUrl=contextPath+"/mktRes/phonenumber/purchase";
@@ -317,11 +336,18 @@ prod.telnum = (function(){
 							_boProdAn.preStore=preStoreFare;
 							_boProdAn.minCharge=pnPrice;
 							 order.service.boProdAn = _boProdAn;
+                                   //_qryOfferInfoByPhoneNumFee();
 							_nextStep();
 						}else if (response.code == -2) {
 							$.alertM(response.data);
 						}else{
-							$.alert("提示","号码预占失败!");
+                              var msg="";
+                                  if(response.data!=undefined&&response.data.msg!=undefined){
+                                       msg=response.data.msg;
+                                  }else{
+                                      msg="号码["+phoneNumber+"]预占失败";
+                                  }
+                                  $.alert("提示","号码预占失败，可能原因:"+msg);
 						}
 					},
 					fail:function(response){
@@ -339,8 +365,42 @@ prod.telnum = (function(){
 			_exchangeSelected(loc,selected);
 			_btnQueryPhoneNumber();
 		};
+          // 改号密码预占查询如果选择"是"，则需要展示提供信息并填写全位号码
+          var _modifyPswChange = function(flag){
+              if (flag) {
+                   
+                   $("#change_pswInfo").show();
+                   $("#change_phoneNum").show();
+                   $("#phoneNum").show();
+                   $("#change_pnFour").val("");
+                   $("#change_pnFour").prop("disabled", true);
+                   $("#change_pnFive").val("");
+                   $("#change_pnFive").prop("disabled", true);
+                   $("#change_pnSix").val("");
+                   $("#change_pnSix").prop("disabled", true);
+                   $("#change_pnSeven").val("");
+                   $("#change_pnSeven").prop("disabled", true);
+                   $("#change_pnEnd").val("");
+                   $("#change_pnEnd").prop("disabled", true);
+                   $("#change_pnNotExitNum").val("");
+                   $("#change_pnNotExitNum").prop("disabled", true);
+              } else {
+                   $("#change_pswInfo").hide();
+                   $("#phoneNum").hide();
+                   $("#change_phoneNum").hide();
+                   $("#change_pnFour").prop("disabled", false);
+                   $("#change_pnFive").prop("disabled", false);
+                   $("#change_pnSix").prop("disabled", false);
+                   $("#change_pnSeven").prop("disabled", false);
+                   $("#change_pnEnd").prop("disabled", false);
+                   $("#change_pnEnd").val("最后四位");
+                   $("#change_pnNotExitNum").prop("disabled", false);
+                   $("#change_pnNotExitNum").val("后四位不含");
+              }
+          }
 		//构造查询条件 
 		var _buildInParam = function(param){
+            var query_flag_02= $('input:radio[name="query_flag_02"]:checked').val();
 			var areaId=order.prodModify.choosedProdInfo.areaId;
 			var pnHead = $("#change_pnHead").find("a.selected").attr("val");
 			var pnEnd =$.trim($("#change_pnEnd").val());
@@ -356,10 +416,10 @@ prod.telnum = (function(){
 			if(pnEnd=='最后四位'){
 				pnEnd='';
 			}
-			var phoneNum=$.trim($("#phoneNum").val());
-			if(phoneNum=="任意四位"){
-				phoneNum='';
-			}
+//              var phoneNum=$.trim($("#phoneNum").val());
+//              if(phoneNum=="任意四位"){
+//                   phoneNum='';
+//              }
 			
 			pnNotExitNum = (pnNotExitNum == '') ? pnNotExitNum : "[^" + pnNotExitNum + "]{4}$";
 			// 校验中间四位是否是数字
@@ -392,7 +452,18 @@ prod.telnum = (function(){
 				}
 				pnNotExitNum = !ec.util.isObj(pnNotExitNum) ? middleRegExp + "\\d{4}$" : middleRegExp + pnNotExitNum;
 			}
-			
+              var phoneNum=$.trim($("#phoneNum").val());
+              if(phoneNum == "任意四位" || query_flag_02 == 1){
+                   phoneNum = '';
+              } else if (query_flag_02 == 2) {
+                   // 密码预占查询选择“是”，全位号码必填
+                   if (!ec.util.isObj(phoneNum) || !/^(180|189|133|134|153|181|108|170|173|177)\d{8}$/.test(phoneNum)) {
+                        $.alert("提示", "请正确输入已经“靓号预占”的11位号码", "information", function() {
+                             $("#phoneNum").focus();
+                        });
+                        return false;
+                   }
+              }
 			var pnCharacterId;
 			var Greater  = "";
 			var Less  ="";
@@ -410,7 +481,7 @@ prod.telnum = (function(){
 			}
 			pnCharacterId = ec.util.defaultStr(pnCharacterId);
 			return {"pnHead":pnHead,"pnEnd":pnEnd,"pnNotExitNum":pnNotExitNum,"goodNumFlag":pnCharacterId,"maxPrePrice":Less,
-				"minPrePrice":Greater,"pnLevelId":'',"pageSize":"20","phoneNum":phoneNum,"areaId":areaId,"poolId":poolId
+                   "minPrePrice":Greater,"pnLevelId":'',"pageSize":"20","phoneNum":phoneNum,"areaId":areaId,"poolId":poolId,"queryFlag":query_flag_02
 			};
 		};
 		//点击前定位
@@ -606,6 +677,9 @@ prod.telnum = (function(){
 		
 		//规则校验
 		var _initPage = function(){
+          if($("#phoneNum").attr("id")!=undefined){
+               $("#phoneNum").attr("id","change_phoneNum");
+          }
             var custInfo = order.cust.getCustInfo415();
             order.cust.preCheckCertNumberRelQueryOnly(custInfo);//查询证件下已经有的号码个数
             var oldNum = OrderInfo.oneCardFiveNum.usedNum[order.cust.getCustInfo415Flag(custInfo)];
@@ -806,12 +880,19 @@ prod.telnum = (function(){
 			if(ispurchased==1){
 				_btnToOffer(selectedObj);
 			}else{
+                var phoneNumberVal_06 = $(selectedObj).attr("numberVal").split("_")[7];       
+                   if(phoneNumberVal_06=="1"){
+                        easyDialog.open({
+                             container : 'password_dialog'
+                        });
+                   }else{
 				_btnPurchase(selectedObj);
 			}
+              }
 		};
-		var selectedObj=null;
-		var ispurchased=0;
-		var selectedLevel="";
+//          var selectedObj=null;
+//          var ispurchased=0;
+//          var selectedLevel="";
 		/**
 		 * obj被选中的号码对象
 		 * ispurchased是否身份预占号码。1：是,0否。不是身份预占的号码需要调用预占方法。
@@ -848,6 +929,19 @@ prod.telnum = (function(){
 			//添加号码选中样式
 			$(obj).addClass("select");
 		};
+          /**
+           * 靓号预占 密码校验
+           */
+          var _preePassword=function(){
+              var pree_password_text=$("#pree_password_text").val();
+              if($.trim(pree_password_text)==""){
+                   $.alert("提示","预占密码不能为空！");
+              }else{
+                   easyDialog.close();
+                   $("#pree_password_text").val("");//初始化
+                   _btnPurchase(selectedObj,pree_password_text);
+              }
+          };
 		return {
 			qryPhoneNbrLevelInfoList:_qryPhoneNbrLevelInfoList,
 			endSelectNum:_endSelectNum,
@@ -862,6 +956,9 @@ prod.telnum = (function(){
 			resetBoProdAn:_resetBoProdAn,
 			btnIBydentityQuery:_btnIBydentityQuery,
 			//btnToOffer:_btnToOffer,
+              modifyPswChange:_modifyPswChange,
+              queryFlag:_queryFlag,
+              preePassword:_preePassword,
 			initOffer:_initOffer,
 			selectNum:_selectNum,
 			initPage:_initPage,
