@@ -1671,10 +1671,10 @@ public class MktResController extends BaseController {
 //		List<Map<String, Object>> picturesInfo = new ArrayList<Map<String, Object>>();
 //		picturesInfo = (List<Map<String, Object>>) param.get("picturesInfo");
 		
-		String picturesInfo = param.get("picturesInfo").toString();
-		JSONArray arr = JSONArray.fromObject(picturesInfo);
+//		String picturesInfo = param.get("picturesInfo").toString();
+//		JSONArray arr = JSONArray.fromObject(picturesInfo);
 		String olId=MapUtil.asStr(param, "olId");
-		param.put("picturesInfo",arr);
+//		param.put("picturesInfo",arr);
 		param.put("areaId", sessionStaff.getCurrentAreaId());
 		param.put("srcFlag", "REAL");
 		param.put("accNbr", sessionStaff.getInPhoneNum());

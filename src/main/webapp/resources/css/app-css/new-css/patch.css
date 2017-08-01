@@ -487,3 +487,7 @@ fieldset[disabled] .form-control:focus {
   background: #05a642;
   border-color: #05a642;
 }
+
+.camera-box img {
+  margin: 0;
+}

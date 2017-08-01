@@ -55,6 +55,7 @@
 		<script src="${contextPath}/js/app-js/busi-js/order-new/memberChange.js?${jsversion}" type="text/javascript"></script>
 		<script src="${contextPath}/js/app-js/busi-js/bill/paymentQuery.js?${jsversion}" type="text/javascript"></script>
 		<script src="${contextPath}/js/app-js/busi-js/marketingRecommend/marketingRecommend.js?${jsversion}" type="text/javascript"></script>
+		<script src="${contextPath}/js/app-js/busi-js/order-new/verify.js?${jsversion}" type="text/javascript"></script>
 		<script>
 		window.onload= function() 
 		{  
@@ -69,7 +70,7 @@
 			}
 			var app_flag="${app_flag}";//1表示来至手机端，空值表示来至浏览器
 			if(!app_flag){//方便浏览器开发
-				
+				home.appVersion = "123456";//增加版本号方便测试
 				var params={};
 				var menu = ${menu}; //菜单测试
 				if(!menu){

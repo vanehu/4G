@@ -201,6 +201,7 @@
 		<div id="queryCust" style="margin-top: 60px;"></div>
 		<div id="ewm" style="margin-top: 60px;"></div>
 		<div id="prodofferPrepare" style="margin-top: 60px;"></div>
+		<div id="verifyPrepare" style="margin-top: 60px;display:none;"></div>
 		<script>
 			$(document).ready(function() {
 				var urlstr = '${urlstr}';
@@ -208,7 +209,9 @@
 					provence.getMenuList(urlstr);
 				}
 				var app_version = '${app_version}';
-				home.appVersion=app_version;
+				if(app_version.length>0){
+					home.appVersion=app_version;
+				}
 				if(app_version.length<=0){
 					 window.setTimeout(function() {					 
 						    var ua = navigator.userAgent.toLowerCase();

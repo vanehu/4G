@@ -220,3 +220,9 @@ html input[disabled] {
 .has-feedback label~.form-control-feedback{
 	top: 5px!important;
 }
+
+.camera-box img {
+  height: auto;
+  width: auto;
+  margin: 0;
+}

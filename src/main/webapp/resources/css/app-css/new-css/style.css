@@ -3257,6 +3257,33 @@ button:focus {
 .photo-box li:nth-child(2n-1) {
   border-right: 1px solid #dedede;
 }
+.camera {
+  overflow: hidden;
+}
+.camera-box {
+  width: 46%;
+  margin: 0.4rem 2% 0.8rem;
+  text-align: center;
+  background: #666;
+  display: inline-block;
+  float: left;
+  overflow: hidden;
+  height: 3.4rem;
+}
+.camera-box img {
+  height: 100%;
+  margin: 0;
+}
+.camera-mes {
+  width: 100%;
+  text-align: center;
+}
+.camera-mes p {
+  text-align: center;
+  font-size: 0.3rem;
+  color: #05a642;
+  line-height: 0.4rem;
+}
 .choice-box {
   width: 100%;
   border-bottom: 1px solid #dedede;
