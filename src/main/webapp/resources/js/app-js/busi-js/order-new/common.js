@@ -190,13 +190,24 @@ common = (function($) {
 			OrderInfo.jbr.telNumber = "";
 		}
 		var json = "{\"picturesInfo\":[";
+		var param = {};
+		var picturesInfo = [];
 		//客户照片节点
 		if(custIdentityPic != undefined && ec.util.isObj(custIdentityPic)){
 			json = json + "{\"orderInfo\":\"" + OrderInfo.cust.identityPic + "\",\"picFlag\":\"A\",\"custName\":\"" + OrderInfo.cust.partyName + "\",\"certType\":\"" + OrderInfo.cust.identityCd + "\",\"certNumber\":\"" + OrderInfo.cust.identityNum + "\",\"accNbr\":\"" + OrderInfo.cust.telNumber +"\"},";
+			var p = {
+					"orderInfo":OrderInfo.cust.identityPic,
+					"picFlag":"A",
+					"custName":OrderInfo.cust.partyName,
+					"certType":OrderInfo.cust.identityCd,
+					"certNumber":OrderInfo.cust.identityNum,
+					"accNbr":OrderInfo.cust.telNumber
+				};
+			picturesInfo.push(p);
 		}
 		//使用人照片节点
 		for(var i=0; i<OrderInfo.choosedUserInfos.length; i++){
-			var custInfo = OrderInfo.choosedUserInfos[i].custInfo;;
+			var custInfo = OrderInfo.choosedUserInfos[i].custInfo;
 			var userIdentityPic = custInfo.identityPic;
 			if(custInfo.accNbr == undefined){
 				custInfo.accNbr = "";
@@ -213,15 +224,44 @@ common = (function($) {
 			}
 			if(isAddPic && userIdentityPic != undefined && ec.util.isObj(userIdentityPic)){
 				json = json + "{\"orderInfo\":\"" + userIdentityPic + "\",\"picFlag\":\"B\",\"custName\":\"" + custInfo.partyName + "\",\"certType\":\"" + custInfo.identityCd + "\",\"certNumber\":\"" + custInfo.idCardNumber + "\",\"accNbr\":\"" + custInfo.accNbr +"\"},";
+				var p = {
+						"orderInfo":userIdentityPic,
+						"picFlag":"B",
+						"custName":custInfo.partyName,
+						"certType":custInfo.identityCd,
+						"certNumber":custInfo.idCardNumber,
+						"accNbr":custInfo.accNbr
+					};
+				picturesInfo.push(p);
 			}
 		}
 		//经办人照片节点
 		if(jbrIdentityPic != undefined && ec.util.isObj(jbrIdentityPic)){
 			json = json + "{\"orderInfo\":\"" + OrderInfo.jbr.identityPic + "\",\"picFlag\":\"C\",\"custName\":\"" + OrderInfo.jbr.partyName + "\",\"certType\":\"" + OrderInfo.jbr.identityCd + "\",\"certNumber\":\"" + OrderInfo.jbr.identityNum + "\",\"accNbr\":\"" + OrderInfo.jbr.telNumber +"\"},";
+			var p = {
+					"orderInfo":OrderInfo.jbr.identityPic,
+					"picFlag":"C",
+					"custName":OrderInfo.jbr.partyName,
+					"certType":OrderInfo.jbr.identityCd,
+					"certNumber":OrderInfo.jbr.identityNum,
+					"accNbr":OrderInfo.jbr.telNumber
+				};
+			picturesInfo.push(p);
 		}
 		
 		json = json + "{\"orderInfo\":\"\",\"picFlag\":\"D\",\"custName\":\"" + OrderInfo.jbr.partyName + "\",\"certType\":\"" + OrderInfo.jbr.identityCd + "\",\"certNumber\":\"" + OrderInfo.jbr.identityNum + "\",\"accNbr\":\"" + OrderInfo.jbr.telNumber +"\"}";
 		json = json+"]}";
+		var p = {
+				"orderInfo":"",
+				"picFlag":"D",
+				"custName":OrderInfo.jbr.partyName,
+				"certType":OrderInfo.jbr.identityCd,
+				"certNumber":OrderInfo.jbr.identityNum,
+				"accNbr":OrderInfo.jbr.telNumber
+			};
+		picturesInfo.push(p);
+		param.picturesInfo = picturesInfo;
+		verify.upLoad_param = param;
 		arr[0]=method;
 		arr[1]=json;
 		//获取实名审核开关，传给原生判断是否开启审核页面
@@ -234,12 +274,14 @@ common = (function($) {
 		if(isNeedCheck!="0"){
 			arr[3]="OFF";
 		}
-		MyPlugin.photoProcess(arr,
-            function(result) {
-            },
-            function(error) {
-            }
-		);
+//		arr[3]="ON";
+		verify.openVerify(arr[3]);
+//		MyPlugin.photoProcess(arr,
+//            function(result) {
+//            },
+//            function(error) {
+//            }
+//		);
 	};
 	
 	//调用客户端的二代证识别方法       method：表示回调js方法 如：order.prodModify.getIDCardInfos
@@ -406,6 +448,11 @@ common = (function($) {
 			return;
 		}
 		if($(".modal-dialog").is(":visible")){//有弹出层不允许返回
+			return;
+		}
+		if($("#verifyPrepare").length>0 && $("#verifyPrepare").css("display")=="block"){//有弹出层不允许返回
+			$("#prodofferPrepare").show();
+			$("#verifyPrepare").hide();
 			return;
 		}
 //		alert("OrderInfo.actionFlag="+OrderInfo.actionFlag+"---OrderInfo.order.step="+OrderInfo.order.step+"---OrderInfo.returnFlag="+OrderInfo.returnFlag);
@@ -1799,7 +1846,7 @@ common = (function($) {
 		// return (num1*m+num2*m)/m;
 		return Math.round(num1 * m + num2 * m) / m;
 	};
-	
+    
 	return {
 		relocationCust		:	_relocationCust,
 		setCalendar			:	_setCalendar,

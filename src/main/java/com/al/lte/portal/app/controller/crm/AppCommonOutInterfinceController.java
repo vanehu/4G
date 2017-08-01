@@ -168,28 +168,30 @@ public class AppCommonOutInterfinceController extends BaseController{
 	 * @return
 	 * @throws AuthorityException
 	 */
-	@SuppressWarnings("deprecation")
+	@SuppressWarnings({ "deprecation", "unchecked" })
 	@RequestMapping(value = "/pic/verify", method = RequestMethod.POST)
 	public @ResponseBody JsonResponse verify(@RequestBody Map<String, Object> param, String optFlowNum,
 			HttpServletResponse response,HttpServletRequest request){
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
                 SysConstant.SESSION_KEY_LOGIN_STAFF);
 		JsonResponse jsonResponse = null;
-		Map<String, Object> rMap = null;
+		Map<String, Object> rMap = new HashMap<String, Object>();
 		Map<String, Object> reqMap = new HashMap<String, Object>();
 		String imageBest = (String) param.get("image_best");
 		System.out.println("++++++人证比对壳子入参"+JsonUtil.toString(param));
 		param.remove("image_best");
 		param.put("channel_type", sessionStaff.getCurrentChannelType());
+		param.put("channel_nbr", sessionStaff.getCurrentChannelId());
+		param.put("staff_code", sessionStaff.getStaffCode());
 		param.put("busi_type", "1");
 		param.put("area_id", sessionStaff.getCurrentAreaId());
 		param.put("province_code", sessionStaff.getCurrentAreaId().substring(0, 3)+"0000");
 		System.out.println("++++++人证比对入参params"+JsonUtil.toString(param));
 //		String areaid = sessionStaff.getAreaId();//区
 			try {
-				String imgsrc = request.getRealPath("/resources/soFile/")+"orgimageBest.jpg";
-				String imgdist = request.getRealPath("/resources/soFile/")+"newimageBest.jpg";
-				imageBest = ImgReSIze.reSizeImg(imgsrc, imageBest, imgdist, 1000, 1000, 1f);
+//				String imgsrc = request.getRealPath("/resources/soFile/")+"orgimageBest.jpg";
+//				String imgdist = request.getRealPath("/resources/soFile/")+"newimageBest.jpg";
+//				imageBest = ImgReSIze.reSizeImg(imgsrc, imageBest, imgdist, 1000, 1000, 1f);
 				reqMap.put("app_id",AESUtil.encryptToString("crm", MDA.FACE_VERIFY_APP_ID_SECRET));
 				reqMap.put("params", AESUtil.encryptToString(JsonUtil.toString(param),MDA.FACE_VERIFY_PARAMS_SECRET));
 				reqMap.put("image_best", imageBest);
@@ -200,26 +202,27 @@ public class AppCommonOutInterfinceController extends BaseController{
 	 				Map<String, Object> verify_cfg = MDA.PROV_AUTH_SWITH.get((sessionStaff.getAreaId() + "").substring(0, 3));
 	 				Float FZ = Float.parseFloat((String) verify_cfg.get("FZ"));//相似度最低要求（阀值）
 	 				Map<String, Object> res = (Map<String, Object>) rMap.get("result");
-	 				Float XSD = Float.parseFloat((String) res.get("confidence"));//相似度
+	 				Float XSD = Float.parseFloat(String.valueOf(res.get("confidence")));//相似度
 					if(FZ>XSD){
 						String QZSHQX = "1";// 是否有强制审核权限
 						QZSHQX = staffBmo.checkOperatBySpecCd("QZSHQX", sessionStaff);
 						//相似度不足，且没有权限，返回失败
 						if("0".equals(QZSHQX)){
+							rMap.put("checkType", "4");
 							jsonResponse = super.successed(rMap,ResultConstant.SUCCESS.getCode());
 						}else{
 							rMap.remove("result");
 							rMap.put("code", "POR-2004");
-							rMap.put("msg", "人证比对相似度低于"+FZ+"%,无强制审核权限！");
+							rMap.put("msg", "人证不符，人证相似度为"+XSD+"%，请重新拍照");
 							jsonResponse = super.failed(rMap,ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
 						}
 					}else{
+						rMap.put("checkType", "3");
 						jsonResponse = super.successed(rMap,ResultConstant.SUCCESS.getCode());
 					}
 	 			} else {
 	 				jsonResponse = super.failed(rMap,ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
 	 			}
-//				DataBus db = InterfaceClient.callService(reqMap, PortalServiceCode.BORAD_BAND_QUERYCHARGECONFIG,optFlowNum, sessionStaff);
 	        }  catch (BusinessException be) {
 				this.log.error("人证比对查询失败", be);
 				return super.failed(be);
@@ -474,9 +477,9 @@ public class AppCommonOutInterfinceController extends BaseController{
 				jo = JSONObject.fromObject(rMap);
 				System.out.println("随机数："+randomCode+"--------token："+token);
 	        }  catch (Exception e) {
-				log.error("数获取员工信息与令牌失败", e);
+				log.error("获取员工信息与令牌失败", e);
 				rMap.put(RESULT_CODE, "1");
-				rMap.put(RESULT_MSG, "数获取员工信息与令牌失败");
+				rMap.put(RESULT_MSG, "获取员工信息与令牌失败");
 				jo = JSONObject.fromObject(rMap);
 				return jo;
 						//super.failed(ErrorCode.QUERY_STAFF_INFO, e, reqMap);

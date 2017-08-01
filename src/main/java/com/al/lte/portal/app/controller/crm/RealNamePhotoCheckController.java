@@ -254,10 +254,10 @@ public class RealNamePhotoCheckController extends BaseController{
     
 
     //经办人拍照人证相符短信校验码验证
-    @RequestMapping(value = "/smsSend" ,method = RequestMethod.GET)
-	@LogOperatorAnn(desc = "经办人拍照人证相符发送短信校验码", code = "RXSH", level = LevelLog.DB)
-	@ResponseBody
-	public JsonResponse smsSend(@RequestParam Map<String, Object> paramMap,HttpServletRequest request, @LogOperatorAnn String flowNum) {
+    @RequestMapping(value = "/smsSend", method = RequestMethod.POST)
+    @ResponseBody
+//	@LogOperatorAnn(desc = "经办人拍照人证相符发送短信校验码", code = "RXSH", level = LevelLog.DB)
+	public JsonResponse smsSend(@RequestBody Map<String, Object> paramMap,HttpServletRequest request, @LogOperatorAnn String flowNum) {
 		try {
 			SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
 			String number = (String) paramMap.get(NUMBER);
@@ -487,4 +487,47 @@ public class RealNamePhotoCheckController extends BaseController{
 			return isPhotographReviewNeeded;
 	}
 	
+	/**
+	 * 手机客户端-人脸比对
+	 * @param params
+	 * @param request
+	 * @param model
+	 * @param session
+	 * @return
+	 */
+	@RequestMapping(value = "/faceVerify", method = RequestMethod.POST)
+    @AuthorityValid(isCheck = false)
+    public String faceVerify(@RequestBody Map<String, Object> param,Model model,HttpSession session,@LogOperatorAnn String flowNum) throws BusinessException {		
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
+		String isNeedCheck = (String) param.get("isNeedCheck");
+		String sessionKey = sessionStaff.getStaffId() + SysConstant.RXSH;
+		if("ON".equals(isNeedCheck)){
+			Map<String, Object> result = null;
+			try {
+				 List<Map<String, Object>> staffList = (List<Map<String, Object>>) ServletUtils.getSessionAttribute(super.getRequest(), sessionKey);
+			        if(staffList != null && staffList.size()>0){
+			        	model.addAttribute("staffList", staffList);
+			        }else{
+			        	result = staffBmo.qryOperateSpecStaffList(SysConstant.RXSH, sessionStaff);
+			        	if (ResultCode.R_SUCC.equals(MapUtils.getString(result, SysConstant.RESULT_CODE, "1"))) {
+			        		model.addAttribute("staffList", result.get(SysConstant.RESULT));
+		                	ServletUtils.setSessionAttribute(super.getRequest(), sessionKey, result.get(SysConstant.RESULT));
+		                } else {
+		                	model.addAttribute("staffList", staffList);
+		                }
+			        }
+			} catch (InterfaceException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		model.addAttribute("isNeedCheck", isNeedCheck);
+		return "/app/order_new/face-verify";
+    }
 }

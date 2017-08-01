@@ -217,10 +217,32 @@ public class OrderQueryController extends BaseController {
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
                 SysConstant.SESSION_KEY_LOGIN_STAFF);
 		try{
+			String cityid = sessionStaff.getAreaId();//市
+			String proid = cityid.substring(0, 3) + "0000";//省
+			String areaid = sessionStaff.getCurrentAreaId();//区
+			cityid = areaid.substring(0, 5) + "00";//市
 			param.put("APPDESC", propertiesUtils.getMessage(SysConstant.APPDESC));
 			param.put("dataDimensionCd", MySimulateData.getInstance().getParam((String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),SysConstant.AREA_DIMENSION_CD));
 			String operateSpecInfo = EhcacheUtil.getOperateSpecInfo(session, urlType);
 			List<Map<String, Object>> list = CommonMethods.getAreaRangeList(sessionStaff, param, operateSpecInfo);
+			if("3".equals(String.valueOf(param.get("leve")))){
+				if(list.size()==0 && !cityid.equals(proid) && proid.equals(String.valueOf(param.get("parentAreaId")))){
+					Map<String, Object> mapCity = CommonMethods.getAreaInfo(cityid);
+					mapCity.put("commonRegionId", mapCity.get("areaId"));
+					mapCity.put("regionName", mapCity.get("areaName"));
+					list.add(mapCity);
+				}
+			}
+			
+			if("4".equals(String.valueOf(param.get("leve")))){
+				if(list.size()==0 && !cityid.equals(areaid) && cityid.equals(String.valueOf(param.get("parentAreaId")))){
+					Map<String, Object> mapCity = CommonMethods.getAreaInfo(areaid);
+					mapCity.put("commonRegionId", mapCity.get("areaId"));
+					mapCity.put("regionName", mapCity.get("areaName"));
+					list.add(mapCity);
+				}
+			}
+			
 			return this.successed(list);
 		} catch (InterfaceException ie) {
 
