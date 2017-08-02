@@ -143,13 +143,13 @@ public class MktResController extends BaseController {
 	 */
 	@RequestMapping(value = "/telnumcg/list", method = RequestMethod.GET)
 	public String telnumcgList(@RequestParam Map<String, Object> param, Model model,
-			@LogOperatorAnn String flowNum, HttpServletResponse response,HttpServletRequest request,HttpSession session) {
+			@LogOperatorAnn String flowNum, HttpServletResponse response,HttpSession session) {
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils
 				.getSessionAttribute(super.getRequest(),
 						SysConstant.SESSION_KEY_LOGIN_STAFF);
 		String queryFlag=MapUtils.getString(param, "isReserveFlag", "");
 		if("1".equals(queryFlag)){
-            if(commonBmo.checkToken(request, SysConstant.ORDER_SUBMIT_TOKEN)){
+            if(commonBmo.checkToken(super.getRequest(), SysConstant.ORDER_SUBMIT_TOKEN)){
                 
             }else{
                  super.addHeadCode(response,ResultConstant.SERVICE_RESULT_FAILTURE);
@@ -158,7 +158,7 @@ public class MktResController extends BaseController {
         }
 
 		List<Map<String, Object>> list = null;
-		String areaId=(String) param.get("areaId");
+		String areaId=MapUtils.getString(param,"areaId","");
 		param.putAll(getAreaInfos(areaId));
 		param.remove("isReserveFlag");
 		try {

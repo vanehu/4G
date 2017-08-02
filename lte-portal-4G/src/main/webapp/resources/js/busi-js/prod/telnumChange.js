@@ -933,13 +933,13 @@ prod.telnum = (function(){
            * 靓号预占 密码校验
            */
           var _preePassword=function(){
-              var pree_password_text=$("#pree_password_text").val();
-              if($.trim(pree_password_text)==""){
+              var preePasswordText=$("#pree_password_text").val();
+              if(!ec.util.isObj($.trim(preePasswordText))){
                    $.alert("提示","预占密码不能为空！");
               }else{
                    easyDialog.close();
                    $("#pree_password_text").val("");//初始化
-                   _btnPurchase(selectedObj,pree_password_text);
+                   _btnPurchase(selectedObj,preePasswordText);
               }
           };
 		return {
