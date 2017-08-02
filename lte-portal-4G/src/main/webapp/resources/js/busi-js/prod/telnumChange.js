@@ -300,7 +300,7 @@ prod.telnum = (function(){
 				}else{
 					_boProdAn={};
 				}
-				if(oldPhoneNumber!=""){
+				if(oldPhoneNumber!=""&&oldPhoneNumber){
 					oldrelease=true;
 					for(var i=0;i<idcode.length;i++){//身份证预占的号码不需要被释放
 						if(idcode[i]==oldPhoneNumber){
