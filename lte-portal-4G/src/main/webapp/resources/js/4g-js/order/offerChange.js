@@ -117,7 +117,9 @@ offerChange = (function() {
 			var $tbody = $("#member_tbody");
 			$tbody.html("");
 			$("#main_title").text(OrderInfo.offerSpec.offerSpecName);
+			var memberRoleCd = "";
 			$.each(OrderInfo.offerSpec.offerRoles,function(){
+				memberRoleCd = this.memberRoleCd;
 				if(this.memberRoleCd=="401"){
 					var offerRole = this;
 					var $tr = $("<tr style='background:#f8f8f8;'></tr>");
@@ -169,9 +171,11 @@ offerChange = (function() {
 					});
 				}
 			});
-			easyDialog.open({
-				container : "member_dialog"
-			});
+			if(memberRoleCd !=1){
+				easyDialog.open({
+					container : "member_dialog"
+				});
+			}
 			$("#member_btn").off("click").on("click",function(){
 				offerChangeConfirm();
 				try {
