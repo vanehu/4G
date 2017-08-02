@@ -147,9 +147,20 @@ public class MktResController extends BaseController {
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils
 				.getSessionAttribute(super.getRequest(),
 						SysConstant.SESSION_KEY_LOGIN_STAFF);
+		String queryFlag=MapUtils.getString(param, "isReserveFlag", "");
+		if("1".equals(queryFlag)){
+            if(commonBmo.checkToken(super.getRequest(), SysConstant.ORDER_SUBMIT_TOKEN)){
+                
+            }else{
+                 super.addHeadCode(response,ResultConstant.SERVICE_RESULT_FAILTURE);
+                 return "/order/reserve-phonenumber-list";
+            }
+        }
+
 		List<Map<String, Object>> list = null;
-		String areaId=(String) param.get("areaId");
+		String areaId=MapUtils.getString(param,"areaId","");
 		param.putAll(getAreaInfos(areaId));
+		param.remove("isReserveFlag");
 		try {
 			Map<String, Object> datamap = this.mktResBmo.queryPhoneNumber(param,
 					flowNum, sessionStaff);
@@ -221,7 +232,11 @@ public class MktResController extends BaseController {
 			return super.failedStr(model, ErrorCode.PHONENUM_LIST, e, param);
 		}
 		model.addAllAttributes(param);
-		return "/product/telnum-change-list";
+		  if(queryFlag.equals("1")){
+              return "/order/reserve-phonenumber-list";
+          }else{
+        	  return "/product/telnum-change-list";
+          }
 	}
 	/**
 	 * 改号，身份证号查询号码预占列表
