@@ -3632,22 +3632,27 @@ order.cust = (function(){
 
 	//加载拍照设备列表，获取摄像头信息
 	var _getCameraInfo = function(){
-		//拍照仪版本检查更新
-		query.common.checkCameraDriverVersion();
-		
-		var device = capture.getDevices();
-	    device = JSON.parse(device);
-		if (device == null || device == undefined) {
+		try{
+			//拍照仪版本检查更新
+			query.common.checkCameraDriverVersion();
+			
+			var device = capture.getDevices();
+		    device = JSON.parse(device);
+			if (device == null || device == undefined) {
+				$("#tips").html("提示：请检查是否正确安装插件");
+				return;
+		    }
+			if(device.resultFlag == 0){
+				$.each(device.devices,function(){
+				    $("#device").append("<option value='"+this.device+"' >"+this.name+"</option>");
+				});
+				$("#startPhotos").off("click").on("click",function(){_createVideo();});
+			}else{
+				$("#tips").html("提示："+device.errorMsg);
+				return;
+			}
+		} catch(e){
 			$("#tips").html("提示：请检查是否正确安装插件");
-			return;
-	    }
-		if(device.resultFlag == 0){
-			$.each(device.devices,function(){
-			    $("#device").append("<option value='"+this.device+"' >"+this.name+"</option>");
-			});
-			$("#startPhotos").off("click").on("click",function(){_createVideo();});
-		}else{
-			$("#tips").html("提示："+device.errorMsg);
 			return;
 		}
 	};
