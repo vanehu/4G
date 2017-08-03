@@ -72,12 +72,13 @@
 			description="问卷调查题目查询"></const> <const type="String" name="CSB_HTTP_QUESTION_RESET" 
 			value="http://10.140.28.122:8070/ses_intf/" description="问卷调查结果回写"></const> -->
 
-
-
 		<!-- 配置问卷 key -->
 		<const type="String" name="QESTION_KEY" value="827c5d6c20b855475d174736c4920e33"
 			description="问卷调查key">
 		</const>
+		
+		<!-- 配置问卷 菜单权限开关 -->
+		<const type="String" name="IS_QUESTION_MENU" value="OFF" />
 
 		<const type="String" name="ASYNC_FLAG" value="OFF" />
 		<const type="String" name="DEF_HTTP_FLAG" value="ON" />

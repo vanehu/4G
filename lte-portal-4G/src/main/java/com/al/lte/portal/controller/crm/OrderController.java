@@ -637,7 +637,7 @@ public class OrderController extends BaseController {
      * 根据权限过滤测试卡及党政军备案
      * @param sessionStaff
      * @param list 产品属性列表
-     * @throws Exception
+     * @throws ge
      */
     private void filterAttrData(SessionStaff sessionStaff, List<Map<String, Object>> list) throws Exception {
         String specialtestauth = staffBmo.checkOperatBySpecCd(SysConstant.SPECIALTESTQX, sessionStaff);//测试卡权限
@@ -1488,6 +1488,7 @@ public class OrderController extends BaseController {
             HttpServletResponse response, HttpServletRequest request) {
         SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
                 SysConstant.SESSION_KEY_LOGIN_STAFF);
+
         try {
         	Map<String, Object> orderData =sessionStaff.getOrderData();
         	if(orderData!=null){
@@ -1556,6 +1557,21 @@ public class OrderController extends BaseController {
                         }
                         boolean checkFlag = false;//标识判断是否查权益
                         HttpSession session = request.getSession();
+                        String membershipLevel = (String)session.getAttribute("memberLevel");
+                        String isChecked = "N";
+                        if(!StringUtil.isEmpty(membershipLevel)){
+                            String[] arr = membershipLevel.split("星");
+                            try {
+                                if(arr.length>0){
+                                    int lev = Integer.parseInt(arr[0]);
+                                    if(2<=lev && lev<=7){
+                                        isChecked = "Y";
+                                    }
+                                }
+                            }catch (Exception e){
+                            }
+                        }
+                        model.addAttribute("isChecked", isChecked);
                         int sumAmount = 0;
                         if (templist != null && templist.size() != 0) {
                             for (Map<String, Object> item : templist) {
@@ -1629,6 +1645,7 @@ public class OrderController extends BaseController {
 	                                        		session.setAttribute(SysConstant.INTEREST_BHK+sessionStaff.getCardNumber(), "true");
 	                                        		model.addAttribute("INTEREST_BHK", "have");
 	                                        	}
+
 	                                        	//国漫权益 100800 国漫免预存
 	                                        	if("100800".equals(pointInfo.get("pointItemID"))){
 	                                        		session.setAttribute(SysConstant.INTEREST_GM+sessionStaff.getCardNumber(), "true");

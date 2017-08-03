@@ -65,6 +65,47 @@ var getAlertTimeStamp = function(){
                 }
 			});
 		},
+		
+		//没有取消按钮的问卷调查按钮
+		question_confirm : function(title,content,options,type) {
+			var confirmTitle = title + alertIP + getAlertTimeStamp();
+			var buttons= ['确定'];
+			if(!$.isFunction(options.no)){
+				buttons= ['确定'];
+			}
+			new $.Zebra_Dialog(content,{
+				'keyboard':false,
+            	'modal':true,
+            	'overlay_close':false,
+            	'overlay_opacity':.5,
+                'type':    !!type?type:'confirmation',
+                'title':    confirmTitle,
+                'buttons':  buttons,
+                'onClose':  function(caption) {
+                    if(caption == '确定'){
+                    	if($.isFunction(options.yes)){
+                    		options.yes();
+                    	} 
+                    	if($.isFunction(options.yesdo)){
+                    		$(".ZebraDialog").remove();
+                			$(".ZebraDialogOverlay").remove();
+                    		options.yesdo();
+                    		return;
+                    	} 
+                    	if($.isFunction(options.yestocheck)){
+                    		options.yestocheck();
+                    		return;
+                    	} 
+                    }else{
+                    	if($.isFunction(options.no)){
+                    		options.no();
+                    	}
+                    }
+                    $(".ZebraDialog").remove();
+                	$(".ZebraDialogOverlay").remove();
+                }
+			});
+		},
 		//error, warning, question, information,confirmation
 		alert:function(title,content,type,callBack){
 			var alertTitle = title + alertIP + getAlertTimeStamp();

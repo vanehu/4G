@@ -378,6 +378,8 @@ cert = (function() {
 				
 				if(ec.util.isArray(OrderInfo.certInfoKeys)){
 					OrderInfo.orderData.orderList.orderListInfo.certInfoKeys = OrderInfo.certInfoKeys;
+				} else{
+					OrderInfo.orderData.orderList.orderListInfo.certInfoKeys = [];
 				}
 			}
 		} catch(e){

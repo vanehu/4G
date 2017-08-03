@@ -169,12 +169,12 @@
 		                  					 		<#if iseditOperation?? && iseditOperation=="0" && refundType??&&(refundType==0) >
 		                  					 		     <#if acctItemTypeId?? && (itemList.acctItemTypeId == acctItemTypeId)  &&  isEditAdjustOperation?? && isEditAdjustOperation!="0">
 														 <#else>
-		                  					 		        <a class="charge_add money_upd money_edit_gray" style="background-color:#95B27B;" href="javascript:void(0);"  onclick="order.calcharge.changePayMethod('${itemList.acctItemTypeId}','${trid}','${itemList.payMethodCd}',this);">修改费用</a><br>
+															 <a class="charge_add money_upd money_edit_gray" style="background-color:#95B27B;" href="javascript:void(0);"  onclick="order.calcharge.changePayMethod('${itemList.acctItemTypeId}','${trid}','${itemList.payMethodCd}',this);">修改费用</a><br>
 													        <!-- <a class="charge_add money_cut" href="javascript:void(0);"  onclick="order.calcharge.delItems2(this,'${itemList.acctItemTypeId}','${trid}','old');">&nbsp;&nbsp;</a>-->
 													    </#if>
 													</#if>
 													<#if INTEREST_BHK =="have" && itemList.boActionType=="14">
-												    <input type="checkbox" name="point" onclick="order.calcharge.changePoingts('${itemList.acctItemTypeId}','${trid}','${itemList.acctItemId}','100300','免费补换卡',this);"/><a class="charge_add money_upd money_edit_gray" style="background-color:#95B27B;" href="javascript:void(0);">免费补换卡</a><br>
+												    <input type="checkbox" name="point" id="mfbhk" onclick="order.calcharge.changePoingts('${itemList.acctItemTypeId}','${trid}','${itemList.acctItemId}','100300','免费补换卡',this);"/><a class="charge_add money_upd money_edit_gray" style="background-color:#95B27B;" href="javascript:void(0);">免费补换卡</a><br>
 													<#elseif INTEREST_GM =="have" && itemList.objId ==13409281>
 													 <input type="checkbox"  name="point" onclick="order.calcharge.changePoingts('${itemList.acctItemTypeId}','${trid}','${itemList.acctItemId}','100800','国漫免预存',this);"/><a class="charge_add money_upd money_edit_gray" style="background-color:#95B27B;" href="javascript:void(0);">国漫免预存</a><br>
 													</#if>
@@ -253,6 +253,7 @@
 							<input type="hidden" id="payMethodCd_${trid}" value="${itemList.payMethodCd}"/>
 							<input type="hidden" id="acctItemTypeName_${trid}" value="${itemList.acctItemTypeName}" />
 							<input type="hidden" id="objInstId_${trid}" value="" />
+							<input type="hidden" id="isChecked" value="${isChecked}" />
 							<input type="hidden" id="prodId_${trid}" value="" />
 							<input type="hidden" id="boActionType_${trid}" value="${itemList.boActionType}" />
 							<#if (iseditOperation?? && iseditOperation=="0") && (refundType?? && refundType==0) >
@@ -339,3 +340,13 @@
 <!--弹出框的内容-->
 <#include "/print/invoice-prepare.html"/>
 <!--弹出层-->
+<script type="text/javascript">
+	$(function() {
+        var isChecked = $("#isChecked").val();
+        if (isChecked == "Y") {
+            $("#mfbhk").attr("checked", "true");
+            $("#mfbhk").click();
+        }
+    });
+
+</script>
