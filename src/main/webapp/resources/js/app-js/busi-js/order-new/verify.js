@@ -68,7 +68,7 @@ verify = (function(){
 //            verify.img_YS = o.watermark;
             $("#img_watermark").attr("src","data:image/jpeg;base64,"+o.watermark);
           //对原图进行压缩
-            var scale = 1;
+            var scale = 0.4;
         	//目标尺寸
 //        	var target = 800;
 //        	var $img1 = $("#img_artwork");
@@ -119,40 +119,44 @@ verify = (function(){
     
     //调用人证比对
     var verify_pic = function(image_best){
-    	$("#bd").attr("disabled","disabled");
-    	var cert_number = "";
-    	if($("#identidiesType").val()=="1" && ((OrderInfo.actionFlag!="111" && cust.isSameOne) ||(OrderInfo.actionFlag=="111" && order.broadband.isSameOne))){
-    		cert_number = $("#userid").val();
-    	}else{
-    		cert_number = OrderInfo.jbr.identityNum;
-    	}
-    	var param = {
-    			"cert_address":OrderInfo.jbr.addressStr,
-    			"cert_number":cert_number,
-    			"cust_id":OrderInfo.cust.custId,
-    			"party_name":OrderInfo.jbr.partyName,
-    			"image_best":image_best,
-    			"image_idcard":OrderInfo.jbr.identityPic
-    			
-    	}
-    	$.callServiceAsJson(contextPath + "/appInterfince/pic/verify", param, {
-            "before": function () {
-                $.ecOverlay("<strong>正在进行人证比对,请稍等...</strong>");
-            }, "done": function (response) {
-            	$.unecOverlay();
-//            	alert(JSON.stringify(response));
-                if (response.code == 0) {
-                	$("#verify_msg").text("人证相符，相似度"+response.data.result.confidence+"%，拍摄成功");
-                	$("#bd").removeAttr("disabled","");
-                	verify.checkType = response.data.checkType;
-                }else if (response.code == 1002) {
-                	$("#verify_msg").text(response.data.msg);
-                }else {
-//                	$("#bd").removeAttr("disabled","");
-                    $.alertM(response.data);
+    	if($("#verify_openFlag").val()=="ON"){
+    		$("#bd").attr("disabled","disabled");
+        	var cert_number = "";
+        	if($("#identidiesType").val()=="1" && ((OrderInfo.actionFlag!="111" && cust.isSameOne) ||(OrderInfo.actionFlag=="111" && order.broadband.isSameOne))){
+        		cert_number = $("#userid").val();
+        	}else{
+        		cert_number = OrderInfo.jbr.identityNum;
+        	}
+        	var param = {
+        			"cert_address":OrderInfo.jbr.addressStr,
+        			"cert_number":cert_number,
+        			"cust_id":OrderInfo.cust.custId,
+        			"party_name":OrderInfo.jbr.partyName,
+        			"image_best":image_best,
+        			"image_idcard":OrderInfo.jbr.identityPic
+        			
+        	}
+        	$.callServiceAsJson(contextPath + "/appInterfince/pic/verify", param, {
+                "before": function () {
+                    $.ecOverlay("<strong>正在进行人证比对,请稍等...</strong>");
+                }, "done": function (response) {
+                	$.unecOverlay();
+//                	alert(JSON.stringify(response));
+                    if (response.code == 0) {
+                    	$("#verify_msg").text("人证相符，相似度"+response.data.confidence+"%，拍摄成功");
+                    	$("#bd").removeAttr("disabled");
+                    	verify.checkType = response.data.checkType;
+                    }else if (response.code == 1002) {
+                    	$("#verify_msg").text(response.data.msg);
+                    }else {
+//                    	$("#bd").removeAttr("disabled");
+                        $.alertM(response.data);
+                    }
                 }
-            }
-        });
+            });
+    	}else{
+    		$("#bd").removeAttr("disabled");
+    	}
     }
     
     var _verifyPass = function(){
@@ -174,7 +178,7 @@ verify = (function(){
     
     var _upLoadPic = function(){
     	//对水印图进行压缩
-      var scale = 1;
+      var scale = 0.4;
     	compress('data:image/jpeg;base64,' + "", 0.2, scale, "img_watermark", function(dataUrl) {
 //        	image_best = dataUrl.split('data:image/jpeg;base64,')[1];
 //        	$("#img_watermark").attr("src","data:image/jpeg;base64,"+image_best);
