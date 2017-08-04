@@ -25,6 +25,7 @@ import com.al.common.utils.StringUtil;
 import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ecs.common.entity.JsonResponse;
 import com.al.ecs.common.entity.LevelLog;
+import com.al.ecs.common.util.MDA;
 import com.al.ecs.common.util.PropertiesUtils;
 import com.al.ecs.common.util.UIDGenerator;
 import com.al.ecs.common.web.ServletUtils;
@@ -501,6 +502,9 @@ public class RealNamePhotoCheckController extends BaseController{
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
 		String isNeedCheck = (String) param.get("isNeedCheck");
 		String sessionKey = sessionStaff.getStaffId() + SysConstant.RXSH;
+		Map<String, Object> verify_cfg = MDA.PROV_AUTH_SWITH.get((sessionStaff.getAreaId() + "").substring(0, 3));
+			String verify_openFlag = String.valueOf(verify_cfg.get("PIC_VERIFY"));//人证比对开关
+			model.addAttribute("verify_openFlag", verify_openFlag);
 		if("ON".equals(isNeedCheck)){
 			Map<String, Object> result = null;
 			try {

@@ -983,20 +983,39 @@ public class CustBmoImpl implements CustBmo {
   //人证照片比对
   	public Map<String, Object> verify(Map<String, Object> param,
   			String optFlowNum, SessionStaff sessionStaff) throws Exception {
-  		Map<String, Object> resultMap = new HashMap<String, Object>();
-  		DataBus db = InterfaceClient.callService(param,PortalServiceCode.PIC_VERIFY,optFlowNum, sessionStaff);
-  		Map<String, Object> returnMap = new HashMap<String, Object>();
-  		if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db
-  				.getResultCode()))) {
-  			resultMap = db.getReturnlmap();
-  			Map<String, Object> datamap = resultMap;
-  			returnMap.put("code", ResultCode.R_SUCCESS);
-  			returnMap.put("result",datamap);
-  		} else {
-  			returnMap.put("code", ResultCode.R_FAIL);
-  			returnMap.put("msg", db.getResultMsg());
-  		}
-  		return returnMap;				
+  		String serviceCode="auth.face.faceVerify";
+    	DataBus db = InterfaceClient.callServiceMiddleSys(param,serviceCode,optFlowNum, sessionStaff);
+    	Map<String, Object> returnMap = new HashMap<String, Object>();
+    	if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db
+				.getResultCode()))) {
+			returnMap = db.getReturnlmap();
+			returnMap.put("code", ResultCode.R_SUCCESS);
+			if(!"0".equals(String.valueOf(returnMap.get("result_code")))){
+				returnMap.put("code", ResultCode.R_FAIL);
+				returnMap.put("msg", returnMap.get("error_msg"));
+			}
+			returnMap.putAll(returnMap);
+		} else {
+			returnMap.put("code", ResultCode.R_FAIL);
+			returnMap.put("msg", db.getResultMsg());
+			returnMap.put("flowId", db.getBusiFlowId());
+		}
+		return returnMap;
+    	
+//  		Map<String, Object> resultMap = new HashMap<String, Object>();
+//  		DataBus db = InterfaceClient.callService(param,PortalServiceCode.PIC_VERIFY,optFlowNum, sessionStaff);
+//  		Map<String, Object> returnMap = new HashMap<String, Object>();
+//  		if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db
+//  				.getResultCode()))) {
+//  			resultMap = db.getReturnlmap();
+//  			Map<String, Object> datamap = resultMap;
+//  			returnMap.put("code", ResultCode.R_SUCCESS);
+//  			returnMap.put("result",datamap);
+//  		} else {
+//  			returnMap.put("code", ResultCode.R_FAIL);
+//  			returnMap.put("msg", db.getResultMsg());
+//  		}
+//  		return returnMap;				
   	}
   	
     /**

@@ -192,17 +192,25 @@ public class AppCommonOutInterfinceController extends BaseController{
 //				String imgsrc = request.getRealPath("/resources/soFile/")+"orgimageBest.jpg";
 //				String imgdist = request.getRealPath("/resources/soFile/")+"newimageBest.jpg";
 //				imageBest = ImgReSIze.reSizeImg(imgsrc, imageBest, imgdist, 1000, 1000, 1f);
-				reqMap.put("app_id",AESUtil.encryptToString("crm", MDA.FACE_VERIFY_APP_ID_SECRET));
-				reqMap.put("params", AESUtil.encryptToString(JsonUtil.toString(param),MDA.FACE_VERIFY_PARAMS_SECRET));
-				reqMap.put("image_best", imageBest);
-				System.out.println("++++++人证比对入参reqMap="+JsonUtil.toString(reqMap));
+				Map<String, Object> SvcCont = new HashMap<String, Object>();
+				SvcCont.put("app_id",AESUtil.encryptToString("crm", MDA.FACE_VERIFY_APP_ID_SECRET));
+				SvcCont.put("params", AESUtil.encryptToString(JsonUtil.toString(param),MDA.FACE_VERIFY_PARAMS_SECRET));
+				SvcCont.put("image_best", imageBest.replaceAll("\n|\r", ""));
+				Map<String, Object> TcpCont = new HashMap<String, Object>();
+				TcpCont.put("Method", "auth.face.faceVerify");
+				TcpCont.put("Sign", "123");
+				TcpCont.put("Version", "V1.0");
+				Map<String, Object> ContractRoot = new HashMap<String, Object>();
+				ContractRoot.put("SvcCont", SvcCont);
+				ContractRoot.put("TcpCont", TcpCont);
+				reqMap.put("ContractRoot", ContractRoot);
+				System.out.println("++++++人证比对入参ContractRoot="+JsonUtil.toString(reqMap));
 				rMap = custBmo.verify(reqMap, optFlowNum, sessionStaff);
-//	 			log.debug("return={}", JsonUtil.toString(rMap));
+	 			log.debug("return={}", JsonUtil.toString(rMap));
 	 			if (rMap != null&& ResultCode.R_SUCCESS.equals(rMap.get("code").toString())) {
 	 				Map<String, Object> verify_cfg = MDA.PROV_AUTH_SWITH.get((sessionStaff.getAreaId() + "").substring(0, 3));
 	 				Float FZ = Float.parseFloat((String) verify_cfg.get("FZ"));//相似度最低要求（阀值）
-	 				Map<String, Object> res = (Map<String, Object>) rMap.get("result");
-	 				Float XSD = Float.parseFloat(String.valueOf(res.get("confidence")));//相似度
+	 				Float XSD = Float.parseFloat(String.valueOf(rMap.get("confidence")));//相似度
 					if(FZ>XSD){
 						String QZSHQX = "1";// 是否有强制审核权限
 						QZSHQX = staffBmo.checkOperatBySpecCd("QZSHQX", sessionStaff);
