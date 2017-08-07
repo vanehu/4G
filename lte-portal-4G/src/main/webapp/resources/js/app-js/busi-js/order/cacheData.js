@@ -201,7 +201,7 @@ CacheData = (function() {
 						optionStr +='<option value="'+valueRange.value+'">'+valueRange.text+'</option>';
 					}
 				}
-				selectStr += optionStr + "</select></td></tr>"; 
+				selectStr += optionStr + "</select></td></tr></div>";
 				return selectStr;
 			} else if(feeType == CONST.PAY_TYPE.AFTER_PAY){
 				selectStr = selectStr+'<div class="form-group pack-pro-box"><label for="exampleInputPassword1">' + param.name + ': </label>';
