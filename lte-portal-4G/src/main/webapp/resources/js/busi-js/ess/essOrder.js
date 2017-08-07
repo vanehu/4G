@@ -236,14 +236,14 @@ essOrder.main = (function() {
 		var termSellChannel = ec.util.defaultStr($("#p_termSellChannel").val());
 		var url = contextPath + "/ess/order/exportExcel?transactionId="
 				+ transactionId + "&orderType=" + orderType
-				+ "&commonRegionId=" + commonRegionId + "&extCustOrderId="
-				+ extCustOrderId + "&orderStatus=" + orderStatus
+				+ "&commonRegionId=" + commonRegionId + "&orderStatus=" + orderStatus
 				+ "&channelId=" + channelId + "&accNbrSellChannel="
 				+ accNbrSellChannel + "&termSellChannel=" + termSellChannel
 				+ "&startDate=" + startDate + "&endDate=" + endDate
 				+ "&accNbr=" + accNbr;
+		$("#p_extCustOrderId_hidden").attr("value", extCustOrderId);
 		$("#essOrderList_action").attr("action", url);
-		$("#essOrderList_action").submit();			
+		$("#essOrderList_action").submit();
 	};
 	
 	
