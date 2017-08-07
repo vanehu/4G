@@ -2336,24 +2336,22 @@ AttachOffer = (function() {
 			var content = CacheData.getParamContent(prodId,spec,2);	
 			$.confirm("参数设置： ",content,{ 
 				yes:function(){
+                    if(!!spec.prodSpecParams){
+                        for (var i = 0; i < spec.prodSpecParams.length; i++) {
+                            var param = spec.prodSpecParams[i];
+                            var itemSpec = CacheData.getServSpecParam(prodId,servSpecId,param.itemSpecId);
+                            itemSpec.setValue = $("#"+prodId+"_"+param.itemSpecId).val();
+                        }
+                    }
+                    $("#can_"+prodId+"_"+servSpecId).removeClass("canshu").addClass("canshu2");
+                    var attchSpec = CacheData.getServSpec(prodId,servSpecId);
+                    attchSpec.isset = "Y";
+                    $(".ZebraDialog").remove();
+                    $(".ZebraDialogOverlay").remove();
 				},
 				no:function(){	
 				}
 			});
-			$('#paramForm').bind('formIsValid', function(event, form){
-				if(!!spec.prodSpecParams){
-					for (var i = 0; i < spec.prodSpecParams.length; i++) {
-						var param = spec.prodSpecParams[i];
-						var itemSpec = CacheData.getServSpecParam(prodId,servSpecId,param.itemSpecId);
-						itemSpec.setValue = $("#"+prodId+"_"+param.itemSpecId).val();
-					}
-				}
-				$("#can_"+prodId+"_"+servSpecId).removeClass("canshu").addClass("canshu2");
-				var attchSpec = CacheData.getServSpec(prodId,servSpecId);
-				attchSpec.isset = "Y";
-				$(".ZebraDialog").remove();
-                $(".ZebraDialogOverlay").remove();
-			}).ketchup({bindElementByClass:"ZebraDialog_Button1"});
 		}
 	};
 	
