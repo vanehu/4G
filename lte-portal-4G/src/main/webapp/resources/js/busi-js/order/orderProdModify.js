@@ -1848,7 +1848,7 @@ order.prodModify = (function(){
 		order.prepare.step(1);
 		$("#orderedprod").hide();
 		$("#order_prepare").hide();
-		$(".ordercon a:first span").text("取 消");
+		//$(".ordercon a:first span").text("取 消");
 		$(".main_body").css("height","150px");
 		$(".main_body").css("min-height","150px");
 		$("#order_confirm").empty();
