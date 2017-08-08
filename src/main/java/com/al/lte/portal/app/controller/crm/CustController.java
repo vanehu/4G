@@ -93,7 +93,21 @@ public class CustController extends BaseController {
     public String custQuery(@RequestBody Map<String, Object> param,HttpServletRequest request,Model model,HttpSession session) throws BusinessException {
     	String forward = "";
     	Map<String, Object> custSessionMap =  (Map<String, Object>) session.getAttribute("custMp");
+    	String firstLoad="true";
+    	if(session.getAttribute("firstLoad")!=null){
+    		firstLoad=(String) session.getAttribute("firstLoad");
+    	}
     	List menu =  (List) session.getAttribute(SysConstant.SESSION_KEY_MENU_LIST);
+    	if(param.get("type")!=null){
+    		String type=param.get("type")+"";
+    		if("false".equals(firstLoad)){//已经加载过资源文件，则改变type值，无需再次加载，其中type=1需要加载，type=2无需加载
+    			type="2";
+    		}
+    		model.addAttribute("type", type);
+    		if("1".equals(param.get("type")+"")){
+    			session.setAttribute("firstLoad", "false");//表示加载过
+    		}
+    	}
     	//判断是否已经完成客户定位 是Y 否N
 		if(custSessionMap!=null){
 			model.addAttribute("haveCust", "Y");

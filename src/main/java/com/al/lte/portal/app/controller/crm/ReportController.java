@@ -311,6 +311,7 @@ public class ReportController extends com.al.lte.portal.controller.crm.ReportCon
 		model.addAttribute("p_areaId", defaultAreaInfo.get("defaultAreaId"));
 		model.addAttribute("p_areaId_val", defaultAreaInfo.get("defaultAreaName"));
 		model.addAttribute("p_channelId", sessionStaff.getCurrentChannelId());
+		model.addAttribute("queryType", "tj");//表示统计
 		if(param.get("newFlag")!=null){//跳转新ui
 			return "/app/cart_new/cart-main";
 		}
@@ -344,6 +345,7 @@ public class ReportController extends com.al.lte.portal.controller.crm.ReportCon
 		model.addAttribute("p_areaId_val", defaultAreaInfo.get("defaultAreaName"));
 		model.addAttribute("p_areaId", defaultAreaInfo.get("defaultAreaId"));
 		model.addAttribute("p_channelId", sessionStaff.getCurrentChannelId());
+		model.addAttribute("queryType", "tj");//表示统计
 		if(param.get("newFlag")!=null){//跳转新ui
 			return "/app/cart_new/cart-main";
 		}
@@ -572,6 +574,79 @@ public class ReportController extends com.al.lte.portal.controller.crm.ReportCon
 		} catch (Exception e) {
 			log.error("购物车详情/report/cartOfferInfo方法异常", e);
 			return super.failedStr(model, ErrorCode.CUST_ITEM_DETAIL, e, param);
+		}
+    }
+    
+	/**
+	 * 受理单列表查询
+	 * @param session
+	 * @param model
+	 * @param request
+	 * @return
+	 * @throws BusinessException
+	 */
+    @SuppressWarnings("unchecked")
+	@RequestMapping(value = "/cartListTj", method = RequestMethod.GET)
+    public String cartListTj(HttpSession session,Model model,WebRequest request) throws BusinessException{
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+                SysConstant.SESSION_KEY_LOGIN_STAFF);
+        Map<String, Object> param = new HashMap<String, Object>();
+        List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+        Integer nowPage = 1 ;
+        Integer pageSize = 10 ;
+        Integer totalSize = 0 ;
+        String startDt=request.getParameter("startDt");
+        String endDt=request.getParameter("endDt");
+        if(startDt!=null){
+        	startDt=startDt.replaceAll("-", "")+"000000";
+        }
+        if(endDt!=null){
+        	endDt=endDt.replaceAll("-", "")+"235959";
+        }
+        param.put("startDt", startDt);
+		param.put("endDt", endDt);
+		param.put("areaId", request.getParameter("areaId"));
+		param.put("qryBusiOrder", request.getParameter("qryBusiOrder"));
+		
+		param.put("channelId", request.getParameter("channelId"));
+		param.put("busiStatusCd", request.getParameter("busiStatusCd"));
+		param.put("olStatusCd", request.getParameter("olStatusCd"));
+		param.put("qryNumber", request.getParameter("qryNumber"));
+		param.put("olNbr", request.getParameter("olNbr"));
+		param.put("olTypeCd", Const.OL_TYPE_CD);
+		param.put("qryCnt", "Y");
+		param.put("qryTime", "1");
+		param.put("pageType", "monitor");
+		
+        try{
+    		nowPage = Integer.parseInt(request.getParameter("nowPage").toString());
+    		pageSize = Integer.parseInt(request.getParameter("pageSize").toString());
+    		param.put("nowPage", nowPage);
+    		param.put("pageSize", pageSize);
+    		
+    		Map<String, Object> map = cartBmo.queryCartsForTj(param, null, sessionStaff);
+        	if(map!=null&&map.get("orderList")!=null){
+        		list =(List<Map<String, Object>>)map.get("orderList");
+        		totalSize = (Integer)map.get("totalCnt");       		
+         	}
+        	PageModel<Map<String, Object>> pm = PageUtil.buildPageModel(
+            		nowPage,
+            		pageSize,
+            		totalSize<1?1:totalSize,
+    				list);
+    		model.addAttribute("pageModel", pm);
+    		model.addAttribute("code", map.get("code"));
+			model.addAttribute("mess", map.get("mess"));			
+		    return "/app/cart_new/cart-list-tj";//新版ui
+        } catch (BusinessException be) {
+
+			return super.failedStr(model, be);
+		} catch (InterfaceException ie) {
+
+			return super.failedStr(model, ie, param, ErrorCode.CUST_ORDER);
+		} catch (Exception e) {
+			log.error("购物车查询/app/report/cartList方法异常", e);
+			return super.failedStr(model, ErrorCode.CUST_ORDER, e, param);
 		}
     }
 }
