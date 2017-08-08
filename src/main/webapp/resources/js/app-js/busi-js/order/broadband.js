@@ -1151,7 +1151,7 @@ var _saveHtml2Pdf=function(){
 //			order.broadband.confirm();
 //			return;
 //		}
-		custQuery.goQueryCust();
+		custQuery.goQueryCust(2);//代表甩单
 //		common.callCustLocation('common.callCustInfo');
 	}
 	//客户定位

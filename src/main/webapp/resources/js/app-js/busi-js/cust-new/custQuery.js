@@ -20,8 +20,8 @@ custQuery = (function(){
 	var _govSwitch = "";//政企开关
 	var _custPic="";//客户读卡照片
 	//进入客户定位页面
-	var _goQueryCust = function(){
-		var param = {};
+	var _goQueryCust = function(type){//1非甩单，2甩单
+		var param = {"type":type};
 		$.callServiceAsHtml(contextPath+"/app/cust/query",param,{
 			"before":function(){
 				$.ecOverlay("<strong>正在加载中,请稍等...</strong>");
