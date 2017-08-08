@@ -119,7 +119,7 @@
 		                  	 -->
 		                  	 	
 				                <#if sub.relatesBoId?? && (sub.relatesBoId=="") || (sub.relatesBoId?? && (sub.relatesBoId!=null&&(sub.statusCd!='401700')))>
-				                <#if sub.statusCd!='301200' >
+				                <#if sub.statusCd!='301200' && sub.statusCd!='100002' && sub.statusCd!='100001' >
 		                  		<#if sub.actionClassCd?? && (sub.boActionTypeCd=="1"||sub.actionClassCd==1300||sub.actionClassCd==1200)>
 		                  			<#if (new_prod_num>1) || (is_vice_card>0)> <!-- 模拟主卡 -->
 		                  				<#if sub.boActionTypeCd?? && sub.boActionTypeCd=="1" && sub.offerRoleId=='24100' ><!-- 模拟主卡,主卡标识应该为 400  -->
@@ -128,8 +128,8 @@
                   								objId="${sub.objSpecId}" instId="${sub.objInstId}"  boActionTypeCd="${sub.boActionTypeCd}" acctNbr="${sub.num}" custId="${order.partyId}" relaBoId="${sub.boId}" relatesBoId="${sub.relatesBoId}" areaId="${order.areaId}" queryAreaId ="${sub.areaId}" actionClassCd="${sub.actionClassCd}" is_new="${new_prod_num}" statusCd="${sub.statusCd}" cancelFlag="${order.cancelFlag}">撤单</a>
 		                  				<#elseif sub.boActionTypeCd?? && sub.boActionTypeCd=="1" >
 		                  					<!-- 只撤单个，不考虑其他情况及副卡其他关联，撤主卡才考虑-->
-											<a class="purchase" href="javascript:order.undo.undoCheck('only','N','${order.olNbr}_${sub.objInstId}_${sub.boId}')" name="${order.olNbr}" id="${order.olNbr}_${sub.objInstId}_${sub.boId}" olId="${order.olId}" olNbr="${order.olNbr}" partyid="${order.partyId}" 
-                  								objId="${sub.objSpecId}" instId="${sub.objInstId}" boActionTypeCd="${sub.boActionTypeCd}" acctNbr="${sub.num}" custId="${order.partyId}" relaBoId="${sub.boId}" relatesBoId="${sub.relatesBoId}" areaId="${order.areaId}" queryAreaId ="${sub.areaId}" actionClassCd="${sub.actionClassCd}" is_new="${new_prod_num}" statusCd="${sub.statusCd}" cancelFlag="${order.cancelFlag}">撤单</a>
+											<!-- <a class="purchase" href="javascript:order.undo.undoCheck('only','N','${order.olNbr}_${sub.objInstId}_${sub.boId}')" name="${order.olNbr}" id="${order.olNbr}_${sub.objInstId}_${sub.boId}" olId="${order.olId}" olNbr="${order.olNbr}" partyid="${order.partyId}" 
+                  								objId="${sub.objSpecId}" instId="${sub.objInstId}" boActionTypeCd="${sub.boActionTypeCd}" acctNbr="${sub.num}" custId="${order.partyId}" relaBoId="${sub.boId}" relatesBoId="${sub.relatesBoId}" areaId="${order.areaId}" queryAreaId ="${sub.areaId}" actionClassCd="${sub.actionClassCd}" is_new="${new_prod_num}" statusCd="${sub.statusCd}" cancelFlag="${order.cancelFlag}">撤单</a> -->
 		                  				<#elseif sub.actionClassCd==1300>
 		                  				<!-- 57560 update by huangjj3 1、撤单查询若订单项的actionClassCd=1300时，即产品类订单项，后台在原有list节点下拼装接入产品节点，
 		                  				prodInstId为接入产品实例ID ，prodSpecId为接入产品规格，前台订单提交时，若actionClassCd=1300时，busiObj节点下的instId传接入产品实例ID，objId传接入产品 规格ID。-->
@@ -142,8 +142,8 @@
 		                  			<#elseif new_prod_num==1 > <!-- 单产品新装 -->
 		                  				<!-- 针对能力开放套餐变更，加载单个副卡，只撤单个副卡-->
 		                  				<#if sub.boActionTypeCd?? && sub.boActionTypeCd=="1" && sub.roleCd == "401">
-											<a class="purchase" href="javascript:order.undo.undoCheck('only','N','${order.olNbr}_${sub.objInstId}_${sub.boId}')" name="${order.olNbr}" id="${order.olNbr}_${sub.objInstId}_${sub.boId}" olId="${order.olId}" olNbr="${order.olNbr}" partyid="${order.partyId}" 
-                  								objId="${sub.objSpecId}" instId="${sub.objInstId}" boActionTypeCd="${sub.boActionTypeCd}" acctNbr="${sub.num}" custId="${order.partyId}" relaBoId="${sub.boId}" relatesBoId="${sub.relatesBoId}" areaId="${order.areaId}" queryAreaId ="${sub.areaId}" actionClassCd="${sub.actionClassCd}" is_new="${new_prod_num}" statusCd="${sub.statusCd}" cancelFlag="${order.cancelFlag}">撤单</a>
+											<!-- <a class="purchase" href="javascript:order.undo.undoCheck('only','N','${order.olNbr}_${sub.objInstId}_${sub.boId}')" name="${order.olNbr}" id="${order.olNbr}_${sub.objInstId}_${sub.boId}" olId="${order.olId}" olNbr="${order.olNbr}" partyid="${order.partyId}" 
+                  								objId="${sub.objSpecId}" instId="${sub.objInstId}" boActionTypeCd="${sub.boActionTypeCd}" acctNbr="${sub.num}" custId="${order.partyId}" relaBoId="${sub.boId}" relatesBoId="${sub.relatesBoId}" areaId="${order.areaId}" queryAreaId ="${sub.areaId}" actionClassCd="${sub.actionClassCd}" is_new="${new_prod_num}" statusCd="${sub.statusCd}" cancelFlag="${order.cancelFlag}">撤单</a> -->
 		                  				<!-- 撤整个订单-->
 		                  				<#elseif sub.boActionTypeCd?? && sub.boActionTypeCd=="1" >
                							    <a class="purchase" href="javascript:order.undo.undoCheck('main','Y','${order.olNbr}_${sub.objInstId}_${sub.boId}')" name="${order.olNbr}" id="${order.olNbr}_${sub.objInstId}_${sub.boId}" olId="${order.olId}" olNbr="${order.olNbr}" partyid="${order.partyId}" 
