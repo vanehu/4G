@@ -9,6 +9,7 @@ import com.al.lte.portal.common.CompareObject;
 import com.al.lte.portal.common.InterfaceClient;
 import com.al.lte.portal.common.PortalServiceCode;
 import com.al.lte.portal.model.SessionStaff;
+
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
@@ -288,5 +289,30 @@ public class CartBmoImpl implements CartBmo{
 			throw new BusinessException(ErrorCode.CLT_ORDER_ITEMS, dataBusMap, resultMap, e);
 		}
 
+	}
+
+	/**
+	 * 购物车列表查询-统计
+	 */
+	public Map<String, Object> queryCartsForTj(Map<String, Object> dataBusMap,
+			String optFlowNum, SessionStaff sessionStaff) throws Exception {
+		Map<String, Object> result = new HashMap<String, Object>();
+		DataBus db = InterfaceClient.callService(dataBusMap,PortalServiceCode.SHOPPING_CART_LIST_SIMPLE, optFlowNum, sessionStaff);
+		try{
+			result.put("code", -1);
+			result.put("mess", db.getResultMsg());
+			if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db.getResultCode()))) {
+				Map returnMap = db.getReturnlmap() ;
+				result.put("code", 1);
+				result.put("mess", returnMap.get("resultMsg"));
+				if(ResultCode.R_SUCC.equals(returnMap.get("resultCode"))){
+					result = (Map)returnMap.get("result");
+					result.put("code", 0);
+				}
+			}
+			return result ;
+		}catch(Exception e){
+			throw new BusinessException(ErrorCode.CUST_ORDER,dataBusMap,db.getReturnlmap(), e);
+		}
 	}
 }

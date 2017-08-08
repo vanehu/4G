@@ -28,6 +28,16 @@ public interface CartBmo {
 	public Map<String, Object> queryCarts(Map<String, Object> dataBusMap,String optFlowNum, SessionStaff sessionStaff) throws Exception;
 	
 	/**
+	  * 查询购物车列表-统计
+	  * @param dataBusMap
+	  * @param optFlowNum
+	  * @param sessionStaff
+	  * @return
+	  * @throws BusinessException
+	  */
+	public Map<String, Object> queryCartsForTj(Map<String, Object> dataBusMap,String optFlowNum, SessionStaff sessionStaff) throws Exception;
+	
+	/**
 	  * 查询购物车详情
 	  * @param dataBusMap
 	  * @param optFlowNum
