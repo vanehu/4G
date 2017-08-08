@@ -138,7 +138,7 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <i class="iconfont icon-close close" data-dismiss="modal" aria-hidden="true"></i>
+        <i class="iconfont icon-close close" onclick="cart.main.closeCartInfo()"></i>
         <h4 class="modal-title">订单详情</h4>
       </div>
       <div class="modal-body" id="cart_info">
@@ -153,5 +153,6 @@
     App.init();
     mydate();
     cart.main.initDic();
+    cart.main.queryType='${queryType}';
   });
 </script>

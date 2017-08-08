@@ -80,7 +80,7 @@ home = (function($) {
 		if(OrderInfo.actionFlag == "111"){
 			common.goKuandai();
 		}else if(home.menuData.needCust == "Y"){
-			order.broadband.goCust();
+			custQuery.goQueryCust(1);//代表非甩单
 		}else{
 			params.method = home.menuData.method;
 			params.actionFlag = home.menuData.actionFlag;

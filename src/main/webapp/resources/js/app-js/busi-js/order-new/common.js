@@ -439,7 +439,7 @@ common = (function($) {
 	
 	//客户端调用此方法返回到上一页 1 为prepare页面  2为order-content（填单）页面 3为order-confirm（订单确认和收银台）页面 4为order-print（打印）页面
 	var _callReturnBack=function(){
-		if($("#home").length == 0 ){
+		if($("#home").length == 0 && OrderInfo.actionFlag!=40){//统计查询除外
 			_goGroupHome($("#home").css("display")=="block");
 		}else if($("#home").css("display")=="block"){
 			return;

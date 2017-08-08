@@ -4,6 +4,7 @@ CommonUtils.regNamespace("cart", "main");
  */
 cart.main = (function() {
 	var _checkOlId;//待审核的虚拟订单号
+	var _queryType;//查询类型
     //查询
     var _queryCartList = function(pageIndex, scroller) {
         OrderInfo.actionFlag = 40;
@@ -63,6 +64,11 @@ cart.main = (function() {
         		}
             	param.endDt = ($("#p_endDt").val()).replace(/\//g, '');
             }
+           // cart.main.queryType="";
+            if(cart.main.queryType=="tj"){//统计走新的接口查询
+            	_queryTjList(param,curPage);
+            	return;
+            }
         }
         param.newFlag="1";
         $.callServiceAsHtmlGet(contextPath + "/app/report/cartList", param, {
@@ -108,6 +114,52 @@ cart.main = (function() {
             }
         });
     };
+    
+ //统计查询  
+   var _queryTjList=function(param,curPage){
+       $.callServiceAsHtmlGet(contextPath + "/app/report/cartListTj", param, {
+           "before": function() {
+               $.ecOverlay("购物车查询中，请稍等...");
+           },
+           "always": function() {
+               //$.unecOverlay();
+           },
+           "done": function(response) {
+               $.unecOverlay();
+               if (response && response.code == -2) {
+                   return;
+               } else {
+                   OrderInfo.order.step = 2;
+                   if (response.data == "" || (response.data).indexOf("没有查询到结果") >= 0) {
+                       $("#islastPage").val(1);
+                       $("#currentPage").val(Number(curPage) - 1);
+                       $.alert("提示", "没有查询到结果");
+                       return;
+                   }
+                   $("#nav-tab-1").removeClass("active in");
+       	    	$("#nav-tab-2").addClass("active in");
+       	    	$("#tab1_li").removeClass("active");
+       	    	$("#tab2_li").addClass("active");
+                  
+                   if (curPage == 1) {
+                   	 $("#nav-tab-2").children('.list-box').html(response.data);
+                        $('a[href="#nav-tab-2"]').click();
+                   } else {
+                   	$("#order-list-all").empty();
+                       $("#order-list-all").append(response.data);
+                       $.refresh($("#order-list-all"));
+                   }
+                   
+                   //回调刷新iscroll控制数据,控件要求
+                   //if (scroller && $.isFunction(scroller)) scroller.apply(this, []);
+               }
+           },
+           fail: function(response) {
+               $.unecOverlay();
+               $.alert("提示", "请求可能发生异常，请稍后再试！");
+           }
+       });
+   };
     //改变渠道-监听
     var _channelChange = function() {
         if ($("#p_channelId").val() != "") {
@@ -695,6 +747,10 @@ cart.main = (function() {
 			}
 		});
 	};
+	
+  var _closeCartInfo=function(){
+	  $("#cart_info_modal").modal("hide");
+  };
     return {
         cartBack: _cartBack,
         channelChange: _channelChange,
@@ -719,6 +775,8 @@ cart.main = (function() {
         feeScroll           :_feeScroll,
         getjbrPhotos        :_getjbrPhotos,
         checkjbrPhotos      :_checkjbrPhotos,
-        testUrl             :_testUrl
+        testUrl             :_testUrl,
+        queryType           :_queryType,
+        closeCartInfo       :_closeCartInfo
     };
 })();
