@@ -181,26 +181,27 @@ CacheData = (function() {
 		var feeType = $("select[name='pay_type_-1']").val();
 		if(feeType==undefined) feeType = order.prodModify.choosedProdInfo.feeType;
 		if(feeType == CONST.PAY_TYPE.BEFORE_PAY){
-			if(param.rule.isConstant=='Y'){ //不可修改
-				selectStr = selectStr+"<tr><td>"+param.name + ": </td><td><select class='inputWidth183px' id="+prodId+"_"+itemSpecId+" disabled='disabled'>"; 
-			}else {
-				if(param.rule.isOptional=="N") { //必填
-					selectStr = selectStr+"<tr><" +
-							"td>"+param.name + ": </td><td><select class='inputWidth183px' id="+prodId+"_"+itemSpecId+" data-validate='validate(required,reg:"
-							  + param.rule.maskMsg+"("+param.rule.mask+")) on(blur)'><label class='f_red'>*</label><br>"; 
-				}else{
-					selectStr = selectStr+"<tr><td>"+param.name + ": </td><td><select class='inputWidth183px' id="+prodId+"_"+itemSpecId+"><br>"; 
-				}
-			}
-			for ( var j = 0; j < param.valueRange.length; j++) {
-				var valueRange = param.valueRange[j];
-				if(valueRange.value== param.setValue){
-					optionStr +='<option value="'+valueRange.value+'" selected="selected" >'+valueRange.text+'</option>';
-				}else {
-					optionStr +='<option value="'+valueRange.value+'">'+valueRange.text+'</option>';
-				}
-			}
-			selectStr += optionStr + "</select></td></tr>"; 
+            selectStr = selectStr+'<div class="form-group pack-pro-box"><label for="exampleInputPassword1">' + param.name + ': </label>';
+            if(param.rule.isConstant=='Y'){ //不可修改
+                selectStr =selectStr+ "<select class='inputWidth183px' id="+prodId+"_"+itemSpecId+" disabled='disabled'>";
+            }else {
+                if(param.rule.isOptional=="N") { //必填
+                    selectStr =selectStr+ " <select class='inputWidth183px' id="+prodId+"_"+itemSpecId+" data-validate='validate(required,reg:"
+                        + param.rule.maskMsg+"("+param.rule.mask+")) on(blur)'><label class='f_red'>*</label><br>";
+                }else{
+                    selectStr =  selectStr+ "<select class='inputWidth183px' id="+prodId+"_"+itemSpecId+">";
+                    optionStr +='<option value="" >请选择</option>';  //不是必填可以不选
+                }
+            }
+            for ( var j = 0; j < param.valueRange.length; j++) {
+                var valueRange = param.valueRange[j];
+                if(valueRange.value== param.setValue){
+                    optionStr +='<option value="'+valueRange.value+'" selected="selected" >'+valueRange.text+'</option>';
+                }else {
+                    optionStr +='<option value="'+valueRange.value+'">'+valueRange.text+'</option>';
+                }
+            }
+            selectStr += optionStr + "</select></td></tr></div>";
 			return selectStr;
 		}
 			else if(feeType == CONST.PAY_TYPE.AFTER_PAY){
