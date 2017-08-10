@@ -71,7 +71,7 @@ verify = (function(){
 //        	var target = 800;
 //        	var $img1 = $("#img_artwork");
 //        	scale = getScale($img1[0].width,$img1[0].height,scale,target);
-            compress('data:image/jpeg;base64,' + o.artwork, 0.2, scale, "img_artwork", function(dataUrl) {
+            compress('data:image/jpeg;base64,' + o.artwork, 0.2, scale, "img_artwork",0 , function(dataUrl) {
             	image_best = dataUrl.split('data:image/jpeg;base64,')[1];
             	$("#img_best").attr("src","data:image/jpeg;base64,"+image_best);
             	//人证比对
@@ -82,10 +82,10 @@ verify = (function(){
       }
     
     //  base64图片字符串  quality压缩质量   scale缩放比例   text_id图片元素id
-    var compress = function(base64, quality, scale, text_id, cb) {
-//    	var $img = $('<img/>').prop('src', base64);
-    	var $img = $("#"+text_id).prop('src', base64);
-        $img.onload = function() {
+    var compress = function(base64, quality, scale, text_id, i, cb) {
+    	var $img = $('<img/>').prop('src', base64);
+//    	var $img = $("#"+text_id).prop('src', base64);
+        $img[i].onload = function() {
           var dataUrl;
           var width = $img[0].width;
           var height = $img[0].height;
@@ -178,7 +178,7 @@ verify = (function(){
     var _upLoadPic = function(){
     	//对水印图进行压缩
       var scale = 0.4;
-    	compress( $("#img_watermark").attr("src"), 0.2, scale, "img_watermark", function(dataUrl) {
+    	compress( $("#img_watermark").attr("src"), 0.2, scale, "img_watermark", 1, function(dataUrl) {
 //        	image_best = dataUrl.split('data:image/jpeg;base64,')[1];
 //        	$("#img_watermark").attr("src","data:image/jpeg;base64,"+image_best);
         	//照片上传
