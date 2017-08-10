@@ -37,7 +37,7 @@
 	<bean id="uniConfigMDALoader" class="com.al.uniconfig.spring.UniConfigMDALoader" destroy-method="destroy">
 		<property name="locations">
 			<array>
-				<value>classpath:/portal/MDA.xml</value>
+				<value>classpath:/portal/MDA_APP.xml</value>
 			</array>
 		</property> 
 	</bean>
