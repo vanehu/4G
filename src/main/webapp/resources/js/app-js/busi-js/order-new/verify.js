@@ -83,9 +83,9 @@ verify = (function(){
     
     //  base64图片字符串  quality压缩质量   scale缩放比例   text_id图片元素id
     var compress = function(base64, quality, scale, text_id, cb) {
-    	var $img = $('<img/>').prop('src', base64);
-//        var $img = $("#"+text_id);
-        $img[0].onload = function() {
+//    	var $img = $('<img/>').prop('src', base64);
+    	var $img = $("#"+text_id).prop('src', base64);
+        $img.onload = function() {
           var dataUrl;
           var width = $img[0].width;
           var height = $img[0].height;
