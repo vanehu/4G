@@ -168,7 +168,6 @@ public class AppCommonOutInterfinceController extends BaseController{
 	 * @return
 	 * @throws AuthorityException
 	 */
-	@SuppressWarnings({ "deprecation", "unchecked" })
 	@RequestMapping(value = "/pic/verify", method = RequestMethod.POST)
 	public @ResponseBody JsonResponse verify(@RequestBody Map<String, Object> param, String optFlowNum,
 			HttpServletResponse response,HttpServletRequest request){
@@ -193,7 +192,8 @@ public class AppCommonOutInterfinceController extends BaseController{
 //				String imgdist = request.getRealPath("/resources/soFile/")+"newimageBest.jpg";
 //				imageBest = ImgReSIze.reSizeImg(imgsrc, imageBest, imgdist, 1000, 1000, 1f);
 				Map<String, Object> SvcCont = new HashMap<String, Object>();
-				SvcCont.put("app_id",AESUtil.encryptToString("crm", MDA.FACE_VERIFY_APP_ID_SECRET));
+				SvcCont.put("app_id",AESUtil.encryptToString(SysConstant.CSB_SRC_SYS_ID_APP, MDA.FACE_VERIFY_APP_ID_SECRET));
+				System.out.println("++++++params对应的加密密钥"+MDA.FACE_VERIFY_PARAMS_SECRET);
 				SvcCont.put("params", AESUtil.encryptToString(JsonUtil.toString(param),MDA.FACE_VERIFY_PARAMS_SECRET));
 				SvcCont.put("image_best", imageBest.replaceAll("\n|\r", ""));
 				Map<String, Object> TcpCont = new HashMap<String, Object>();

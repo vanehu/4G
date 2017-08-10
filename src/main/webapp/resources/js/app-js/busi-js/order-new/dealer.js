@@ -264,9 +264,16 @@ order.dealer = (function() {
 	
 	function _showJbr(){
 	    $("#jbr").modal("show");
+	    if($("#tab1_jbr").length>0){
+	    	$("#tab1_jbr").click();
+	    }
 	}
 	
 	function _closeJBR(){
+		if(cust.isSameOne == undefined){
+			$("#jbr").modal("hide");
+			return;
+		}
 		if(OrderInfo.preBefore.idPicFlag=="ON" && (OrderInfo.actionFlag!="3" || (OrderInfo.actionFlag=="22" && OrderInfo.uimtypeflag == "22"))){
 			if(!OrderInfo.virOlId){
 				common.callPhotos('cust.getPicture');

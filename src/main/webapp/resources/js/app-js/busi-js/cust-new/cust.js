@@ -945,8 +945,11 @@ cust = (function(){
 //						if(OrderInfo.jbr.identityPic){
 //							OrderInfo.jbr.identityPic = undefined;
 //						}
-						if(OrderInfo.preBefore.idPicFlag=="ON"&& !cust.isCovCust(OrderInfo.cust.identityCd)	&& OrderInfo.actionFlag != 9){//实名拍照省份开关为开并且不是政企客户
+						if(OrderInfo.actionFlag != 9){//实名拍照省份开关为开并且不是政企客户
 								cust.isOldCust = true;
+								if(OrderInfo.cust.custId =="-1"){
+									cust.isOldCust = false;
+								}
 								OrderInfo.jbr.custId = OrderInfo.cust.custId;
 								OrderInfo.jbr.partyName = OrderInfo.cust.partyName;
 								OrderInfo.jbr.telNumber = OrderInfo.cust.telNumber;

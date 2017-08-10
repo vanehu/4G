@@ -154,6 +154,9 @@ common = (function($) {
 	
 	//调用客户端的拍照方法       method：表示回调js方法 如：order.prodModify.getIDCardInfos
 	var _callPhotos=function(method){
+		if(cust.isSameOne == undefined){
+			return;
+		}
 		if(!cust.isSameOne){
 			var partyName = $('#orderAttrName').val();//经办人名称
 			var areaId = OrderInfo.staff.areaId;//经办人地区
