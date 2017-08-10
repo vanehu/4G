@@ -5,6 +5,7 @@ verify = (function(){
 	var _upLoad_param={};//人证比对照片上传入参
 	var _img_YS="";//水印压缩图片
 	var _checkType = "";
+	var countdown = 30;
 	
 	//跳转到人证比对拍照页面
 	var _openVerify=function(isNeedCheck){
@@ -31,9 +32,6 @@ verify = (function(){
 	
 	//人证比对拍照
     var _goPhotograph = function(param) {
-//    	if(!ec.util.isObj(OrderInfo.jbr.identityPic)){
-//    		
-//    	}
         var arr = new Array(1)
         arr[0] = '';
         var image_best = "";
@@ -119,7 +117,7 @@ verify = (function(){
     
     //调用人证比对
     var verify_pic = function(image_best){
-    	if($("#verify_openFlag").val()=="ON"){
+    	if($("#jbr_pic").attr("src").length>50 && $("#verify_openFlag").val()=="ON"){
     		$("#bd").attr("disabled","disabled");
         	var cert_number = "";
         	if($("#identidiesType").val()=="1" && ((OrderInfo.actionFlag!="111" && cust.isSameOne) ||(OrderInfo.actionFlag=="111" && order.broadband.isSameOne))){
@@ -155,6 +153,7 @@ verify = (function(){
                 }
             });
     	}else{
+    		$.unecOverlay();
     		$("#bd").removeAttr("disabled");
     	}
     }
@@ -185,6 +184,20 @@ verify = (function(){
         	//照片上传
 //    		alert(verify.upLoad_param.picturesInfo.length);
     		for(var i=0;i<verify.upLoad_param.picturesInfo.length;i++){
+    			if(verify.checkType != "2"){
+    				verify.upLoad_param.picturesInfo[i].checkType = verify.checkType;
+    			}
+    			if(verify.checkType.length>0){
+    				verify.upLoad_param.picturesInfo[i].staffId = parseInt(OrderInfo.staff.staffId);
+    			}
+	    		if(verify.checkType == "1" || verify.checkType == "2"){
+	    			if($("#check_staff").val().length>0){
+	    				verify.upLoad_param.picturesInfo[i].staffId = parseInt($("#check_staff").val());
+	    			}else{
+	    				$.alert("提示","请选择审核人");
+	    				return;
+	    			}
+	    		}
     			if(verify.upLoad_param.picturesInfo[i].picFlag == "D"){
     				verify.upLoad_param.picturesInfo[i].orderInfo = dataUrl.split('data:image/jpeg;base64,')[1];
     			}
@@ -192,8 +205,16 @@ verify = (function(){
     		if(OrderInfo.actionFlag=="111"){
     			verify.upLoad_param.olId = $("#TransactionID").val();
     		}
-    		verify.upLoad_param.checkType = verify.checkType;
-    		verify.upLoad_param.staffId = OrderInfo.staff.areaId;
+//    		verify.upLoad_param.checkType = verify.checkType;
+//    		verify.upLoad_param.staffId = OrderInfo.staff.staffId;
+//    		if(verify.checkType == "1" || verify.checkType == "2"){
+//    			if($("#check_staff").val().length>0){
+//    				verify.upLoad_param.staffId = $("#check_staff").val();
+//    			}else{
+//    				$.alert("提示","请选择审核人");
+//    				return;
+//    			}
+//    		}
         	$.callServiceAsJson(contextPath + "/app/mktRes/upLoadPicturesFileToFtp", verify.upLoad_param, {
                 "before": function () {
                     $.ecOverlay("<strong>照片上传中,请稍等...</strong>");
@@ -215,7 +236,14 @@ verify = (function(){
         					order.broadband.haveCallPhote=true;
         				}
                     	if($("#pic_checkType").length>0 && $("#pic_checkType").val() == "2"){
-                    		_smsSend("2");
+                    		$.confirm("图片上传成功","流水号："+response.data.reult.result.virOlId,{ 
+        	 					yes:function(){	
+        	 						_smsSend("2");
+        	 					},
+        						no:function(){	
+        							_smsSend("2");
+        						}
+        	 				});
                     	}else{
                     		$("#prodofferPrepare").show();
             				$("#verifyPrepare").hide();
@@ -257,7 +285,10 @@ verify = (function(){
         				if(OrderInfo.actionFlag!="111"){
             				order.dealer.closeJBR();//拍完照片直接关闭经办人界面
         				}
+                	}else if(type=="1"){
+                		settime();
                 	}
+                	
                 } else {
                     $.alert("提示",response.data);
                 }
@@ -265,6 +296,21 @@ verify = (function(){
         });
     }
     
+    var settime = function() { 
+    	if (countdown == 0) { 
+    		$("#verify_smsSend").removeAttr("disabled");
+    		$("#verify_smsSend").text("重新发送");
+    		countdown = 30; 
+    	} else { 
+    		$("#verify_smsSend").attr("disabled","disabled");
+    		$("#verify_smsSend").text("重新发送(" + countdown + ")"); 
+    		countdown--;
+    		setTimeout(function() { 
+    	    	settime();
+    	    	},1000);
+    	} 
+    }
+    	
     var _smsValid = function(type){
     	var param = {
     			"number":$("#check_staff").find("option:selected").attr("phone"),
