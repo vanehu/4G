@@ -71,7 +71,7 @@ verify = (function(){
 //        	var target = 800;
 //        	var $img1 = $("#img_artwork");
 //        	scale = getScale($img1[0].width,$img1[0].height,scale,target);
-            compress('data:image/jpeg;base64,' + "", 0.2, scale, "img_artwork", function(dataUrl) {
+            compress('data:image/jpeg;base64,' + o.artwork, 0.2, scale, "img_artwork", function(dataUrl) {
             	image_best = dataUrl.split('data:image/jpeg;base64,')[1];
             	$("#img_best").attr("src","data:image/jpeg;base64,"+image_best);
             	//人证比对
@@ -83,14 +83,14 @@ verify = (function(){
     
     //  base64图片字符串  quality压缩质量   scale缩放比例   text_id图片元素id
     var compress = function(base64, quality, scale, text_id, cb) {
-        var $img = $("#"+text_id);
-//        $img[0].onload = function() {
+    	var $img = $('<img/>').prop('src', base64);
+//        var $img = $("#"+text_id);
+        $img[0].onload = function() {
           var dataUrl;
           var width = $img[0].width;
           var height = $img[0].height;
           var canvas = document.createElement('canvas');
           var context = canvas.getContext('2d');
-
           canvas.width = width * scale;
           canvas.height = height * scale;
 
@@ -105,7 +105,7 @@ verify = (function(){
           context.drawImage($img[0], sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
           dataUrl = canvas.toDataURL('image/jpeg', quality); //品质0-1
           cb.call(this, dataUrl);
-//        }
+        }
       }
     //获取图片压缩比例  
     var getScale = function(widthdist,heightdist,scale,target){
@@ -178,7 +178,7 @@ verify = (function(){
     var _upLoadPic = function(){
     	//对水印图进行压缩
       var scale = 0.4;
-    	compress('data:image/jpeg;base64,' + "", 0.2, scale, "img_watermark", function(dataUrl) {
+    	compress( $("#img_watermark").attr("src"), 0.2, scale, "img_watermark", function(dataUrl) {
 //        	image_best = dataUrl.split('data:image/jpeg;base64,')[1];
 //        	$("#img_watermark").attr("src","data:image/jpeg;base64,"+image_best);
         	//照片上传
