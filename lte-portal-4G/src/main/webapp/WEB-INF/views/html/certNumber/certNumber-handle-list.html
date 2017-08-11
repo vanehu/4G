@@ -25,6 +25,16 @@
             <td>
                 <a class="purchase" href="javascript:oneFive.certNumberHandle.queryDetail('${item.orderId}')"
                    type="main">详情</a>
+               
+                <#if item.statusCd=="100002">
+                   <a class="purchase" type="main" id="${item.orderId}"
+                   href="javascript:oneFive.certNumberHandle.queryAllDetail('${item.orderId}')">接单</a>
+                   <#else >
+                   		<a class="purchase" type="main" id="${item.orderId}" style="display:none;"
+                   href="javascript:oneFive.certNumberHandle.queryAllDetail('${item.orderId}')">接单</a>
+                 </#if>
+                 
+                
             </td>
         </tr>
         </#list>
@@ -38,4 +48,7 @@
 <!--页码-->
 <@portal.modelPagination pageModel 5 "oneFive.certNumberHandle.queryOneFiveList"/>
 <script src="${contextPath}/js/our-js/ec.pagination.js?${jsversion}" type="text/javascript"></script>
+<script>
+
+</script>
 <!--页码 end-->

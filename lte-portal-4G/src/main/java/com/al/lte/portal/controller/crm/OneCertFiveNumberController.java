@@ -183,7 +183,8 @@ public class OneCertFiveNumberController extends BaseController {
         int nowPage = MapUtils.getIntValue(param, "nowPage", 1);
         String ifFilterOwnAccNbr = MapUtils.getString(param, "ifFilterOwnAccNbr", "");
         if (SysConstant.STR_Y.equals(ifFilterOwnAccNbr)) {
-            param.put("handleStaffId", sessionStaff.getStaffId());
+        	//取消对工号的限制
+            //param.put("handleStaffId", sessionStaff.getStaffId());
         }
         try {
             Map<String, Object> resMap = cartBmo.queryCltCarts(param, null, sessionStaff);
@@ -195,6 +196,7 @@ public class OneCertFiveNumberController extends BaseController {
                 }
                 PageModel<Map<String, Object>> pm = PageUtil.buildPageModel(nowPage, 10, totalSize < 1 ? 1
                         : totalSize, list);
+                
                 model.addAttribute("pageModel", pm);
                 model.addAttribute("code", "0");
 
@@ -331,6 +333,56 @@ public class OneCertFiveNumberController extends BaseController {
             return super.failedStr(model, ErrorCode.CLTORDER_DETAIL, e, paramMap);
         }
     }
+    
+    /**
+     * 统一接单查询跨省一证五卡订单列表详情
+     */
+    @RequestMapping(value = "/queryOneFiveOrderItemAllDetail", method = RequestMethod.GET)
+    @ResponseBody
+    public JsonResponse queryOneFiveOrderItemAllDetail(Model model, HttpSession session, @RequestParam Map<String, Object> paramMap) throws BusinessException {
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
+        JsonResponse jsonResponse;
+        try {
+        	//受理的参数为:{orderId=120000001010, areaId=8320400, accNbr=17767101344, statusCd=201300, channelId=1385688, staffId=5176843}
+            paramMap.put("statusCd", SysConstant.ONE_FIVE_NUMBER_STATUS_INIT);
+            Map<String, Object> resMap = cartBmo.queryCltCartOrder(paramMap, null, sessionStaff);
+            Map<String, Object> orderList = null;
+            Map<String, Object> param = null;
+            if (ResultCode.R_SUCC.equals(resMap.get("resultCode"))) {
+                Map<String, Object> cartInfo = (Map<String, Object>) resMap.get("result");
+                orderList = (Map<String, Object>) cartInfo.get("collectionOrderList");
+                List arrList = (ArrayList)(orderList.get("collectionCustInfos"));
+                     
+                model.addAttribute("orderList", orderList);
+                model.addAttribute("code", ResultCode.R_SUCC);
+                 
+                //参数修改
+                for(int i = 0;i < arrList.size();i++){
+                	String strJson = JsonUtil.toString(arrList.get(i));
+                    param = JsonUtil.toObject(strJson, Map.class);
+                    param.put("channelId", sessionStaff.getCurrentChannelId());
+	                param.put("staffId", sessionStaff.getStaffId());
+	                param.put("statusCd", "201300");
+	                 
+	                Map<String, Object> resuMap = orderBmo.cltOrderCommit(param, null, sessionStaff);
+	                System.out.println(resuMap.toString());
+	                if (ResultCode.R_SUCC.equals(resuMap.get("resultCode"))) {
+	                    jsonResponse = super.successed(ResultConstant.SUCCESS);
+	                } else {
+	                    jsonResponse = super.failed(resuMap.get("resultMsg"), ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+	                }
+	              
+                }             
+            } else {
+                model.addAttribute("code", resMap.get("resultCode"));
+                model.addAttribute("mess", resMap.get("resultMsg"));
+            }
+            return super.successed(orderList, ResultConstant.SUCCESS.getCode());
+        }catch (Exception e) {
+            log.error("购物车详情/order/queryCustCollectionInfo方法异常", e);
+            return super.failed(ErrorCode.CLTORDER_DETAIL, e, paramMap);
+        }
+    }  
 
     /**
      * 跨省一证五卡订单列表详情
