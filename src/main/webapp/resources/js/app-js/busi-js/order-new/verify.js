@@ -6,6 +6,9 @@ verify = (function(){
 	var _img_YS="";//水印压缩图片
 	var _checkType = "";
 	var countdown = 30;
+	var _isNeedCheck;//是否有人像审核权限
+	var _fz;//照片比对阈值
+	var _confidence;//照片相似度
 	
 	//跳转到人证比对拍照页面
 	var _openVerify=function(isNeedCheck){
@@ -117,8 +120,14 @@ verify = (function(){
     
     //调用人证比对
     var verify_pic = function(image_best){
+    	if(verify.isNeedCheck=="ON"){
+			$("#bd").removeAttr("disabled");
+		}
     	if($("#jbr_pic").attr("src").length>50 && $("#verify_openFlag").val()=="ON"){
     		$("#bd").attr("disabled","disabled");
+    		if(verify.isNeedCheck=="ON"){
+    			$("#bd").removeAttr("disabled");
+    		}
         	var cert_number = "";
         	if($("#identidiesType").val()=="1" && ((OrderInfo.actionFlag!="111" && cust.isSameOne) ||(OrderInfo.actionFlag=="111" && order.broadband.isSameOne))){
         		cert_number = $("#userid").val();
@@ -144,8 +153,13 @@ verify = (function(){
                     	$("#verify_msg").text("人证相符，相似度"+response.data.confidence+"%，拍摄成功");
                     	$("#bd").removeAttr("disabled");
                     	verify.checkType = response.data.checkType;
+                    	verify.confidence=response.data.confidence;
+                    	verify.fz=response.data.fz;
                     }else if (response.code == 1002) {
                     	$("#verify_msg").text(response.data.msg);
+                    	verify.checkType = "";//审核不通过
+                    	verify.confidence=response.data.confidence;
+                    	verify.fz=response.data.fz;
                     }else {
 //                    	$("#bd").removeAttr("disabled");
                         $.alertM(response.data);
@@ -159,20 +173,35 @@ verify = (function(){
     }
     
     var _verifyPass = function(){
-    	if($("#pic_checkType").length>0 && $("#pic_checkType").val() == "2"){
-    		verify.checkType = "2";
+    	if(verify.checkType=="4"){//有强制审核权限
+			$.confirm("确认","本次经办人拍照人证相符率为 "+verify.confidence+"%，低于设定的阀值 "+verify.fz+"%，请确实是否强制审核通过？",{ 
+				yes:function(){
+					_upLoadPic();
+				},
+				no:function(){	
+					return;
+				}
+			});
+    	}else if(verify.checkType=="3"){//人像比对通过
     		_upLoadPic();
-    	}else if($("#pic_checkType").length>0 && $("#pic_checkType").val() == "1"){
-    		verify.checkType = "1";
-    		if($("#verify_smsCode").val().length>0){
-    			_smsValid();
-    		}else{
-    			$.alert("提示","请输入验证码")
-    			return;
-    		}
-    	}else{
-    		_upLoadPic();
+    	}else{//打开人工审核界面
+    		$("#checkPhotoModal").modal("show");
     	}
+//    		if($("#pic_checkType").length>0 && $("#pic_checkType").val() == "2"){
+//        		verify.checkType = "2";
+//        		_upLoadPic();
+//        	}else if($("#pic_checkType").length>0 && $("#pic_checkType").val() == "1"){
+//        		verify.checkType = "1";
+//        		if($("#verify_smsCode").val().length>0){
+//        			_smsValid();
+//        		}else{
+//        			$.alert("提示","请输入验证码");
+//        			return;
+//        		}
+//        	}else{
+//        		_upLoadPic();
+//        	}
+//    	}
     }
     
     var _upLoadPic = function(){
@@ -341,7 +370,10 @@ verify = (function(){
 		verifyPass		:	_verifyPass,
 		smsSend			:	_smsSend,
 		smsValid		:	_smsValid,
-		checkType		:	_checkType
+		checkType		:	_checkType,
+		isNeedCheck     :   _isNeedCheck,
+		fz              :   _fz,
+		confidence      :   _confidence
 	};
 	
 })();
