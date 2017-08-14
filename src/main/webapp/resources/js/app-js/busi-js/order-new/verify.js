@@ -187,21 +187,6 @@ verify = (function(){
     	}else{//打开人工审核界面
     		$("#checkPhotoModal").modal("show");
     	}
-//    		if($("#pic_checkType").length>0 && $("#pic_checkType").val() == "2"){
-//        		verify.checkType = "2";
-//        		_upLoadPic();
-//        	}else if($("#pic_checkType").length>0 && $("#pic_checkType").val() == "1"){
-//        		verify.checkType = "1";
-//        		if($("#verify_smsCode").val().length>0){
-//        			_smsValid();
-//        		}else{
-//        			$.alert("提示","请输入验证码");
-//        			return;
-//        		}
-//        	}else{
-//        		_upLoadPic();
-//        	}
-//    	}
     }
     
     var _upLoadPic = function(){
@@ -360,6 +345,23 @@ verify = (function(){
         });
     }
     
+var _checkSure=function(){
+	if($("#pic_checkType").length>0 && $("#pic_checkType").val() == "2"){
+		verify.checkType = "2";
+		_upLoadPic();
+	}else if($("#pic_checkType").length>0 && $("#pic_checkType").val() == "1"){
+		verify.checkType = "1";
+		if($("#verify_smsCode").val().length>0){
+			_smsValid();
+		}else{
+			$.alert("提示","请输入验证码");
+			return;
+		}
+	}else{
+		_upLoadPic();
+	}
+}
+    
 	return {
 		openVerify		:	_openVerify,
 		goPhotograph	:	_goPhotograph,
@@ -373,7 +375,8 @@ verify = (function(){
 		checkType		:	_checkType,
 		isNeedCheck     :   _isNeedCheck,
 		fz              :   _fz,
-		confidence      :   _confidence
+		confidence      :   _confidence,
+		checkSure       :   _checkSure
 	};
 	
 })();
