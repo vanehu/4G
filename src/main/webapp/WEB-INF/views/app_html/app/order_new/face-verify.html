@@ -19,8 +19,26 @@
 								</div>
 							</div>
 						</div>
-						<#if isNeedCheck=="ON">
-						<div class="list-box m-t-10">
+						<div class="sub-btn-box p p-b-15">
+							<button id="pz" onclick="verify.goPhotograph();" class="double-btn">拍摄照片</button>
+							<button id="bd" disabled="disabled" onclick="verify.verifyPass();" class="double-btn">人证相符</button>
+						</div>
+				</div>
+				<!-- end col-12 -->
+			</div>
+
+		</div>
+		
+<div class="modal fade modal-message modal-top" id="checkPhotoModal">
+	<div class="modal-dialog" style="display:block;">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal"
+					aria-hidden="true">×</button>
+				<h4 class="modal-title" id="checkPhotoModalTitle">人工审核</h4>
+			</div>
+			<div class="modal-body">
+				<div class="list-box m-t-10">
 							<ul class="choice-list-box bg-body border-none">
 								<li class="m-t-10">
 									<div class="choice-box">
@@ -53,18 +71,19 @@
 		                      	</div>
 							</div>		
 					</div>
-					</#if>
-						<div class="sub-btn-box p p-b-15">
-							<button id="pz" onclick="verify.goPhotograph();" class="double-btn">拍摄照片</button>
-							<button id="bd" disabled="disabled" onclick="verify.verifyPass();" class="double-btn">人证相符</button>
-						</div>
-				</div>
-				<!-- end col-12 -->
 			</div>
-
+		<div class="modal-footer">
+			<div class="ordinary-btn-box p p-b-15">
+				<button class="double-btn pull-left" onclick="verify.upLoadPic()">确定</button>
+				<button class="double-btn pull-right" onclick="$('#checkPhotoModal').modal('hide')">取消</button>
+			</div>
 		</div>
+		</div>
+	</div>
+</div>
 <script>
 $(function() {
 	order.broadband.init_select();
+	verify.isNeedCheck='${isNeedCheck}';
 });
 </script>

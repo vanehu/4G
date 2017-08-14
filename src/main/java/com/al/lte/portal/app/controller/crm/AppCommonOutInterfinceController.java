@@ -214,6 +214,7 @@ public class AppCommonOutInterfinceController extends BaseController{
 					if(FZ>XSD){
 						String QZSHQX = "1";// 是否有强制审核权限
 						QZSHQX = staffBmo.checkOperatBySpecCd("QZSHQX", sessionStaff);
+						rMap.put("fz", FZ);
 						//相似度不足，且没有权限，返回失败
 						if("0".equals(QZSHQX)){
 							rMap.put("checkType", "4");
