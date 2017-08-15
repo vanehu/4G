@@ -323,15 +323,16 @@ public class SignBmoImpl implements SignBmo{
 								agreement_htmlStr=ParseFreemark.parseTemplate(param2,templet);
 							}else if("llh".equals(agreementName)){//流量壕
 								Map<String,Object> llhMap=querySpecialProtocolByOlId(paramMap,null,sessionStaff);
+								System.out.println("+++++++++++++++++++"+JsonUtil.toString(llhMap));
 								Map<String,Object> param2 = new HashMap<String,Object>();
 								Map<String,Object> flowMoatInfo = (Map<String, Object>) llhMap.get("flowMoatInfo");
 								if(flowMoatInfo!=null){
 									param2.put("accessNbr", flowMoatInfo.get("accessNbr"));
 									param2.put("terminalName", flowMoatInfo.get("terminalName"));
 									param2.put("terminalCode", flowMoatInfo.get("terminalCode"));
-									param2.put("agreementPeriod", flowMoatInfo.get("agreementPeriod"));
+//									param2.put("agreementPeriod", flowMoatInfo.get("agreementPeriod"));
 									param2.put("attachedOfferName", flowMoatInfo.get("attachedOfferName"));
-									param2.put("minChange", flowMoatInfo.get("minChange"));
+//									param2.put("minChange", flowMoatInfo.get("minChange"));
 									param2.putAll(param1);
 									agreement_htmlStr=ParseFreemark.parseTemplate(param2,templet);
 								}
