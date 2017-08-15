@@ -3093,7 +3093,7 @@ SoOrder = (function() {
 			}
 		}
 		
-		if(!query.common.queryPropertiesStatus("ADD_OLD_USER_MOD_ACCT_"+OrderInfo.getAreaId().substring(0,3))){
+		if(!query.common.queryPropertiesStatus("ADD_OLD_USER_MOD_ACCT_"+OrderInfo.getAreaId().substring(0,3))&& OrderInfo.busitypeflag!=7){
 			//纳入老用户判断主卡副卡账户一致
 			if(ec.util.isArray(OrderInfo.oldprodAcctInfos)){
 				for(var a=0;a<OrderInfo.oldprodAcctInfos.length;a++){
