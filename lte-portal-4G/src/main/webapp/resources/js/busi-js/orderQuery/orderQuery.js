@@ -239,7 +239,7 @@ order.query = (function(){
 		}
 		
 		$(selectIdDom).empty();
-		$(selectIdDom).append("<option value='-1'>--请选择审核人员--</option>");
+		$(selectIdDom).append("<option value=''>--请选择审核人员--</option>");
 		
 		if(ec.util.isArray(staffList)){
 			$.each(staffList, function(){

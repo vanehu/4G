@@ -3625,9 +3625,13 @@ order.cust = (function(){
 		$("#photographReviewDiv").show();
 		$("#auditDiv").hide();
 		_getCameraInfo();
-		if(CONST.photographReviewFlag == "ON" && CONST.isPhotographReviewNeeded){
-			order.query.qryOperateSpecStaffList();
-		}
+		//#1619390 人证自动比对审核功能优化 
+		$("#auditStaffList").hide();
+		$("#auditMode").hide();
+		OrderInfo.isManualAudit=="";
+//		if(CONST.photographReviewFlag == "ON" && CONST.isPhotographReviewNeeded){
+//			order.query.qryOperateSpecStaffList();
+//		}
 	};
 
 	//加载拍照设备列表，获取摄像头信息
@@ -3764,15 +3768,41 @@ order.cust = (function(){
 					   $("#tips").html("提示："+ "人证相符，相符度 "+confidence+'%,拍摄成功');
 					   $("#confirmAgree").removeClass("btna_g").addClass("btna_o");
 					   $("#confirmAgree").off("click").on("click",function(){_uploadImage();});
+					   OrderInfo.isManualAudit = "N";
 				}else{
-					   if(CONST.isForcePassfaceVerify){
-						  $("#tips").html("提示："+ "人证不符，相符度 "+confidence+'%,低于阀值'+ response.data.fz +'%，建议重新拍摄');
-//						  $("#confirmAgree").removeClass("btna_g").addClass("btna_o");
-//						  $("#confirmAgree").off("click").on("click",function(){_uploadImage();});
+				       if(CONST.isForcePassfaceVerify){ //有强制审核权限
+						  $("#tips").html("提示："+ "人证不符，相符度 "+confidence+'%,低于阀值'+ response.data.fz +'%，建议重新拍摄或点击人证相符强制审核通过');
+							 if(OrderInfo.confidence == 0){  
+								 $("#tips").empty();
+								 if(response && response.code == 1 && response.data){
+								 if(response.data.tranId){
+								 		request_id = response.data.tranId;
+								 	}
+								  $("#tips").html("提示："+ "人证不符，请求流水【"+ request_id +"】原因为：" + response.data.msg + ",建议重新拍摄");
+								 }
+							 }
+							 $("#confirmAgree").removeClass("btna_g").addClass("btna_o");
+							 $("#confirmAgree").off("click").on("click",function(){
+								 $.confirm("确认","人证不符，相符度 "+confidence+"，低于设定的阀值 "+ response.data.fz +"%，请确实是否强制审核通过？", {
+										yes:function(){
+											OrderInfo.isManualAudit = "N";
+											_uploadImage();
+										},
+										no:function(){}
+							     });
+							 });
+					   }else if(CONST.isPhotographReviewNeeded && CONST.photographReviewFlag == "ON"){ //有人像审核权限
+						   $("#tips").html("提示："+ "人证不符，相符度 "+confidence+'%,低于阀值'+ response.data.fz +'%，你可以重新拍摄或点击人证相符人工审核。');
+						   OrderInfo.isManualAudit = "Y";
+						   $("#auditStaffList").show();
+						   $("#auditMode").show();
+						   order.query.qryOperateSpecStaffList();
+						   $("#confirmAgree").removeClass("btna_g").addClass("btna_o");
+						   $("#confirmAgree").off("click").on("click",function(){_uploadImage();});
 					   }else{
 						  $("#tips").html("提示："+ "人证不符，相符度 "+confidence+'%,低于阀值'+ response.data.fz +'%，请重新拍摄'); 
 						  return;
-				      }
+				       }
 				}
 			 }else if(response.code == 1 && response.data && !CONST.isForcePassfaceVerify){
 				 	if(response.data.tranId){
@@ -3787,22 +3817,15 @@ order.cust = (function(){
 				$.alert("错误", "人证比对发生未知异常，请稍后重试。错误信息：" + response.data);
 				return;
 			}
-			if(CONST.isForcePassfaceVerify){
-				 if(OrderInfo.confidence == 0){  
-					 $("#tips").empty();
-					 if(response && response.code == 1 && response.data){
-					 if(response.data.tranId){
-					 		request_id = response.data.tranId;
-					 	}
-					  $("#tips").html("提示："+ "人证不符，请求流水【"+ request_id +"】原因为：" + response.data.msg + ",建议重新拍摄");
-					 }
-				 }
-				 $("#confirmAgree").removeClass("btna_g").addClass("btna_o");
-				 $("#confirmAgree").off("click").on("click",function(){_uploadImage();});
-			}
 		 }else{
-			  $("#confirmAgree").removeClass("btna_g").addClass("btna_o");
-			  $("#confirmAgree").off("click").on("click",function(){_uploadImage();});
+			 if(CONST.photographReviewFlag == "ON" && CONST.isPhotographReviewNeeded){
+				 OrderInfo.isManualAudit = "Y";
+				 $("#auditStaffList").show();
+				 $("#auditMode").show();
+			     order.query.qryOperateSpecStaffList();
+			 }
+			 $("#confirmAgree").removeClass("btna_g").addClass("btna_o");
+			 $("#confirmAgree").off("click").on("click",function(){_uploadImage();});
 		 }
    };
 	var _rePhotos = function(){
@@ -3820,6 +3843,9 @@ order.cust = (function(){
 		$("#takePhotos").off("click").on("click",function(){_createImage();});
 		$("#takePhotos").removeClass("btna_g").addClass("btna_o");
 		_createVideo();
+		$("#auditStaffList").hide();
+		$("#auditMode").hide();
+		OrderInfo.isManualAudit = "";
 	};
 
 	//刷新时间
@@ -3894,7 +3920,7 @@ order.cust = (function(){
 		var auditStaff = $("#auditStaffList").val();
 		var auditMode = $("#auditMode").val();
 		
-	if(CONST.photographReviewFlag == "ON" && CONST.isPhotographReviewNeeded){
+	if(CONST.photographReviewFlag == "ON" && CONST.isPhotographReviewNeeded && OrderInfo.isManualAudit=="Y"){
 			if(!ec.util.isObj(auditStaff) || auditStaff == "-1"){
 				$.alert("提示", "请选择审核人");
 				return;
@@ -3948,7 +3974,7 @@ order.cust = (function(){
 			}
 			
 			//现场审核补充参数
-			if(CONST.isPhotographReviewNeeded && CONST.photographReviewFlag == "ON" && auditMode == "1"){
+			if(CONST.isPhotographReviewNeeded && CONST.photographReviewFlag == "ON" && auditMode == "1" && OrderInfo.isManualAudit=="Y"){
 				$.each(pictures, function(){
 					this.checkType = auditMode;
 				});
@@ -3981,7 +4007,7 @@ order.cust = (function(){
 				photographs	: pictures
 		    };
 			
-			if(CONST.photographReviewFlag == "ON" && CONST.isPhotographReviewNeeded && !CONST.isForcePassfaceVerify){
+			if(CONST.photographReviewFlag == "ON" && CONST.isPhotographReviewNeeded && OrderInfo.isManualAudit=="Y"){
 				if(auditMode == "1"){//现场审核，短信校验通过再上传
 					//发送短信
 					_sendSms4Audit("1");
