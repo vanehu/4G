@@ -179,15 +179,13 @@ public class OneCertFiveNumberController extends BaseController {
         SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
                 SysConstant.SESSION_KEY_LOGIN_STAFF);
         List<Map<String,Object>> nowPageModel =  (List<Map<String,Object>>) req.getAttribute("pageModel");
-        System.out.println("list:"+nowPageModel);
-           
+            
         List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
         Integer totalSize = 0;
         int nowPage = MapUtils.getIntValue(param, "nowPage", 1);
         String ifFilterOwnAccNbr = MapUtils.getString(param, "ifFilterOwnAccNbr", "");
         if (SysConstant.STR_Y.equals(ifFilterOwnAccNbr)) {
-        	//取消对工号的限制
-            //param.put("handleStaffId", sessionStaff.getStaffId());
+        	param.put("handleStaffId", sessionStaff.getStaffId());
         }
         try {
             Map<String, Object> resMap = cartBmo.queryCltCarts(param, null, sessionStaff);
@@ -199,13 +197,12 @@ public class OneCertFiveNumberController extends BaseController {
                 }
                 PageModel<Map<String, Object>> pm = PageUtil.buildPageModel(nowPage, 10, totalSize < 1 ? 1
                         : totalSize, list);
-                //System.out.println("nowPageModel.size():"+nowPageModel.size());
                 if(nowPageModel != null){
-                	System.out.println("*************");
-	                for(int i=0;i<nowPageModel.size();i++){
+                	for(int i=0;i<nowPageModel.size();i++){
 	                	pm.getList().get(i).put("statusCd", "201300");
 	                }
                 }
+                
                 model.addAttribute("pageModel", pm);
                 model.addAttribute("code", "0");
 
