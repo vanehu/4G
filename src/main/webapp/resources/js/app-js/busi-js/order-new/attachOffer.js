@@ -7,6 +7,8 @@ CommonUtils.regNamespace("AttachOffer");
 
 /** 附属销售品受理对象*/
 AttachOffer = (function() {
+	
+	var _voice_prepare = "0";//缓存首次话费预存，用于流量壕协议
 
 	var _openList = []; //保存已经选择的附属销售品列表，保存附属销售品完整节点，以及参数值
 	
@@ -735,12 +737,18 @@ AttachOffer = (function() {
 		var serContent=_servExDepReByRoleObjs(prodId,offerSpecId);//查询销售品构成成员的依赖互斥以及连带
 		content=content+serContent;
 		if(content==""){ //没有互斥依赖
+			if(specName.indexOf("元预存充值")>=0 && AttachOffer.voice_prepare == "0"){
+				AttachOffer.voice_prepare = specName.replace("元预存充值","");
+			}
 			AttachOffer.addOpenList(prodId,offerSpecId); 
 		}else{	
 			content = "<div style='max-height:300px;overflow:auto;'>" + content + "</div>";
 			$.unecOverlay();
 			$.confirm("订购： " + specName,content,{ 
 				yes:function(){
+					if(specName.indexOf("元预存充值")>=0 && AttachOffer.voice_prepare == "0"){
+						AttachOffer.voice_prepare = specName.replace("元预存充值","");
+					}
 					CacheData.setOffer2ExcludeOfferSpec(param);
 					if(specName.indexOf("合约计划")>=0){
 						mktRes.terminal.hytcmc = specName;
@@ -2723,6 +2731,9 @@ AttachOffer = (function() {
 //		});
 		$.confirm("信息确认",content,{ 
 			yes:function(){
+				if(spec.offerSpecName.indexOf("元预存充值")>=0){
+					AttachOffer.voice_prepare = "0";
+				}
 //				$("#li_"+prodId+"_"+offerSpecId).remove();
 				$span.addClass("delete");
 				spec.isdel = "Y";
@@ -3582,6 +3593,7 @@ AttachOffer = (function() {
 		offerSpecIds		:_offerSpecIds,
 		checkYZFRight		:_checkYZFRight,
 		checkTerminalVal	:_checkTerminalVal,
-		hasYzfTd            :_hasYzfTd
+		hasYzfTd            :_hasYzfTd,
+		voice_prepare		:_voice_prepare
 		};
 })();

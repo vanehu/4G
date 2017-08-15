@@ -128,6 +128,7 @@ public class SignController extends BaseController {
 				model.addAllAttributes(reObject);
 				model.addAttribute("custName", resultMap.get("custName"));
 				model.addAttribute("idCardNbr", resultMap.get("idCardNbr"));
+				model.addAttribute("voice_prepare", paramMap.get("voice_prepare"));
 			}
 		}catch (BusinessException be) {
 			return super.failedStr(model, be);
