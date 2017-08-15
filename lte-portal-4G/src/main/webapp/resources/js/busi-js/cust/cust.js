@@ -3804,7 +3804,7 @@ order.cust = (function(){
 						  return;
 				       }
 				}
-			 }else if(response.code == 1 && response.data && !CONST.isForcePassfaceVerify){
+			 }else if(response.code == 1 && response.data){
 				 	if(response.data.tranId){
 						  request_id = response.data.tranId;
 					}
@@ -3813,7 +3813,7 @@ order.cust = (function(){
 			}else if(response.code == -2 && response.data){
 				$.alertM(response.data);
 				return;
-			}else if(!CONST.isForcePassfaceVerify){
+			}else{
 				$.alert("错误", "人证比对发生未知异常，请稍后重试。错误信息：" + response.data);
 				return;
 			}

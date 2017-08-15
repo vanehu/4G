@@ -29,6 +29,8 @@ SoOrder = (function() {
 	
 	//初始化订单数据
 	var _initOrderData = function(){
+		OrderInfo.confidence = 0 ;
+		OrderInfo.faceVerifyFlag = "N" ;
 		OrderInfo.resetSeq(); //重置序列
 		OrderInfo.resetData(); //重置 数据
 		OrderInfo.orderResult = {}; //清空购物车
@@ -3343,6 +3345,17 @@ SoOrder = (function() {
 					itemSpecId : CONST.BUSI_ORDER_ATTR.VIROLID,
 					value : OrderInfo.subHandleInfo.virOlId//即照片上传时后台返回的18位的虚拟订单ID:virOlId
 				});
+				var result =  query.common.queryPropertiesMapValue("FACE_VERIFY_FLAG", "FACE_VERIFY_"+String(OrderInfo.staff.areaId).substr(0, 3));
+				if(ec.util.isObj(OrderInfo.handleInfo.identityPic) && result.FACE_VERIFY_SWITCH == "ON" && !query.common.checkOperateSpec("RZBDGN")){
+			        custOrderAttrs.push({
+					    itemSpecId : CONST.BUSI_ORDER_ATTR.CONFIDENCE,
+						value : OrderInfo.confidence  //人证照片比对相似度
+					});
+					custOrderAttrs.push({
+						itemSpecId : CONST.BUSI_ORDER_ATTR.FACE_VERIFY_FLAG,
+						value : OrderInfo.faceVerifyFlag //人证比对是否成功 
+					});
+				}
 			}
 		} else{//开关关闭
 			//订单购物车属性(经办人) 老模式

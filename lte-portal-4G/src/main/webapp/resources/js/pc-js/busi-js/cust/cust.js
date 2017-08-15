@@ -2698,32 +2698,6 @@ order.cust = (function(){
 	};
 	
 	var _getCameraInfo = function(){
-		var auditResponse = $.callServiceAsJson(contextPath + "/properties/getValue", {"key": "PHOTOGRAPH_REVIEW_" + OrderInfo.staff.soAreaId.substr(0, 3)});
-		var auditSwitch = "";
-		var  auditOperateSpec = false;
-		OrderInfo.auditSwitch = "";
-		OrderInfo.auditOperateSpec = false;
-    	if (auditResponse.code == "0") {
-    	    auditSwitch = auditResponse.data;
-    	    OrderInfo.auditSwitch = auditSwitch;
-        }
-        var response = $.callServiceAsJson(contextPath + "/common/checkOperateSpec", {"key": "RXSHGN"});
-         if (response.code == "0") {
-			auditOperateSpec = response.data;
-			OrderInfo.auditOperateSpec = response.data;
-		}
-    	if(auditSwitch == "ON" && !auditOperateSpec){
-    	    _qryOperateSpecStaffList();
-//    	    $("#checkType").val("-1");
-    	    $("#checkType").val("");
-//		    $("#auditPersonnel").val("-1");
-		    $("#auditPersonnel").val("");
-		    $("#auditDiv").hide();
-		    $("#photoDiv").show();
-    	}else{
-    		$("#auditPersonnel").hide();
-    		$("#checkType").hide();
-    	}
 		//获取摄像头信息
 		var device = capture.getDevices();
 	    device = JSON.parse(device);
@@ -2740,6 +2714,27 @@ order.cust = (function(){
 			$("#tips").html("提示："+device.errorMsg);
 			return;
 		}
+		var auditResponse = $.callServiceAsJson(contextPath + "/properties/getValue", {"key": "PHOTOGRAPH_REVIEW_" + OrderInfo.staff.soAreaId.substr(0, 3)});
+		var auditSwitch = "";
+		var  auditOperateSpec = false;
+		OrderInfo.auditSwitch = "";
+		OrderInfo.auditOperateSpec = false;
+    	if (auditResponse.code == "0") {
+    	    auditSwitch = auditResponse.data;
+    	    OrderInfo.auditSwitch = auditSwitch;
+        }
+        var response = $.callServiceAsJson(contextPath + "/common/checkOperateSpec", {"key": "RXSHGN"});
+         if (response.code == "0") {
+			auditOperateSpec = response.data;
+			OrderInfo.auditOperateSpec = response.data;
+		}
+        $("#auditDiv").hide();
+ 	    $("#photoDiv").show();
+    	$("#auditPersonnel").hide();
+		$("#checkType").hide();
+		$("#checkType").val("");
+		$("#auditPersonnel").val("");
+		OrderInfo.isManualAudit=="";
 	};
 	var _startPhotos = function(){
 		//创建视频
@@ -2791,8 +2786,7 @@ order.cust = (function(){
 				$("#takePhotos").removeClass("btna_o").addClass("btna_g");
 				$("#rePhotos").removeClass("btna_g").addClass("btna_o");
 				$("#rePhotos").off("click").on("click",function(){order.cust.rePhotos();});
-				$("#confirmAgree").removeClass("btna_g").addClass("btna_o");
-				$("#confirmAgree").off("click").on("click",function(){order.cust.confirmAgree();});
+				_callFaceVerify();
 			}else{
 				$("#tips").html("提示："+resp.data);
 				return;
@@ -2802,6 +2796,104 @@ order.cust = (function(){
 			return;
 		}
 	};
+	
+	var _callFaceVerify = function(){
+	    var request_id = "";
+        var result =  query.common.queryPropertiesMapValue("FACE_VERIFY_FLAG", "FACE_VERIFY_"+String(OrderInfo.staff.areaId).substr(0, 3));
+		if(ec.util.isObj(OrderInfo.handleInfo.identityPic) && result.FACE_VERIFY_SWITCH == "ON" && !query.common.checkOperateSpec("RZBDGN")){
+	        var param={
+			    "ContractRoot":{
+				    "SvcCont":{
+					    "params":{
+						    "olid":"",
+							 "busi_type": OrderInfo.busitypeflag,
+							 "cust_id":OrderInfo.cust.custId,
+							 "area_id" : OrderInfo.getAreaId()
+                         },
+	                     "image_best":encodeURIComponent(OrderInfo.handleInfo.imageInfo)
+					 },
+					 "TcpCont": {}
+			     }
+			 };
+			 $.ecOverlay("<strong>正在处理中, 请稍等...</strong>");
+			 var response =  $.callServiceAsJson(contextPath+"/cust/pic/verify",param);
+			 $.unecOverlay();
+			 OrderInfo.isForcePassfaceVerify = !query.common.checkOperateSpec("QZSHQX");
+			 OrderInfo.isPhotographReviewNeeded = !query.common.checkOperateSpec("RXSHGN");
+			 OrderInfo.photographReviewFlag = query.common.queryPropertiesValue("PHOTOGRAPH_REVIEW_" + String(OrderInfo.staff.areaId).substr(0, 3));
+			 if(response.code == 0 && response.data){
+			     var confidence = response.data.confidence; 
+				 OrderInfo.confidence =  confidence; 
+				 if(confidence == ""){
+					 OrderInfo.confidence = 0;
+				 }
+				 OrderInfo.faceVerifyFlag = response.data.faceVerifyFlag; // y or n 
+				 if(response.data.faceVerifyFlag == "Y"){
+				     $("#tips").css("color","#75ac5f");
+					 $("#tips").html("提示："+ "人证相符，相符度 "+confidence+'%,拍摄成功');
+					 $("#confirmAgree").removeClass("btna_g").addClass("btna_o");
+					 $("#confirmAgree").off("click").on("click",function(){order.cust.confirmAgree();});
+					 OrderInfo.isManualAudit = "N";
+				 }else{
+				     if(OrderInfo.isForcePassfaceVerify){ //有强制审核权限
+					     $("#tips").html("提示："+ "人证不符，相符度 "+confidence+'%,低于阀值'+ response.data.fz +'%，建议重新拍摄或点击人证相符强制审核通过');
+						 if(OrderInfo.confidence == 0){  
+						     $("#tips").empty();
+							 if(response && response.code == 1 && response.data){
+							     if(response.data.tranId){
+								     request_id = response.data.tranId;
+								 }
+								 $("#tips").html("提示："+ "人证不符，请求流水【"+ request_id +"】原因为：" + response.data.msg + ",建议重新拍摄");
+							 }
+						 }
+						 $("#confirmAgree").removeClass("btna_g").addClass("btna_o");
+						 $("#confirmAgree").off("click").on("click",function(){
+						     $.confirm("确认","人证不符，相符度 "+confidence+"，低于设定的阀值 "+ response.data.fz +"%，请确实是否强制审核通过？", {
+						    	    yes:function(){
+						    	        OrderInfo.isManualAudit = "N";
+						    	        order.cust.confirmAgree();
+						    	    },
+						    	    no:function(){}
+						     });
+						 });
+					 }else if(OrderInfo.isPhotographReviewNeeded && OrderInfo.photographReviewFlag == "ON"){ //有人像审核权限
+					     $("#tips").html("提示："+ "人证不符，相符度 "+confidence+'%,低于阀值'+ response.data.fz +'%，你可以重新拍摄或点击人证相符人工审核。');
+						 OrderInfo.isManualAudit = "Y";
+						 $("#auditPersonnel").show();
+						 $("#checkType").show();
+						 _qryOperateSpecStaffList();
+						 $("#confirmAgree").removeClass("btna_g").addClass("btna_o");
+						 $("#confirmAgree").off("click").on("click",function(){order.cust.confirmAgree();});
+					 }else{
+				         $("#tips").html("提示："+ "人证不符，相符度 "+confidence+'%,低于阀值'+ response.data.fz +'%，请重新拍摄'); 
+						 return;
+				     }
+				}
+			}else if(response.code == 1 && response.data){
+			    if(response.data.tranId){
+				    request_id = response.data.tranId;
+				}
+				$.alert("错误", "人证比对失败，请求流水【"+ request_id +"】错误原因：" + response.data.msg);
+				return;
+			}else if(response.code == -2 && response.data){
+				$.alertM(response.data);
+				return;
+			}else{
+				$.alert("错误", "人证比对发生未知异常，请稍后重试。错误信息：" + response.data);
+				return;
+			}
+		}else{ 
+		    if(OrderInfo.auditSwitch == "ON" && !OrderInfo.auditOperateSpec){
+			    OrderInfo.isManualAudit = "Y";
+			    $("#auditPersonnel").show();
+				$("#checkType").show();
+				_qryOperateSpecStaffList();
+			}
+			$("#confirmAgree").removeClass("btna_g").addClass("btna_o");
+			$("#confirmAgree").off("click").on("click",function(){order.cust.confirmAgree();});
+		}
+    };
+  
 	var _rePhotos = function(resultContent){
 		//初始化页面
 		$("#tips").html("");
@@ -2816,6 +2908,9 @@ order.cust = (function(){
 		$("#takePhotos").off("click").on("click",function(){order.cust.takePhotos();});
 		$("#takePhotos").removeClass("btna_g").addClass("btna_o");
 		_startPhotos();
+		$("#auditPersonnel").hide();
+		$("#checkType").hide();
+		OrderInfo.isManualAudit = "";
 	};
 	var _confirmAgree = function(){
 		var auditType = $("#checkType").val();
@@ -2824,7 +2919,7 @@ order.cust = (function(){
 		var number = "";
 		var staffName = "";
 		var staffCode = "";
-		if(OrderInfo.auditSwitch == "ON" && !OrderInfo.auditOperateSpec){
+		if(OrderInfo.auditSwitch == "ON" && !OrderInfo.auditOperateSpec && OrderInfo.isManualAudit=="Y"){
 		    if(auditPersonnel == "" || auditPersonnel == "-1"){
 			    $.alert("提示","请选择审核人");
 			    return;
@@ -2940,7 +3035,7 @@ order.cust = (function(){
 				OrderInfo.subHandleInfo.staffId = OrderInfo.staff.staffId;
 			}
 			OrderInfo.subHandleInfo.virOlId = uploadCustCertificate.data.virOlId;
-    	    if(OrderInfo.auditSwitch == "ON" && !OrderInfo.auditOperateSpec){
+    	    if(OrderInfo.auditSwitch == "ON" && !OrderInfo.auditOperateSpec && OrderInfo.isManualAudit=="Y"){
     	        //审核发送短信验证码
     		var param = {
     		   number: number,
