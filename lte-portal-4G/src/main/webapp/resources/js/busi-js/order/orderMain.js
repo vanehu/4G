@@ -3307,6 +3307,11 @@ order.main = (function(){
 				$("#" + id).attr("placeHolder", "请输入合法" + CacheData.getCheckRuleByKey(identidiesTypeCd, "name"));
 				$("#" + id).attr("data-validate", "validate(" + CacheData.getCheckRuleByKey(identidiesTypeCd, "checkFunction") + ":" + CacheData.getCheckRuleByKey(identidiesTypeCd, "description") + ") on(blur)");
 			}
+			if(identidiesTypeCd==50){
+				$("#orderUserName").attr("data-validate","validate(foreigner) on(blur)");
+			}else{
+				$("#orderUserName").attr("data-validate","validate(personal) on(blur)");
+			}
 			$("#syrCertCheckForm").off().bind('formIsValid', function(event, form){
 				_qryUserCustInfo(dom);
 			}).ketchup({bindElement:"orderUserQryBtn"});

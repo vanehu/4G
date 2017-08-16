@@ -128,6 +128,16 @@ jQuery.ketchup
     return /^[\u4E00-\u9FA5·.a-zA-Z][\u4E00-\u9FA5·.\s\\(\\)（）a-zA-Z]*[\u4E00-\u9FA5·.a-zA-Z]$/.test(code)&&CommonUtils.getLength(code)>=4;
 })
 
+.helper('isForeigner', function(code) {
+	/*
+	 * 1、只能含有中文，字母，逗号或者空格；
+	 * 2、大于4个字符（一个汉字为两个字符）；
+	 * 3、不能以空格开始和结束。
+	 * 4、匹配中英文括号
+	 */
+    return /^[\u4E00-\u9FA5·.a-zA-Z][\u4E00-\u9FA5·.\s\\(\\)（）,a-zA-Z]*[\u4E00-\u9FA5·.a-zA-Z]$/.test(code)&&CommonUtils.getLength(code)>=4;
+})
+
 .helper('isGovernment', function(code) {
     if(CommonUtils.getLength(code)<10){
         return false;

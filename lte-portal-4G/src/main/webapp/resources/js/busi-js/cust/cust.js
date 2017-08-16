@@ -168,8 +168,8 @@ order.cust = (function(){
 	//客户类型选择事件
 	var _partyTypeCdChoose = function(scope,id) {
 		var partyTypeCd=$(scope).val();
-        if ("1" == partyTypeCd) {
-            $($(scope).parents(".network")[0]).find("#cCustName").attr("data-validate", "validate(personal) on(blur)");
+        if ("1" == partyTypeCd) {	
+        	$($(scope).parents(".network")[0]).find("#cCustName").attr("data-validate", "validate(personal) on(blur)");
             $("#industryClassCd").hide();
             OrderInfo.industryClassInfo ={};
         } else if ("2" == partyTypeCd) {
@@ -533,6 +533,11 @@ order.cust = (function(){
 				$("span[name='" + CONST.BUSI_ORDER_ATTR.orderAttrAddr + "']").hide();
 				$("span[name='" + CONST.BUSI_ORDER_ATTR.orderAttrAddr + "']").text("");
 			}
+			if(identidiesTypeCd==50){
+				$($(scope).parents(".network")[0]).find("#cCustName").attr("data-validate","validate(foreigner) on(blur)");
+			}else{
+				$($(scope).parents(".network")[0]).find("#cCustName").attr("data-validate","validate(personal) on(blur)");
+			}
 			if(identidiesTypeCd==2){
 				$("#"+id).attr("onkeyup", "value=value.replace(/[^A-Za-z0-9\u4e00-\u9fa5]/ig,'')");
 				$("#"+id).attr("placeHolder","请输入合法军官证");
@@ -545,7 +550,13 @@ order.cust = (function(){
 				$("#"+id).attr("placeHolder","请输入合法证件号码");
 				$("#"+id).attr("data-validate","validate(required:请准确填写证件号码) on(blur)");
 				$("#"+id).attr("maxlength","20");
-			}else{
+			}
+//			else if(identidiesTypeCd==50){
+//				$($(scope).parents(".network")[0]).find("#cCustName").attr("data-validate","validate(foreigner) on(blur)");
+//				$("#"+id).attr("placeHolder","请输入合法证件号码");
+//				$("#"+id).attr("data-validate","validate(required:请准确填写证件号码) on(blur)");
+//			}
+			else{
 				$("#"+id).attr("placeHolder","请输入合法证件号码");
 				$("#"+id).attr("data-validate","validate(required:请准确填写证件号码) on(blur)");
 			}
