@@ -866,9 +866,22 @@ SoOrder = (function() {
 
 	            transferCust.data.boCertiAccNbrRels.push(boCertiAccNbrRel);
 			};
-			busiOrders.push(transferCust);
-//			OrderInfo.createAcct(busiOrders, -1,toCustId,nameCN);
-//			var changeAcct = true;		
+			//使用人节点
+			  var boProdItems = 
+				   [{
+				   itemSpecId : CONST.PROD_ATTR.PROD_USER,
+				   state : "DEL",
+				   value : OrderInfo.cust.custId
+			   	  }, 
+			   	  {
+			   		  itemSpecId : CONST.PROD_ATTR.PROD_USER,
+			   		  state : "ADD",
+			   		  value : toCustId
+			   	  }]
+			 transferCust.data.boProdItems = boProdItems;
+			 busiOrders.push(transferCust);
+// OrderInfo.createAcct(busiOrders, -1,toCustId,nameCN);
+// var changeAcct = true;
 //			if(order.prodModify.accountInfo.acctId==acctId){				
 //				changeAcct = false;							
 //			}
