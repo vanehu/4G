@@ -336,6 +336,7 @@ common = (function($) {
 	
 	//调用客户端的关闭webview方法
 	var _callCloseWebview=function(){
+		OrderInfo.order.soNbr = "";
 		cust.custCatsh = {};
 		if($("#alert-modal").length>0){
 			$("#alert-modal").modal("hide");
