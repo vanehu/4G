@@ -1114,8 +1114,8 @@ order.main = (function(){
 	//初始化购物车属性
 	var _initOrderAttr = function() {
 		//客户类型,证件类型
-		order.cust.partyTypeCdChoose($("#orderPartyTypeCd").children(":first-child"),"orderIdentidiesTypeCd");
-		order.cust.identidiesTypeCdChoose($("#orderIdentidiesTypeCd").children(":first-child"),"orderAttrIdCard");
+		order.cust.partyTypeCdChoose($("#orderPartyTypeCd"),"orderIdentidiesTypeCd");
+		order.cust.identidiesTypeCdChoose($("#orderIdentidiesTypeCd"),"orderAttrIdCard");
 		//实名信息采集单受理，自动填充经办人信息
 		if(OrderInfo.isCltNewOrder()) {
 			order.cust.cltjbrCreate();
@@ -1585,7 +1585,7 @@ order.main = (function(){
 						});
 
 						/** 初始化证件类型,客户类型 **/
-						order.cust.partyTypeCdChoose($("#orderPartyTypeCdB").children(":first-child"),"orderIdentidiesTypeCdB");
+						order.cust.partyTypeCdChoose($("#orderPartyTypeCdB"),"orderIdentidiesTypeCdB");
 						order.main.identidiesTypeForUser($("#orderIdentidiesTypeCdB").children("[value]='1'"),"orderUserIdCard",$("#choose_user_btn_"+prodId));
 						
 						//设置为身份证
@@ -3238,8 +3238,8 @@ order.main = (function(){
 		});
 
 		/** 初始化证件类型,客户类型 **/
-		order.cust.partyTypeCdChoose($("#orderPartyTypeCdB").children(":first-child"),"orderIdentidiesTypeCdB");
-		order.main.identidiesTypeForUser($("#orderIdentidiesTypeCdB").children(":first-child"),"orderUserIdCard",dom);
+		order.cust.partyTypeCdChoose($("#orderPartyTypeCdB"),"orderIdentidiesTypeCdB");
+		order.main.identidiesTypeForUser($("#orderIdentidiesTypeCdB"),"orderUserIdCard",dom);
 		$('#orderUserPhoneNbr').val('');
 		
 		var cacheObj = $(dom).data('cacheObj');
@@ -3264,9 +3264,10 @@ order.main = (function(){
 		$('#orderIdentidiesTypeCdB').removeAttr("disabled").removeAttr("style");
 		$("#"+id).val("");
 		$("#"+id).attr("onkeyup", "value=value.replace(/[^A-Za-z0-9]/ig,'')");
-		var identidiesTypeCd=$(scope).val();
+		var identidiesTypeCd = $(scope).val();
 		$("#"+id).attr("maxlength", "100");
-		if (identidiesTypeCd == 1 && $(dom).attr("servType") != 2) {
+//		if (identidiesTypeCd == 1 && $(dom).attr("servType") != 2) {
+		if (identidiesTypeCd == 1) {
 			$("#orderUserResetBtn").hide();
 			$("#orderUserQryBtn").hide();
 			$("#orderUserReadCertBtn").show();
