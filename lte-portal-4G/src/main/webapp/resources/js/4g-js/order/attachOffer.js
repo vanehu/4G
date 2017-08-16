@@ -569,9 +569,9 @@ AttachOffer = (function() {
 				if(this.summary != null){
 					this.summary = "";
 				}
-				if(this.offerSpecName != null){
-					this.offerSpecName = "";
-				}
+//				if(this.offerSpecName != null){
+//					this.offerSpecName = "";
+//				}
 			});
 			if(order.ysl!=undefined){
 				if(order.ysl.yslbean.yslflag!=undefined){
@@ -696,9 +696,9 @@ AttachOffer = (function() {
 					if(this.summary != null){
 						this.summary = "";
 					}
-					if(this.offerSpecName != null){
-						this.offerSpecName = "";
-					}
+//					if(this.offerSpecName != null){
+//						this.offerSpecName = "";
+//					}
 				});
 				param.attachOfferOrderedList = attachOffersOrdered;
 				var data = query.offer.searchAttachOfferSpec(param);
