@@ -206,7 +206,9 @@ public class MarketingRecommendController extends BaseController {
 //            }
         } catch (BusinessException be) {
             return super.failedStr(model, be);
-        } catch (Exception e) {
+        } catch (InterfaceException ie) {
+			return super.failedStr(model, ie, param, ErrorCode.QUERY_MKT_CUST_LIST);
+		} catch (Exception e) {
             return super.failedStr(model, ErrorCode.QUERY_MKT_CUST_LIST, e, param);
         }
         return "/app/marketingRecommend/recommend-list";

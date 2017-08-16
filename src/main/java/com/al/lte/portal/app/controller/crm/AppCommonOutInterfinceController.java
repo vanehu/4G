@@ -183,7 +183,7 @@ public class AppCommonOutInterfinceController extends BaseController{
 		param.put("channel_nbr", sessionStaff.getCurrentChannelId());
 		param.put("staff_code", sessionStaff.getStaffCode());
 		param.put("busi_type", "1");
-		param.put("area_id", sessionStaff.getCurrentAreaId());
+		param.put("area_id", sessionStaff.getCurrentAreaId().substring(0, 5)+"00");
 		param.put("province_code", sessionStaff.getCurrentAreaId().substring(0, 3)+"0000");
 		System.out.println("++++++人证比对入参params"+JsonUtil.toString(param));
 //		String areaid = sessionStaff.getAreaId();//区
