@@ -81,6 +81,8 @@ public class MainController extends BaseController {
 			HttpServletRequest request, HttpServletResponse response) {
 		model.addAttribute("menu", request.getParameter("menu"));
 		session.setAttribute(SysConstant.SESSION_KEY_APP_VERSION, request.getParameter("app_version"));
+		//移除已加载过js标志
+		session.removeAttribute("firstLoad");
 		model.addAttribute("app_flag", session.getAttribute(SysConstant.SESSION_KEY_APP_FLAG));
 		String actionFlag=request.getParameter("actionFlag");
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
@@ -218,6 +220,8 @@ public class MainController extends BaseController {
 		model.addAttribute("haveMenu", "Y");
 		String app_version=(String) ServletUtils.getSessionAttribute(request,SysConstant.SESSION_KEY_APP_VERSION);
 		model.addAttribute("app_version",app_version);//客户端版本号
+		//移除已加载过js标志
+		session.removeAttribute("firstLoad");
 		//爱运维菜单需要给原生传秘钥
 		String propertiesKey = (sessionStaff.getCurrentAreaId() + "").substring(0, 3);
 		// 需要展示爱运维菜单的省份
