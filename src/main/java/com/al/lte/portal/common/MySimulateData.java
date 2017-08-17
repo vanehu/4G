@@ -262,7 +262,13 @@ public class MySimulateData {
 	public static Properties getProperties(String resource) {
 		Properties properties = new Properties();
 		try {
-			properties.load(new BufferedInputStream(new FileInputStream(getClassLoader().getResource(resource).getPath())));
+			if (getClassLoader().getResource(resource) == null){
+				System.out.println("单元测试特殊处理");
+				String path = getClassLoader().getResource("").getPath();
+				properties.load(new BufferedInputStream(new FileInputStream(path.substring(1,path.indexOf("/test-classes/"))+"/classes"+resource)));
+			}else{
+				properties.load(new BufferedInputStream(new FileInputStream(getClassLoader().getResource(resource).getPath())));
+			}
 		} catch (IOException e) {
 			throw new RuntimeException("couldn't load properties file '"
 					+ resource + "'", e);

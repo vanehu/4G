@@ -62,22 +62,23 @@ public class DataEngine implements ServletContextAware{
 //        } catch (MalformedURLException e) {
 //            log.error(e);
 //        }
-		
-		//设置全局APP_DESC， LTE为0，MVNO为1
-		setAppDesc();
-		
-		//设置js缓存版本号
-		setjsversion();
-		
-		//4g压缩JS文件
-		compressFile();
-		//能力开放压缩JS文件
-		String level = propertiesUtils.getMessage(SysConstant.TOKENCOMPRESS_JS_LEVEL);
-    	String baseVersion = propertiesUtils.getMessage(SysConstant.BASE_VERSION);
-    	String busiVersion = propertiesUtils.getMessage(SysConstant.BUSI_VERSION);
-		compressNLFile(level,baseVersion,busiVersion);
-		
-		initComplete = true;
+		if (!(servletContext == null)){
+			//设置全局APP_DESC， LTE为0，MVNO为1
+			setAppDesc();
+			
+			//设置js缓存版本号
+			setjsversion();
+			
+			//4g压缩JS文件
+			compressFile();
+			//能力开放压缩JS文件	
+			String level = propertiesUtils.getMessage(SysConstant.TOKENCOMPRESS_JS_LEVEL);
+	    	String baseVersion = propertiesUtils.getMessage(SysConstant.BASE_VERSION);
+	    	String busiVersion = propertiesUtils.getMessage(SysConstant.BUSI_VERSION);
+			compressNLFile(level,baseVersion,busiVersion);
+			
+			initComplete = true;					
+		}
 	}
 	
 	
