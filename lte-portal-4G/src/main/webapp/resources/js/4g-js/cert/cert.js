@@ -290,7 +290,7 @@ cert = (function() {
 		}
 	};
 	
-	//处理订单数据
+	//读卡信息采集
 	var _recordCertReaderCustInfos = function(certInfo){
 		if(ec.util.isObj(certInfo)){
 			var param = {"certInfos":[certInfo]};
@@ -298,7 +298,7 @@ cert = (function() {
 				$.callServiceAsJson(contextPath + "/cert/recordCertReaderCustInfos", param, {
 					"done" : function(response) {
 						if(response.code == 0 && response.data){
-							_fillupOrderInfoCertInfoKeys(response.data.certResults);
+							_fillupOrderInfoCertInfoKeys(response.data.certResults, certInfo.servCode);
 						}
 					},
 					"fail" : function(response) {
@@ -310,15 +310,16 @@ cert = (function() {
 			}
 		}
 	};
-	//OrderInfo.certInfoKeys补充数据
-	var _fillupOrderInfoCertInfoKeys = function(certResults){
+	var _fillupOrderInfoCertInfoKeys = function(certResults, servCode){
 		if(ec.util.isArray(certResults)){
 			$.each(certResults, function(index, certResult){
 				if(certResult.certInfoId != -1 && certResults.certNumber != -1){
 					OrderInfo.pushCertInfoKeys({
 						"certNumber":certResult.certNumber,
 						"certInfoId":certResult.certInfoId,
-						"partyId":""
+						"servCode"	:servCode,//该节点非协议规定，仅门户用作标识
+						"partyId"	:""
+						
 					});
 				}
 			});
@@ -368,10 +369,58 @@ cert = (function() {
 					}
 				});
 				
-				OrderInfo.orderData.orderList.orderListInfo.certInfoKeys = OrderInfo.certInfoKeys;
+				//过滤partyId仍为空的节点
+				$.each(OrderInfo.certInfoKeys, function(index, certInfoKey){
+					if(!ec.util.isObj(certInfoKey.partyId)){
+						OrderInfo.certInfoKeys.splice(index, 1);
+					}
+				});
+				
+				if(ec.util.isArray(OrderInfo.certInfoKeys)){
+					OrderInfo.orderData.orderList.orderListInfo.certInfoKeys = OrderInfo.certInfoKeys;
+				} else{
+					OrderInfo.orderData.orderList.orderListInfo.certInfoKeys = [];
+				}
 			}
 		} catch(e){
 			window.console && window.console.log && (console.log("%cfillupOrderInfoCertReaderCustInfos异常：" + e, "color:red"));
+		}
+	};
+	//兼容脱敏
+	var _deleteCertReaderCustInfosByCertNum = function(identityNum){
+		if(!ec.util.isObj(identityNum)){
+			return;
+		}
+
+		if(ec.util.isArray(OrderInfo.certInfoKeys)){
+			var identityNumStr 	= new String(identityNum);
+			var length			= identityNumStr.length;
+			var fromIndex 		= identityNumStr.indexOf("*");
+			var lastIndex 		= identityNumStr.lastIndexOf("*");
+			
+			var subIdentityNumStr = identityNumStr.substring(0, fromIndex) + identityNumStr.substring(lastIndex + 1, length);
+			
+			$.each(OrderInfo.certInfoKeys, function(index, certInfoKey){
+				var certNumberStr = new String(this.certNumber);
+				var subCertNumberStr = certNumberStr.substring(0, fromIndex) + certNumberStr.substring(lastIndex + 1, length);
+				if(subCertNumberStr == subIdentityNumStr){
+					OrderInfo.certInfoKeys.splice(index, 1);
+				}
+			});
+		}
+	};
+	//根据servCode删除OrderInfo.certInfoKeys中对应的节点
+	var _deleteCertReaderCustInfosByServCode = function(servCode){
+		if(!ec.util.isObj(servCode)){
+			return;
+		}
+		if(ec.util.isArray(OrderInfo.certInfoKeys)){
+			var servCode = new String(servCode);
+			$.each(OrderInfo.certInfoKeys, function(index, certInfoKey){
+				if(this.servCode == servCode){
+					OrderInfo.certInfoKeys.splice(index, 1);
+				}
+			});
 		}
 	};
 	
@@ -383,8 +432,10 @@ cert = (function() {
 		createImage		: _createImage,
 		closeVideo		: _closeVideo,
 		setReaderAreaId	:_setReaderAreaId,
-		fillupPartyId2CertReaderCustInfos:_fillupPartyId2CertReaderCustInfos,
-		fillupOrderInfoCertReaderCustInfos:_fillupOrderInfoCertReaderCustInfos
+		fillupPartyId2CertReaderCustInfos	:_fillupPartyId2CertReaderCustInfos,
+		fillupOrderInfoCertReaderCustInfos	:_fillupOrderInfoCertReaderCustInfos,
+		deleteCertReaderCustInfosByCertNum	:_deleteCertReaderCustInfosByCertNum,
+		deleteCertReaderCustInfosByServCode	:_deleteCertReaderCustInfosByServCode
 	};
 })();
 $(function(){

@@ -38,6 +38,7 @@ oneFive.certNumberHandle = (function () {
                 $("#p_telNumber").css("background-color", "#E8E8E8").attr("disabled", true);
                 $("#p_certNumber").css("background-color", "#E8E8E8").attr("disabled", true);
                 $("#onlyMe").css("background-color", "#E8E8E8").attr("disabled", true);
+                $("#dealOrder").css("background-color", "#E8E8E8").attr("disabled", true);
             } else {
                 $("#p_olNbr").css("background-color", "#E8E8E8").attr("disabled", true);
                 $("#p_startDt").css("background-color", "white").attr("disabled", false);
@@ -45,6 +46,7 @@ oneFive.certNumberHandle = (function () {
                 $("#p_telNumber").css("background-color", "white").attr("disabled", false);
                 $("#p_certNumber").css("background-color", "white").attr("disabled", false);
                 $("#onlyMe").css("background-color", "white").attr("disabled", false);
+                $("#dealOrder").css("background-color", "white").attr("disabled", false);
             }
         });
 
@@ -135,7 +137,7 @@ oneFive.certNumberHandle = (function () {
                 "pageSize": 10
             };
         }
-        param.statusCd = CONST.CERT_NUMBER_ORDER_STATUS.INIT;
+        param.statusCd = $("#dealOrder").val();//CONST.CERT_NUMBER_ORDER_STATUS.INIT;
         param.ifFilterAreaId = "N";
         param.ifFilterItem = "Y";
         param.ifFilterOwnAccNbr = $("#onlyMe").val();//是否过滤其他人接单工单选项默认Y
@@ -213,6 +215,54 @@ oneFive.certNumberHandle = (function () {
             }
         });
     };
+    
+    
+    /**
+     * 查询订单详情(统一进行订单的提交)
+     * @param scope 当前详情按钮对象
+     * @private
+     */
+    var _queryAllDetail = function (orderId) {
+        var param = {
+            "orderId": orderId,
+            "areaId": $("#p_areaId").val(),
+            "ifFilterAreaId": "Y",
+            "staffId": OrderInfo.staff.staffId,
+            "ifFilterOwnAccNbr": $("#onlyMe").val()     
+        };
+        $.callServiceAsJsonGet(contextPath + "/certNumber/queryOneFiveOrderItemAllDetail", param, {
+            "before": function () {
+                $.ecOverlay("详情查询中，请稍等...");
+            },
+            "always": function () {
+                $.unecOverlay();
+            },
+            "done": function (response) {
+            	console.log(response);
+            	if (response.code == 0) {
+					// $.alert("提示", "提交成功");
+					// _queryUserInfo();
+            		$("#"+orderId+"").css('display','none');
+            		_showMain();
+            		$.alert("提示", "接单成功!"); 
+            		
+				} else if (response.code == -2) {
+					$.alertM(response.data);
+				} else {
+					if (response.data) {
+						$.alert("提示", response.data);
+					} else {
+						$.alert("提示", "提交失败!");
+					}
+
+				}
+            },
+            fail: function () {
+                $.unecOverlay();
+                $.alert("提示", "请求可能发生异常，请稍后再试！");
+            }
+        });
+    };
 
     /**
      * 查询附件信息
@@ -248,7 +298,7 @@ oneFive.certNumberHandle = (function () {
                         $.alert("提示", "没有附件");
                     }
                 } else {
-                    $.alertM("提示", response.data);
+                    $.alertM(response.data);
                 }
             },
             fail: function () {
@@ -386,9 +436,9 @@ oneFive.certNumberHandle = (function () {
         $.each(files, function () {
             if ($.inArray(this.picFlag, type.split(',')) != -1) {
                 if (this.picFlag == 'F') {
-                    $(attachmentHtml).append($("<div></div>").append("<embed style='width: 800px;height: 600px;' src='" + "data:application/pdf;base64," + this.orderInfo + "'/>"));
+                    $(attachmentHtml).append($("<div style='width: 800px; height:600px;'></div>").append("<embed style='width: 100%;height: auto;' src='" + "data:application/pdf;base64," + this.orderInfo + "'/>"));
                 } else {
-                    $(attachmentHtml).append($("<div></div>").append("<img style='width: auto;height: auto;'src='" + "data:application/jpeg;base64," + this.orderInfo + "'/>"));
+                    $(attachmentHtml).append($("<div style='width: 800px; height:600px;'></div>").append("<img style='width: 100%;height: auto;'src='" + "data:application/jpeg;base64," + this.orderInfo + "'/>"));
                 }
             }
         });
@@ -406,7 +456,8 @@ oneFive.certNumberHandle = (function () {
         orderComplete: _orderComplete,
         orderReceive: _orderReceive,
         orderReset: _orderReset,
-        orderCancel: _orderCancel
+        orderCancel: _orderCancel,
+        queryAllDetail:_queryAllDetail
     }
 })();
 
@@ -414,4 +465,10 @@ oneFive.certNumberHandle = (function () {
 //初始化
 $(function () {
     oneFive.certNumberHandle.init();
+    $("#p_startDt").off("click").on("click",function(){
+		$.calendar({ format:'yyyy年MM月dd日 ',real:'#p_startDt',maxDate:$("#p_endDt").val() });
+	});
+	$("#p_endDt").off("click").on("click",function(){
+		$.calendar({ format:'yyyy年MM月dd日 ',real:'#p_endDt',minDate:$("#p_startDt").val(),maxDate:'%y-%M-%d' });
+	});
 });

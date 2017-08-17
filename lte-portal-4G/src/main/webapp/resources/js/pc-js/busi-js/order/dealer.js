@@ -430,7 +430,7 @@ order.dealer = (function() {
 				$newTr.append("<td>"+$tr.children().eq(2).text()+"</td>");
 				$newTr.append($tdType);
 				
-				var dealer = $("#tr_"+prodId).find("input"); //产品协销人
+				var dealer = $("#dealerTbody tr:first input"); //产品协销人
 				var staffId = 1;
 				var staffName = "";
 				if(dealer[0]==undefined){
@@ -500,7 +500,29 @@ order.dealer = (function() {
 			$td.append('<a class="purchase" onclick="order.dealer.removeDealer(this);">删除</a>');
 			$td.append('<a class="purchase" onclick="order.dealer.addProdDealer(this,'+objInstId+')">添加</a><label class="f_red">*</label>');
 		}*/
-		$tr.append($td);	
+		$tr.append($td);
+		//渠道数据信息
+		var $tdChannel = $('<td></td>');
+		var selectChanne = $oldTr.find("td select[name='dealerChannel_"+objInstId+"']").clone();
+		$(selectChanne).attr("id","dealerChannel_"+objId);
+		
+		$(selectChanne).empty(); 
+		var $channelListOptions ="";
+		$($oldTr.find("td select[name='dealerChannel_"+objInstId+"']")).find("option").each(function(){
+			var $channelListOptionVal  = $(this).val() ; 
+			var $channelListOptionName = $(this).html() ; 
+			if(this.selected==true){
+				$channelListOptions += "<option value='"+$channelListOptionVal+"' selected ='selected'>"+$channelListOptionName+"</option>";
+			}else{
+				$channelListOptions += "<option value='"+$channelListOptionVal+"'>"+$channelListOptionName+"</option>";
+			}
+		});
+		$(selectChanne).append($channelListOptions);
+		$tdChannel.append(selectChanne);
+		$tdChannel.append('<label class="f_red">*</label>');
+//		$tdChannel.append( $("<eg>").append($(selectChanne).eq(0).clone()).html());		
+		$tr.append($tdChannel);
+		
 		$oldTr.after($tr);
 		OrderInfo.SEQ.dealerSeq++;
 	};
@@ -713,6 +735,11 @@ order.dealer = (function() {
 		});
 	};
 	
+	//批量修改发展人
+	var _updateDealer = function(){
+		order.main.queryStaff(0,'dealer',-99)
+	};
+	
 	return {
 		initDealer 			: _initDealer,
 		changeAccNbr		: _changeAccNbr,
@@ -723,6 +750,7 @@ order.dealer = (function() {
 		removeDealer		: _removeDealer,
 		removeAttDealer		: _removeAttDealer,
 		changeDealer		: _changeDealer,
-		checkAllAttach:_checkAllAttach
+		checkAllAttach:_checkAllAttach,
+		updateDealer:_updateDealer
 	};
 })();

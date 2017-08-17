@@ -201,7 +201,7 @@ CacheData = (function() {
 						optionStr +='<option value="'+valueRange.value+'">'+valueRange.text+'</option>';
 					}
 				}
-				selectStr += optionStr + "</select></td></tr>"; 
+				selectStr += optionStr + "</select></td></tr></div>";
 				return selectStr;
 			} else if(feeType == CONST.PAY_TYPE.AFTER_PAY){
 				selectStr = selectStr+'<div class="form-group pack-pro-box"><label for="exampleInputPassword1">' + param.name + ': </label>';
@@ -929,7 +929,7 @@ CacheData = (function() {
 								newSpec.isdel = "N";
 							}
 						}else {
-							if(OrderInfo.actionFlag==2){
+							if(OrderInfo.actionFlag==2 || OrderInfo.actionFlag==6){
 								offerSpec.isdel = "C";
 								CacheData.setOfferSpec(prodId,offerSpec);
 								var param = CacheData.getExcDepOfferParam(prodId,offerSpec.offerSpecId);
@@ -1083,7 +1083,7 @@ CacheData = (function() {
 								newSpec.isdel = "N";
 							}
 						}else {
-							if(OrderInfo.actionFlag==2||OrderInfo.actionFlag==21 ||OrderInfo.actionFlag==22){
+							if(OrderInfo.actionFlag==2|| OrderInfo.actionFlag==6|| OrderInfo.actionFlag==21 ||OrderInfo.actionFlag==22){
 								offerSpec.isdel = "C";
 								CacheData.setOfferSpec(prodId,offerSpec);
 								var param = CacheData.getExcDepOfferParam(prodId,offerSpec.offerSpecId);

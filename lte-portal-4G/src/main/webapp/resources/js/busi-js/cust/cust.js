@@ -1548,7 +1548,8 @@ order.cust = (function(){
 							prodInstId : order.prodModify.choosedProdInfo.prodInstId,
 							acctNbr : order.prodModify.choosedProdInfo.accNbr,
 							prodSpecId : order.prodModify.choosedProdInfo.productId,
-							areaId : order.prodModify.choosedProdInfo.areaId
+							areaId : order.prodModify.choosedProdInfo.areaId,
+							prodBigClass:order.prodModify.choosedProdInfo.prodBigClass
 						};
 						order.cust.initUserInfos(param);
 					}
@@ -3086,8 +3087,7 @@ order.cust = (function(){
 					}
 					_saveAuthRecordFail(recordParam);
 					return;
-				} catch(e){
-				}
+				} catch(e){}
 				//window.localStorage.setItem("OrderInfo.cust",JSON.stringify(OrderInfo.cust));
 				if(!order.cust.queryForChooseUser){
 					custInfo = param;
@@ -3632,22 +3632,27 @@ order.cust = (function(){
 
 	//加载拍照设备列表，获取摄像头信息
 	var _getCameraInfo = function(){
-		//拍照仪版本检查更新
-		query.common.checkCameraDriverVersion();
-		
-		var device = capture.getDevices();
-	    device = JSON.parse(device);
-		if (device == null || device == undefined) {
+		try{
+			//拍照仪版本检查更新
+			query.common.checkCameraDriverVersion();
+			
+			var device = capture.getDevices();
+		    device = JSON.parse(device);
+			if (device == null || device == undefined) {
+				$("#tips").html("提示：请检查是否正确安装插件");
+				return;
+		    }
+			if(device.resultFlag == 0){
+				$.each(device.devices,function(){
+				    $("#device").append("<option value='"+this.device+"' >"+this.name+"</option>");
+				});
+				$("#startPhotos").off("click").on("click",function(){_createVideo();});
+			}else{
+				$("#tips").html("提示："+device.errorMsg);
+				return;
+			}
+		} catch(e){
 			$("#tips").html("提示：请检查是否正确安装插件");
-			return;
-	    }
-		if(device.resultFlag == 0){
-			$.each(device.devices,function(){
-			    $("#device").append("<option value='"+this.device+"' >"+this.name+"</option>");
-			});
-			$("#startPhotos").off("click").on("click",function(){_createVideo();});
-		}else{
-			$("#tips").html("提示："+device.errorMsg);
 			return;
 		}
 	};
@@ -3677,6 +3682,7 @@ order.cust = (function(){
 	// 拍照(点击确认拍照)
 	var _createImage = function() {
 		$("#tips").empty();
+		$("#tips").css("color","#F00");
 		OrderInfo.confidence = 0 ;
 		OrderInfo.faceVerifyFlag = "N" ;
 		if(!$('#img_Photo').is(":hidden")){}
@@ -3724,23 +3730,22 @@ order.cust = (function(){
 			throw new Error("camera driver (DoccameraOcx.exe) is installed incorrectly.");
 		}
 	};
-	 var _callFaceVerify = function(){
-    	 var result =  query.common.queryPropertiesMapValue("FACE_VERIFY_FLAG", "FACE_VERIFY_"+String(OrderInfo.staff.areaId).substr(0, 3));
+	var _callFaceVerify = function(){
+	 	 var request_id = "";
+         var result =  query.common.queryPropertiesMapValue("FACE_VERIFY_FLAG", "FACE_VERIFY_"+String(OrderInfo.staff.areaId).substr(0, 3));
 		 if(ec.util.isObj(OrderInfo.bojbrCustIdentities.identidiesPic) && result.FACE_VERIFY_SWITCH == "ON" && !query.common.checkOperateSpec(CONST.RZBDGN)){
 			 var param={
 				 "ContractRoot":{
 						   "SvcCont":{
 							     "params":{
-							    	  "olid":"",
-									  "busi_type": OrderInfo.busitypeflag,
-									  
-									
-								      "cust_id":OrderInfo.cust.custId,
-                                      "image_best":encodeURIComponent($("#img_Photo").data("identityPic"))
-	                             }
+									    	"olid":"",
+											  "busi_type": OrderInfo.busitypeflag,
+											  "cust_id":OrderInfo.cust.custId,
+											  "area_id" : OrderInfo.getAreaId()
+                                          },
+	                             "image_best":encodeURIComponent($("#img_Photo").data("identityPic"))
 						    },
 						    "TcpCont": {
-						    	
 						    }
 					    }
 			 };
@@ -3755,6 +3760,7 @@ order.cust = (function(){
 				 }
 				 OrderInfo.faceVerifyFlag = response.data.faceVerifyFlag; // y or n 
 				 if(response.data.faceVerifyFlag == "Y"){
+				 	   $("#tips").css("color","#75ac5f");
 					   $("#tips").html("提示："+ "人证相符，相符度 "+confidence+'%,拍摄成功');
 					   $("#confirmAgree").removeClass("btna_g").addClass("btna_o");
 					   $("#confirmAgree").off("click").on("click",function(){_uploadImage();});
@@ -3769,7 +3775,10 @@ order.cust = (function(){
 				      }
 				}
 			 }else if(response.code == 1 && response.data && !CONST.isForcePassfaceVerify){
-				$.alert("错误", "人证比对失败，错误原因：" + response.data);
+				 	if(response.data.tranId){
+						  request_id = response.data.tranId;
+					}
+				$.alert("错误", "人证比对失败，请求流水【"+ request_id +"】错误原因：" + response.data.msg);
 				return;
 			}else if(response.code == -2 && response.data){
 				$.alertM(response.data);
@@ -3782,7 +3791,10 @@ order.cust = (function(){
 				 if(OrderInfo.confidence == 0){  
 					 $("#tips").empty();
 					 if(response && response.code == 1 && response.data){
-					  $("#tips").html("提示："+ "人证不符，原因为" + response.data + ",建议重新拍摄");
+					 if(response.data.tranId){
+					 		request_id = response.data.tranId;
+					 	}
+					  $("#tips").html("提示："+ "人证不符，请求流水【"+ request_id +"】原因为：" + response.data.msg + ",建议重新拍摄");
 					 }
 				 }
 				 $("#confirmAgree").removeClass("btna_g").addClass("btna_o");
@@ -3792,10 +3804,11 @@ order.cust = (function(){
 			  $("#confirmAgree").removeClass("btna_g").addClass("btna_o");
 			  $("#confirmAgree").off("click").on("click",function(){_uploadImage();});
 		 }
-    };
+   };
 	var _rePhotos = function(){
 		//初始化页面
 		$("#tips").html("");
+		$("#tips").css("color","#F00");
 		$("#img_Photo")[0].src="";
 		$("#img_Photo")[0].height=0;
 		$("#img_Photo")[0].width=0;
@@ -3948,8 +3961,14 @@ order.cust = (function(){
 			 }else if(CONST.isForcePassfaceVerify && OrderInfo.faceVerifyFlag == "N"){
 				     $.each(pictures, function(){
 							this.checkType = "4";
-				  });
+							if(OrderInfo.operateSpecStaff.staffId == ""){
+								this.staffId = OrderInfo.staff.staffId;
+							}
+					});
 			 }
+			 
+			
+			 
 			 
 			uploadCustCertificateParams = {
 				accNbr		: "",
@@ -4047,66 +4066,6 @@ order.cust = (function(){
 	};
 	//上传照片主函数
 	var _uploadImageMainFunc = function(params, callBackFuncMust, callBackFuncOption){
-		 var result =  query.common.queryPropertiesMapValue("FACE_VERIFY_FLAG", "FACE_VERIFY_"+String(OrderInfo.staff.areaId).substr(0, 3));
-		 if(result.FACE_VERIFY_SWITCH == "ON" && CONST.isfaceVerify){
-			 var param={
-				 "ContractRoot":{
-						   "SvcCont":{
-							     "params":{
-							    	  "olid":"",
-									  "busi_type": OrderInfo.busitypeflag,
-									  "opt_name": $.trim($("#orderAttrName").val()),
-									  "opt_certnum": $.trim($("#orderAttrIdCard").val()), 
-								      "cust_id":OrderInfo.cust.custId,
-								      "party_name": man.resultContent.partyName,
-								      "gender":man.resultContent.gender,
-								      "nation":man.resultContent.nation,
-								      "born_day":man.resultContent.bornDay,
-								      "cert_address" : man.resultContent.certAddress,
-								      "cert_number":man.resultContent.certNumber,
-								      "cert_org": man.resultContent.certOrg,
-								      "eff_date":man.resultContent.effDate,
-								      "exp_date":man.resultContent.expDate,
-								      "image_idcard" : encodeURIComponent(OrderInfo.bojbrCustIdentities.identidiesPic), 
-								      "image_best":encodeURIComponent($("#img_Photo").data("identityPic"))
-	                             }
-						    },
-						    "TcpCont": {
-						    	
-						    }
-					    }
-			 };
-			 var response =  $.callServiceAsJson(contextPath+"/cust/pic/verify",param);
-			 if(response.code == 0 && response.data){
-				 OrderInfo.confidence = response.data.confidence;   
-				 OrderInfo.faceVerifyFlag = response.data.faceVerifyFlag; // y or n 
-				 if(response.data.faceVerifyFlag == "Y"){
-				     $.each(params.photographs, function(){
-								this.checkType = "3";
-					 });
-					 $.alert("提示", "人证相符，相符度 "+confidence+'%,拍摄成功');
-				 }else{
-					  if(CONST.isForcePassfaceVerify){
-						     $.each(params.photographs, function(){
-									this.checkType = "4";
-						     });
-						     $.alert("提示", "人证相符，相符度 "+confidence+'%,拍摄成功');
-					  }else{
-						  $.alert("提示", "人证不符，相符度 "+confidence+'%,低于阀值'+ response.data.fz +'%，请重新拍摄');
-				    	  return;
-				      }
-				}
-			}else if(response.code == 1 && response.data){
-				$.alert("错误", "人证比对失败，错误原因：" + response.data);
-				return false;
-			}else if(response.code == -2 && response.data){
-				$.alertM(response.data);
-				return false;
-			}else{
-				$.alert("错误", "人证比对发生未知异常，请稍后重试。错误信息：" + response.data);
-				return false;
-			}
-		 }
 		 uploadCustCertificate(params, callBackFuncMust, callBackFuncOption);
 	};
 	var uploadCustCertificate = function(params, callBackFuncMust, callBackFuncOption){
@@ -4689,6 +4648,8 @@ order.cust = (function(){
 				response.data.prodId = param.prodInstId;
 				OrderInfo.oldUserInfos.push(response.data);
 			}
+        } else if (response.code == 1002) {
+            console.debug("该产品下没有查询到属性！");
 		}else if (response.code==-2){
 			$.alertM(response.data);
 		}else {

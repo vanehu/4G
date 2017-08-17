@@ -270,7 +270,7 @@ public class CommonController extends BaseController {
 	    } catch (Exception e) {
 	    	
 	    }
-	    
+	    request.getSession().setAttribute(Const.CACHE_CERTINFO_PARAM, resultMap);
 	    String partyName = MapUtils.getString(resultMap, "partyName"); //姓名
 	    String certAddress = MapUtils.getString(resultMap, "certAddress"); //地址
 	    String certNumber = MapUtils.getString(resultMap, "certNumber"); //身份证号码
@@ -496,6 +496,7 @@ public class CommonController extends BaseController {
 			String certificate = MapUtils.getString(returntMap, "certificate");
 			Map<?, ?> certificateMap = custBmo.decodeCert(certificate.trim(),
 					secret);
+			request.getSession().setAttribute(Const.CACHE_CERTINFO_PARAM, certificateMap);
 			/* 对下面的字段进行签名，可根据需要增加签名字段 */
 			String partyName = MapUtils.getString(certificateMap, "partyName"); // 姓名
 			String certAddress = MapUtils.getString(certificateMap,

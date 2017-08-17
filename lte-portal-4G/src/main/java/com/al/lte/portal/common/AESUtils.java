@@ -270,7 +270,7 @@ public class AESUtils {
 			cipher.init(Cipher.DECRYPT_MODE, key);// 初始化
 			byte[] decryptFrom = parseHexStr2Byte(content);
 			byte[] result = cipher.doFinal(decryptFrom);
-			return new String(result); // 加密
+			return new String(result,"UTF-8"); // 加密
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
 		} catch (NoSuchPaddingException e) {
@@ -280,6 +280,8 @@ public class AESUtils {
 		} catch (IllegalBlockSizeException e) {
 			e.printStackTrace();
 		} catch (BadPaddingException e) {
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
 		return null;

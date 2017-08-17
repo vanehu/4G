@@ -1366,19 +1366,6 @@ cust = (function(){
 			$.alertM(response.data);
 			return false;
 		}
-		//一证五号校验
-		 var inParam = {
-	                "certType": OrderInfo.cust.identityCd,
-	                "certNum":OrderInfo.cust.idCardNumber, 
-	                "certAddress": OrderInfo.cust.addressStr,
-	                "custName": OrderInfo.cust.partyName,
-	                "custNameEnc": OrderInfo.cust.CN,
-	                "certNumEnc": OrderInfo.cust.certNum,
-	                "certAddressEnc": OrderInfo.cust.address
-	            };
-      if(OrderInfo.busitypeflag ==1 && !cust.preCheckCertNumberRel("-1", inParam)){
-          return false;
-      }
 		return true;
 	};
 	//客户鉴权--证件类型
@@ -2508,6 +2495,29 @@ cust = (function(){
         }
         return checkResult;
     };
+
+    /**
+     * 证号关系预校验接口,只查询数据不校验
+     */
+    var _preCheckCertNumberRelQueryOnly = function (inParam) {
+        var isON = offerChange.queryPortalProperties("ONE_CERT_5_NUMBER_"+OrderInfo.cust.areaId.substr(0,3));
+        if (isON) {
+            var param = $.extend(true, {"certType": "", "certNum": "", "certAddress": "", "custName": ""}, inParam);
+            if (CacheData.isGov(param.certType)) {//过滤政企的证件类型，政企的证件不调用一证五号校验
+                return true;
+            }
+            var response = $.callServiceAsJson(contextPath + "/cust/preCheckCertNumberRel", JSON.stringify(param));
+            if (response.code == 0) {
+                var result = response.data;
+                if (ec.util.isObj(result)) {
+                    ec.util.mapPut(OrderInfo.oneCardFiveNum.usedNum, _getCustInfo415Flag(inParam), result.usedNum);
+                }
+            } else {
+                $.alertM(response.data);
+            }
+        }
+    };
+
     /**
      * 获取一证五号客户信息，新客户或者老用户
      * @private
@@ -2675,6 +2685,8 @@ cust = (function(){
 				response.data.prodId = param.prodInstId;
 				OrderInfo.oldUserInfos.push(response.data);
 			}
+        } else if (response.code == 1002) {
+            console.debug("该产品下没有查询到属性！");
 		}else if (response.code==-2){
 			$.alertM(response.data);
 		}else {
@@ -2749,6 +2761,7 @@ cust = (function(){
 		getPicture2                 :       _getPicture2,
 		getjbrGenerationInfos2      :       _getjbrGenerationInfos2,
 		preCheckCertNumberRel       :       _preCheckCertNumberRel,
+        preCheckCertNumberRelQueryOnly:     _preCheckCertNumberRelQueryOnly,
 		getCustInfo415              :       _getCustInfo415,
 		getCustInfo415Flag          :       _getCustInfo415Flag,
         canOrderYiPay				:		_canOrderYiPay,

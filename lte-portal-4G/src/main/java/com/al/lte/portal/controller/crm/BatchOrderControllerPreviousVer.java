@@ -1517,6 +1517,7 @@ public class BatchOrderControllerPreviousVer  extends BaseController {
 		String start = sdf.format(calendar.getTime());
 		model.addAttribute("startDt", start);
 		model.addAttribute("endDt", end);
+		model.addAttribute("batchType", batchType);
 		model.addAttribute("templateType", batchType);
 		model.addAttribute("batchTypeName", batchTypeName);
 		return "/batchOrder/batch-order-query";

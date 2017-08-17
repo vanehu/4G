@@ -142,6 +142,10 @@ order.phoneNumber = (function(){
 				// 请求返回号码后按照当前所选排序选项进行页面DOM排序
 				$("#pnOrder .selected").removeClass().click();
 				$("#btnSwitchNbr").off("click").on("click",function(){order.phoneNumber.btnQueryPhoneNumber({});});
+				var orderAreaId = $("#p_areaId").val();
+				if(order.prepare.isPreInstall() && orderAreaId!=""){
+					$("#p_cust_areaId").val(orderAreaId);
+				}
 			},
 			fail:function(response){
 				$.unecOverlay();
@@ -931,6 +935,9 @@ order.phoneNumber = (function(){
 		});	
 	};
 	var _initPhonenumber=function(){
+		if(!order.prepare.isPreInstall()){
+			$("#areaDiv").hide();
+		}
 	    var phoneNumNewFlag = $("#phoneNumFlag").val();
 	    var p_areaId = $("#p_areaId").val();
 		if(phoneNumNewFlag=='new'){//只选号不预占，用于写卡申请传卡管做混配
@@ -1316,6 +1323,11 @@ order.phoneNumber = (function(){
 		}
 	};
 
+	//定位客户选择地区
+	var _chooseAreaPr = function(){
+		order.area.chooseAreaTree("order/prepare","p_areaId_val","p_areaId",3);
+	};
+	
 	return {
 		qryPhoneNbrLevelInfoList:_qryPhoneNbrLevelInfoList,
 		selectNum:_selectNum,
@@ -1341,6 +1353,7 @@ order.phoneNumber = (function(){
 		nbrcount:_nbrcount,
 		pswChange: _pswChange,
 		numOrder: _numOrder,
-		getVirtualNum:_getVirtualNum
+		getVirtualNum:_getVirtualNum,
+		chooseAreaPr:_chooseAreaPr
 	};
 })();

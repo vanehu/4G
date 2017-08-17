@@ -263,14 +263,20 @@ public class PCModelController extends BaseController {
 				headerHost = request.getHeader("Host");
 			}
 			String defaultDomain= propertiesUtils.getMessage("DEFAULTDOMAIN");
-			//否则，走原来的老逻辑
-			if((port==10101 || port==10102 || port==10103) && "ON".equals(flag)){
-				return super.redirect("https://"+defaultDomain+":83/provPortal"+modelUrl);
-			}else if((port==10151 || port==10152 || port==10153) && "ON".equals(flag)){
-				return super.redirect("https://"+defaultDomain+":84/provPortal"+modelUrl);
-			}else{
-				return super.redirect(modelUrl);
-			}	
+			String domainNameONOFF = propertiesUtils.getMessage("DOMAINNAMEONOFF");
+			if(PortalUtils.isSecondLevelDomain(headerHost) && "ON".equals(domainNameONOFF)){
+				//#591478 若启用分省域名，应重定向到*.crm.189.cn:port
+				return super.redirect("https://" + headerHost + "/provPortal" + modelUrl);
+			} else{
+				//否则，走原来的老逻辑
+				if((port==10101 || port==10102 || port==10103) && "ON".equals(flag)){
+					return super.redirect("https://"+defaultDomain+":83/provPortal"+modelUrl);
+				}else if((port==10151 || port==10152 || port==10153) && "ON".equals(flag)){
+					return super.redirect("https://"+defaultDomain+":84/provPortal"+modelUrl);
+				}else{
+					return super.redirect(modelUrl);
+				}	
+			}
 			
 		}catch(Exception ex){
 			log.error("PC单点页面集成接口异常:",ex);

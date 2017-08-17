@@ -131,12 +131,21 @@ oneFive.certNumberQuery = (function () {
                 "startDt": startDt,
                 "endDt": endDt,
                 "nowPage": curPage,
-                "staffId": OrderInfo.staff.staffId,
                 "pageSize": 10
             };
         }
         param.ifFilterAreaId = "Y";
         param.ifFilterItem = "N";
+        if (ec.util.isObj(telNumber) || ec.util.isObj(certNumber)) {
+            if (ec.util.isObj(telNumber)) {
+                param.telNumber = telNumber;
+            }
+            if (ec.util.isObj(certNumber)) {
+                param.certNumber = certNumber;
+            }
+        } else {
+            param.staffId = OrderInfo.staff.staffId;
+        }
         $.callServiceAsHtmlGet(contextPath + "/certNumber/queryOneFiveOrderList", param, {
             "before": function () {
                 $.ecOverlay("一证五卡订单查询中，请稍等...");
@@ -234,7 +243,7 @@ oneFive.certNumberQuery = (function () {
                         $.alert("提示", "没有附件");
                     }
                 } else {
-                    $.alertM("提示", response.data);
+                    $.alertM(response.data);
                 }
             },
             fail: function () {
@@ -280,4 +289,10 @@ oneFive.certNumberQuery = (function () {
 //初始化
 $(function () {
     oneFive.certNumberQuery.init();
+    $("#p_startDt").off("click").on("click",function(){
+		$.calendar({ format:'yyyy年MM月dd日 ',real:'#p_startDt',maxDate:$("#p_endDt").val() });
+	});
+	$("#p_endDt").off("click").on("click",function(){
+		$.calendar({ format:'yyyy年MM月dd日 ',real:'#p_endDt',minDate:$("#p_startDt").val(),maxDate:'%y-%M-%d' });
+	});
 });

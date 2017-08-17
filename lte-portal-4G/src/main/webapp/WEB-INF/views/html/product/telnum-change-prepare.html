@@ -13,28 +13,39 @@
              <div class="selectList">
                  
                  <dl>
-                 <dt>号池：</dt>
-                       <dd id="change_nbrPool">
-                         
-					   </dd>
-                       <dt>查预占号码：</dt>
+                 	 <dt>查预占号码：</dt>
                        <dd>
                          <input type="text" id="idCode" class="numberTextBox inputWidth103px" value="请输入身份证查询被预占的号码" onblur="javascript:if($(this).val()==''){$(this).val('请输入身份证查询被预占的号码');}" onfocus="javascript:if($(this).val()=='请输入身份证查询被预占的号码'){$(this).val('')}"/>
                          <input type="button" value="查 询" class="numberSearch" id="change_btnNumExistSearch"/>
                        </dd>
                  </dl>
+                 
+                 <dl>
+                 <dt>号池：</dt>
+                       <dd id="change_nbrPool">
+                         
+					   </dd>
+                       <dt style="width: 100px;" id="psw_dt">密码预占查询：</dt>
+                       <dd id="psw_dd">
+                       	<input type="radio" value="1"  name="query_flag_02" checked="checked" onclick="prod.telnum.modifyPswChange(false)"/>否 
+                       	<input type="radio" value="2" name="query_flag_02" onclick="prod.telnum.modifyPswChange(true)"/>是
+                       </dd>
+                       <dd id="change_pswInfo" style="color: #ff0000; display: none;">&nbsp;&nbsp;&nbsp;&nbsp;请在【号码自定义】栏输入全位号码才可查询出来</dd>
+                 </dl>
+    
                  <dl>
                        <dt>号码自定义：</dt>
                        <dd id="change_pnHead">
                        </dd>
                        <dd>
-                       	 <input type="hidden" id="phoneNum" class="numberTextBox width82" maxlength="4" value="任意四位" onblur="javascript:if($(this).val()==''){$(this).val('任意四位');}" onfocus="javascript:if($(this).val()=='任意四位'){$(this).val('')}"/>
+                       	 <!-- <input type="hidden" id="phoneNum" class="numberTextBox width82" maxlength="4" value="任意四位" onblur="javascript:if($(this).val()==''){$(this).val('任意四位');}" onfocus="javascript:if($(this).val()=='任意四位'){$(this).val('')}"/> -->
                        	 <input type="text" id = "change_pnFour" class="numberTextBox width82 input-box" maxlength="1" placeholder="四" title = "中间四位"/>
                        	 <input type="text" id = "change_pnFive" class="numberTextBox width82 input-box" maxlength="1" placeholder="五" title = "中间四位"/>
                        	 <input type="text" id = "change_pnSix" class="numberTextBox width82 input-box" maxlength="1" placeholder="六" title = "中间四位"/>
                        	 <input type="text" id = "change_pnSeven" class="numberTextBox width82 input-box" maxlength="1" placeholder="七" title = "中间四位"/>
                          <input type="text" id="change_pnEnd" class="numberTextBox width82" maxlength="4" value="最后四位" onblur="javascript:if($(this).val()==''){$(this).val('最后四位');}" onfocus="javascript:if($(this).val()=='最后四位'){$(this).val('')}"/>
                          <input type="text" id="change_pnNotExitNum" class="numberTextBox width82" maxlength="1" value="后四位不含" onblur="javascript:if($(this).val()==''){$(this).val('后四位不含');}" onfocus="javascript:if($(this).val()=='后四位不含'){$(this).val('')}"/>
+                         <input type="text" id="phoneNum" class="numberTextBox width82" style="display: none;" maxlength="11" placeholder="全位号码" />
                          <input type="button" value="搜 索" class="numberSearch" id="change_btnNumSearch" />
                          <input type="button" value="换一组" class="numberSearch" id="change_btnSwitchNbr"/>
                        </dd>
@@ -90,3 +101,35 @@
 	</#if>
 	<a class="btna_o" href="javascript:prod.telnum.endSelectNum();"><span>下一步</span></a> </div>
 <!--订单准备 end-->
+
+<!-- 密码弹出框-->  
+<div class="easyDialogdiv" style="width:320px;height:200px;display: none;" id="password_dialog" >
+	<div class="easyDialogclose" onclick="easyDialog.close()"></div>
+  	<table class="contract_list rule">
+        <thead>
+            <tr>
+                <td colspan="2">预占密码</td>
+            </tr>                                                    
+        </thead>
+  	</table>
+  	<br/>
+  	<div class="form-content">
+	    <div class="phone_warp" style="margin:0px 10px;">
+	    	<table>
+	        	<tbody>	
+	        	<tr>
+		        	<td style="font-size: 14px;">预占密码：</td>
+		        	<td>
+		        		<input type="password" id="pree_password_text"  class="numberTextBox"/>
+		        	</td>
+	        	</tr>
+	        	</tbody>
+	      	</table>
+	      	<div align="center" style="margin: 20px auto;">
+	      		<a href="javascript:void(0)" onclick="prod.telnum.preePassword()" class="btn_h30"><span>确认</span></a>
+	      			<button style="display:none" id="btncustreset" type="reset">ssss</button>
+	        	<a href="javascript:easyDialog.close();" class="btn_h30" style=" margin-left:20px;"><span>取消</span></a>
+	      	</div>
+	    </div>
+  	</div>
+</div>

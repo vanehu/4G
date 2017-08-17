@@ -3,7 +3,7 @@ jQuery.ketchup
     if (code.length != 18) {
         return false;
     }
-    var reg = /^([0-9ABCDEFGHJKLMNPQRTUWXY]{2})([0-9]{6})([0-9ABCDEFGHJKLMNPQRTUWXY]{9})([0-9Y])$/;
+    var reg = /^([0-9ABCDEFGHJKLMNPQRTUWXY]{2})([0-9]{6})([0-9ABCDEFGHJKLMNPQRTUWXY]{9})([0-9ABCDEFGHJKLMNPQRTUWXY])$/;
     if (!reg.test(code)) {
         return false;
     }
@@ -17,12 +17,7 @@ jQuery.ketchup
         sum += str.indexOf(codes[0].charAt(i)) * ws[i];
     }
     var c18 = 31 - (sum % 31);
-    if (c18 == 31) {
-        c18 = 'Y';
-    } else if (c18 == 30) {
-        c18 = '0';
-    }
-    if (c18 != codes[1]) {
+    if (str.charAt(c18) != codes[1]) {
         return false;
     }
     return true;
@@ -194,11 +189,11 @@ jQuery.ketchup
 .helper('getKetchupEvents', function(el) {
   var events = el.data('events').ketchup,
       retArr = [];
-  
+
   for(var i = 0; i < events.length; i++) {
     retArr.push(events[i].namespace);
   }
-      
+
   return retArr.join(' ');
 })
 
@@ -215,7 +210,7 @@ jQuery.ketchup
 	}else {
 		return (/^[0-9a-fA-F]{0,15}$/).test(val);
 	}
-	
+
 })
 .helper('idCardCheck', function(num) {
 	num = num.toUpperCase();
@@ -327,7 +322,7 @@ jQuery.ketchup
 		}
 		return false;
 	})
-	
+
 .helper('isLength4_64', function (code) {
 	 if(code==""||code.length<4||code.length>64){
 	     return false;

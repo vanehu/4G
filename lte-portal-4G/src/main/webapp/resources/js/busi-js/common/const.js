@@ -629,11 +629,12 @@ CONST = (function(){
 			
 	//允许订购翼销售的证件类型（居民身份证、临时居民身份证或户口簿登记）
 	var _YIPAY_IDENTITYCD = [
-			{NAME:"居民身份证", CD:"1"},
-			{NAME:"临时居民身份证", CD:"41"},
-			{NAME:"户口簿", CD:"12"}
-		];
+		{NAME:"户口簿", 			CD:"12"},
+		{NAME:"居民身份证", 		CD:"1"},
+		{NAME:"临时居民身份证", 	CD:"41"}
+	];
 
+	//二代证读卡servCode
 	var _CERT_READER_USER 					= "使用人";
 	var _CERT_READER_AUTH_CUST 				= "用户鉴权";
 	var _CERT_READER_QUERY_CUST 			= "定位客户";

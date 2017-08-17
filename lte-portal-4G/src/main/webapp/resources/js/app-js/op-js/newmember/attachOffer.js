@@ -2113,13 +2113,16 @@ AttachOffer = (function() {
 		} 
 		if(spec.isdel == "C"){  //没有订购过
 			$('#li_'+prodId+'_'+servSpecId).remove(); //删除可开通功能产品里面
-			var $li = $('<a id="li_'+prodId+'_'+servSpecId+'" onclick="AttachOffer.closeServSpec('+prodId+','+servSpecId+',\''+servSpecName+'\',\''+ifParams+'\')" class="list-group-item"></a>');
-			$li.append('<span id="span_'+prodId+'_'+servSpecId+'">'+spec.servSpecName+'</span>');
-			if(spec.ifDault==0){ //必须
-				$li.removeAttr("onclick");	
-			}else{
-				$li.append('<span id="span_remove_'+prodId+'_'+servSpecId+'" class="glyphicon glyphicon-remove pull-right" aria-hidden="true"></span>');
-			}
+            var $li = $('<a href="javascript:void(0);" id="li_'+prodId+'_'+servSpecId+'"  class="list-group-item">');
+            $li.append('<span id="span_'+prodId+'_'+servSpecId+'">'+spec.servSpecName+'</span>');
+            $li.append(' <span onclick="AttachOffer.closeServSpec('+prodId+','+servSpecId+',\''+servSpecName+'\',\''+ifParams+'\')" id="span_remove_'+prodId+'_'+servSpecId+'" class="glyphicon glyphicon-remove pull-right" aria-hidden="true"></span>');
+            if(spec.ifDault==0){ //必须
+                $li.removeAttr("onclick");
+            }
+            //添加参数redmine1595782
+            if(spec.ifParams == "Y"){
+                $li.append('<p id="can_'+prodId+'_'+servSpecId+'" class="abtn01 btn-span" isset="N" style="display: inline"><span class="abtn03 btn-span"><button type="button" class="btn btn-info" style="right:50px;width:48px;top:13px;" data-toggle="modal" data-target="#setting" onclick="AttachOffer.showServParam('+prodId+','+servSpecId+',0);">参</button></span></a></p>')
+            }
 			$("#open_serv_ul_"+prodId).append($li);
 		}else {
 		    $("#li_"+prodId+"_"+servSpecId).find("span").removeClass("del");
@@ -2336,24 +2339,22 @@ AttachOffer = (function() {
 			var content = CacheData.getParamContent(prodId,spec,2);	
 			$.confirm("参数设置： ",content,{ 
 				yes:function(){
+                    if(!!spec.prodSpecParams){
+                        for (var i = 0; i < spec.prodSpecParams.length; i++) {
+                            var param = spec.prodSpecParams[i];
+                            var itemSpec = CacheData.getServSpecParam(prodId,servSpecId,param.itemSpecId);
+                            itemSpec.setValue = $("#"+prodId+"_"+param.itemSpecId).val();
+                        }
+                    }
+                    $("#can_"+prodId+"_"+servSpecId).removeClass("canshu").addClass("canshu2");
+                    var attchSpec = CacheData.getServSpec(prodId,servSpecId);
+                    attchSpec.isset = "Y";
+                    $(".ZebraDialog").remove();
+                    $(".ZebraDialogOverlay").remove();
 				},
 				no:function(){	
 				}
 			});
-			$('#paramForm').bind('formIsValid', function(event, form){
-				if(!!spec.prodSpecParams){
-					for (var i = 0; i < spec.prodSpecParams.length; i++) {
-						var param = spec.prodSpecParams[i];
-						var itemSpec = CacheData.getServSpecParam(prodId,servSpecId,param.itemSpecId);
-						itemSpec.setValue = $("#"+prodId+"_"+param.itemSpecId).val();
-					}
-				}
-				$("#can_"+prodId+"_"+servSpecId).removeClass("canshu").addClass("canshu2");
-				var attchSpec = CacheData.getServSpec(prodId,servSpecId);
-				attchSpec.isset = "Y";
-				$(".ZebraDialog").remove();
-                $(".ZebraDialogOverlay").remove();
-			}).ketchup({bindElementByClass:"ZebraDialog_Button1"});
 		}
 	};
 	

@@ -1,5 +1,6 @@
 package com.al.lte.portal.controller.crm;
 
+import com.al.ecs.common.util.DateUtil;
 import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ecs.common.entity.JsonResponse;
 import com.al.ecs.common.entity.PageModel;
@@ -149,18 +150,42 @@ public class OneCertFiveNumberController extends BaseController {
     }
 
     /**
+     * 跨省一证五卡报表
+     */
+    @RequestMapping(value = "/certNumberReport", method = RequestMethod.GET)
+    public String certNumberReport(Model model) {
+
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+                SysConstant.SESSION_KEY_LOGIN_STAFF);
+
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd");
+        String endTime = f.format(c.getTime());
+        String startTime = f.format(c.getTime());
+        Map<String, Object> defaultAreaInfo = CommonMethods.getDefaultAreaInfo_MinimumC3(sessionStaff);
+
+        model.addAttribute("p_startDt", startTime);
+        model.addAttribute("p_endDt", endTime);
+        model.addAttribute("p_areaId", defaultAreaInfo.get("defaultAreaId"));
+        model.addAttribute("p_areaId_val", defaultAreaInfo.get("defaultAreaName"));
+        return "/certNumber/certNumber-report-main";
+    }
+
+    /**
      * 跨省一证五卡订单列表
      */
     @RequestMapping(value = "/queryOneFiveOrderList", method = RequestMethod.GET)
-    public String queryOneFiveOrderList(Model model, @RequestParam Map<String, Object> param) throws BusinessException {
+    public String queryOneFiveOrderList(Model model, @RequestParam Map<String, Object> param,HttpServletRequest req) throws BusinessException {
         SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
                 SysConstant.SESSION_KEY_LOGIN_STAFF);
+        List<Map<String,Object>> nowPageModel =  (List<Map<String,Object>>) req.getAttribute("pageModel");
+            
         List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
         Integer totalSize = 0;
         int nowPage = MapUtils.getIntValue(param, "nowPage", 1);
         String ifFilterOwnAccNbr = MapUtils.getString(param, "ifFilterOwnAccNbr", "");
         if (SysConstant.STR_Y.equals(ifFilterOwnAccNbr)) {
-            param.put("handleStaffId", sessionStaff.getStaffId());
+        	param.put("handleStaffId", sessionStaff.getStaffId());
         }
         try {
             Map<String, Object> resMap = cartBmo.queryCltCarts(param, null, sessionStaff);
@@ -172,6 +197,12 @@ public class OneCertFiveNumberController extends BaseController {
                 }
                 PageModel<Map<String, Object>> pm = PageUtil.buildPageModel(nowPage, 10, totalSize < 1 ? 1
                         : totalSize, list);
+                if(nowPageModel != null){
+                	for(int i=0;i<nowPageModel.size();i++){
+	                	pm.getList().get(i).put("statusCd", "201300");
+	                }
+                }
+                
                 model.addAttribute("pageModel", pm);
                 model.addAttribute("code", "0");
 
@@ -190,6 +221,91 @@ public class OneCertFiveNumberController extends BaseController {
             return super.failedStr(model, ie, param, ErrorCode.CLTORDER_LIST);
         } catch (Exception e) {
             log.error("采集单查询/order/queryCustCollectionList方法异常", e);
+            return super.failedStr(model, ErrorCode.CLTORDER_LIST, e, param);
+        }
+    }
+
+    /**
+     * 跨省一证五卡报表列表
+     */
+    @RequestMapping(value = "/queryOneFiveReportList", method = RequestMethod.GET)
+    public String queryOneFiveReportList(Model model, @RequestParam Map<String, Object> param) throws BusinessException {
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+                SysConstant.SESSION_KEY_LOGIN_STAFF);
+        List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> resultlist = new ArrayList<Map<String, Object>>();
+        Integer totalSize = 0;
+        try {
+            Calendar startDate = Calendar.getInstance();
+            Calendar endDate = Calendar.getInstance();
+            startDate.setTime(DateUtil.getDateFromString(MapUtils.getString(param, "startDt", DateUtil.getNow(DateUtil.DATE_FORMATE_STRING_H)), DateUtil.DATE_FORMATE_STRING_H));
+            endDate.setTime(DateUtil.getDateFromString(MapUtils.getString(param, "endDt", DateUtil.getNow(DateUtil.DATE_FORMATE_STRING_H)), DateUtil.DATE_FORMATE_STRING_H));
+
+            Map<String, Object> resMap = oneFiveBmo.queryReport(param, sessionStaff);
+            if (ResultCode.R_SUCC.equals(resMap.get("resultCode"))) {
+                Map<String, Object> map = (Map<String, Object>) resMap.get("result");
+                if (map != null && map.get("cntInfo") != null) {
+                    list = (List<Map<String, Object>>) map.get("cntInfo");
+                    totalSize = list.size();
+                    while (startDate.before(endDate) || startDate.equals(endDate)) {
+                        String currentDateStr = DateUtil.formatDate(startDate.getTime(), DateUtil.DATE_FORMATE_STRING_H);
+                        boolean exist = false;
+                        for (Map<String, Object> item : list) {
+                            String acceptDate = MapUtils.getString(item, "acceptDate");
+                            if (currentDateStr.equals(acceptDate)) {
+                                resultlist.add(item);
+                                exist = true;
+                            }
+                        }
+                        if (!exist) {
+                            Map<String, Object> emptyItem = new HashMap<String, Object>();
+                            emptyItem.put("acceptDate", currentDateStr);
+                            emptyItem.put("initialOrderCnt", 0);
+                            emptyItem.put("doingOrderCnt", 0);
+                            emptyItem.put("cancelOrderCnt", 0);
+                            emptyItem.put("finishOrderCnt", 0);
+                            emptyItem.put("totalCnt", 0);
+                            resultlist.add(emptyItem);
+                        }
+                        startDate.add(Calendar.DATE, 1);
+                    }
+                    if (resultlist.size() > 1) {
+                        Map<String, Object> totalCount = new HashMap<String, Object>();
+                        totalCount.put("acceptDate", MapUtils.getString(param, "startDt", DateUtil.getNow(DateUtil.DATE_FORMATE_STRING_H)) + "/" + MapUtils.getString(param, "endDt", DateUtil.getNow(DateUtil.DATE_FORMATE_STRING_H)));
+                        Long initialOrderCnt = 0L;
+                        Long doingOrderCnt = 0L;
+                        Long cancelOrderCnt = 0L;
+                        Long finishOrderCnt = 0L;
+                        for (Map<String, Object> rMap : resultlist) {
+                            initialOrderCnt += MapUtils.getLong(rMap, "initialOrderCnt", 0L);
+                            doingOrderCnt += MapUtils.getLong(rMap, "doingOrderCnt", 0L);
+                            cancelOrderCnt += MapUtils.getLong(rMap, "cancelOrderCnt", 0L);
+                            finishOrderCnt += MapUtils.getLong(rMap, "finishOrderCnt", 0L);
+                        }
+                        totalCount.put("initialOrderCnt", initialOrderCnt);
+                        totalCount.put("doingOrderCnt", doingOrderCnt);
+                        totalCount.put("cancelOrderCnt", cancelOrderCnt);
+                        totalCount.put("finishOrderCnt", finishOrderCnt);
+                        totalCount.put("totalCnt", initialOrderCnt + doingOrderCnt + cancelOrderCnt + finishOrderCnt);
+                        resultlist.add(totalCount);
+                    }
+                }
+                PageModel<Map<String, Object>> pm = PageUtil.buildPageModel(1, totalSize, totalSize < 1 ? 1
+                        : totalSize, resultlist);
+                model.addAttribute("pageModel", pm);
+                model.addAttribute("code", "0");
+
+            } else {
+                model.addAttribute("code", resMap.get("resultCode"));
+                model.addAttribute("mess", resMap.get("resultMsg"));
+            }
+            return "/certNumber/certNumber-report-list";
+        } catch (BusinessException be) {
+            return super.failedStr(model, be);
+        } catch (InterfaceException ie) {
+            return super.failedStr(model, ie, param, ErrorCode.CLTORDER_LIST);
+        } catch (Exception e) {
+            log.error("采集单报表查询service/intf.detailService/queryCollectionOrderItemCount方法异常", e);
             return super.failedStr(model, ErrorCode.CLTORDER_LIST, e, param);
         }
     }
@@ -223,6 +339,56 @@ public class OneCertFiveNumberController extends BaseController {
             return super.failedStr(model, ErrorCode.CLTORDER_DETAIL, e, paramMap);
         }
     }
+    
+    /**
+     * 统一接单查询跨省一证五卡订单列表详情
+     */
+    @RequestMapping(value = "/queryOneFiveOrderItemAllDetail", method = RequestMethod.GET)
+    @ResponseBody
+    public JsonResponse queryOneFiveOrderItemAllDetail(Model model, HttpSession session, @RequestParam Map<String, Object> paramMap) throws BusinessException {
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
+        JsonResponse jsonResponse;
+        try {
+        	//受理的参数为:{orderId=120000001010, areaId=8320400, accNbr=17767101344, statusCd=201300, channelId=1385688, staffId=5176843}
+            paramMap.put("statusCd", SysConstant.ONE_FIVE_NUMBER_STATUS_INIT);
+            Map<String, Object> resMap = cartBmo.queryCltCartOrder(paramMap, null, sessionStaff);
+            Map<String, Object> orderList = null;
+            Map<String, Object> param = null;
+            if (ResultCode.R_SUCC.equals(resMap.get("resultCode"))) {
+                Map<String, Object> cartInfo = (Map<String, Object>) resMap.get("result");
+                orderList = (Map<String, Object>) cartInfo.get("collectionOrderList");
+                List arrList = (ArrayList)(orderList.get("collectionCustInfos"));
+                     
+                model.addAttribute("orderList", orderList);
+                model.addAttribute("code", ResultCode.R_SUCC);
+                 
+                //参数修改
+                for(int i = 0;i < arrList.size();i++){
+                	String strJson = JsonUtil.toString(arrList.get(i));
+                    param = JsonUtil.toObject(strJson, Map.class);
+                    param.put("channelId", sessionStaff.getCurrentChannelId());
+	                param.put("staffId", sessionStaff.getStaffId());
+	                param.put("statusCd", "201300");
+	                 
+	                Map<String, Object> resuMap = orderBmo.cltOrderCommit(param, null, sessionStaff);
+	                System.out.println(resuMap.toString());
+	                if (ResultCode.R_SUCC.equals(resuMap.get("resultCode"))) {
+	                    jsonResponse = super.successed(ResultConstant.SUCCESS);
+	                } else {
+	                    jsonResponse = super.failed(resuMap.get("resultMsg"), ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+	                }
+	              
+                }             
+            } else {
+                model.addAttribute("code", resMap.get("resultCode"));
+                model.addAttribute("mess", resMap.get("resultMsg"));
+            }
+            return super.successed(orderList, ResultConstant.SUCCESS.getCode());
+        }catch (Exception e) {
+            log.error("购物车详情/order/queryCustCollectionInfo方法异常", e);
+            return super.failed(ErrorCode.CLTORDER_DETAIL, e, paramMap);
+        }
+    }  
 
     /**
      * 跨省一证五卡订单列表详情
@@ -366,6 +532,7 @@ public class OneCertFiveNumberController extends BaseController {
         param.put("areaId", sessionStaff != null ? sessionStaff.getCurrentAreaId() : "");
         param.put("soNbr", soNbr);
         param.put("olId", soNbr);
+        param.put("operateStaffId", sessionStaff.getStaffId());
         param.put("srcFlag", SysConstant.ONE_FIVE_SRC_FLAG_REAL);
 
 

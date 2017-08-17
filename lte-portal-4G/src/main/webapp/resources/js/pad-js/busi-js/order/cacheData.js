@@ -764,7 +764,7 @@ CacheData = (function() {
 								newSpec.isdel = "N";
 							}
 						}else {
-							if(OrderInfo.actionFlag==2){
+							if(OrderInfo.actionFlag==2 || OrderInfo.actionFlag==6){
 								offerSpec.isdel = "C";
 								CacheData.setOfferSpec(prodId,offerSpec);
 								var param = CacheData.getExcDepOfferParam(prodId,offerSpec.offerSpecId);
@@ -824,7 +824,7 @@ CacheData = (function() {
 								newSpec.isdel = "N";
 							}
 						}else {
-							if(OrderInfo.actionFlag==2){
+							if(OrderInfo.actionFlag==2 || OrderInfo.actionFlag==6){
 								offerSpec.isdel = "C";
 								CacheData.setOfferSpec(prodId,offerSpec);
 								var param = CacheData.getExcDepOfferParam(prodId,offerSpec.offerSpecId);

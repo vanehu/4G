@@ -539,7 +539,28 @@ order.dealer = (function() {
 							$.alert("操作提示","没有查询到该员工信息！");
 						}
 					}else{
-						$("#dealer_"+objInstId).attr("value",response.data[0].staffName).attr("staffId", response.data[0].staffId);
+						var $channelListOptions ="";
+						$.each(response.data[0].chanInfos,function(){
+							if(this.selected==true){
+								$channelListOptions += "<option value='"+this.channelNbr+"' selected ='selected'>"+this.channelName+"</option>";
+							}else{
+								$channelListOptions += "<option value='"+this.channelNbr+"'>"+this.channelName+"</option>";
+							}
+						});
+						if(objInstId == -99){
+							$("input[id^='dealer_']").each(function(){
+								$(this).attr("value",response.data[0].staffName).attr("staffId", response.data[0].staffId);
+							});
+							$("select[id^='dealerChannel_']").each(function(){
+								$(this).empty();
+								$(this).append($channelListOptions);
+							});
+						}else{
+							$("#dealer_"+objInstId).attr("value",response.data[0].staffName).attr("staffId", response.data[0].staffId);
+							$("#dealerChannel_"+objInstId).empty();
+							
+							$("#dealerChannel_"+objInstId).append($channelListOptions);
+						}
 						$("#developModal").modal("hide");
 					}
 				//	$("#developModal").hide();
@@ -613,20 +634,39 @@ order.dealer = (function() {
 				
 				$div2.append($select);
 				$div.append($div2);
-				
-				var $td = $('<div class="col-xs-6" style=\"width:33%\"><input type="text" onclick="javascript:order.dealer.showDealer(0,\'dealer\',\''+objId+'\');" onChange="javascript:this.staffId=OrderInfo.staff.staffId;this.value=OrderInfo.staff.staffName" class="form-control" id="dealer_'+objId+'" staffId="'+OrderInfo.staff.staffId+'" value="'+OrderInfo.staff.staffName+'" ></input></div>');
+				var staffId = OrderInfo.staff.staffId;
+				var staffName = OrderInfo.staff.staffName;
+				if($("#dealerTbody li:first input")[0]!=null){
+					staffId = $("#dealerTbody li:first input").attr("staffId");
+					staffName = $("#dealerTbody li:first input").attr("value");
+				}
+				var $td = $('<div class="col-xs-6" style=\"width:33%\"><input type="text" onclick="javascript:order.dealer.showDealer(0,\'dealer\',\''+objId+'\');" onChange="javascript:this.staffId=OrderInfo.staff.staffId;this.value=OrderInfo.staff.staffName" class="form-control" id="dealer_'+objId+'" staffId="'+staffId+'" value="'+staffName+'" ></input></div>');
 				$div.append($td);
 				
 				//渠道数据信息
 				var $tdChannel = $("<div class='col-xs-6' style=\"width:33%\"></div>");
 				var $channelSelect = $('<select id="dealerChannel_'+objId+'" name="dealerChannel_'+id+'" class="selectpicker show-tick form-control styled-select" onclick=a=this.value;></select>');
-				$.each(OrderInfo.channelList,function(){
-					if(this.isSelect==1)
-						$channelSelect.append("<option value='"+this.channelNbr+"' selected ='selected'>"+this.channelName+"</option>");
-					else
-						$channelSelect.append("<option value='"+this.channelNbr+"'>"+this.channelName+"</option>");
-				});
 				
+				if($("#dealerTbody li:first select:last")[0]!=null){
+					var $channelListOptions ="";
+					$("#dealerTbody li:first select:last").find("option").each(function(){
+						var $channelListOptionVal  = $(this).val() ; 
+						var $channelListOptionName = $(this).html() ; 
+						if(this.selected==true){
+							$channelListOptions += "<option value='"+$channelListOptionVal+"' selected ='selected'>"+$channelListOptionName+"</option>";
+						}else{
+							$channelListOptions += "<option value='"+$channelListOptionVal+"'>"+$channelListOptionName+"</option>";
+						}
+					});
+					$channelSelect.append($channelListOptions);
+				}else{
+					$.each(OrderInfo.channelList,function(){
+						if(this.isSelect==1)
+							$channelSelect.append("<option value='"+this.channelNbr+"' selected ='selected'>"+this.channelName+"</option>");
+						else
+							$channelSelect.append("<option value='"+this.channelNbr+"'>"+this.channelName+"</option>");
+					});
+				}
 				$tdChannel.append($channelSelect);
 				
 				$div.append($tdChannel);
@@ -933,6 +973,11 @@ order.dealer = (function() {
 		$.refresh($("#dealerTbody"));
 	};
 	
+	//批量修改发展人
+	var _updateDealer = function(){
+		order.dealer.showDealer(0,'dealer',-99);
+	};
+	
 	return {
 		initDealer 			: _initDealer,
 		changeAccNbr		: _changeAccNbr,
@@ -947,6 +992,7 @@ order.dealer = (function() {
 		showDealer          : _showDealer,
 		queryChildNode      : _queryChildNode,
 		removeDealerNew:_removeDealerNew,
-		checkAllAttach:_checkAllAttach
+		checkAllAttach:_checkAllAttach,
+		updateDealer:_updateDealer
 	};
 })();

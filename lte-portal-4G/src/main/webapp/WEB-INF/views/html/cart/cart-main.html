@@ -91,11 +91,20 @@
                                	</select>
                                	<label class="f_red">&nbsp;&nbsp;</label>
                                	</#if>
+                               	
+                               	<dt>
+								   <label>时间选项：</label>
+							    </dt>
+							    <dd id="timeZones">
+								  <input type="radio" value="N" disabled="disabled" id="ifChansferN"  name="ifChansfer" checked>2个月内</input>
+								  <input type="radio" value="Y" disabled="disabled" id="ifChansferY" name="ifChansfer">2个月前</input>
+							    </dd>
+								 
                             </dl>      
                             <dl>
-                            	  <dt>接入号：</dt>
+                            	  <dt><input type="checkbox" id="if_p_qryNumber" >接入号：</dt>
                                   <dd>
-                                    <input type="text" class="numberTextBox width198" id="p_qryNumber" value=""/>
+                                    <input type="text" class="numberTextBox width198" id="p_qryNumber" disabled="disabled" value=""/>
                                     <label class="f_red">&nbsp;</label>
                                   </dd>
                              	  <dt style="width:100px"><input type="checkbox" id="if_p_olNbr" >购物车流水：</dt>
