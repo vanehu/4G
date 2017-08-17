@@ -458,7 +458,7 @@ public class essOrderController extends BaseController {
 			row.createCell(j++).setCellValue(null == map.get("transactionId") ? "" : map.get("transactionId").toString());
 			row.createCell(j++).setCellValue(null == map.get("extCustOrderId") ? "" : map.get("extCustOrderId").toString());
 			row.createCell(j++).setCellValue(null == map.get("version") ? "" : map.get("version").toString());
-			row.createCell(j++).setCellValue(null == map.get("orderType") ? "" : map.get("orderType").toString());
+			row.createCell(j++).setCellValue(null == map.get("orderTypeName") ? "" : map.get("orderTypeName").toString());
 			row.createCell(j++).setCellValue(null == map.get("statusCd") ? "" : map.get("statusCd").toString());
 			row.createCell(j++).setCellValue(null == map.get("accNbr") ? "" : map.get("accNbr").toString());
 			row.createCell(j++).setCellValue(null == map.get("channelName") ? "" : map.get("channelName").toString());
