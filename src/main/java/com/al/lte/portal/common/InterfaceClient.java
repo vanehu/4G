@@ -198,7 +198,9 @@ public class InterfaceClient {
 		}
 		
 		// 开始调用
-		request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
+		if (!(RequestContextHolder.getRequestAttributes()==null)){
+			request = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest();
+		}
 		String paramString = "";
 		String paramJson="";
 		String retnJson = "";
