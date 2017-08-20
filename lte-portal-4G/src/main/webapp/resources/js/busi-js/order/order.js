@@ -244,7 +244,7 @@ order.service = (function(){
 		
 	};
 	
-	var _loadOfferChangeView = function(param){
+	var _loadOfferChangeView = function(param, offerSpec){
 		var url=contextPath+"/order/queryFeeType";
 		$.ecOverlay("<strong>正在查询是否判断付费类型的服务中,请稍后....</strong>");
 		var response = $.callServiceAsJsonGet(url,param);	
@@ -305,7 +305,7 @@ order.service = (function(){
 			OrderInfo.offer.initOfferCheckRule(offerSpec);
 			var isOfferChangeAllowed = OrderInfo.offer.getResult();
 			if(isOfferChangeAllowed){
-				_loadOfferChangeView(param);
+				_loadOfferChangeView(param, offerSpec);
 			}
 			return;
 		}

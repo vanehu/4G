@@ -643,6 +643,6 @@ public class MDA {
 	/**营销推荐接触反馈结果*/
 	public static final List<Map<String,String>> MKT_CONTACT_RESULT = new ArrayList<Map<String,String>>();
 	
-	/**套餐变更校验副卡数量是否满足目的套餐规则*/
+	/**#1614052套餐变更校验副卡数量是否满足目的套餐规则*/
 	public static final String OFFER_CHANGE_CHECK = new String("");
 }

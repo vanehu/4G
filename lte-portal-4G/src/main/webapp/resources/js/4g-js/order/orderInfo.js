@@ -127,6 +127,7 @@ OrderInfo = (function() {
 		initOfferMemberInfo: function(){
 			this.reset();
 			if(ec.util.isArray(this.offerMemberInfos)){
+				//在$.each()函数体中会重写this对象，导致无法正常调用类的成员变量
 				for(var i = 0; i < this.offerMemberInfos.length; i++){
 					var offerMemberInfo = this.offerMemberInfos[i];
 					if(offerMemberInfo.roleCd == CONST.MEMBER_ROLE_CD.VICE_CARD || 
@@ -179,6 +180,8 @@ OrderInfo = (function() {
 					"，不满足目标套餐的规则要求：副卡数量最大为" + this._maxQty + "，最小为" + this._minQty + "。";
 					$.alert("无法订购", msg);
 				}
+			}else{
+				result = true;
 			}
 			
 			return result;

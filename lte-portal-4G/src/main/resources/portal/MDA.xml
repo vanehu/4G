@@ -3454,6 +3454,6 @@
 			{'id':'6000','name':'接触失败','desc':'未接触成功到客户'}
 			]
 		</const>
-		<const type="String" name="OFFER_CHANGE_CHECK" value="ON" description="#1614052套餐变更校验副卡数量是否满足目的套餐规则，默认ON校验，OFF不校验"/>
+		<const type="String" name="OFFER_CHANGE_CHECK" value="OFF" description="#1614052套餐变更校验副卡数量是否满足目的套餐规则，默认OFF不校验，ON校验"/>
 	</mda>
 </mdas>
