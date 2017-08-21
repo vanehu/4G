@@ -372,6 +372,8 @@ order.cust = (function(){
 				$('#chooseUserBt').off('click');
 			};
 		}else{
+			$("#" + id).attr("placeHolder", "请输入合法" + CacheData.getCheckRuleByKey(identidiesTypeCd, "name"));
+			 $("#" + id).attr("data-validate", "");
 			// 填单页面经办人非身份证
 			if (id == "orderAttrIdCard") {
 				$("#orderAttrReadCertBtn").hide();
@@ -393,7 +395,6 @@ order.cust = (function(){
 					$("#orderAttrQryBtn").show();
 					if (query.common.queryPropertiesStatus("CHECK_RULES_" + (ec.util.isObj(OrderInfo.staff.areaId) ? OrderInfo.staff.areaId.substr(0, 3) : "")) && CacheData.isInCheckRuleByTypeCd(identidiesTypeCd)) {
 		                $("#" + id).removeAttr("onkeyup");
-		                $("#" + id).attr("placeHolder", "请输入合法" + CacheData.getCheckRuleByKey(identidiesTypeCd, "name"));
 		                $("#" + id).attr("data-validate", "validate(" + CacheData.getCheckRuleByKey(identidiesTypeCd, "checkFunction") + ":" + CacheData.getCheckRuleByKey(identidiesTypeCd, "description") + ") on(blur)");
 		            }
 					$("#jbrCertCheckForm").off().bind('formIsValid', function(event, form){
@@ -419,7 +420,6 @@ order.cust = (function(){
 				$('#chooseUserBt').off('click');
 				if (query.common.queryPropertiesStatus("CHECK_RULES_" + (ec.util.isObj(OrderInfo.staff.areaId) ? OrderInfo.staff.areaId.substr(0, 3) : "")) && CacheData.isInCheckRuleByTypeCd(identidiesTypeCd)) {
 	                $("#" + id).removeAttr("onkeyup");
-	                $("#" + id).attr("placeHolder", "请输入合法" + CacheData.getCheckRuleByKey(identidiesTypeCd, "name"));
 	                $("#" + id).attr("data-validate", "validate(" + CacheData.getCheckRuleByKey(identidiesTypeCd, "checkFunction") + ":" + CacheData.getCheckRuleByKey(identidiesTypeCd, "description") + ") on(blur)");
 	            }
 				$("#syrCertCheckForm").off().bind('formIsValid', function(event, form){
@@ -2949,69 +2949,53 @@ order.cust = (function(){
 		var  orderAttrPhoneNbr = ec.util.defaultStr($("#orderAttrPhoneNbr").val());
         var param;
         var queryCustInfo = OrderInfo.queryCustInfo;
-		if(queryCustInfo.code == 0){//定位到客户，照片不下省
-			param = {
-			    photographs: [{
-				    photograph: encodeURIComponent(OrderInfo.handleInfo.imageInfo),
-				    flag: "D",//*经办人头像照片
-				    staffId     : staffId,
-				    signature:OrderInfo.handleInfo.signature
-				}],
-			    venderId  	: OrderInfo.handleInfo.venderId,//*厂商ID
-				srcFlag   	: "REAL",//*来源标识(实名制拍照留存需传REAL)
-				accNbr		: orderAttrPhoneNbr,
-				areaId		: OrderInfo.getAreaId(),
-				certNumber	: identityNum,
-				certType 	: orderIdentidiesTypeCd,
-				custName 	: orderAttrName,
-				extSystem	: "1000000206"
-			};
+        if($("#orderIdentidiesTypeCd").val() == 1){
+    		param = {
+    			    photographs: [
+    			        {
+    				        photograph: encodeURIComponent(OrderInfo.handleInfo.imageInfo),
+    				        flag: "D",//*经办人头像照片
+    				        staffId     : "",
+    				        signature:OrderInfo.handleInfo.signature},
+    				    {
+        				    photograph: encodeURIComponent(OrderInfo.handleInfo.identityPic),
+        				    staffId     : "",
+        				    flag: "C"//*经办人身份证照片
+        				}
+    			    ],
+    			    venderId  	: OrderInfo.handleInfo.venderId,//*厂商ID
+    				srcFlag   	: "REAL",//*来源标识(实名制拍照留存需传REAL)
+					accNbr		: orderAttrPhoneNbr,
+    				areaId		: OrderInfo.getAreaId(),
+    				certNumber	: identityNum,
+    				certType 	: orderIdentidiesTypeCd,
+    				custName 	: orderAttrName,
+    				extSystem	: "1000000206"
+    			};
+    	}else{
+    		param = {
+    			    photographs: [
+    			        {
+    				        photograph: encodeURIComponent(OrderInfo.handleInfo.imageInfo),
+    				        flag: "D",//*经办人头像照片
+    				        staffId     : "",
+    				        signature:OrderInfo.handleInfo.signature
+    				    }
+    			    ],
+    			    venderId  	: OrderInfo.handleInfo.venderId,//*厂商ID
+    				srcFlag   	: "REAL",//*来源标识(实名制拍照留存需传REAL)
+    				accNbr		: orderAttrPhoneNbr,
+    				areaId		: OrderInfo.getAreaId(),
+    				certNumber	: identityNum,
+    				certType 	: orderIdentidiesTypeCd,
+    				custName 	: orderAttrName,
+    				extSystem	: "1000000206"
+    			};
+    	}
+		if(queryCustInfo.code == 0){//老客户
 			OrderInfo.subHandleInfo.handleExist = "Y";
 			OrderInfo.subHandleInfo.handleCustId = queryCustInfo.data.custInfos[0].custId;
-        }else{//定位不到客户，用身份证，身份证的照片二进制下省
-        	if($("#orderIdentidiesTypeCd").val() == 1){
-        		param = {
-        			    photographs: [
-        			        {
-        				        photograph: encodeURIComponent(OrderInfo.handleInfo.imageInfo),
-        				        flag: "D",//*经办人头像照片
-        				        staffId     : staffId,
-        				        signature:OrderInfo.handleInfo.signature},
-        				    {
-            				    photograph: encodeURIComponent(OrderInfo.handleInfo.identityPic),
-            				    staffId     : staffId,
-            				    flag: "C"//*经办人身份证照片
-            				}
-        			    ],
-        			    venderId  	: OrderInfo.handleInfo.venderId,//*厂商ID
-        				srcFlag   	: "REAL",//*来源标识(实名制拍照留存需传REAL)
-    					accNbr		: orderAttrPhoneNbr,
-        				areaId		: OrderInfo.getAreaId(),
-        				certNumber	: identityNum,
-        				certType 	: orderIdentidiesTypeCd,
-        				custName 	: orderAttrName,
-        				extSystem	: "1000000206"
-        			};
-        	}else{
-        		param = {
-        			    photographs: [
-        			        {
-        				        photograph: encodeURIComponent(OrderInfo.handleInfo.imageInfo),
-        				        flag: "D",//*经办人头像照片
-        				        staffId     : staffId,
-        				        signature:OrderInfo.handleInfo.signature
-        				    }
-        			    ],
-        			    venderId  	: OrderInfo.handleInfo.venderId,//*厂商ID
-        				srcFlag   	: "REAL",//*来源标识(实名制拍照留存需传REAL)
-        				accNbr		: orderAttrPhoneNbr,
-        				areaId		: OrderInfo.getAreaId(),
-        				certNumber	: identityNum,
-        				certType 	: orderIdentidiesTypeCd,
-        				custName 	: orderAttrName,
-        				extSystem	: "1000000206"
-        			};
-        	}
+        }else{//新客户
         	OrderInfo.subHandleInfo.handleExist = "N";
         	OrderInfo.subHandleInfo.identidiesTypeCd = orderIdentidiesTypeCd;
         	OrderInfo.subHandleInfo.identityNum = identityNum;
@@ -3021,6 +3005,23 @@ order.cust = (function(){
         	OrderInfo.subHandleInfo.imageInfo = OrderInfo.handleInfo.identityPic;
         }
 		OrderInfo.subHandleInfo.orderAttrFlag = OrderInfo.orderAttrFlag;
+		if(OrderInfo.auditSwitch == "ON" && !OrderInfo.auditOperateSpec && OrderInfo.isManualAudit=="Y"){
+			$.each(param.photographs, function(){
+				this.staffId = staffId;
+			});
+		}
+		if(OrderInfo.faceVerifyFlag == "Y"){
+		    $.each(param.photographs, function(){
+			    this.checkType = "3"; //人证对比通过
+			});
+		    OrderInfo.subHandleInfo.auditType = "3";
+		}else if(OrderInfo.isForcePassfaceVerify && OrderInfo.faceVerifyFlag == "N"){
+	        $.each(param.photographs, function(){
+			    this.checkType = "4"; //强制审核
+			    this.staffId = OrderInfo.staff.staffId;
+			});
+	        OrderInfo.subHandleInfo.auditType = "4";
+		}				
 		var uploadCustCertificate = $.callServiceAsJson(contextPath+"/token/pc/cust/uploadCustCertificate",param);
 		if(uploadCustCertificate.code == 0){
 			if(OrderInfo.handleInfo.checkCustCertSwitch == "ON"){
