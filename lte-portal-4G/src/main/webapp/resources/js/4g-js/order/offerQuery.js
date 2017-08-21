@@ -156,6 +156,8 @@ query.offer = (function() {
 				OrderInfo.offer.offerId = prod.prodOfferInstId;
 				OrderInfo.offer.offerSpecId = prod.prodOfferId;
 				OrderInfo.offer.offerSpecName = prod.prodOfferName;
+				OrderInfo.offer.initOfferMemberInfo();
+				
 				return true;
 			}else{//销售品成员实例为空
 				$.alert("提示","查询销售品实例构成，没有返回成员实例无法继续受理");
