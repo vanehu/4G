@@ -1024,7 +1024,7 @@ order.writeCard = (function(){
 		var loaddll = ocx.TransferDll(_cardDllInfoJson.dllName + ".DLL");
 		if (loaddll != '0') {
 			$.alert("提示","您插入白卡的卡商写卡组件不存在，请将组件下载保存到以下目录：<br/>32位系统 C:\\Windows\\System32<br/>64位系统 C:\\Windows\\SysWOW64<br/>","error");
-			var url = contextPath + "/card/"+ _cardDllInfoJson.dllName + ".DLL";
+			var url = contextPath + "/phoneimg/card/"+ _cardDllInfoJson.dllName + ".DLL";
 			location.href = url;
 			return false;
 		}

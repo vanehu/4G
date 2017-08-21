@@ -1860,9 +1860,9 @@ order.prodModify = (function(){
 			_commonSubmit(param.boActionTypeCd,param.prodStatusCd,param.itemSpecId,param.state);
 		});
 		*/
-		
-	}	
-	
+
+	}
+
 	//修改产品实例属性:修改使用人
 	var _spec_parm_user_change = function(){
 		OrderInfo.prodAttrs = [];
@@ -1903,7 +1903,7 @@ order.prodModify = (function(){
         	}
         }
         OrderInfo.preBefore.prcFlag = "";
-        
+
 		OrderInfo.busitypeflag=4;
 		OrderInfo.initData(CONST.ACTION_CLASS_CD.PROD_ACTION,CONST.BO_ACTION_TYPE.PRODUCT_INFOS,0,CONST.getBoActionTypeName(CONST.BO_ACTION_TYPE.PRODUCT_INFOS),"");
 		var param = _getCallRuleParam(CONST.BO_ACTION_TYPE.PRODUCT_INFOS,_choosedProdInfo.prodInstId);
@@ -1915,7 +1915,7 @@ order.prodModify = (function(){
 		};
 		rule.rule.prepare(param,'order.prodModify.spec_parm_user_show',callParam);
 	};
-	
+
 	//产品实例属性:使用人-展示
 	var _spec_parm_user_show = function(){
 		//#1476472 若已经订购翼支付功能产品，不满足校验规不能更换使用人，查询已定购销售品成，只在产品属性二次菜单赋值
@@ -1946,16 +1946,16 @@ order.prodModify = (function(){
 						$.alert("提示","产品实例属性加载异常！");
 					}else{
 						//$("#"+param.ul_id).append(response.data);
-						_gotoOrderModify(response);		
+						_gotoOrderModify(response);
 					}
 				}else{
 					$.alert("提示","产品实例属性加载异常");
 				}
 			}
-		});	
-		
+		});
+
 	};
-	
+
 	//修改付费类型:修改付费类型、是否信控 --入口
 	var _spec_parm_fee_type_change = function(){
 		OrderInfo.prodAttrs = [];
@@ -1964,12 +1964,12 @@ order.prodModify = (function(){
 				return;
 			}
 		}
-		
+
 		if(order.prodModify.choosedProdInfo.is3G == 'Y'){ //限制3G套餐不能修改付费类型、信控属性
 			$.alert('提示', '3G套餐不能修改付费类型或信控属性');
 			return;
 		}
-		
+
 		//查分省前置校验开关
         var propertiesKey = "PRECHECKFLAG_"+OrderInfo.staff.soAreaId.substring(0,3);
         var isPCF = offerChange.queryPortalProperties(propertiesKey);
@@ -1981,7 +1981,7 @@ order.prodModify = (function(){
         	}
         }
         OrderInfo.preBefore.prcFlag = "";
-        
+
 		OrderInfo.busitypeflag=4;
 		OrderInfo.initData(CONST.ACTION_CLASS_CD.PROD_ACTION,CONST.BO_ACTION_TYPE.CHANGE_FEE_TYPE,0,CONST.getBoActionTypeName(CONST.BO_ACTION_TYPE.CHANGE_FEE_TYPE),"");
 		var param = _getCallRuleParam(CONST.BO_ACTION_TYPE.CHANGE_FEE_TYPE,_choosedProdInfo.prodInstId);
@@ -1993,7 +1993,7 @@ order.prodModify = (function(){
 		};
 		rule.rule.prepare(param,'order.prodModify.spec_parm_fee_type_show',callParam);
 	};
-	
+
 	//修改付费类型:修改付费类型、是否信控 --展示
 	var _spec_parm_fee_type_show = function(){
 		var param={
@@ -2020,15 +2020,15 @@ order.prodModify = (function(){
 						$.alert("提示","变更付费类型加载异常！");
 					}else{
 						//$("#"+param.ul_id).append(response.data);
-						_gotoOrderModify(response);		
+						_gotoOrderModify(response);
 					}
 				}else{
 					$.alert("提示","变更付费类型加载异常");
 				}
 			}
-		});	
+		});
 	};
-	
+
 	//初始化 付费类型 和 是否信控
 	var _initChangeProdAttrs = function(){
 		if($('#offerChangeFeeTypeSelect').length > 0 && $('#offerChangeXinkongSelect').length > 0){
@@ -2036,8 +2036,8 @@ order.prodModify = (function(){
 			var oldIsXinkongValue = $('#offerChangeXinkongSelect').attr('oldValue');
 			$('#offerChangeFeeTypeSelect option[value="'+oldFeeType+'"]').attr('selected', 'selected');
 			$('#offerChangeXinkongSelect option[value="'+oldIsXinkongValue+'"]').attr('selected', 'selected');
-			order.prodModify.choosedProdInfo.isXinkongValue = oldIsXinkongValue; 
-			
+			order.prodModify.choosedProdInfo.isXinkongValue = oldIsXinkongValue;
+
 			//修改后的付费类型为后付费时，“是否信控”才可以修改。修改后的付费类型为预付费时，“是否信控”是固定的值“是”
 			var changeFunction = function(){
 				var newOfferFeeType = $('#offerChangeFeeTypeSelect').val();
@@ -2046,7 +2046,7 @@ order.prodModify = (function(){
 						$('#offerChangeXinkongSelect').append('<option value="">无</option>');
 					}
 					$('#offerChangeXinkongSelect').val("").attr('disabled', 'disabled');
-					
+
 					if(newOfferFeeType == CONST.PAY_TYPE.BEFORE_PAY){
 						$('#offerChangeXinkongSelect').val(CONST.PROD_ATTR_VALUE.IS_XINKONG_YES); //是否信控 “是”选项的value为20
 					}
@@ -2054,7 +2054,7 @@ order.prodModify = (function(){
 					$('#offerChangeXinkongSelect option[value=""]').remove();
 					$('#offerChangeXinkongSelect').removeAttr('disabled'); //是否信控 “是”选项的value为20
 				}
-				
+
 				OrderInfo.offerSpec.feeType = newOfferFeeType;
 				offerChange.isChangeFeeType=true;
 //				AttachOffer.showOfferSpecByFeeType();
@@ -2063,7 +2063,7 @@ order.prodModify = (function(){
 			changeFunction();
 		}
 	};
-	
+
 	//修改产品实例属性
 	var _spec_parm_change= function(){
 		OrderInfo.prodAttrs = [];
@@ -2072,7 +2072,7 @@ order.prodModify = (function(){
 				return;
 			}
 		}
-		
+
 		//查分省前置校验开关
         var propertiesKey = "PRECHECKFLAG_"+OrderInfo.staff.soAreaId.substring(0,3);
         var isPCF = offerChange.queryPortalProperties(propertiesKey);
@@ -2084,7 +2084,7 @@ order.prodModify = (function(){
         	}
         }
         OrderInfo.preBefore.prcFlag = "";
-        
+
 		OrderInfo.busitypeflag=4;
 		OrderInfo.initData(CONST.ACTION_CLASS_CD.PROD_ACTION,CONST.BO_ACTION_TYPE.PRODUCT_PARMS,0,CONST.getBoActionTypeName(CONST.BO_ACTION_TYPE.PRODUCT_PARMS),"");
 		var param = _getCallRuleParam(CONST.BO_ACTION_TYPE.PRODUCT_PARMS,_choosedProdInfo.prodInstId);
@@ -2125,17 +2125,17 @@ order.prodModify = (function(){
 						$.alert("提示","产品实例属性加载异常！");
 					}else{
 						//$("#"+param.ul_id).append(response.data);
-						_gotoOrderModify(response);		
+						_gotoOrderModify(response);
 					}
 				}else{
 					$.alert("提示","产品实例属性加载异常");
 				}
 			}
-		});	
-		
+		});
+
 	};
-	
-	//修改产品密码 
+
+	//修改产品密码
 	var _showPasswordChange = function () {
 		OrderInfo.prodAttrs = [];
 		if(OrderInfo.authRecord.resultCode!="0" && OrderInfo.preBefore.prcFlag != "Y"){
@@ -2143,7 +2143,7 @@ order.prodModify = (function(){
 				return;
 			}
 		}
-		
+
 		//查分省前置校验开关
         var propertiesKey = "PRECHECKFLAG_"+OrderInfo.staff.soAreaId.substring(0,3);
         var isPCF = offerChange.queryPortalProperties(propertiesKey);
@@ -2155,7 +2155,7 @@ order.prodModify = (function(){
         	}
         }
         OrderInfo.preBefore.prcFlag = "";
-        
+
 		OrderInfo.busitypeflag=17;
 		OrderInfo.initData(CONST.ACTION_CLASS_CD.PROD_ACTION,CONST.BO_ACTION_TYPE.PRODUCT_PASSWORD,0,CONST.getBoActionTypeName(CONST.BO_ACTION_TYPE.PRODUCT_PASSWORD),"");
 		var param = _getCallRuleParam(CONST.BO_ACTION_TYPE.PRODUCT_PASSWORD,_choosedProdInfo.prodInstId);
@@ -2182,7 +2182,7 @@ order.prodModify = (function(){
 				_gotoOrderModify(response);
 				$('#password_form').bind('formIsValid',_spec_password_change_check).ketchup({bindElement:"btsubmit"});
 			}
-		});	
+		});
 	};
 	//产品密码修改-鉴权
 	function _spec_password_change_check(){
@@ -2195,13 +2195,13 @@ order.prodModify = (function(){
 			}
 		}
 		if(!$("#password_change1").val()){
-			$.alert("操作提示","请输入 产品密码");	
+			$.alert("操作提示","请输入 产品密码");
 			return ;
 		}else if(!$("#password_change2").val()){
-			$.alert("操作提示","请输入 确认密码");	
+			$.alert("操作提示","请输入 确认密码");
 			return ;
 		}else if($("#password_change1").val()!=$("#password_change2").val()){
-			$.alert("操作提示","两次密码不一致");	
+			$.alert("操作提示","两次密码不一致");
 			return ;
 		}
 		var reg = new RegExp("^([0-9]{6})$");//6位纯数字 0~9
@@ -2253,10 +2253,10 @@ order.prodModify = (function(){
 		var data = {boProdPasswords:boProdPasswords} ;
 		OrderInfo.actionFlag=31;//改产品密码
 		SoOrder.submitOrder(data);
-		
+
 	}
-	
-	
+
+
 	//密码重置 校验
 	var _showPasswordReset = function () {
 		OrderInfo.prodAttrs = [];
@@ -2265,7 +2265,7 @@ order.prodModify = (function(){
 				return;
 			}
 		}
-		
+
 		//查分省前置校验开关
         var propertiesKey = "PRECHECKFLAG_"+OrderInfo.staff.soAreaId.substring(0,3);
         var isPCF = offerChange.queryPortalProperties(propertiesKey);
@@ -2277,7 +2277,7 @@ order.prodModify = (function(){
         	}
         }
         OrderInfo.preBefore.prcFlag = "";
-        
+
 		OrderInfo.busitypeflag=48;
 		OrderInfo.initData(CONST.ACTION_CLASS_CD.PROD_ACTION,CONST.BO_ACTION_TYPE.PRODUCT_PASSWORD,0,CONST.getBoActionTypeName(CONST.BO_ACTION_TYPE.PRODUCT_PASSWORD),"");
 		var param = _getCallRuleParam(CONST.BO_ACTION_TYPE.PRODUCT_PASSWORD,_choosedProdInfo.prodInstId);
@@ -2304,7 +2304,7 @@ order.prodModify = (function(){
 				//$('#password_form').bind('formIsValid').ketchup();
 				$('#password_form').bind('formIsValid',_spec_password_reset_save).ketchup({bindElement:"btsubmit"});
 			}
-		});	
+		});
 	};
 	//密码重置 保存
 	function _spec_password_reset_save(){
@@ -2313,14 +2313,14 @@ order.prodModify = (function(){
 			$.alert("操作提示","请输入 产品密码");
 			return ;
 		}else if(!$("#password_change2").val()){
-			$.alert("操作提示","请输入 确认密码");	
+			$.alert("操作提示","请输入 确认密码");
 			return ;
 		}else if($("#password_change1").val()!=$("#password_change2").val()){
-			$.alert("操作提示","两次密码不一致");	
+			$.alert("操作提示","两次密码不一致");
 			return ;
 		}
 		*/
-		
+
 		var boProdPasswords = new Array();
 		var boProdPasswords_del = {
 				prodId : _choosedProdInfo.prodInstId, //从页面头部div获取
@@ -2338,10 +2338,10 @@ order.prodModify = (function(){
 		boProdPasswords.push(boProdPasswords_add);
 		var data = {boProdPasswords:boProdPasswords} ;
 		OrderInfo.actionFlag=32;//重置产品密码
-		
+
 		SoOrder.submitOrder(data);
 	}
-	
+
 	//修改短号：校验
 	function _shortnum_change(){
 		//SoOrder.builder();
@@ -2376,13 +2376,13 @@ order.prodModify = (function(){
 					}else if(response.data==-1){
 						$.alert("提示","加载短号信息异常！");
 					}else{
-						_gotoOrderModify(response);		
+						_gotoOrderModify(response);
 					}
 				}else{
 					$.alert("提示","短号加载异常");
 				}
 			}
-		});	
+		});
 	}
 	function _shortnum_change_val(obj){
 		if($(obj).attr("checkSta")=="2"&&$(obj).val()!=$(obj).attr("changeval")){
@@ -2454,9 +2454,9 @@ order.prodModify = (function(){
 				$.alert("提示","请求可能发生异常，请稍后再试！");
 				return ;
 			}
-		});	
+		});
 	}
-	
+
 	//修改短号--提交
 	function _shortnum_save(){
 		var shortnum_sel = $("#shortnum_sel").val();
@@ -2473,7 +2473,7 @@ order.prodModify = (function(){
 			return ;
 		}
 		//SoOrder.builder(CONST.ACTION_CLASS_CD.SHORTNUM_ACTION,CONST.BO_ACTION_TYPE.SHORT_NUM);
-		
+
 		//OrderInfo.initData(CONST.ACTION_CLASS_CD.PROD_ACTION,CONST.BO_ACTION_TYPE.PRODUCT_PARMS,0,CONST.getBoActionTypeName(CONST.BO_ACTION_TYPE.PRODUCT_PARMS),"");
 		//SoOrder.builder();
 		var boProdCompItems = new Array();
@@ -2489,19 +2489,19 @@ order.prodModify = (function(){
 		//return ;
 		OrderInfo.actionFlag=34;//修改短号
 		SoOrder.submitOrder(data);
-		
+
 	}
-	
-	
-	
+
+
+
 	var _isNullParam = function(data){
 		return data == undefined || !data;
 	};
-	
+
 	//补换卡
 	var _changeCard = function(param){
 		//SoOrder.builder();
-		
+
 		$.callServiceAsHtml(contextPath+"/order/changeCard", param, {
 			"before":function(){
 			},
@@ -2522,9 +2522,9 @@ order.prodModify = (function(){
 				$.unecOverlay();
 			}
 		});
-		
-	};	
-	
+
+	};
+
 	var compspecGrps = "";
 	var getCompInfo = function(compspecparam){
 		var grprlue = "";
@@ -2544,7 +2544,7 @@ order.prodModify = (function(){
 		}
 	};
 	var _addComp = function(param){
-		
+
 		OrderInfo.initData("","",12,"纳入成员");
 		SoOrder.builder();
 		var compparam ={};
@@ -2567,10 +2567,10 @@ order.prodModify = (function(){
 			}
 		});
 	};
-	
+
 	//退出群组
 	var _removeComp = function(param){
-		
+
 		OrderInfo.initData("","",12,"退出成员");
 		SoOrder.builder();
 		var compparam ={};
@@ -2593,7 +2593,7 @@ order.prodModify = (function(){
 			}
 		});
 	};
-	
+
 	//查询群组的账号
 	var _queryRomveAcc = function(){
 		var prodnum = $.trim($("#removeAcc").val());
@@ -2647,9 +2647,9 @@ order.prodModify = (function(){
 				$.unecOverlay();
 				$.alert("提示","套餐加载失败，请稍后再试！");
 			}
-		});		
+		});
 	};
-	
+
 	//可选包订购退订
 	var _orderAttachOffer = function () {
 		OrderInfo.prodAttrs = [];
@@ -2670,14 +2670,14 @@ order.prodModify = (function(){
         	}
         }
         OrderInfo.preBefore.prcFlag = "";
-        
+
         OrderInfo.busitypeflag=14;
 		AttachOffer.init();
 		$("#title_"+prodId).show();
 		$("#uimDiv_"+prodId).show();
-		$("#isMust_"+prodId).hide();	
+		$("#isMust_"+prodId).hide();
 	};
-	
+
 	//套餐变更
 	var _changeOffer = function () {
 		OrderInfo.prodAttrs = [];
@@ -2697,7 +2697,7 @@ order.prodModify = (function(){
         	}
         }
         OrderInfo.preBefore.prcFlag = "";
-        
+
 		OrderInfo.busitypeflag=2;
 		OrderInfo.oldprodInstInfos = [];
 		OrderInfo.oldofferSpec = [];
@@ -2706,7 +2706,7 @@ order.prodModify = (function(){
 		OrderInfo.oldAddNumList = [];
 		offerChange.init();
 	};
-	
+
 	//改付费帐户规则校验
 	var _showChangeAccount = function(){
 		OrderInfo.busitypeflag=16;
@@ -2721,7 +2721,7 @@ order.prodModify = (function(){
 		if (flag) return;
 		//SoOrder.builder();
 	};
-	
+
 	//获取产品原帐户信息并转至改付费帐户页面
 	var _changeAccount = function(){
 		if(!_choosedProdInfo.prodInstId || !_choosedProdInfo.accNbr){
@@ -2761,7 +2761,7 @@ order.prodModify = (function(){
 					$("#order_fill_content").hide();
 					order.prepare.hideStep();
 					return;
-				}				
+				}
 				var prodAcctInfos = jr.data;
 				$.callServiceAsHtml(contextPath+"/order/preChangeAccount", prodAcctInfos, {
 					"before":function(){
@@ -2777,11 +2777,11 @@ order.prodModify = (function(){
 						if(response.code != 0) {
 							$.alert("提示","查询失败,请稍后重试");
 							return;
-						}											
+						}
 						$("#order_fill_content").html(response.data).show();
 						$(".h2_title").append(_choosedProdInfo.productName+"-"+_choosedProdInfo.accNbr);
 						$("#origAccts option:first").attr("selected", "selected");
-						//获取账单投递信息主数据				
+						//获取账单投递信息主数据
 						acct.acctModify.getBILL_POST();
 					},
 					fail:function(response){
@@ -2792,7 +2792,7 @@ order.prodModify = (function(){
 			}
 		});
 	};
-	
+
 	//产品下原有付费帐户展示（弹出框）
 	var _showOrigAccts = function(){
 		easyDialog.open({
@@ -2802,7 +2802,7 @@ order.prodModify = (function(){
 			easyDialog.close();
 		});
 	};
-		
+
 	//查询帐户信息并选择新的付费帐户（弹出框）
 	var _chooseAcct = function() {
 		$("#chooseQueryAcctType").find("option[value=1]").attr("selected","selected");
@@ -2817,7 +2817,7 @@ order.prodModify = (function(){
 				$("#d_query_nbr").show();
 //				$("#d_query_pwd").show();
 			}
-			else{				
+			else{
 				$("#d_query_nbr").hide();
 				$("#d_query_pwd").hide();
 				$("#d_query_cd").show();
@@ -2831,16 +2831,16 @@ order.prodModify = (function(){
 			easyDialog.close();
 		});
 	};
-			
+
 	//查询帐户,显示查询结果，记录选择的帐户信息
 	var newAcctList = [];
 	var _queryAccount = function(acctSelect){
 		//根据接入号查询帐户
 		var response;
 		if($("#chooseQueryAcctType").val()==1){
-			if(!CONST.LTE_PHONE_HEAD.test($.trim($("#d_query_nbr input").val()))){					
-				$.alert("提示", "请输入有效的中国电信手机号");					
-				return;				
+			if(!CONST.LTE_PHONE_HEAD.test($.trim($("#d_query_nbr input").val()))){
+				$.alert("提示", "请输入有效的中国电信手机号");
+				return;
 			}
 //			var param = {
 //					accessNumber : $("#d_query_nbr input").val(),
@@ -2852,7 +2852,7 @@ order.prodModify = (function(){
 				var acctQueryParam = {
 					accessNumber : $("#d_query_nbr input").val()
 				};
-				response = order.prodModify.returnAccount(acctQueryParam);		
+				response = order.prodModify.returnAccount(acctQueryParam);
 //			}
 //			else{
 //				$.alert("提示",jr.data);
@@ -2864,14 +2864,14 @@ order.prodModify = (function(){
 					acctCd : $("#d_query_cd input").val()
 			};
 			response = order.prodModify.returnAccount(acctQueryParam);
-		}		
+		}
 		$("#acctListTab tbody").empty();
 		if(response.code==0){
 			var returnMap = response.data;
 			if(returnMap.resultCode==0){
 				if(returnMap.accountInfos && returnMap.accountInfos.length>0){
 					var accountInfos = returnMap.accountInfos;
-					$.each(accountInfos, function(i, accountInfo){					
+					$.each(accountInfos, function(i, accountInfo){
 						var tr = $("<tr></tr>").appendTo($("#acctListTab tbody"));
 						if(accountInfo.name){
 							$("<td class='teleNum'>"+accountInfo.name+"</td>").appendTo(tr);
@@ -2909,7 +2909,7 @@ order.prodModify = (function(){
 									state : "ADD"
 							};
 							newAcctList.push(newAccount);
-							
+
 							$("#acctListTab tbody").empty();
 							$("#d_query_cd").hide();
 							$("#d_query_nbr").hide();
@@ -2921,19 +2921,19 @@ order.prodModify = (function(){
 								if($(option).val()==accountInfo.acctId){
 									found = true;
 									return false;
-								}								
+								}
 							});
-							if(found==false){										
+							if(found==false){
 								$("<option>").text(accountInfo.name+" : "+accountInfo.accountNumber).attr("value", accountInfo.acctId).appendTo($(acctSelect));
 							}
 							$(acctSelect).find("option[value=default]").remove();
 							$(acctSelect).find("option[value="+accountInfo.acctId+"]").attr("selected","selected");
 						});
-					});			
+					});
 				}
 				else{
 					$("<tr><td colspan=4>未查询到帐户信息</td></tr>").appendTo($("#acctListTab tbody"));
-				}	
+				}
 			}
 			else{
 				$("<tr><td colspan=4>"+returnMap.resultMsg+"</td></tr>").appendTo($("#acctListTab tbody"));
@@ -2943,7 +2943,7 @@ order.prodModify = (function(){
 			$("<tr><td colspan=4>"+response.data+"</td></tr>").appendTo($("#acctListTab tbody"));
 		}
 	};
-	
+
 	//帐户查询请求（二次业务时查询已有帐户）
 	var _returnAccount = function(acctQueryParam){
 		acctQueryParam.areaId =  _choosedProdInfo.areaId;
@@ -2954,7 +2954,7 @@ order.prodModify = (function(){
 		}
 		return response;
 	};
-	
+
 	//新建帐户
 	var _createAcct = function(){
 		var newAccount = {
@@ -2979,7 +2979,7 @@ order.prodModify = (function(){
 		acct.acctModify.paymentType();
 		acct.acctModify.billPostType();
 	};
-	
+
 	//切换新付费帐户
 	var _ifNewAcct = function(acctSelect){
 		if($(acctSelect).val()<0){
@@ -2992,12 +2992,12 @@ order.prodModify = (function(){
 
 	//改付费帐户提交（下一步）
 	var _changeAccountSave = function(){
-		
+
 		//帐户信息校验
 		if($("#newAccts").val()=="default"){
 			$.alert("提示","请选择新帐户");
 			return;
-		}		
+		}
 		//新建帐户支付信息与投递信息填写校验
 		if($("#newAccts").val()<0){
 			//帐户信息填写校验
@@ -3015,31 +3015,31 @@ order.prodModify = (function(){
 			}
 		});
 		if(repick==false){
-			
+
 			var delAcctId = $("#origAccts").val();
-			var origAcct = $("#origAcctList tbody").find("tr[id="+delAcctId+"]");							
-			
-			var _acctCd = $(origAcct).find("td:eq(4)").text();					
-			var _acctId = $(origAcct).find("td:eq(0)").text();					
-			var _chargeItemCd = $(origAcct).find("td:eq(2)").text();					
-			var _percent = $(origAcct).find("td:eq(7)").text();					
+			var origAcct = $("#origAcctList tbody").find("tr[id="+delAcctId+"]");
+
+			var _acctCd = $(origAcct).find("td:eq(4)").text();
+			var _acctId = $(origAcct).find("td:eq(0)").text();
+			var _chargeItemCd = $(origAcct).find("td:eq(2)").text();
+			var _percent = $(origAcct).find("td:eq(7)").text();
 			var _priority = $(origAcct).find("td:eq(8)").text();
 			if(_priority==""){
 				_priority = 1;
 			}
-			var _prodAcctId = $(origAcct).find("td:eq(1)").text();	
-			
-			var origAcctInfo = {							
-					acctCd : _acctCd,							
-					acctId : _acctId,							
-					acctRelaTypeCd : "1",							
-					chargeItemCd : _chargeItemCd,				
-					percent : _percent,							
-					priority : _priority,							
-					prodAcctId : _prodAcctId,						
-					state : "DEL"					
+			var _prodAcctId = $(origAcct).find("td:eq(1)").text();
+
+			var origAcctInfo = {
+					acctCd : _acctCd,
+					acctId : _acctId,
+					acctRelaTypeCd : "1",
+					chargeItemCd : _chargeItemCd,
+					percent : _percent,
+					priority : _priority,
+					prodAcctId : _prodAcctId,
+					state : "DEL"
 			};
-				
+
 			var newAcctInfo;
 			$.each(newAcctList, function(i, newAccount){
 				if(newAccount.acctId==$("#newAccts").val()){
@@ -3047,18 +3047,18 @@ order.prodModify = (function(){
 					return false;
 				}
 			});
-			
+
 			var _boAccountRelas = [];
 			_boAccountRelas.push(origAcctInfo);
 			_boAccountRelas.push(newAcctInfo);
-		
+
 			var _busiOrderAttrs = [];
-			var remark = $("#orderRemark").val();		
+			var remark = $("#orderRemark").val();
 			_busiOrderAttrs.push({
 				itemSpecId : "111111118",
 				value : remark
 			});
-		
+
 			var data = {
 					boAccountRelas : _boAccountRelas,
 					busiOrderAttrs : _busiOrderAttrs
@@ -3073,41 +3073,41 @@ order.prodModify = (function(){
 				var acctChangeNode = {
 						areaId : _choosedProdInfo.areaId,
 						busiOrderInfo : {
-							seq : OrderInfo.SEQ.seq-- 
-						}, 
+							seq : OrderInfo.SEQ.seq--
+						},
 						busiObj : {
 							accessNumber: _choosedProdInfo.accNbr,
                             instId: _choosedProdInfo.prodInstId,
                             isComp: "N",
                             objId: _choosedProdInfo.productId,
                             offerTypeCd: "1"
-						},  
+						},
 						boActionType : {
 							actionClassCd : 1300,
 							boActionTypeCd : "-6"
-						}, 
+						},
 						data : data
 				};
 				busiOrder.push(acctChangeNode);
-				
+
 				SoOrder.submitOrder(busiOrder);
 			}
 			//更换的帐户为已有帐户
 			else{
 				OrderInfo.initData(CONST.ACTION_CLASS_CD.PROD_ACTION,CONST.BO_ACTION_TYPE.CHANGE_ACCOUNT,0,CONST.getBoActionTypeName(CONST.BO_ACTION_TYPE.CHANGE_ACCOUNT),"");
 				SoOrder.submitOrder(data);
-			}			
+			}
 		}
 		else{
 			$.alert("提示","该帐户已经是付费帐户了，请重新选择");
 			return;
-		}		
+		}
 	};
-	
+
 	//退出二次业务
 	var _cancel = function() {
 		$.confirm("信息","确定取消当前操作吗？",{
-		yes:function(){		
+		yes:function(){
 			OrderInfo.resetChooseUserInfo(true);
 			//退出二次业务时释放被预占的UIM卡
 			var boProd2Tds = OrderInfo.boProd2Tds;
@@ -3135,12 +3135,12 @@ order.prodModify = (function(){
 				}
 				order.service.boProdAn = {};
 				order.phoneNumber.resetBoProdAn();
-			}			
+			}
 			//页面变动
 			$("#order_fill_content").empty();
 			OrderInfo.order.step=0;//订单初始页面
 			order.prepare.hideStep();
-			
+
 			var menuName = $("#menuName").attr("menuName");
 			if (ec.util.isObj(menuName) && CONST.PHONE_LEVEL_MODIFY==menuName) {
 				$("#order_prepare").hide();
@@ -3150,10 +3150,10 @@ order.prodModify = (function(){
 				$("#order_prepare").show();
 			}
 		},no:function(){
-			
+
 		}},"question");
 	};
-	
+
 	//加入组合入参
 	var compparam = "";
 	var _queryCustProd = function(){
@@ -3198,9 +3198,9 @@ order.prodModify = (function(){
 				var content$=$("#prodinst");
 				content$.html(response.data);
 			}
-		});	
+		});
 	};
-	
+
 	var _compChangeTab = function(num){
 		if(num == 1){
 			$("#tab_1").addClass("setcon");
@@ -3216,7 +3216,7 @@ order.prodModify = (function(){
 			$("#compopr").hide();
 		}
 	};
-	
+
 	var _addToComp = function(obj){
 		var phonenumber = $(obj).parent().parent().children(":first-child").next().text();
 		var productId = $(obj).parent().parent().children(":last-child").text();
@@ -3279,7 +3279,7 @@ order.prodModify = (function(){
 					};
 					childmenber.push(childrole);
 				}
-				var setting = {	
+				var setting = {
 					data: {
 						key: {
 							title:"t"
@@ -3323,9 +3323,9 @@ order.prodModify = (function(){
 					}else{
 						$.alert("提示","不能加入该角色，请重新选择！");
 					}
-				}	
+				}
 				$.fn.zTree.init($("#rluename"), setting, zNodes);
-				
+
 				$("#nextstep").click(function(){
 					if(prodCompRelaRoleCd!=""&&prodCompRelaRoleName!=""){
 						$("#dialogtitle").html('设置短号');
@@ -3359,7 +3359,7 @@ order.prodModify = (function(){
 						statusCd:"1102"
 					};
 					var url = contextPath+"/order/checkGroupShortNum";
-					var res = $.callServiceAsJson(url,param,{});	
+					var res = $.callServiceAsJson(url,param,{});
 					if (res.code == 0) {
 						var addnbrhtml="<li id='li_"+phonenumber+"' prodInstId='"+prodInstId+"' phonenumber='"+phonenumber+"' prodCompRelaRoleCd='"+prodCompRelaRoleCd+
 						"' prodCompRelaRoleName='"+prodCompRelaRoleName+"' productId='"+productId+"' style='width:280px;'>" +
@@ -3381,7 +3381,7 @@ order.prodModify = (function(){
 			width:400,height:150
 		});
 	};
-	
+
 	var getChoosedMenbr = function(){
 		var numbers = [];
 		$("#choosed_menbers li").each(function(){
@@ -3390,7 +3390,7 @@ order.prodModify = (function(){
 		});
 		return numbers;
 	};
-	
+
 	var boolHasShortNum = function(){
 		var hasshrot = true;
 		$("#choosed_menbers li").each(function(){
@@ -3401,7 +3401,7 @@ order.prodModify = (function(){
 		});
 		return hasshrot;
 	};
-	
+
 	var _changeShortNum =function(obj){
 		var phonenum = $(obj).parent().children('span#addNbr').text();
 		var shortnum = $(obj).parent().children('span#shortNumber').text();
@@ -3461,7 +3461,7 @@ order.prodModify = (function(){
 			width:350,height:100
 		});
 	};
-	
+
 	var getOprShortNumInfo = function(accNbr,shortNbr,statusCd){
 		var param = {
 			groupNbr:_choosedProdInfo.accNbr,
@@ -3476,7 +3476,7 @@ order.prodModify = (function(){
 		var res = $.callServiceAsJson(url,param,{});
 		return res;
 	};
-	
+
 	var _releaseShortNum = function(){
 		var shortNbr = $("#resshortnum").val();
 		var param = {
@@ -3505,7 +3505,7 @@ order.prodModify = (function(){
 			$.alert("提示",res.data);
 		}
 	};
-	
+
 	var canAddAnother = function(){
 		var phonelist = $("#choosed_menbers").html();
 		phonelist = phonelist.replace(/[\r\n]/g,"").replace(/[ ]/g,"");
@@ -3517,10 +3517,10 @@ order.prodModify = (function(){
 				return true;
 			}
 		}else{
-			return true;	
+			return true;
 		}
 	};
-	
+
 	var isExist = function(prodnum){
 		var params = {
 			"compProdId":_choosedProdInfo.prodInstId,
@@ -3547,7 +3547,7 @@ order.prodModify = (function(){
 			return returndata;
 		}
 	};
-	
+
 	var _addCompSubmit = function(){
 		var phonelist = $("#choosed_menbers").html();
 		phonelist = phonelist.replace(/[\r\n]/g,"").replace(/[ ]/g,"");
@@ -3633,7 +3633,7 @@ order.prodModify = (function(){
 		OrderInfo.confirmList.push(comfimMeneber);
 		SoOrder.submitOrder(busiOrder);
 	};
-	
+
 	var _removeCompSubmit = function(){
 		var t = $("#choosed_menbers").html();
         t = t.replace(/[\r\n]/g,"").replace(/[ ]/g,"");
@@ -3697,20 +3697,20 @@ order.prodModify = (function(){
 		OrderInfo.confirmList.push(comfimMeneber);
 		SoOrder.submitOrder(busiOrder);
 	};
-	
+
 	var _removeCompDelSelect = function(obj){
-		$.confirm("确认","确定要取消该号码吗?",{ 
+		$.confirm("确认","确定要取消该号码吗?",{
 			yes:function(){
 				var accNbr = $(obj).next().text();
 				$("#li_"+accNbr).remove();
 			},
-			no:function(){						
+			no:function(){
 			}
 		});
 	};
-	
+
 	var _addCompDelSelect = function(obj){
-		$.confirm("确认","确定要取消该号码吗?",{ 
+		$.confirm("确认","确定要取消该号码吗?",{
 			yes:function(){
 				var accNbr = $(obj).parent().children('span#addNbr').text();
 				var shortnum =$(obj).parent().children('span#shortNumber').text();
@@ -3736,9 +3736,9 @@ order.prodModify = (function(){
 				}else{
 					$("#li_"+accNbr).remove();
 				}
-				
+
 			},
-			no:function(){						
+			no:function(){
 			}
 		});
 	};
@@ -3751,18 +3751,34 @@ order.prodModify = (function(){
 				return;
 			}
 		}
-		
+
 		if(order.prodModify.choosedProdInfo.prodStateCd==CONST.PROD_STATUS_CD.STOP_PROD){
 			$.alert("提示","停机产品不允许受理！");
 			return;
 		}
-		
+
 		OrderInfo.busitypeflag=0;
 		var queryParam = {
 				objInstId : _choosedProdInfo.prodInstId,
 				queryType : "1",
 				areaId : OrderInfo.staff.areaId
 		};
+        //判断细化返销前置校验编码开关是否打开  redmine1153501
+        var preKey = "COMANDFXPRECHECK_"+OrderInfo.staff.soAreaId.substring(0,3);
+        var isPreKey = offerChange.queryPortalProperties(preKey);
+        if(isPreKey == "OFF"){
+            //查分省前置校验开关
+            var propertiesKey = "PRECHECKFLAG_"+OrderInfo.staff.soAreaId.substring(0,3);
+            var isPCF = offerChange.queryPortalProperties(propertiesKey);
+            if(isPCF == "ON"){
+                if(OrderInfo.preBefore.prcFlag != "Y"){
+                    if(!_preCheckBeforeOrder("22","showBuyBack")){
+                        return ;
+                    }
+                }
+            }
+            OrderInfo.preBefore.prcFlag = "";
+        }
 		var url = contextPath+"/order/queryOrderItemDetailForResale";
 		$.callServiceAsHtmlGet(url,queryParam,{
 			"before":function(){
@@ -3783,22 +3799,6 @@ order.prodModify = (function(){
 				if(objList.data ==null){
 					$.alert("提示","无法返销，不符合可以返销的规则，上一次购物车操作不是新装、订购合约或者补换卡中的一种。");
 					return;
-				}
-				//判断细化返销前置校验编码开关是否打开  redmine1153501
-				var preKey = "COMANDFXPRECHECK_"+OrderInfo.staff.soAreaId.substring(0,3);
-				var isPreKey = offerChange.queryPortalProperties(preKey);
-				if(isPreKey == "OFF"){
-					//查分省前置校验开关
-			        var propertiesKey = "PRECHECKFLAG_"+OrderInfo.staff.soAreaId.substring(0,3);
-			        var isPCF = offerChange.queryPortalProperties(propertiesKey);
-			        if(isPCF == "ON"){
-			        	if(OrderInfo.preBefore.prcFlag != "Y"){
-			        		if(!_preCheckBeforeOrder("22","showBuyBack")){
-			            		return ;
-			            	}
-			        	}
-			        }
-			        OrderInfo.preBefore.prcFlag = "";
 				}
 				//动作类型1 新装，S1订购销售品,14补换卡 （返销优先级 新装返销-订购销售品返销-补换卡返销）
 				for(var i=0;i<objList.data.length;i++){
