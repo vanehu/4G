@@ -813,13 +813,13 @@ public final class SysConstant {
 	/** 判断业务类型是否限制经办人必须填写且拍照 */
 	public static final String IS_ACTION_FLAG_LIMITED = "isActionFlagLimitedForHandleCust";
 
-	/** 专用测试权限 */
+	/** 专用测试卡权限 */
 	public static final String SPECIALTESTQX = "ZYCSK";
 
 	/** 问卷调查菜单权限 **/
 	public static final String QUESTION_MUNE = "WJDC";
 
-	/** 专用测试权限 */
+	/** 党政军备案卡权限 */
 	public static final String DZJBAKQX = "DZJBAKQX";
 
 	/** 实名登记类型 */

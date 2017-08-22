@@ -45,6 +45,9 @@ jQuery.ketchup
 .validation('personal', '个人用户名:大于等于4个字符（2个汉字）。不能含有数字、不能有特殊字符，可以含有“▪”(半角、全角都可以)', function (form, el, code) {
     return this.isPersonal(code);
 })
+.validation('foreigner', '个人用户名:大于等于4个字符（2个汉字）。不能含有数字、可以含有“,”(半角)、可以含有“▪”(半角、全角都可以)', function (form, el, code) {
+    return this.isForeigner(code);
+})
 .validation('government', '企业用户名:a) 不为空，且大于等于10个字节 b) 不能全为数字', function (form, el, code) {
     return this.isGovernment(code);
 })

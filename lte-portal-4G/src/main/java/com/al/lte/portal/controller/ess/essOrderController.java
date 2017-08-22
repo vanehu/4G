@@ -2,13 +2,9 @@ package com.al.lte.portal.controller.ess;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,8 +13,8 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
 import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
@@ -34,7 +30,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
 
@@ -54,7 +49,6 @@ import com.al.lte.portal.bmo.crm.MktResBmo;
 import com.al.lte.portal.bmo.crm.OrderBmo;
 import com.al.lte.portal.bmo.ess.EssOrderBmo;
 import com.al.lte.portal.bmo.staff.StaffBmo;
-import com.al.lte.portal.common.AESSecurity;
 import com.al.lte.portal.common.MySimulateData;
 import com.al.lte.portal.common.SysConstant;
 import com.al.lte.portal.model.SessionStaff;
@@ -87,6 +81,16 @@ public class essOrderController extends BaseController {
 	@RequestMapping(value = "/orderQuery", method = RequestMethod.GET)
 	public String orderQuery(Model model, HttpServletRequest request,
 			HttpSession session) {
+		
+		//设置默认的起止时间
+		Calendar calendar = Calendar.getInstance();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		String endDt = sdf.format(calendar.getTime());
+		calendar.add(Calendar.DATE, -3);
+		String startDt = sdf.format(calendar.getTime());
+		model.addAttribute("p_startDt", startDt);
+		model.addAttribute("p_endDt", endDt);
+		
 		return "/ess/ess-order-query-main";
 	}
 
@@ -330,7 +334,9 @@ public class essOrderController extends BaseController {
 	public JsonResponse exportExcel(HttpServletRequest request, HttpServletResponse response) {
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
 		Map<String,Object> param = new HashMap<String,Object>();
-		String extCustOrderId = (String) request.getParameter("extCustOrderId");
+		// extCustOrderId 按订单号批量导出时，放置于url之后传参长度过大会致使导出失败，因此需改变传参方式
+		//String extCustOrderId = (String) request.getParameter("extCustOrderId");
+		String extCustOrderId = (String) request.getParameter("p_extCustOrderId_hidden");
 		String orderType = (String) request.getParameter("orderType");
 		String commonRegionId = (String) request.getParameter("commonRegionId");
 		String transactionId = (String) request.getParameter("transactionId");
@@ -452,7 +458,7 @@ public class essOrderController extends BaseController {
 			row.createCell(j++).setCellValue(null == map.get("transactionId") ? "" : map.get("transactionId").toString());
 			row.createCell(j++).setCellValue(null == map.get("extCustOrderId") ? "" : map.get("extCustOrderId").toString());
 			row.createCell(j++).setCellValue(null == map.get("version") ? "" : map.get("version").toString());
-			row.createCell(j++).setCellValue(null == map.get("orderType") ? "" : map.get("orderType").toString());
+			row.createCell(j++).setCellValue(null == map.get("orderTypeName") ? "" : map.get("orderTypeName").toString());
 			row.createCell(j++).setCellValue(null == map.get("statusCd") ? "" : map.get("statusCd").toString());
 			row.createCell(j++).setCellValue(null == map.get("accNbr") ? "" : map.get("accNbr").toString());
 			row.createCell(j++).setCellValue(null == map.get("channelName") ? "" : map.get("channelName").toString());

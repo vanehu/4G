@@ -86,11 +86,30 @@ AttachOffer = (function() {
 	
 	//可订购的附属查询 
 	var _queryAttachOfferSpec = function(param) {
+		
 		//将异步加载方法改成同步，要不加载order.main.callBackBuildView 获取不到缓存
 		var data = query.offer.queryAttachSpec(param);
 		if(data){
 			$("#attach_"+param.prodId).html(data);
 			_showMainRoleProd(param.prodId); //通过主套餐成员显示角字
+			
+			if(AttachOffer.openList!=null&&AttachOffer.openList!=undefined){
+				$.each(AttachOffer.openList,function(){
+					if(this.prodId == param.prodId){
+						if(this.specList!=null&&this.specList!=undefined){
+							for(var i =0;i<this.specList.length;i++){
+								var specTemp = this.specList[i];
+								var fullOfferSpec = query.offer.queryAttachOfferSpec(param.prodId,specTemp.offerSpecId);
+								for(var attr in fullOfferSpec){ //把可选包规格构成查询到的属性添加到原默认必选返回的规格中
+									this.specList[i][attr] = fullOfferSpec[attr];
+								} 
+								_terminCheckShow(param.prodId,this.specList[i]);												
+							}
+						}
+					}
+
+				});					
+			}
 			
 			//根据已选功能产品查询带出的可选包[W]
 			var servSpecIds = [];
@@ -136,6 +155,118 @@ AttachOffer = (function() {
 				}
 			}
 		});*/
+	};
+	
+	
+	var _terminCheckShow = function (prodId,newSpec){
+		console.log("******");
+		console.log(newSpec);
+		console.log(newSpec.agreementInfos)
+		if(ec.util.isArray(newSpec.agreementInfos)){ //合约销售品需要输入终端 mark
+			if(OrderInfo.actionFlag!=14){
+				//非购机入口的
+				totalNums=0;
+				_removeAttach2Coupons(prodId,newSpec.offerSpecId);//清除串码组
+				var objInstId = prodId+'_'+newSpec.offerSpecId;
+				//一个终端对应一个ul
+				var $ul = $('<div id="terminalUl_'+objInstId+'"></div>');
+//				var $sel = $('<select id="terminalSel_'+objInstId+'"></select>');  
+//				var $li1 = $('<div style="display:none;" class="form-group"><label style="width:auto; margin:0px 10px;"><span style="color:#71AB5A;font-size:16px">'+newSpec.offerSpecName+'</span></label></div>');
+				
+//				var $li2 = $('<div style="display:none;"><label> 可选终端规格：</label></div>'); //隐藏
+//				$.each(newSpec.agreementInfos,function(){
+//					var $option = $('<option value="'+this.terminalModels+'" price="'+this.agreementPrice+'">'+this.terminalName+'</option>');
+//					$sel.append($option);
+//				});
+//				$li2.append($sel).append('<label class="f_red">*</label>');
+				
+				var minNum=newSpec.agreementInfos[0].minNum;
+				var maxNum=newSpec.agreementInfos[0].maxNum;
+				var $li3=$('<div></div>');
+				var isFastOffer = 0 ;
+				if(ec.util.isArray(newSpec.extAttrParams)){
+					$.each(newSpec.extAttrParams,function(){
+						if(this.attrId == CONST.OFFER_FAST_FILL){
+							isFastOffer = 1;
+							return false;
+						}
+					});
+				}
+				for(var i=0;i<newSpec.agreementInfos.length;i++){
+					var agreementInfo=newSpec.agreementInfos[i];
+						var $ulGroups=$('<ul id="ul_'+objInstId+'" style="margin-left: -40px;"></ul>');
+						var $liGroups = $('<li class="form-group" style="list-style-type:none;"><label> 终端：</label></li>');
+						var $selTerms = $('<select style="display:none;" id="'+objInstId+'"></select>');
+						var $selTermGroups = $('<select style="display:none;" id="group_'+objInstId+'"></select>');
+						if(ec.util.isArray(agreementInfo.terminalGroups)){ //如果有配置终端组，则拼接终端组的规格ID和包含的终端规格ID
+							for(var j=0;j<agreementInfo.terminalGroups.length;j++){
+								var $optionTermGroups=$('<option value="'+agreementInfo.terminalGroups[j].terminalGroupId+'" terminalMaxNum="'+agreementInfo.terminalGroups[j].terminalMaxNum+'" terminalMinNum="'+agreementInfo.terminalGroups[j].terminalMinNum+'">'+agreementInfo.terminalGroups[j].terminalGroupId+'</option>');
+								$selTermGroups.append($optionTermGroups);
+								if(ec.util.isArray(agreementInfo.terminalGroups[j].terminalGroup)){
+									$.each(agreementInfo.terminalGroups[j].terminalGroup,function(){
+										var $optionTerms=$('<option value="'+this.terminalModels+'" price="'+this.terminalPrice+'">'+this.terminalName+'</option>');
+										$selTerms.append($optionTerms);
+									});
+								}
+							}
+						}
+						if(ec.util.isArray(agreementInfo.terminals)){ //如果是直接配置终端规格（旧数据），则拼接终端规格ID
+							$.each(agreementInfo.terminals,function(){
+								var $optionTerms=$('<option value="'+this.terminalModels+'" price="'+this.terminalPrice+'">'+this.terminalName+'</option>');
+								$selTerms.append($optionTerms);
+							});
+						}
+						
+						$liGroups.append($selTerms).append($selTermGroups);
+						if(maxNum>newSpec.agreementInfos[0].minNum){
+							var $strAdd=$('<button id="terminalAddBtn_'+objInstId+'" type="button" prodId="'+prodId+'" offerSpecId="'+newSpec.offerSpecId+'" fag="0" onclick="AttachOffer.addAndDelTerminal(this)" value="添加" class="btn btn-default"></button>');
+							var $strDel=$('<button id="terminalDelBtn_'+objInstId+'" type="button" prodId="'+prodId+'" offerSpecId="'+newSpec.offerSpecId+'" fag="1" onclick="AttachOffer.addAndDelTerminal(this)" value="删除" class="btn btn-default"></button>');
+							$liGroups.append($strAdd).append($strDel);
+						}
+						$ulGroups.append($liGroups);
+                        var minNumArray=new Array();
+						for(var k=1;k<=minNum;k++){
+							var id="terminalText_"+objInstId+'_'+k;
+							minNumArray[k-1]=id;
+							var $liTerminal=$('<li class="form-group" style="list-style-type:none;"><label for="exampleInputPassword1">终端校验：</label><div class="input-group" style="width:100%;"><input id="terminalText_'+objInstId+'_'+k+'" type="text" class="form-control" maxlength="50" placeholder="请先输入终端串号" />'
+									+'<li class="form-group" style="list-style-type:none;"><input type="checkbox" id="if_p_reserveCode" onclick="AttachOffer.changereserveCode()"><label for="exampleInputPassword1">使用预约码：</label><div class="input-group"><input id="reserveCode" type="text" disabled="disabled" class="form-control" maxlength="50" placeholder="请输入预约码" style="background-color: #E8E8E8;"/>'
+									+'<span class="input-group-btn"><button id="terminalBtn_'+objInstId+'_'+k+'" type="button" num="'+k+'" flag="'+isFastOffer+'" prodId="'+prodId+'" offerSpecId="'+newSpec.offerSpecId+'" onclick="AttachOffer.checkTerminalCode(this)" class="btn btn-default">校验</button></span></div></li>');
+							var	$li4 = $('<li id="terminalDesc_'+k+'" style="display:none;list-style-type:none;" ><label></label><label id="terminalName_'+k+'"></label></li>');
+							$ulGroups.append($liTerminal).append($li4);
+						}
+						$ul.append($ulGroups);
+						totalNums+=minNum;
+				}
+				var $div = $("#terminalDiv_"+prodId);
+				$ul.appendTo($div);
+				$div.show();
+				var terminalCode="";
+				if(OrderInfo.terminalCode!=null && OrderInfo.terminalCode!="" && OrderInfo.terminalCode!="null" && OrderInfo.reloadFlag!="N"){
+					var	accessNum=OrderInfo.getAccessNumber(prodId);
+					if(accessNum!="" && accessNum!=null && accessNum!= undefined){
+						var terminalCodeArray=OrderInfo.terminalCode.split(",");
+						for(var k=0;k<terminalCodeArray.length;k++){
+							if(terminalCodeArray[k].indexOf(accessNum)!=-1){
+								//取终端串码minNumArray
+								terminalCode=terminalCodeArray[k].split("_")[1];
+								//填值
+								for(var z=0;z<minNumArray.length;z++){
+									if(minNumArray[z].indexOf(prodId)!=-1){
+										$("#"+minNumArray[z]).val(terminalCode);
+			                             break;
+									}
+								}
+							}
+						}
+					}
+				}
+				if(newSpec.agreementInfos[0].minNum>0){//合约里面至少要有一个终端
+					newSpec.isTerminal = 1;
+				}
+			
+			}
+			//}
+		}	
 	};
 	
 	//显示增值业务内容

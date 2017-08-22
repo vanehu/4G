@@ -1213,16 +1213,16 @@ order.main = (function(){
 	//初始化购物车属性
 	var _initOrderAttr = function() {
 		//客户类型,证件类型
-		order.cust.partyTypeCdChoose($("#orderPartyTypeCd").children(":first-child"),"orderIdentidiesTypeCd");
-		order.cust.identidiesTypeCdChoose($("#orderIdentidiesTypeCd").children(":first-child"),"orderAttrIdCard");
+		order.cust.partyTypeCdChoose($("#orderPartyTypeCd"),"orderIdentidiesTypeCd");
+		order.cust.identidiesTypeCdChoose($("#orderIdentidiesTypeCd"),"orderAttrIdCard");
 		//初始化使用人.根据开关
 		var response = $.callServiceAsJson(contextPath + "/properties/getValue", {"key": "REAL_USER_" + OrderInfo.staff.areaId.substr(0, 3)});
 		if (response.code == "0") {
 			OrderInfo.realUserFlag = response.data;
 		}
 		if(response.data == "ON"){
-			order.cust.partyTypeCdChoose($("#orderPartyTypeCdB").children(":first-child"),"orderIdentidiesTypeCdB");
-			order.cust.identidiesTypeCdChoose($("#orderIdentidiesTypeCdB").children(":first-child"),"orderUserIdCard");
+			order.cust.partyTypeCdChoose($("#orderPartyTypeCdB"),"orderIdentidiesTypeCdB");
+			order.cust.identidiesTypeCdChoose($("#orderIdentidiesTypeCdB"),"orderUserIdCard");
 		}
 	};
 	

@@ -459,89 +459,63 @@ public class MDA {
 
 	/**能力开放预校验加省份流水开关*/
 	public static final Map<String,String> TOKORDERINFOFORCHECKFLAG = new HashMap<String,String>();
-	/**
-	 * 电子档案查询系统标识LIST
-	 */
+
+	/**电子档案查询系统标识LIST*/
 	public static final List<Map<String,String>> PSRCFLAGLIST = new ArrayList<Map<String,String>>();
 	
-	/**
-	 * 短信验证码是否发送标识(从sp_sys_param表迁移到MDA，故沿用表中的命名)
-	 */
+	/**短信验证码是否发送标识(从sp_sys_param表迁移到MDA，故沿用表中的命名)*/
 	public static final String msgCodeFlag = new String("");
 	
-	/**
-	 * 翼支付收费调用支付平台分省开关 
-	 */
+	/**翼支付收费调用支付平台分省开关*/
 	public static final Map<String,String> NEWPAYFLAG = new HashMap<String,String>();
 	
-	/**
-	 * 统一登录地址(一般生产使用)
-	 */
+	/**统一登录地址(一般生产使用)*/
 	public static final String UNIFY_LOGIN_URI = new String("");
 	
-	/**
-	 * 双屏互动服务端请求地址端口
-	 */
+	/**双屏互动服务端请求地址端口*/
 	public static final String PUSH_HOST_PORT = new String("");
 	
-	/**
-	 * 调用支付平台接口地址
-	 */
+	/**调用支付平台接口地址*/
 	public static final String PAY_TOKEN_URL=new String("");
 	
-	/**
-	 * 跳转支付平台地址
-	 */
+	/**跳转支付平台地址*/
 	public static final String PAY_URL=new String("");
 	
-	/**
-	 * 中台密钥串
-	 */
+	/**中台密钥串*/
 	public static final String SecretKey=new String("");
 	
-	/**
-	 * 号码资源状态前置校验分省开关
-	 */
+	/**号码资源状态前置校验分省开关*/
 	public static final Map<String,String> NUMBER_CHECK_FLAG  = new HashMap<String,String>();
 	
-	/**
-	 * 安全办公业务是否启用开关
-	 */
+	/**安全办公业务是否启用开关*/
 	public static final String SECURITY_OFFICE_FLAG = new String("");
-	/**
-	 * 返档改造生效开关
-	 */
+
+	/**返档改造生效开关*/
 	public static final String RETURN_ACCOUNT_FLAG=new String("");
-	/**
-	 * ess访问FTP服务器路径，快销卡打印回执pdf文件上传
-	 */
+
+	/**ess访问FTP服务器路径，快销卡打印回执pdf文件上传*/
 	public static final String ESSFTPREMOTEPATH = new String ("");
+
 	/**
 	 * ess快销卡打印回执pdf文件上传FTP服务器配置信息(单台FTP服务器)'FTP服务器IP,端口,用户名,密码'
 	 */
-	public static final String ESSFTPSERVICECONFIG = new String ("");	
+	public static final String ESSFTPSERVICECONFIG = new String ("");
+
 	/**
 	 * #896069受理地区为省级地区(二级地区)时，是否加载为登录地区(三级地区),OFF:否；ON:是(默认)
 	 */
 	public static final String AREA_CTRL_FLAG = new String("");
 	
-	/**
-	 * 副卡使用人分省开关
-	 */
+	/**副卡使用人分省开关*/
 	public static final Map<String,String> FUKA_SHIYR_FLAG  = new HashMap<String,String>();
 
-	/**
-	 * 证件号码长度校验开关
-	 */
+	/**证件号码长度校验开关*/
 	public static final String CMADDRESS_CHECK_FLAG  = new String("");
-
 	
 	/**公告附件下载FTP服务器配置*/
 	public static final String NOTICE_FTP_SERVICE_CONFIGS = new String("");
 
-	/**
-	 * 翼销售app省份新版ui开关
-	 */
+	/**翼销售app省份新版ui开关*/
 	public static final Map<String,String> NEWUIFLAG = new HashMap<String,String>();
 	
 	/**公告附件下载FTP服务器配置*/
@@ -552,14 +526,11 @@ public class MDA {
 
     /**实名制:证件照片水印内容*/
     public static final String WARTER_MARKER_CONEXT = new String("");
-	/**
-	 * 集团CRM-4G IE兼容性开关
-	 */
+
+	/**集团CRM-4G IE兼容性开关*/
 	public static final Map<String,String> IE_XUA = new HashMap<String,String>();
 
-	/**
-	 * 流量包父子关系开关
-	 */
+	/**流量包父子关系开关*/
 	public static final String NEW_LABEL_FLAG  = new String("");
 
 	/**实名制拍照分省开关(4GWEB+能力+翼销售共用)*/
@@ -627,75 +598,51 @@ public class MDA {
 	/**USB二代证读卡统一分省配置*/
 	public static final Map<String, Object> CERT_SIGNATURE = new HashMap<String, Object>();
 
-    /**
-     * 一证五号回执打印内容
-     */
+    /**一证五号回执打印内容*/
     public static final Map<String, Object> ONE_CERT_FIVE_NUMBER_PRINT_CONTENT = new HashMap<String, Object>();
     
     /**实名制拍照人像审核分省开关，默认OFF(4GWEB+能力+翼销售共用)*/
 	public static final Map<String,String> PHOTOGRAPH_REVIEW_FLAG  = new HashMap<String,String>();
 
-    /**
-     * 主副卡，保留套餐拆副卡删除使用人
-     */
+    /**主副卡，保留套餐拆副卡删除使用人*/
     public static final Map<String, String> VICE_CARD_DEL_USER_ON_OFF = new HashMap<String, String>();
     
-    /**
-     * 加装老用户为副卡，修改副卡账户为主卡账户，默认OFF
-     */
+    /**加装老用户为副卡，修改副卡账户为主卡账户，默认OFF*/
     public static final Map<String, String> ADD_OLD_USER_MOD_ACCT = new HashMap<String, String>();
     
-    /**
-	 * 默认域名地址
-	 */
+    /**默认域名地址*/
 	public static final String DEFAULTDOMAIN=new String("");
 	
-	/**
-	 * 新域名地址
-	 */
+	/**新域名地址*/
 	public static final String NEWDOMAIN=new String("");
-	/**
-	 * 新域名开关
-	 */
+
+	/**新域名开关*/
 	public static final String DOMAINNAMEONOFF=new String("");
 	
 	/**USB二代证读卡统一分省配置*/
 	public static final Map<String, Object> CERT_SIGNATURE_UNIFY = new HashMap<String, Object>();
 
-    /**
-     * 一证五号手工输入身份证号
-     */
+    /**一证五号手工输入身份证号*/
     public static final Map<String, String> ONE_CERT_5_NUMBER_MANUAL_INPUT_ID = new HashMap<String, String>();
     
-    /**
-     * 电渠加装副卡业务支持预装+返档
-     */
+    /**电渠加装副卡业务支持预装+返档*/
     public static final Map<String, String> ECS_RETURN_FILE = new HashMap<String, String>();
     
-    /**
-     * 人证平台参数配置
-     */
+    /**人证平台参数配置*/
     public static final Map<String, Object> FACE_VERIFY_FLAG = new HashMap<String, Object>();
     
-    
-    /**
-     * 人证平台配置：应用ID
-     */
+    /**人证平台配置：应用ID*/
 	public static final String FACE_VERIFY_APP_ID=new String("");
-	
     
-    /**
-     * 人证平台配置：APP_ID对应的加密密钥
-     */
+    /**人证平台配置：APP_ID对应的加密密钥*/
     public static final String FACE_VERIFY_APP_ID_SECRET=new String("");
     
-    /**
-     * 人证平台配置：params对应的加密密钥
-     */
+    /**人证平台配置：params对应的加密密钥*/
     public static final String FACE_VERIFY_PARAMS_SECRET =new String("");
   
-	/**
-	 * 营销推荐接触反馈结果
-	 */
+	/**营销推荐接触反馈结果*/
 	public static final List<Map<String,String>> MKT_CONTACT_RESULT = new ArrayList<Map<String,String>>();
+	
+	/**#1614052套餐变更校验副卡数量是否满足目的套餐规则*/
+	public static final String OFFER_CHANGE_CHECK = new String("");
 }

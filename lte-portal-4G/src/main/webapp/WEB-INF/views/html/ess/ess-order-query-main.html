@@ -20,12 +20,12 @@
 			<div class="order_content" style="border: none; padding: 10px">
 				<div class="order_tab_panel" style="display: block;">
 					<div class="selectList">
-					<form method="post" id="essOrderList_action"></form>
+					<form method="post" id="essOrderList_action"><input type="hidden" id="p_extCustOrderId_hidden" name="p_extCustOrderId_hidden"/></form>
 						<dl>
 							<dt style="width: 100px">外部订单号：</dt>
 							<dd>
 								<input type="text" class="numberTextBox width198"
-									id="p_extCustOrderId" value=""/>
+									id="p_extCustOrderId" value="" placeholder="批量时以英文输入状态下逗号分隔" />
 							   <label class="f_red">&nbsp;&nbsp;</label>
 							</dd>
 							<dt style="width: 100px">订单类型：</dt>

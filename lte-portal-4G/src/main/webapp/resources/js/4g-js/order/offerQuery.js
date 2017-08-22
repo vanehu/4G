@@ -156,6 +156,8 @@ query.offer = (function() {
 				OrderInfo.offer.offerId = prod.prodOfferInstId;
 				OrderInfo.offer.offerSpecId = prod.prodOfferId;
 				OrderInfo.offer.offerSpecName = prod.prodOfferName;
+				OrderInfo.offer.initOfferMemberInfo();
+				
 				return true;
 			}else{//销售品成员实例为空
 				$.alert("提示","查询销售品实例构成，没有返回成员实例无法继续受理");
@@ -569,8 +571,8 @@ query.offer = (function() {
 	var _searchAttachOfferSpec = function(param) {
 		addParam(param);  //添加基本参数
 		if(ec.util.isArray(OrderInfo.oldprodInstInfos) && (OrderInfo.actionFlag==6)){
-			for(var i=0;i<OrderInfo.oldprodInstInfos.length;i++){
-				if(param.acctNbr==OrderInfo.oldprodInstInfos[i].accNbr){
+			//for(var i=0;i<OrderInfo.oldprodInstInfos.length;i++){
+			//	if(param.acctNbr==OrderInfo.oldprodInstInfos[i].accNbr){
 					param.mainOfferSpecId=OrderInfo.offerSpec.offerSpecId;
 					param.offerSpecIds.push(OrderInfo.offerSpec.offerSpecId);	
 					if(ec.util.isObj(OrderInfo.offerSpec.offerRoles)){
@@ -580,8 +582,8 @@ query.offer = (function() {
 							}
 						});
 					}
-				}
-			}
+			//	}
+			//}
 		}
 		if(OrderInfo.menuName == "ZXHYBL"){
 		    OrderInfo.preliminaryInfo.mainOfferSpecId = param.mainOfferSpecId;
