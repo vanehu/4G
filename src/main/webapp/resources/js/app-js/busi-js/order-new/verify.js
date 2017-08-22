@@ -184,8 +184,13 @@ verify = (function(){
 			});
     	}else if(verify.checkType=="3"){//人像比对通过
     		_upLoadPic();
-    	}else{//打开人工审核界面
-    		$("#checkPhotoModal").modal("show");
+    	}else{
+    		if(verify.isNeedCheck=="ON"){
+    			//打开人工审核界面
+        		$("#checkPhotoModal").modal("show");
+    		}else{
+    			_upLoadPic();
+    		}
     	}
     }
     
