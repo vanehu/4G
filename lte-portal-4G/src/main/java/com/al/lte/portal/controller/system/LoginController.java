@@ -961,23 +961,28 @@ public class LoginController extends BaseController {
 	public JsonResponse changeUimSmsValidate(@RequestParam("smspwd") String smsPwd,@RequestParam("number") String number,
 			HttpServletRequest request ,HttpServletResponse response) throws Exception {
 		this.log.debug("changeUimsmsPwd={}", smsPwd);
-		// 验证码内容
-		String smsPwdSession = (String) ServletUtils.getSessionAttribute(
-				request, SysConstant.SESSION_KEY_CHANGEUIM_SMS);
-		// 对应的手机号
-		String numberSession = (String) ServletUtils.getSessionAttribute(
-				request, SESSION_CUSTAUTH_SMS_MUNBER);
-		//如果不需要发送短信，验证码就为空，不提示短信过期失效
-		if(StringUtil.isEmpty(smsPwdSession)){
-			return super.failed("短信过期失效，请重新发送!", ResultConstant.FAILD.getCode());
+		if(number.equals(request.getSession().getAttribute("checkNumber"))||((List)request.getSession().getAttribute("accNbrInfos")).contains("accNbr="+number)){
+			// 验证码内容
+			String smsPwdSession = (String) ServletUtils.getSessionAttribute(
+					request, SysConstant.SESSION_KEY_CHANGEUIM_SMS);
+			// 对应的手机号
+			String numberSession = (String) ServletUtils.getSessionAttribute(
+					request, SESSION_CUSTAUTH_SMS_MUNBER);
+			//如果不需要发送短信，验证码就为空，不提示短信过期失效
+			if(StringUtil.isEmpty(smsPwdSession)){
+				return super.failed("短信过期失效，请重新发送!", ResultConstant.FAILD.getCode());
+			}
+			if (smsPwdSession.equals(smsPwd)&&numberSession.equals(number)) {
+				Map<String,Object> resData=new HashMap<String,Object>();
+				resData.put("msg", "短信验证成功.");
+				return super.successed(resData);
+			}else {
+				return super.failed("短信验证码错误!", ResultConstant.FAILD.getCode());
+			}
+		}else{
+			return super.failed("参数被非法篡改!", ResultConstant.FAILD.getCode());
 		}
-		if (smsPwdSession.equals(smsPwd)&&numberSession.equals(number)) {
-			Map<String,Object> resData=new HashMap<String,Object>();
-			resData.put("msg", "短信验证成功.");
-			return super.successed(resData);
-		}else {
-			return super.failed("短信验证码错误!", ResultConstant.FAILD.getCode());
-		}
+		
 	}
 	
 

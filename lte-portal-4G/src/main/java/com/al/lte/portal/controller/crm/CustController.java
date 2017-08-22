@@ -56,6 +56,8 @@ public class CustController extends BaseController {
 	@RequestMapping(value = "/queryCust", method = { RequestMethod.POST })
     public String queryCust(@RequestBody Map<String, Object> paramMap, Model model,@LogOperatorAnn String flowNum,
             HttpServletResponse response,HttpSession httpSession,HttpServletRequest request) {
+		request.getSession().removeAttribute("checkNumber");
+		request.getSession().removeAttribute("accNbrInfos");
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
                 SysConstant.SESSION_KEY_LOGIN_STAFF);
 		if(sessionStaff == null){
@@ -304,6 +306,14 @@ public class CustController extends BaseController {
 						//如果使用接入号定位客户，不需要去调用根据客户查询接入号接口
 						if (!(custInfos.size() == 1 && StringUtils.isBlank(identityCd) && StringUtils.isNotBlank(qryAcctNbr))) {
 							accNbrResultMap = custBmo.queryAccNbrByCust(accNbrParamMap, flowNum, sessionStaff);
+							if(!MapUtils.isNotEmpty(accNbrResultMap)){
+								String checkNumber = (String) (paramMap.get("acctNbr")==""?paramMap.get("identityNum")==""?paramMap.get("queryTypeValue"):paramMap.get("identityNum"):paramMap.get("acctNbr"));
+								request.getSession().setAttribute("checkNumber", checkNumber);
+							}else{
+								List custInfoss = (List)accNbrResultMap.get("custInfos");
+								List accNbrInfos = (List) (((Map)custInfoss.get(0)).get("accNbrInfos"));
+								request.getSession().setAttribute("accNbrInfos", accNbrInfos);
+							}
 						}
 
 						List custInfosWithNbr = null;
@@ -372,7 +382,7 @@ public class CustController extends BaseController {
 			if(paramMap.containsKey("query")){	
 				model.addAttribute("query", paramMap.get("query"));  //综合查询调用标志
 			}
-			//日志平台busi_run_nbr字段
+ 			//日志平台busi_run_nbr字段
 			String log_busi_run_nbr = UIDGenerator.getRand();
 			ServletUtils.getSession(request).setAttribute(SysConstant.LOG_BUSI_RUN_NBR, log_busi_run_nbr);
 			long Time = Calendar.getInstance().getTimeInMillis();
