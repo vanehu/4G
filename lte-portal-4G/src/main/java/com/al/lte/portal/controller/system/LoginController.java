@@ -855,22 +855,39 @@ public class LoginController extends BaseController {
 	@ResponseBody
 	public JsonResponse changeUimMsgReSend(@RequestParam Map<String, Object> paramMap,HttpServletRequest request, @LogOperatorAnn String flowNum) {
 		try {
-			Long sessionTimeL = (Long) request.
-					getSession().getAttribute(SysConstant.SESSION_KEY_TEMP_CHANGEUIM_SMS_TIME);
-			if (sessionTimeL == null) {
-				request.getSession().setAttribute(SysConstant.SESSION_KEY_TEMP_CHANGEUIM_SMS_TIME, (new Date()).getTime());
-				sessionTimeL = 0L;
+			System.out.println(paramMap);
+			String number = (String)paramMap.get("munber");
+			String checkNumber = (String)request.getSession().getAttribute("checkNumber");
+			List<Map> accNbrInfos = (List<Map>)request.getSession().getAttribute("accNbrInfos");
+			List<String> checkList = new ArrayList<String>();
+			if(accNbrInfos != null && accNbrInfos.size() > 0){
+				for(int i=0;i<accNbrInfos.size();i++){
+					String numberC = (String) ((Map)accNbrInfos.get(i)).get("accNbr");
+					checkList.add(numberC);
+					
+				}
 			}
-			long sessionTime = sessionTimeL;
-			long nowTime = (new Date()).getTime();
-			long inteval = 28 * 1000;//比30秒提前2秒
-			int smsErrorCount = MapUtils.getIntValue(paramMap, "smsErrorCount", 0);
-			if (nowTime - sessionTime > inteval || smsErrorCount >= 3) {
-				changeUimSendMsg(request, flowNum);
-			} else {
-				log.debug("time inteval:{}", nowTime - sessionTime);
-				return super.failed("短信验证码发送时间有误!请求太过频烦,请稍后再重发！",
-						ResultConstant.ACCESS_LIMIT_FAILTURE.getCode());
+			if((number != null && number.equals(checkNumber))||(checkList != null && checkList.contains(number))){
+				
+				Long sessionTimeL = (Long) request.
+						getSession().getAttribute(SysConstant.SESSION_KEY_TEMP_CHANGEUIM_SMS_TIME);
+				if (sessionTimeL == null) {
+					request.getSession().setAttribute(SysConstant.SESSION_KEY_TEMP_CHANGEUIM_SMS_TIME, (new Date()).getTime());
+					sessionTimeL = 0L;
+				}
+				long sessionTime = sessionTimeL;
+				long nowTime = (new Date()).getTime();
+				long inteval = 28 * 1000;//比30秒提前2秒
+				int smsErrorCount = MapUtils.getIntValue(paramMap, "smsErrorCount", 0);
+				if (nowTime - sessionTime > inteval || smsErrorCount >= 3) {
+					changeUimSendMsg(request, flowNum);
+				} else {
+					log.debug("time inteval:{}", nowTime - sessionTime);
+					return super.failed("短信验证码发送时间有误!请求太过频烦,请稍后再重发！",
+							ResultConstant.ACCESS_LIMIT_FAILTURE.getCode());
+				}
+			}else{
+				return super.failed("参数被非法篡改!", ResultConstant.FAILD.getCode());
 			}
 		} catch (BusinessException be) {
 			this.log.error("错误信息:{}", be);
@@ -961,26 +978,21 @@ public class LoginController extends BaseController {
 	public JsonResponse changeUimSmsValidate(@RequestParam("smspwd") String smsPwd,@RequestParam("number") String number,
 			HttpServletRequest request ,HttpServletResponse response) throws Exception {
 		this.log.debug("changeUimsmsPwd={}", smsPwd);
-		if(number.equals(request.getSession().getAttribute("checkNumber"))||((List)request.getSession().getAttribute("accNbrInfos")).contains("accNbr="+number)){
-			// 验证码内容
-			String smsPwdSession = (String) ServletUtils.getSessionAttribute(
+		String smsPwdSession = (String) ServletUtils.getSessionAttribute(
 					request, SysConstant.SESSION_KEY_CHANGEUIM_SMS);
-			// 对应的手机号
-			String numberSession = (String) ServletUtils.getSessionAttribute(
+		// 对应的手机号
+		String numberSession = (String) ServletUtils.getSessionAttribute(
 					request, SESSION_CUSTAUTH_SMS_MUNBER);
-			//如果不需要发送短信，验证码就为空，不提示短信过期失效
-			if(StringUtil.isEmpty(smsPwdSession)){
-				return super.failed("短信过期失效，请重新发送!", ResultConstant.FAILD.getCode());
-			}
-			if (smsPwdSession.equals(smsPwd)&&numberSession.equals(number)) {
-				Map<String,Object> resData=new HashMap<String,Object>();
-				resData.put("msg", "短信验证成功.");
-				return super.successed(resData);
-			}else {
-				return super.failed("短信验证码错误!", ResultConstant.FAILD.getCode());
-			}
-		}else{
-			return super.failed("参数被非法篡改!", ResultConstant.FAILD.getCode());
+		//如果不需要发送短信，验证码就为空，不提示短信过期失效
+		if(StringUtil.isEmpty(smsPwdSession)){
+			return super.failed("短信过期失效，请重新发送!", ResultConstant.FAILD.getCode());
+		}
+		if (smsPwdSession.equals(smsPwd)&&numberSession.equals(number)) {
+			Map<String,Object> resData=new HashMap<String,Object>();
+			resData.put("msg", "短信验证成功.");
+			return super.successed(resData);
+		}else {
+			return super.failed("短信验证码错误!", ResultConstant.FAILD.getCode());
 		}
 		
 	}

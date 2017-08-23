@@ -58,6 +58,8 @@ public class CustController extends BaseController {
             HttpServletResponse response,HttpSession httpSession,HttpServletRequest request) {
 		request.getSession().removeAttribute("checkNumber");
 		request.getSession().removeAttribute("accNbrInfos");
+		String checkNumber = (String) (paramMap.get("acctNbr")==""?paramMap.get("identityNum")==""?paramMap.get("queryTypeValue"):paramMap.get("identityNum"):paramMap.get("acctNbr"));
+		request.getSession().setAttribute("checkNumber", checkNumber);
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
                 SysConstant.SESSION_KEY_LOGIN_STAFF);
 		if(sessionStaff == null){
@@ -307,9 +309,12 @@ public class CustController extends BaseController {
 						if (!(custInfos.size() == 1 && StringUtils.isBlank(identityCd) && StringUtils.isNotBlank(qryAcctNbr))) {
 							accNbrResultMap = custBmo.queryAccNbrByCust(accNbrParamMap, flowNum, sessionStaff);
 							if(!MapUtils.isNotEmpty(accNbrResultMap)){
-								String checkNumber = (String) (paramMap.get("acctNbr")==""?paramMap.get("identityNum")==""?paramMap.get("queryTypeValue"):paramMap.get("identityNum"):paramMap.get("acctNbr"));
+								request.getSession().removeAttribute("accNbrInfos");
+								//String checkNumber = (String) (paramMap.get("acctNbr")==""?paramMap.get("identityNum")==""?paramMap.get("queryTypeValue"):paramMap.get("identityNum"):paramMap.get("acctNbr"));
 								request.getSession().setAttribute("checkNumber", checkNumber);
 							}else{
+								request.getSession().removeAttribute("accNbrInfos");
+								request.getSession().removeAttribute("checkNumber");
 								List custInfoss = (List)accNbrResultMap.get("custInfos");
 								List accNbrInfos = (List) (((Map)custInfoss.get(0)).get("accNbrInfos"));
 								request.getSession().setAttribute("accNbrInfos", accNbrInfos);
