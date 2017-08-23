@@ -109,7 +109,12 @@ common.print = (function($){
 		params.PcFlag=PcFlag;
 		params.enter="1";//新版标志
 		params.actionFlag=OrderInfo.actionFlag;
-		params.voice_prepare=AttachOffer.voice_prepare;//话费预存金额
+		if($(".hfyck").length>0){
+			params.voice_prepare = $(".hfyck").text();
+		}else{
+			params.voice_prepare = "0"
+		}
+		params.main_offer=AttachOffer.main_offer;//主套餐
 		var url=contextPath+"/order/sign/previewHtmlForSign";
 		$.callServiceAsHtml(url, params, {
 			"before":function(){

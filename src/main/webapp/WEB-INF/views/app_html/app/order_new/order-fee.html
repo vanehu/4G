@@ -69,7 +69,7 @@
 							<input type="hidden" id="boActionType_${trid}" value="${itemList.boActionType}" />
 			<span class="list-title">${itemList.acctItemTypeName}</span> 
 			<span class="pull-right p-r-10 list-text" > <span class="title-lg">
-			<span class="font-orange" id="realMoney_${trid}">${((itemList.feeAmount)?number / 100)?string('0.00')}</span>元(实)</span> 
+			<span <#if itemList.acctItemTypeName == "话费预存款">class="font-orange hfyck"<#else>class="font-orange"</#if> id="realMoney_${trid}">${((itemList.feeAmount)?number / 100)?string('0.00')}</span>元(实)</span> 
 			<span class="subtitle font-secondary" id="shouldMoney_${trid}">${((itemList.feeAmount)?number / 100)?string('0.00')}(应)</span>
 			</li>
 		</ul>
@@ -109,7 +109,7 @@
 										<input type="hidden" id="boActionType_${trid}" value="${itemList.boActionType}" />
 						<span class="list-title">${itemList.acctItemTypeName}</span> 
 						<span class="pull-right p-r-10 list-text" > <span class="title-lg">
-						<span class="font-orange" id="realMoney_${trid}">${((itemList.feeAmount)?number / 100)?string('0.00')}</span>元(实)</span> 
+						<span <#if itemList.acctItemTypeName == "话费预存款">class="font-orange hfyck"<#else>class="font-orange"</#if> id="realMoney_${trid}">${((itemList.feeAmount)?number / 100)?string('0.00')}</span>元(实)</span> 
 						<span class="subtitle font-secondary" id="shouldMoney_${trid}">${((itemList.feeAmount)?number / 100)?string('0.00')}(应)</span>
 						</li>
 					</ul>
