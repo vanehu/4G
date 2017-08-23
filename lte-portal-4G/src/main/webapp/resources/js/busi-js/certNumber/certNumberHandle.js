@@ -414,4 +414,10 @@ oneFive.certNumberHandle = (function () {
 //初始化
 $(function () {
     oneFive.certNumberHandle.init();
+    $("#p_startDt").off("click").on("click",function(){
+		$.calendar({ format:'yyyy年MM月dd日 ',real:'#p_startDt',maxDate:$("#p_endDt").val() });
+	});
+	$("#p_endDt").off("click").on("click",function(){
+		$.calendar({ format:'yyyy年MM月dd日 ',real:'#p_endDt',minDate:$("#p_startDt").val(),maxDate:'%y-%M-%d' });
+	});
 });
