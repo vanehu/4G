@@ -179,18 +179,6 @@ order.dealer = (function() {
 			$('#dealerModal-result').hide();
 			return;
 		}
-		var isAdded = false; //是否添加过同一类型的发展人
-		$('#dealerList').children('li').not(':first').each(function(){
-			if($(this).data().role == $('#dealerType').val()){
-				isAdded = true;			
-			    return false; //跳出each循环
-			}
-		})
-		if(isAdded){
-			$('#dealerType').siblings('.help-block').removeClass('hidden');	
-			$('#dealerModal-result').hide();
-			return;
-		}
 		var $queryBtn = $('#qsd').button('loading');
 		var param = {
 				"dealerId":"dealer",
@@ -352,6 +340,16 @@ order.dealer = (function() {
 			default:
 			role = "第一发展人";
 			break;
+		}
+		var isAdded = false; //是否添加过同一类型的发展人
+		$('#dealerList').children('li').not(':first').each(function(){
+			if($(this).data().role == $('#dealerType').val()){
+				isAdded = true;			
+			    return false; //跳出each循环
+			}
+		})
+		if(isAdded){//添加过同类型的先移除
+			$("#dealerList").children('li[data-role="' + roleId + '"]').remove();//移除同类型节点
 		}
 	    var html = '<li data-channelnbr="' + channelNbr + '" data-role="' + roleId + '" data-staffid="' + staffId + '" data-dealername="'+name+'"> <span class="list-title font-secondary choice-box-left" id="dealerName"> '+name+' <small>('+role+')</small></span> <i onclick="$(this).closest(\'li\').remove();" class="iconfont icon-close absolute-right"></i > </li>'; 
 	    $('#dealerList').append(html);
