@@ -397,6 +397,12 @@ order.cust = (function(){
 		                $("#" + id).removeAttr("onkeyup");
 		                $("#" + id).attr("data-validate", "validate(" + CacheData.getCheckRuleByKey(identidiesTypeCd, "checkFunction") + ":" + CacheData.getCheckRuleByKey(identidiesTypeCd, "description") + ") on(blur)");
 		            }
+					if(identidiesTypeCd==50){
+                        $("#orderAttrName").attr("data-validate","validate(foreigner) on(blur)");
+                    }else{
+                        $("#orderAttrName").attr("data-validate","validate(personal) on(blur)");
+                    }
+
 					$("#jbrCertCheckForm").off().bind('formIsValid', function(event, form){
 						_qryCustInfo();
 					}).ketchup({bindElement:"orderAttrQryBtn"});	
@@ -422,6 +428,11 @@ order.cust = (function(){
 	                $("#" + id).removeAttr("onkeyup");
 	                $("#" + id).attr("data-validate", "validate(" + CacheData.getCheckRuleByKey(identidiesTypeCd, "checkFunction") + ":" + CacheData.getCheckRuleByKey(identidiesTypeCd, "description") + ") on(blur)");
 	            }
+				if(identidiesTypeCd==50){
+                    $("#orderUserName").attr("data-validate","validate(foreigner) on(blur)");
+                }else{
+                    $("#orderUserName").attr("data-validate","validate(personal) on(blur)");
+                }
 				$("#syrCertCheckForm").off().bind('formIsValid', function(event, form){
 					_qryUserCustInfo();
 				}).ketchup({bindElement:"orderUserQryBtn"});	
