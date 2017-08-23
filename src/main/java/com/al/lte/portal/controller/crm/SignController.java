@@ -122,13 +122,14 @@ public class SignController extends BaseController {
 					super.getRequest(), response);
 			if (MapUtils.isNotEmpty(resultMap)) {
 				resultMap.put("actionFlag", paramMap.get("actionFlag").toString());
+				resultMap.put("voice_prepare", paramMap.get("voice_prepare").toString());
+				resultMap.put("main_offer", paramMap.get("main_offer").toString());
 				Map<String,Object> reObject=signBmo.setPrintInfos(resultMap,super.getRequest(),paramMap);
 				RedisUtil.set("mgrPdf_"+ paramMap.get("olId").toString(), reObject.get("pp"));	
 				reObject.remove("pp");
 				model.addAllAttributes(reObject);
 				model.addAttribute("custName", resultMap.get("custName"));
 				model.addAttribute("idCardNbr", resultMap.get("idCardNbr"));
-				model.addAttribute("voice_prepare", paramMap.get("voice_prepare"));
 			}
 		}catch (BusinessException be) {
 			return super.failedStr(model, be);

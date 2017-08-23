@@ -292,6 +292,8 @@ public class SignBmoImpl implements SignBmo{
 			List specialAgreement = MDA.SPECIAL_AGREEMENT.get("SPECIAL_AGREEMENT_"+login_area_id.substring(0, 3));//省份特殊协议配置
 			List<String> spList = new ArrayList<String>();
 			String actionFlag = (String) resultMap.get("actionFlag");
+			String voice_prepare = (String) resultMap.get("voice_prepare");
+			String main_offer = (String) resultMap.get("main_offer");
 			if(specialAgreement !=null && specialAgreement.size()>0){
 				 List<String> list= new ArrayList<String>(); 
 				int j=0;
@@ -303,6 +305,8 @@ public class SignBmoImpl implements SignBmo{
 				param1.put("dateYear", DateUtil.nowYear());
 				param1.put("dateMonth", DateUtil.nowMonth());
 				param1.put("dateDay", DateUtil.nowDayOfMonth());
+				param1.put("voice_prepare", voice_prepare);
+				param1.put("main_offer", main_offer);
 				for(m=0;m<specialAgreement.size();m++){
 					Map agreementMap = (Map) specialAgreement.get(m);
 					if("ON".equals(agreementMap.get("provinceisopen"))){//省份开关是否打开
@@ -333,6 +337,18 @@ public class SignBmoImpl implements SignBmo{
 //									param2.put("agreementPeriod", flowMoatInfo.get("agreementPeriod"));
 									param2.put("attachedOfferName", flowMoatInfo.get("attachedOfferName"));
 //									param2.put("minChange", flowMoatInfo.get("minChange"));
+									param2.putAll(param1);
+									agreement_htmlStr=ParseFreemark.parseTemplate(param2,templet);
+								}
+							}else if("hb".equals(agreementName)){//红包
+								Map<String,Object> hbMap=querySpecialProtocolByOlId(paramMap,null,sessionStaff);
+								System.out.println("+++++++++++++++++++"+JsonUtil.toString(hbMap));
+								Map<String,Object> param2 = new HashMap<String,Object>();
+								Map<String,Object> bestPayRedPackInfo = (Map<String, Object>) hbMap.get("bestPayRedPackInfo");
+								if(bestPayRedPackInfo!=null){
+									param2.put("accessNbr", bestPayRedPackInfo.get("accessNbr"));
+									param2.put("inUseTime", bestPayRedPackInfo.get("inUseTime"));
+									param2.put("saleOfferName", bestPayRedPackInfo.get("saleOfferName"));
 									param2.putAll(param1);
 									agreement_htmlStr=ParseFreemark.parseTemplate(param2,templet);
 								}

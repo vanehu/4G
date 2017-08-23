@@ -349,6 +349,7 @@ common = (function($) {
 			$("#home").show();
 			//客户信息
 			OrderInfo.cust = [];
+			cust.userFlag = "OFF";
 		}else{
 			var arr=new Array(1);
 			arr[0]="";
