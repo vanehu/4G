@@ -98,6 +98,9 @@ marketingRecommend = (function(){
 	                			if(sa[1].length==1 && sa[1]!="0") sa[1] = sa[1]+"0";
 	                			stats[i].statsAttValue = sa[1]+"%";
 	                		}
+	                		if(stats[i].statsAttValue == "NULL" || stats[i].statsAttValue == "undefined"){
+	                			stats[i].statsAttValue = "未定义";
+	                		}
 	                		$("#collapse01_p").append('<p class="font-white f-s-16">'+stats[i].attrName+'：'+stats[i].statsAttValue+'</p>');
 	                	}
 	                	haveSearch = "Y";
