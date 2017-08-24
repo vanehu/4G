@@ -18,6 +18,9 @@
 			<#if ydrwhtmlFlag=='ON'>
 			<option id="read_ydrw" read="N" value="6">移动入网协议</option>
 			</#if>
+			<#if hbhtmlFlag=='ON'>
+			<option id="read_hb" read="N" value="7">翼支付红包协议</option>
+			</#if>
 		</select>
 		<i class="iconfont pull-right p-r-10"></i>
 	</div>
@@ -57,6 +60,11 @@
 		<div id="ydrwhtml" style="display:none"  class="info hzhtml">
 		<#if ydrwhtmlFlag=='ON'>
 			${ydrwhtmlStr}
+		</#if>
+		</div>
+		<div id="hbhtml" style="display:none"  class="info hzhtml">
+		<#if hbhtmlFlag=='ON'>
+			${hbhtmlStr}
 		</#if>
 		</div>
 	</div>

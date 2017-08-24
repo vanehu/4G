@@ -1329,6 +1329,7 @@ custQuery = (function(){
 		};
 		OrderInfo.ifLteNewInstall = prodInfoTr.attr("ifLteNewInstall");
 		order.prodModify.choosedProdInfo=_choosedProdInfo;
+		AttachOffer.main_offer = _choosedProdInfo.prodOfferName;
 //		alert(order.prodModify.choosedProdInfo.prodOfferId);
 		// 选择产品后 激活下一步按钮
 		$("#goOrder").show();
