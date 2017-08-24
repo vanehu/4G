@@ -171,6 +171,10 @@ common.print = (function($){
 								$.alert("提示","请先阅读移动入网协议！");
 								return;
 							}
+							if($("#read_hb").length>0 && $("#read_hb").attr("read")=="N"){
+								$.alert("提示","请先阅读翼支付红包电子协议！");
+								return;
+							}
 						}
 						if(!ec.util.isObj($("#signinput").val())){
 							$.alert("提示","请先进行签名，然后再保存！");
@@ -373,6 +377,12 @@ common.print = (function($){
 			     "background-size": "120px 120px"
 			});
 		}
+		if($.trim($("#hbhtml").html())!=''){
+			$("#hbsign").css({ 
+			     "background":"url(data:image/jpg;base64,"+datasignBase64+") 50px -10px no-repeat", 
+			     "background-size": "120px 120px"
+			});
+		}
 	};
 	var _changeAgree=function(flag,obj){
 		$("#changeAUI li").each(function(index){
@@ -401,7 +411,11 @@ common.print = (function($){
 		}else if(flag=='6'){
 			$("#ydrwhtml").show();
 			$("#read_ydrw").attr("read","Y");
+		}else if(flag=='7'){
+			$("#hbhtml").show();
+			$("#read_hb").attr("read","Y");
 		}
+		
 	};
 	//回执打印（重打）
 	var _preVoucher=function(olId, chargeItems){
