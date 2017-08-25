@@ -15,6 +15,7 @@ import com.al.lte.portal.bmo.crm.MktResBmo;
 import com.al.lte.portal.bmo.crm.OrderBmo;
 import com.al.lte.portal.bmo.staff.StaffBmo;
 import com.al.lte.portal.common.*;
+import com.al.lte.portal.common.Base64;
 import com.al.lte.portal.model.SessionStaff;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -780,10 +781,12 @@ public class CustController extends BaseController {
 	}
 	
 	@RequestMapping(value = "/custAuth", method = { RequestMethod.POST })
-	public String custAuth(@RequestBody Map<String, Object> param, Model model,@LogOperatorAnn String flowNum, HttpServletResponse response,HttpSession httpSession) throws BusinessException {
+	public String custAuth(@RequestBody Map<String, Object> param, Model model,@LogOperatorAnn String flowNum, HttpServletResponse response,HttpSession httpSession,HttpServletRequest request) throws BusinessException {
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils
 				.getSessionAttribute(super.getRequest(),
 						SysConstant.SESSION_KEY_LOGIN_STAFF);
+		//request.getSession().removeAttribute("dxState");
+		//request.getSession().setAttribute("dxState","Y");
 		Map map = new HashMap();
 		Map paramMap = new HashMap();
 		Map resultMap = new HashMap();
@@ -909,6 +912,7 @@ public class CustController extends BaseController {
 					return super.failedStr(model, ErrorCode.CUST_AUTH, e, paramMap);
 				}
 			}
+			request.getSession().setAttribute("dxState","Y");
 		} else {
 			String canJump = (String) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_JUMPAUTH + "_" + sessionStaff.getStaffId());
 			String custId = MapUtils.getString(param, "custId", "");
@@ -2432,6 +2436,24 @@ public class CustController extends BaseController {
 			log.error("营销任务（接触）反馈结果记录服务saveMktContactResult服务返回的数据异常", e);
 			return super.failed(ErrorCode.SAVE_MTK_RESULT, e, paramMap);
 		}
+		return jsonResponse;
+    }
+    
+    //判断用户是够篡改报文
+    @RequestMapping(value = "/isTrueJson", method = RequestMethod.POST)
+    @ResponseBody
+    public JsonResponse isTrueJson(HttpServletResponse response, HttpServletRequest request){
+		JsonResponse jsonResponse = null;
+		String state = (String)request.getSession().getAttribute("dxState");
+		Map<String, Object> resMap = new HashMap<String,Object>();
+		if(state != null){
+			resMap.put("dxState", state);
+		}else{
+			resMap.put("dxState", "");
+			//request.getSession().removeAttribute("dxState");
+		}
+		jsonResponse = super.successed(resMap, ResultConstant.SUCCESS.getCode());
+		//request.getSession().removeAttribute("dxState");
 		return jsonResponse;
     }
 }

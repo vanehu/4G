@@ -855,7 +855,6 @@ public class LoginController extends BaseController {
 	@ResponseBody
 	public JsonResponse changeUimMsgReSend(@RequestParam Map<String, Object> paramMap,HttpServletRequest request, @LogOperatorAnn String flowNum) {
 		try {
-			System.out.println(paramMap);
 			String number = (String)paramMap.get("munber");
 			String checkNumber = (String)request.getSession().getAttribute("checkNumber");
 			List<Map> accNbrInfos = (List<Map>)request.getSession().getAttribute("accNbrInfos");
@@ -978,6 +977,8 @@ public class LoginController extends BaseController {
 	public JsonResponse changeUimSmsValidate(@RequestParam("smspwd") String smsPwd,@RequestParam("number") String number,
 			HttpServletRequest request ,HttpServletResponse response) throws Exception {
 		this.log.debug("changeUimsmsPwd={}", smsPwd);
+		//移除相关的session信息
+		request.getSession().removeAttribute("dxState");
 		String smsPwdSession = (String) ServletUtils.getSessionAttribute(
 					request, SysConstant.SESSION_KEY_CHANGEUIM_SMS);
 		// 对应的手机号
@@ -985,13 +986,17 @@ public class LoginController extends BaseController {
 					request, SESSION_CUSTAUTH_SMS_MUNBER);
 		//如果不需要发送短信，验证码就为空，不提示短信过期失效
 		if(StringUtil.isEmpty(smsPwdSession)){
+			request.getSession().setAttribute("dxState", "N");
 			return super.failed("短信过期失效，请重新发送!", ResultConstant.FAILD.getCode());
 		}
 		if (smsPwdSession.equals(smsPwd)&&numberSession.equals(number)) {
 			Map<String,Object> resData=new HashMap<String,Object>();
 			resData.put("msg", "短信验证成功.");
+			//设置session返回是否成功的状态
+			request.getSession().setAttribute("dxState", "Y");
 			return super.successed(resData);
 		}else {
+			request.getSession().setAttribute("dxState", "N");
 			return super.failed("短信验证码错误!", ResultConstant.FAILD.getCode());
 		}
 		
