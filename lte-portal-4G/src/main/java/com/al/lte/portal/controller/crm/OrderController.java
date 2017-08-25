@@ -1780,6 +1780,12 @@ public class OrderController extends BaseController {
         } catch (Exception e) {
             return super.failedStr(model, ErrorCode.CHARGE_LIST, e, param);
         }
+        //判断开启展示本地打印回执按钮开关
+        String openPrint = SysConstant.ON;
+        if(!StringUtil.isEmptyStr(sessionStaff.getAreaId())){
+           openPrint = propertiesUtils.getMessage("OPENPRINTFLAG_"+sessionStaff.getAreaId().substring(0,3));
+        }
+        model.addAttribute("openPrint",openPrint);
         return "/order/order-cal-charge";
     }
 

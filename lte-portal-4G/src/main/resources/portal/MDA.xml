@@ -251,7 +251,7 @@
 			'YJY-8450000':'ON',
 			'YJY-8410000':'ON',
 			'YJY-8620000':'ON',
-			'YJY-8360000':'ON',
+			'YJY-8360000':'OFF',
 			'YJY-8460000':'ON',
 			'YJY-8230000':'ON'
 			}
@@ -3454,5 +3454,42 @@
 			{'id':'6000','name':'接触失败','desc':'未接触成功到客户'}
 			]
 		</const>
+		<const type="String" name="OFFER_CHANGE_CHECK" value="OFF" description="#1614052套餐变更校验副卡数量是否满足目的套餐规则，默认OFF不校验，ON校验"/>
+		<const type="Map" name="OPENPRINTFLAG" description="开启展示本地打印回执按钮，默认ON">
+			{
+			'OPENPRINTFLAG_854':'ON',<!-- 西藏 -->
+			'OPENPRINTFLAG_863':'ON',<!-- 青海 -->
+			'OPENPRINTFLAG_815':'ON',<!-- 内蒙古 -->
+			'OPENPRINTFLAG_823':'ON',<!-- 黑龙江 -->
+			'OPENPRINTFLAG_845':'ON',<!-- 广西 -->
+			'OPENPRINTFLAG_850':'ON',<!-- 重庆 -->
+			'OPENPRINTFLAG_861':'ON',<!-- 陕西 -->
+			'OPENPRINTFLAG_842':'ON',<!-- 湖北 -->
+			'OPENPRINTFLAG_835':'ON',<!-- 福建 -->
+			'OPENPRINTFLAG_832':'ON',<!-- 江苏 -->
+			'OPENPRINTFLAG_846':'ON',<!-- 海南 -->
+			'OPENPRINTFLAG_864':'ON',<!-- 宁夏 -->
+			'OPENPRINTFLAG_814':'ON',<!-- 山西 -->
+			'OPENPRINTFLAG_853':'ON',<!-- 云南 -->
+			'OPENPRINTFLAG_836':'ON',<!-- 江西 -->
+			'OPENPRINTFLAG_837':'ON',<!-- 山东 -->
+			'OPENPRINTFLAG_811':'OFF',<!-- 北京 -->
+			'OPENPRINTFLAG_843':'ON',<!-- 湖南 -->
+			'OPENPRINTFLAG_851':'ON',<!-- 四川 -->
+			'OPENPRINTFLAG_844':'ON',<!-- 广东 -->
+			'OPENPRINTFLAG_831':'ON',<!-- 上海 -->
+			'OPENPRINTFLAG_812':'ON',<!-- 天津 -->
+			'OPENPRINTFLAG_813':'ON',<!-- 河北 -->
+			'OPENPRINTFLAG_841':'ON',<!-- 河南 -->
+			'OPENPRINTFLAG_821':'ON',<!-- 辽宁 -->
+			'OPENPRINTFLAG_822':'ON',<!-- 吉林 -->
+			'OPENPRINTFLAG_834':'ON',<!-- 安徽 -->
+			'OPENPRINTFLAG_833':'ON',<!-- 浙江 -->
+			'OPENPRINTFLAG_852':'ON',<!-- 贵州 -->
+			'OPENPRINTFLAG_862':'ON',<!-- 甘肃 -->
+			'OPENPRINTFLAG_865':'ON',<!-- 新疆 -->
+			'OPENPRINTFLAG_899':'ON'<!-- 虚拟省 -->
+			}
+		</const>	
 	</mda>
 </mdas>

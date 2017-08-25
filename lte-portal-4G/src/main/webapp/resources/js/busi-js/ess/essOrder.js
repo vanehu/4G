@@ -94,6 +94,11 @@ essOrder.main = (function() {
 			curPage = pageIndex;
 		};
 		var extCustOrderId = ec.util.defaultStr($("#p_extCustOrderId").val());
+		var extCustOrderIds = extCustOrderId.split(",");
+		if(extCustOrderIds.length > 1000){
+			$.alert("提示","按订单号批量查询时数量不能超过1000笔，请重新输入！");
+			return;
+		}
 		var orderType = ec.util.defaultStr($("#p_orderType").val());
 		var commonRegionId = ec.util.defaultStr($("#p_areaId").val());
 		var transactionId = ec.util.defaultStr($("#p_transactionId").val());
@@ -224,6 +229,11 @@ essOrder.main = (function() {
 	
 	var _exportExcel = function(){
 		var extCustOrderId = ec.util.defaultStr($("#p_extCustOrderId").val());
+		var extCustOrderIds = extCustOrderId.split(",");
+		if(extCustOrderIds.length > 1000){
+			$.alert("提示","按订单号批量导出时数量不能超过1000笔，请重新输入！");
+			return;
+		}
 		var orderType = ec.util.defaultStr($("#p_orderType").val());
 		var commonRegionId = ec.util.defaultStr($("#p_areaId").val());
 		var transactionId = ec.util.defaultStr($("#p_transactionId").val());
@@ -236,14 +246,14 @@ essOrder.main = (function() {
 		var termSellChannel = ec.util.defaultStr($("#p_termSellChannel").val());
 		var url = contextPath + "/ess/order/exportExcel?transactionId="
 				+ transactionId + "&orderType=" + orderType
-				+ "&commonRegionId=" + commonRegionId + "&extCustOrderId="
-				+ extCustOrderId + "&orderStatus=" + orderStatus
+				+ "&commonRegionId=" + commonRegionId + "&orderStatus=" + orderStatus
 				+ "&channelId=" + channelId + "&accNbrSellChannel="
 				+ accNbrSellChannel + "&termSellChannel=" + termSellChannel
 				+ "&startDate=" + startDate + "&endDate=" + endDate
 				+ "&accNbr=" + accNbr;
+		$("#p_extCustOrderId_hidden").attr("value", extCustOrderId);
 		$("#essOrderList_action").attr("action", url);
-		$("#essOrderList_action").submit();			
+		$("#essOrderList_action").submit();
 	};
 	
 	

@@ -156,6 +156,8 @@ query.offer = (function() {
 				OrderInfo.offer.offerId = prod.prodOfferInstId;
 				OrderInfo.offer.offerSpecId = prod.prodOfferId;
 				OrderInfo.offer.offerSpecName = prod.prodOfferName;
+				OrderInfo.offer.initOfferMemberInfo();
+				
 				return true;
 			}else{//销售品成员实例为空
 				$.alert("提示","查询销售品实例构成，没有返回成员实例无法继续受理");
@@ -433,22 +435,24 @@ query.offer = (function() {
 	// 查询默认必须可选包
 	var _queryDefMustOfferSpec = function(param) {
 		addParam(param);  //添加基本参数
-		//#1524389 主副卡纳入老用户，默认必选套餐参数传新套餐ID
-		if(ec.util.isArray(OrderInfo.oldprodInstInfos) && (OrderInfo.actionFlag==6 || OrderInfo.actionFlag==2)){
-			for(var i=0;i<OrderInfo.oldprodInstInfos.length;i++){
-				if(param.acctNbr==OrderInfo.oldprodInstInfos[i].accNbr){
-					param.mainOfferSpecId=OrderInfo.offerSpec.offerSpecId;
-					param.offerSpecId=OrderInfo.offerSpec.offerSpecId;
-					if(ec.util.isObj(OrderInfo.offerSpec.offerRoles)){
-						$.each(OrderInfo.offerSpec.offerRoles,function(){
-							if(this.memberRoleCd==CONST.MEMBER_ROLE_CD.VICE_CARD || this.memberRoleCd==CONST.MEMBER_ROLE_CD.COMMON_MEMBER){
-								param.offerRoleId = this.offerRoleId;
-							}
-						});
-					}
-				}
-			}
-		}
+        //#1524389 主副卡纳入老用户，默认必选套餐参数传新套餐ID
+        if(OrderInfo.actionFlag==6 || OrderInfo.actionFlag==2){
+            for(var j=0;j<OrderInfo.oldoffer.length;j++){
+                for(var i=0;i<OrderInfo.oldoffer[j].offerMemberInfos.length;i++){
+                    if(param.acctNbr==OrderInfo.oldoffer[j].offerMemberInfos[i].accessNumber){
+                        param.mainOfferSpecId=OrderInfo.offerSpec.offerSpecId;
+                        param.offerSpecId=OrderInfo.offerSpec.offerSpecId;
+                        if(ec.util.isObj(OrderInfo.offerSpec.offerRoles)){
+                            $.each(OrderInfo.offerSpec.offerRoles,function(){
+                                if(this.memberRoleCd==OrderInfo.oldoffer[j].offerMemberInfos[i].roleCd){
+                                    param.offerRoleId = this.offerRoleId;
+                                }
+                            });
+                        }
+                    }
+                }
+            }
+        }
 		var url = contextPath+"/offer/queryDefaultAndRequiredOfferSpec";
 		$.ecOverlay("<strong>查询默认必须可选包中，请稍等...</strong>");
 		var response = $.callServiceAsJsonGet(url,param);	
@@ -569,8 +573,8 @@ query.offer = (function() {
 	var _searchAttachOfferSpec = function(param) {
 		addParam(param);  //添加基本参数
 		if(ec.util.isArray(OrderInfo.oldprodInstInfos) && (OrderInfo.actionFlag==6)){
-			for(var i=0;i<OrderInfo.oldprodInstInfos.length;i++){
-				if(param.acctNbr==OrderInfo.oldprodInstInfos[i].accNbr){
+			//for(var i=0;i<OrderInfo.oldprodInstInfos.length;i++){
+			//	if(param.acctNbr==OrderInfo.oldprodInstInfos[i].accNbr){
 					param.mainOfferSpecId=OrderInfo.offerSpec.offerSpecId;
 					param.offerSpecIds.push(OrderInfo.offerSpec.offerSpecId);	
 					if(ec.util.isObj(OrderInfo.offerSpec.offerRoles)){
@@ -580,8 +584,8 @@ query.offer = (function() {
 							}
 						});
 					}
-				}
-			}
+			//	}
+			//}
 		}
 		if(OrderInfo.menuName == "ZXHYBL"){
 		    OrderInfo.preliminaryInfo.mainOfferSpecId = param.mainOfferSpecId;

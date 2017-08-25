@@ -2686,7 +2686,7 @@ cust = (function(){
 				OrderInfo.oldUserInfos.push(response.data);
 			}
         } else if (response.code == 1002) {
-            console.debug("该产品下没有查询到属性！");
+//            console.debug("该产品下没有查询到属性！");
 		}else if (response.code==-2){
 			$.alertM(response.data);
 		}else {

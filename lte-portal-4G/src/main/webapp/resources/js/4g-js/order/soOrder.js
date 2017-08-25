@@ -3084,7 +3084,7 @@ SoOrder = (function() {
 					return false ;
 				}
 				//现场审核，拍照审核校验
-				if(CONST.photographReviewFlag == "ON" && CONST.isPhotographReviewNeeded && ec.util.isObj(auditMode) && auditMode == "1" && !CONST.isForcePassfaceVerify){
+				if(CONST.photographReviewFlag == "ON" && CONST.isPhotographReviewNeeded && ec.util.isObj(auditMode) && auditMode == "1" && OrderInfo.isManualAudit=="Y"){
 					if(!isAuditSucess){
 						$.alert("提示", "请完成经办人人像审核操作！");
 						return false ;
@@ -3093,7 +3093,7 @@ SoOrder = (function() {
 			}
 		}
 		
-		if(!query.common.queryPropertiesStatus("ADD_OLD_USER_MOD_ACCT_"+OrderInfo.getAreaId().substring(0,3))){
+		if(!query.common.queryPropertiesStatus("ADD_OLD_USER_MOD_ACCT_"+OrderInfo.getAreaId().substring(0,3))&& OrderInfo.busitypeflag!=7){
 			//纳入老用户判断主卡副卡账户一致
 			if(ec.util.isArray(OrderInfo.oldprodAcctInfos)){
 				for(var a=0;a<OrderInfo.oldprodAcctInfos.length;a++){
