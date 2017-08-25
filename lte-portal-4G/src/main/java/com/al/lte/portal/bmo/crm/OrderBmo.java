@@ -802,8 +802,9 @@ public interface OrderBmo {
 
 	/**
 	 * 调后台接口下载实名制拍照证件
+	 * @param b 
 	 */
-	public Map<String, Object> downloadCustCertificate(Map<String, Object> param, SessionStaff sessionStaff) throws Exception;
+	public Map<String, Object> downloadCustCertificate(Map<String, Object> param, SessionStaff sessionStaff, boolean b) throws Exception;
 
 	/**
 	 * 订单提交校验客户身份证信息

@@ -7,10 +7,8 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
-
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.al.ec.serviceplatform.client.DataBus;
@@ -49,33 +47,32 @@ public class Photograph {
 	/**备用,记录其他信息*/
 	private Object extrea;
 	
-	private static Object Lock = new Object();
-	
 	private static Photograph photograph;
 	
+	public Photograph(){
+		super();
+	}
+	
+	public Photograph(String context){
+		super();
+		this.context = context;
+	}
+	
 	public static Photograph getInstance(){
-		synchronized (Lock) {
-			if (photograph == null) {
-				photograph = new Photograph();
-				Timer timer = new Timer();
-				timer.schedule(new TimerTask() {
-					@Override
-					public void run() {
-						photograph = new Photograph();
-					}
-				}, 0, 5000);
+		if (photograph == null) {
+			synchronized (Photograph.class) {
+				if (photograph == null) {
+					photograph = new Photograph();
+					photograph.setContext(MDA.WARTER_MARKER_CONEXT + " " + DateUtil.getFormatTimeString(new Date(), "yyyy/MM/dd"));
+				}
 			}
 		}
-		photograph.setContext(MDA.WARTER_MARKER_CONEXT + " " + DateUtil.getFormatTimeString(new Date(), "yyyy/MM/dd"));
+		
 		return photograph;
 	}
 	
-	public static synchronized Photograph getInstanceSync(){
-		if (photograph == null) {
-			photograph = new Photograph();
-		}
-		photograph.setContext(MDA.WARTER_MARKER_CONEXT + " " + DateUtil.getFormatTimeString(new Date(), "yyyy/MM/dd"));
-		return photograph;
+	public static Photograph getNewInstance(){
+		return	new Photograph(MDA.WARTER_MARKER_CONEXT + " " + DateUtil.getFormatTimeString(new Date(), "yyyy/MM/dd"));
 	}
 	
 	/**
@@ -160,6 +157,32 @@ public class Photograph {
 		}
 		
 		return resultMap;
+	}
+	
+	public String imageResize(){
+		String imageFormat = MapUtils.getString(MDA.IE8_COMPRESS_CONFIG, "COMPRESS_FORMAT", "jpeg");
+		int height = MapUtils.getIntValue(MDA.IE8_COMPRESS_CONFIG, "COMPRESS_HEIGHT", 300);
+		int width = MapUtils.getIntValue(MDA.IE8_COMPRESS_CONFIG, "COMPRESS_WIDTH", 400);
+		return this.imageResize(imageFormat, height, width);
+	}
+	
+	public String imageResize(String imageFormat, int height, int width){
+		try {
+			if(StringUtils.isBlank(imageFormat)){
+				imageFormat = ImageUtil.getImageFormat(this.image);
+				imageFormat = StringUtils.isBlank(imageFormat) ? "jpeg" : imageFormat;
+			}
+			if(StringUtils.isNotBlank(ImageUtil.getImageFormat(this.image))){
+				this.image = StringUtils.substring(this.image, StringUtils.indexOf(this.image, ",") + 1);
+			}
+			
+			byte[] srcImageBytes = Base64.decodeBase64(this.image);
+			byte[] scaledImageBytes = ImageUtil.imageResize(srcImageBytes, imageFormat, height, width);
+			return Base64.encodeBase64String(scaledImageBytes);
+		} catch (IOException ioe) {
+			log.error("图片压缩异常，异常信息：", ioe);
+			return null;
+		}
 	}
 
 	public String getPhotograph() {
