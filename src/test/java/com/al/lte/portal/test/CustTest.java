@@ -5,11 +5,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.util.EntityUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
+import com.al.ec.serviceplatform.client.httpclient.MyHttpclient;
 import com.al.lte.portal.bmo.crm.CustBmo;
 import com.al.lte.portal.bmo.crm.OrderBmo;
 import com.al.lte.portal.bmo.staff.StaffBmo;
@@ -69,6 +75,24 @@ public class CustTest extends BaseJunit {
     	System.out.println("**************begin********");
     	ret = custBmo.queryAccNbrByCust(paramMap, optFlowNum, setSessionStaff());
     	System.out.println("**************end********"+JSONArray.fromObject(ret).toString());
-    }       
+    }      
+    @Test
+    public void test111() throws Exception {
+    	HttpPost post = null;
+		HttpEntity entity = null;
+		try {
+			post = new HttpPost("https://42.99.16.152:85/appPortal");
+			post.addHeader("Content-Type", "application/xml;charset=UTF-8");		
+			String paramString = "";
+			entity = new StringEntity(paramString, "utf-8");
+			post.setEntity(entity);
+			HttpResponse httpresponse = MyHttpclient.getInstance()
+					.getHttpclient().execute(post);
+			entity = httpresponse.getEntity();
+			String retnJson = EntityUtils.toString(entity, "utf-8");
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+    }     
 }
 
