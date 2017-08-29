@@ -7,7 +7,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath*:/spring/portal-context.xml" })
+@ContextConfiguration(locations = { "classpath*:/spring/portal-context-junit.xml" })
 public abstract class BaseJunit {
 
 }

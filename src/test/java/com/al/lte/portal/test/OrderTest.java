@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
+import com.al.lte.portal.bmo.crm.OfferBmo;
 import com.al.lte.portal.bmo.crm.OrderBmo;
 import com.al.lte.portal.bmo.crm.SecondBusiness;
 import com.al.lte.portal.model.SessionStaff;
@@ -22,6 +23,9 @@ public class OrderTest extends BaseJunit {
     private OrderBmo orderBmo;
 	@Autowired
 	private SecondBusiness secondBusiness;
+	@Autowired
+	private OfferBmo offerBmo;
+	
 	
 	private SessionStaff setSessionStaff() throws Exception {
     	SessionStaff sessionStaff = new SessionStaff();
@@ -64,4 +68,17 @@ public class OrderTest extends BaseJunit {
     	ret = secondBusiness.querySecondBusinessMenuAuth(paramMap, optFlowNum, setSessionStaff());
     	System.out.println("**************end********"+JSONArray.fromObject(ret).toString());
     }    
+    @Test
+    public void queryMyfavorite() throws Exception {
+    	Map paramMap = new HashMap();
+    	Map ret = new HashMap();
+    	String optFlowNum = "13324324";
+    	String paramJson = "{\"prodSpecId\":235010000,\"offerSpecIds\":[86327],\"offerRoleId\":42958,\"prodId\":-1,\"staffId\":5176843,\"channelId\":1385688,\"areaId\":\"8320400\",\"partyId\":\"700000652018\",\"mainOfferSpecId\":86327,\"soNbr\":\"1502872202316724\",\"newFlag\":1,\"sysFlag\":\"10004\",\"operatorsId\":\"99999\",\"transactionId\":\"17081616302434149505317\"}";
+    	ObjectMapper mapper = new ObjectMapper();
+    	paramMap = mapper.readValue(paramJson, Map.class);
+    	System.out.println("**************begin********");
+    	ret = offerBmo.queryMyfavorite(paramMap, optFlowNum, setSessionStaff());
+    	System.out.println("**************end********"+JSONArray.fromObject(ret).toString());
+    }    
+    
 }
