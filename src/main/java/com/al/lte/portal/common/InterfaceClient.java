@@ -377,9 +377,6 @@ public class InterfaceClient {
 					serviceCode = serviceCode.substring(4);
 					intfUrl =MDA.PAY_TOKEN_URL.toString();
 					intfUrl += serviceCode;
-					if("pay-refundOrder".equals(serviceCode)){
-						System.out.println("开始调用支付接口:"+intfUrl);
-					}
 					sys = "pay";//支付平台标志
 					if (!dataBusMap.containsKey("areaId")) {
 						if(sessionStaff != null){
@@ -419,11 +416,7 @@ public class InterfaceClient {
 						String s=paramString.substring(0,paramString.indexOf("<chargeItems class=\"array\">")+27)+"<![CDATA["+paramString.substring(paramString.indexOf("<chargeItems class=\"array\">")+27,paramString.indexOf("</chargeItems>"))+"]]>"+paramString.substring(paramString.indexOf("</chargeItems>"),paramString.length());
 						paramString=s;
 					}					
-					paramJson = paramString;
-					if("pay-refundOrder".equals(serviceCode)){
-						System.out.println("============================================");
-						System.out.println("请求入参:"+paramJson);
-					}					
+					paramJson = paramString;			
 				}else if (TER_PREFIX.equals(prefix)) {
 					serviceCode = serviceCode.substring(4);
 					// 只通过csb调用
@@ -478,11 +471,7 @@ public class InterfaceClient {
 							}
 						}
 					}
-				}
-				if("pay-refundOrder".equals(serviceCode)){
-					System.out.println("============================================");
-					System.out.println("csb配置:"+serviceCodeObj+"是否csb请求:"+asyncWay);
-				}		
+				}	
 				// 添加标识ID 
 				logSeqId = createLogSeqId(dataBusMap, serviceCode,
 						sessionStaff, dbKeyWord, prefix, logSeqId);
