@@ -119,6 +119,11 @@ cert = (function() {
 	    }
 	    var man = null;
 	    var ver=  null;
+	    //#1633521 身份证读卡器安全方案 -- 渠道级的读卡器型号限制
+	    var userCloud = !query.common.checkOperateSpec("USE_CLOUD_HEAD");
+	    if(userCloud && (undefined == conn.isCloud || 1 == conn.isCloud)){//有权限只能使用云读头
+	    	return {"resultFlag": -1, "errorMsg": "受理员工有'使用云读头'权限，仅可使用云读头读卡。"};
+	    }
 	    if (undefined == conn.isCloud || 1 == conn.isCloud) {
 	    	man = JSON.parse(CertCtl.readCert());
 	    	if(man.resultFlag != 0){
