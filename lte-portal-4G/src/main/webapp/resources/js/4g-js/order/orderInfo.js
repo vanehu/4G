@@ -1827,9 +1827,7 @@ OrderInfo = (function() {
 
 			OrderInfo.virOlId				  = "";		//拍照上传虚拟购物车ID
 			OrderInfo.handleCust			  = {};		//针对经办人老客户缓存一些数据
-			OrderInfo.certInfoKeys	  		  = [];		//读卡客户信息列表
 			OrderInfo.handleCustId 			  = "";		//经办人为老客户时的客户ID
-			OrderInfo.certInfoKeys			  = [];		//读卡客户信息列表
 			OrderInfo.boUserCustInfos 		  = [];		//使用人：客户信息节点
 			OrderInfo.ifCreateHandleCust	  = false;	//判断是否需要新建经办人
 			OrderInfo.boUserCustIdentities	  = [];		//使用人：客户证件节点
