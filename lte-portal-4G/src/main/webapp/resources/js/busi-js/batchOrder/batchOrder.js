@@ -13,7 +13,7 @@ order.batch = (function(){
 			return;
 		}
 
-		if(batchType == '10' || batchType == '11' || batchType == '12'|| batchType == '13' || batchType == '14'|| batchType == '15'){						
+		if(batchType == '10' || batchType == '11' || batchType == '12'|| batchType == '13' || batchType == '14'|| batchType == '15' || batchType == '20'){						
 			//批量订购裸终端、批量换档、批量换卡、批量在用拆机、批量未激活拆机
 			_submitFormAjax(batchType);
 		} else if(batchType == '16' || batchType == '17' || batchType == '18'){
@@ -546,6 +546,8 @@ order.batch = (function(){
 			location.href=contextPath+"/file/BATCHECS.xls";
 		}else if(batType=='19'){//政企批开
 			location.href=contextPath+"/file/BATCHORDER.xls";
+		}else if(batType=='20'){//批量撤单
+			location.href=contextPath+"/file/BATCHCANCEL.xls";
 		}else{
 			$.alert("提示","未找到批量类型所对应的模板文件，请检查！");
 			return;
