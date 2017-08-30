@@ -3066,7 +3066,7 @@
 			'PHOTOGRAPH_REVIEW_843':'OFF',<!-- 湖南 -->
 			'PHOTOGRAPH_REVIEW_851':'OFF',<!-- 四川 -->
 			'PHOTOGRAPH_REVIEW_844':'OFF',<!-- 广东 -->
-			'PHOTOGRAPH_REVIEW_831':'ON',<!-- 上海 -->
+			'PHOTOGRAPH_REVIEW_831':'OFF',<!-- 上海 -->
 			'PHOTOGRAPH_REVIEW_812':'OFF',<!-- 天津 -->
 			'PHOTOGRAPH_REVIEW_813':'OFF',<!-- 河北 -->
 			'PHOTOGRAPH_REVIEW_841':'OFF',<!-- 河南 -->
@@ -3490,6 +3490,11 @@
 			'OPENPRINTFLAG_865':'ON',<!-- 新疆 -->
 			'OPENPRINTFLAG_899':'ON'<!-- 虚拟省 -->
 			}
-		</const>
-	</mda>
+		<const type="Map" name="IE8_COMPRESS_CONFIG" description="IE8图片压缩参数">
+		{
+			"COMPRESS_FORMAT"	:"jpeg",
+			"COMPRESS_WIDTH"	:400,
+			"COMPRESS_HEIGHT"	:300
+		}
+		</const>		</mda>
 </mdas>

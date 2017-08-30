@@ -71,12 +71,7 @@ order.query = (function(){
 	
 	var _downloadCustCertificate = function(){
 		//每次查询前清空缓存并初始化页面
-		$("#handleCustPhotograph").attr("src", "");
-		$("#handleCustCertificateImg").attr("src", "");
-		$("#handleCustCertificateTbody").hide();
-		$("#handleCustCertificateNoList").hide();
-		$("#photographReviewSuccess").hide();
-		$("#photographReviewFail").hide();
+		$("#handleCustCertificateList").html("");
 		
 		var params = {
 			"olId"		:$.trim($("#virOlIdInput").val()),
@@ -84,36 +79,17 @@ order.query = (function(){
 			"srcFlag"	:"REAL"
 		};
 		
-		$.callServiceAsJson(contextPath + "/order/downloadCustCertificate", params, {
+		$.callServiceAsHtml(contextPath + "/order/downloadCustCertificate", params, {
 			"before" : function() {
 				$.ecOverlay("<strong>正在查询经办人人像信息, 请稍等...</strong>");
 			},
 			"done" : function(response) {
 				if(response.code == 0 && response.data){
-					var photographs = response.data.photographs;
-					if(ec.util.isArray(photographs)){
-						$.each(photographs, function(){
-						    if(this.picFlag == "C"){//经办人身份证照片
-						    	$("#handleCustCertificateImg").attr("src", "data:image/jpeg;base64," + this.photograph);
-						    } else if(this.picFlag == "D"){//经办人头像照片
-						    	$("#handleCustPhotograph").attr("src", "data:image/jpeg;base64," + this.photograph);
-						    }
-						});
-						$("#handleCustCertificateTbody").addClass("phone_warp");
-						$("#handleCustCertificateTbody").show();
-						$("#photographReviewSuccess").show();
-						$("#photographReviewFail").show();
-					} else{
-						$("#handleCustCertificateNoList").addClass("phone_warp");
-						$("#handleCustCertificateNoList").show();
-					}
-				}else if(response.code == 1 && response.data){
-					$.alert("错误", "查询经办人人像信息失败，错误原因：" + response.data);
-					$("#handleCustCertificateNoList").show();
+					$("#handleCustCertificateList").html(response.data).show();
 				}else if(response.code == -2 && response.data){
 					$.alertM(response.data);
 				}else{
-					$.alert("错误", "查询经办人人像信息发生未知异常，请稍后重试。错误信息：" + response.data);
+					$("#handleCustCertificateList").html(response.data).show();
 				}
 			},
 			"fail" : function(response) {
