@@ -3526,6 +3526,7 @@
 			'OPENPRINTFLAG_865':'ON',<!-- 新疆 -->
 			'OPENPRINTFLAG_899':'ON'<!-- 虚拟省 -->
 			}
+		</const>
 		<const type="Map" name="IE8_COMPRESS_CONFIG" description="IE8图片压缩参数">
 		{
 			"COMPRESS_FORMAT"	:"jpeg",
