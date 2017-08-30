@@ -152,9 +152,15 @@ OrderInfo = (function() {
 						var offerRole = offerRoles[i];
 						if(offerRole.memberRoleCd == CONST.MEMBER_ROLE_CD.VICE_CARD || 
 								offerRole.memberRoleCd == CONST.MEMBER_ROLE_CD.BROADBAND_VICE_CARD){//副卡
-							this._minQty = offerRole.minQty;
-							this._maxQty = offerRole.maxQty;
-							return;
+							var roleObjs = offerRole.roleObjs;
+							for(var j = 0; j < roleObjs.length; j++){
+								var roleObj = roleObjs[j];
+								if(roleObj.objType == 2){
+									this._minQty = roleObj.minQty;
+									this._maxQty = roleObj.maxQty;
+									return;
+								}
+							}
 						}
 					}
 				}
