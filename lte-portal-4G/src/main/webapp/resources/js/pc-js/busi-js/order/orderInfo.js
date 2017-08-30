@@ -1524,7 +1524,7 @@ OrderInfo = (function() {
 			OrderInfo.certInfoKeys.push(certInfoKeys);
 		}
 	};
-	
+    var _needCheckFlag  = "N";//是否需要调用一证五号
 	return {
 		certInfoKeys			:_certInfoKeys,
 		pushCertInfoKeys		:_pushCertInfoKeys,
@@ -1632,6 +1632,7 @@ OrderInfo = (function() {
 		oneCardPhone   : _oneCardPhone,
 		queryCustInfo  : _queryCustInfo,
 		preliminaryInfo : _preliminaryInfo,
-		_oldUserInfos	: _oldUserInfos
+		_oldUserInfos	: _oldUserInfos,
+        needCheckFlag  :_needCheckFlag
 	};
 })();

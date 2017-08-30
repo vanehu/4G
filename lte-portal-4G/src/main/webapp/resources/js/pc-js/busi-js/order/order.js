@@ -1611,12 +1611,14 @@ order.service = (function(){
      */
     function needCheck(offerSpec) {
         var needCheck = false;
+        OrderInfo.needCheckFlag = "N";
         if (ec.util.isObj(offerSpec) && ec.util.isObj(offerSpec.offerRoles) && offerSpec.offerRoles.length > 0) {
             $.each(offerSpec.offerRoles, function () {
                 if (ec.util.isObj(this.roleObjs) && this.roleObjs.length > 0) {
                     $.each(this.roleObjs, function () {
                         if (this.objId == "235010000" || this.objId == "280000000" || this.objId == "280000025") {
                             needCheck = true;
+                            OrderInfo.needCheckFlag = "Y";
                         }
                     })
                 }
