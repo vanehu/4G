@@ -33,6 +33,7 @@ import com.al.lte.portal.bmo.print.PrintBmo;
 import com.al.lte.portal.bmo.staff.StaffBmo;
 import com.al.lte.portal.common.AESUtils;
 import com.al.lte.portal.common.CommonMethods;
+import com.al.lte.portal.common.CommonUtils;
 import com.al.lte.portal.common.Const;
 import com.al.lte.portal.common.Des33;
 import com.al.lte.portal.common.EhcacheUtil;
@@ -5052,26 +5053,29 @@ public class OrderController extends BaseController {
      * 实名制客户身份证件下载
      */
     @RequestMapping(value = "/downloadCustCertificate", method = RequestMethod.POST)
-    @ResponseBody
-    public JsonResponse downloadCustCertificate(@RequestBody Map<String, Object> param, @LogOperatorAnn String flowNum, HttpServletResponse response) {
+    public String downloadCustCertificate(@RequestBody Map<String, Object> param, @LogOperatorAnn String flowNum, Model model) {
         SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
         Map<String, Object> result = null;
-        JsonResponse jsonResponse = null;
+        CommonUtils.setUserAgent(super.getRequest());
+        
         try {
-        	result = orderBmo.downloadCustCertificate(param, sessionStaff);
-            if (result != null && ResultCode.R_SUCCESS.equals(result.get("code").toString())) {
-                jsonResponse = super.successed(result, ResultConstant.SUCCESS.getCode());
+        	result = orderBmo.downloadCustCertificate(param, sessionStaff, CommonUtils.isIE8());
+            if (result != null && ResultCode.R_SUCCESS.equals(MapUtils.getString(result, "code", ""))) {
+            	model.addAttribute("code", ResultCode.R_SUCC);
+            	model.addAttribute("list", result.get("photographs"));
             } else {
-                jsonResponse = super.failed(result.get("msg").toString(), ResultConstant.FAILD.getCode());
+            	model.addAttribute("code", ResultCode.R_FAILURE);
+            	model.addAttribute("msg", MapUtils.getString(result, "msg", "查询经办人人像信息发生未知异常，请稍后重试。"));
             }
         } catch (BusinessException be) {
-            return super.failed(be);
+            return super.failedStr(model, be);
         } catch (InterfaceException ie) {
-            return super.failed(ie, param, ErrorCode.DOWNLOAD_CUST_CERTIFICATE);
+            return super.failedStr(model, ie, param, ErrorCode.DOWNLOAD_CUST_CERTIFICATE);
         } catch (Exception e) {
-            return super.failed(ErrorCode.DOWNLOAD_CUST_CERTIFICATE, e, param);
+            return super.failedStr(model, ErrorCode.DOWNLOAD_CUST_CERTIFICATE, null, param);
         }
-        return jsonResponse;
+        
+        return "/order/photograph-review-list";
     }
 
     /**

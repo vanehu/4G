@@ -530,6 +530,11 @@ order.service = (function(){
 				}
 				if(offerRoleId!=""){
 					_closeChooseDialog();
+					OrderInfo.offer.initOfferCheckRule(prodOfferSpec);
+					var isOfferChangeAllowed = OrderInfo.offer.getResult();
+					if(!isOfferChangeAllowed){
+						return;
+					}
 					var prodId=$("#li_"+subpage).attr("objinstid");
 					var accessnumber=$("#li_"+subpage).attr("accessnumber");
 					for ( var i = 0; i < OrderInfo.viceOfferSpec.length; i++) {//清除旧数据

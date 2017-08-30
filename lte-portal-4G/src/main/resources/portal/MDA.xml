@@ -2115,14 +2115,13 @@
 			}
 		</const>
 		<const type="Map" name="BATCH_CONFIGS" description="批量业务配置">
-			{
+		{
 			"0":{
 			"totalColumns" :8,				<!-- Excel共7列数据 -->
 			"strictColumns" :[0,1,2,3,5],	<!-- Excel第0,1,2,3,5列数据必填(起始列0) -->
 			"govEntCheckList" :[],			<!-- 针对政企客户需要特别校验的列 -->
 			"regexpCheckList" :[2],			<!-- 需要进行正则校验的列，例如号码和价格列 -->
-			"nameColumns"
-			:["客户ID","帐户ID","主接入号","UIM卡号","租机串码","区号","联系人","联系电话"],	<!-- Excel每列数据名称 -->
+			"nameColumns" :["客户ID","帐户ID","主接入号","UIM卡号","租机串码","区号","联系人","联系电话"],	<!-- Excel每列数据名称 -->
 			"maxRows" :50000,			<!-- Excel允许导入最大行数(不指定即为无限制) -->
 			"batchTypeName" :"批开活卡",		<!-- 批量业务名称 -->
 			"repeatCheckList" :[2,3],			<!-- 防止重复需要校验的列 -->
@@ -2395,25 +2394,40 @@
 			"threadsFlag" :'ON'
 			},
 			"19":{
-			"totalColumns" :7,
-			"strictColumns"
-			:[0,1,2,4],
-			"govEntCheckList" :[],
-			"regexpCheckList" :[1],
-			"nameColumns" :["帐户ID","主接入号","UIM卡号","租机串码","区号","联系人","联系电话"],
-			"maxRows" :50000,
-			"batchTypeName" :"政企批开",
-			"repeatCheckList" :[1,2],
-			"regexpCheck" :{
-			"1":"LTEPHONEHEAD"
+				"totalColumns" :7,
+				"strictColumns" :[0,1,2,4],
+				"govEntCheckList" :[],
+				"regexpCheckList" :[1],
+				"nameColumns" :["帐户ID","主接入号","UIM卡号","租机串码","区号","联系人","联系电话"],
+				"maxRows" :50000,
+				"batchTypeName" :"政企批开",
+				"repeatCheckList" :[1,2],
+				"regexpCheck" :{
+					"1":"LTEPHONEHEAD"
+				},
+				"templateType" :0,
+				"threshold" :512,
+				"errorDataMaxCount" :10,
+				"threadsFlag" :'ON'
 			},
-			"templateType" :0,
-			"threshold"
-			:512,
-			"errorDataMaxCount" :10,
-			"threadsFlag" :'ON'
+			"22":{
+				"totalColumns" :9,
+				"strictColumns" :[0,1,2,3,5],
+				"govEntCheckList" :[],
+				"regexpCheckList" :[2],
+				"nameColumns":["客户ID","帐户ID","主接入号","UIM卡号","租机串码","区号","联系人","联系电话","副卡"],
+				"maxRows" :1000,
+				"batchTypeName" :"批开主副卡",
+				"repeatCheckList" :[2,3],
+				"regexpCheck" :{
+					"2":"LTEPHONEHEAD"
+				},
+				"templateType" :0,
+				"threshold" :512,
+				"errorDataMaxCount" :10,
+				"threadsFlag" :'ON'
 			}
-			}
+		}
 		</const>
 		<const type="String" name="TRANSFER_CUST_FLAG" value="OFF"
 			description="针对政企批开的返档优化开关" />
@@ -3066,7 +3080,7 @@
 			'PHOTOGRAPH_REVIEW_843':'OFF',<!-- 湖南 -->
 			'PHOTOGRAPH_REVIEW_851':'OFF',<!-- 四川 -->
 			'PHOTOGRAPH_REVIEW_844':'OFF',<!-- 广东 -->
-			'PHOTOGRAPH_REVIEW_831':'ON',<!-- 上海 -->
+			'PHOTOGRAPH_REVIEW_831':'OFF',<!-- 上海 -->
 			'PHOTOGRAPH_REVIEW_812':'OFF',<!-- 天津 -->
 			'PHOTOGRAPH_REVIEW_813':'OFF',<!-- 河北 -->
 			'PHOTOGRAPH_REVIEW_841':'OFF',<!-- 河南 -->
@@ -3490,6 +3504,11 @@
 			'OPENPRINTFLAG_865':'ON',<!-- 新疆 -->
 			'OPENPRINTFLAG_899':'ON'<!-- 虚拟省 -->
 			}
-		</const>	
-	</mda>
+		<const type="Map" name="IE8_COMPRESS_CONFIG" description="IE8图片压缩参数">
+		{
+			"COMPRESS_FORMAT"	:"jpeg",
+			"COMPRESS_WIDTH"	:400,
+			"COMPRESS_HEIGHT"	:300
+		}
+		</const>		</mda>
 </mdas>

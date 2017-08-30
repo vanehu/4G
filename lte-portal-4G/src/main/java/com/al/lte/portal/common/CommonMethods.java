@@ -42,14 +42,11 @@ public class CommonMethods {
 			synchronized(CommonMethods.class){
 				if(commonMethodsInstance == null){
 					commonMethodsInstance = new CommonMethods();
-					return commonMethodsInstance;
-				} else{
-					return commonMethodsInstance;
 				}
 			}
-		} else{
-			return commonMethodsInstance;
 		}
+		
+		return commonMethodsInstance;
 	}
 	
 	public static List<Map<String, Object>> getAreaRangeList(SessionStaff sessionStaff,Map<String,Object> param,String operateSpecInfo) throws Exception {

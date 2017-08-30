@@ -643,9 +643,11 @@ public class MDA {
 	/**营销推荐接触反馈结果*/
 	public static final List<Map<String,String>> MKT_CONTACT_RESULT = new ArrayList<Map<String,String>>();
 
-	/**#1614052套餐变更校验副卡数量是否满足目的套餐规则*/
+	/**#1614052套餐变更校验副卡数量是否满足目的套餐规则*/	
 	public static final String OFFER_CHANGE_CHECK = new String("");
-
 	/**开启展示本地打印回执按钮*/
 	public static final Map<String, String> OPENPRINTFLAG = new HashMap<String, String>();
+	
+	/**IE8图片压缩参数*/
+    public static final Map<String, Object> IE8_COMPRESS_CONFIG = new HashMap<String, Object>();
 }
