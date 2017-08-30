@@ -546,6 +546,8 @@ order.batch = (function(){
 			location.href=contextPath+"/file/BATCHECS.xls";
 		}else if(batType=='19'){//政企批开
 			location.href=contextPath+"/file/BATCHORDER.xls";
+		}else if(batType=='22'){//批开主副卡
+			location.href=contextPath+"/file/BATCHHUOKAMULTI.xls";
 		}else{
 			$.alert("提示","未找到批量类型所对应的模板文件，请检查！");
 			return;
