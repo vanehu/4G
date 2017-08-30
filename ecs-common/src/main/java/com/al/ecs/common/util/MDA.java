@@ -639,6 +639,12 @@ public class MDA {
     
     /**人证平台配置：params对应的加密密钥*/
     public static final String FACE_VERIFY_PARAMS_SECRET =new String("");
+    
+    /** 新疆人证平台配置：APP_ID对应的加密密钥*/
+    public static final String XJ_FACE_VERIFY_APP_ID_SECRET=new String("");
+    
+    /**新疆人证平台配置：params对应的加密密钥*/
+    public static final String XJ_FACE_VERIFY_PARAMS_SECRET =new String("");
   
 	/**营销推荐接触反馈结果*/
 	public static final List<Map<String,String>> MKT_CONTACT_RESULT = new ArrayList<Map<String,String>>();

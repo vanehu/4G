@@ -4246,7 +4246,7 @@ SoOrder = (function() {
 					value : OrderInfo.virOlId//即照片上传时后台返回的18位的虚拟订单ID:virOlId
 				});
 				 var result =  query.common.queryPropertiesMapValue("FACE_VERIFY_FLAG", "FACE_VERIFY_"+String(OrderInfo.staff.areaId).substr(0, 3));
-				  if(OrderInfo.bojbrCustIdentities.identidiesTypeCd == "1" && ec.util.isObj(OrderInfo.bojbrCustIdentities.identidiesPic) && result.FACE_VERIFY_SWITCH == "ON" && !query.common.checkOperateSpec(CONST.RZBDGN)){
+				  if(OrderInfo.bojbrCustIdentities.identidiesTypeCd == "1" && ec.util.isObj(OrderInfo.bojbrCustIdentities.identidiesPic) && (result.FACE_VERIFY_SWITCH == "ON" || result.PROVINCE_FACE_VERIFY_FLAG == "ON")&& !query.common.checkOperateSpec(CONST.RZBDGN)){
 					 custOrderAttrs.push({
 							itemSpecId : CONST.BUSI_ORDER_ATTR.CONFIDENCE,
 							value : OrderInfo.confidence  //人证照片比对相似度

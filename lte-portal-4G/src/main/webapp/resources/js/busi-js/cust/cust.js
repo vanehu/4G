@@ -3759,7 +3759,7 @@ order.cust = (function(){
 	var _callFaceVerify = function(){
 	 	 var request_id = "";
          var result =  query.common.queryPropertiesMapValue("FACE_VERIFY_FLAG", "FACE_VERIFY_"+String(OrderInfo.staff.areaId).substr(0, 3));
-		 if(ec.util.isObj(OrderInfo.bojbrCustIdentities.identidiesPic) && result.FACE_VERIFY_SWITCH == "ON" && !query.common.checkOperateSpec(CONST.RZBDGN)){
+		 if(ec.util.isObj(OrderInfo.bojbrCustIdentities.identidiesPic) && (result.FACE_VERIFY_SWITCH == "ON" ||  result.PROVINCE_FACE_VERIFY_FLAG == "ON") && !query.common.checkOperateSpec(CONST.RZBDGN)){
 			 var param={
 				 "ContractRoot":{
 						   "SvcCont":{

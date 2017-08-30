@@ -2215,8 +2215,19 @@ public class CustController extends BaseController {
   				.get("SvcCont");
   		Map<String, Object> paramsMap = (Map<String, Object>) svcContMap
   				.get("params");
-  		String encryptAppIdStr = AESUtil.encryptToString(MDA.FACE_VERIFY_APP_ID,
-  				 MDA.FACE_VERIFY_APP_ID_SECRET);
+  		
+  		
+
+  		String appId = MDA.FACE_VERIFY_APP_ID_SECRET;
+  		Map<String, Object> fzConfig = (HashMap<String, Object>) MDA.FACE_VERIFY_FLAG
+				.get("FACE_VERIFY_"
+						+ sessionStaff.getCurrentAreaId()
+								.substring(0, 3));
+  		if("ON".equals(MapUtils.getString(fzConfig, "PROVINCE_FACE_VERIFY_FLAG","")) && "OFF".equals(MapUtils.getString(fzConfig, "FACE_VERIFY_SWITCH",""))){
+  			appId = MDA.XJ_FACE_VERIFY_APP_ID_SECRET;
+  		}
+        String encryptAppIdStr = AESUtil.encryptToString(MDA.FACE_VERIFY_APP_ID,
+  				 appId);
   		svcContMap.put("app_id", encryptAppIdStr);
   		Map<String, Object> paramMaps = (Map<String, Object>) ServletUtils.getSessionAttribute(getRequest(), Const.CACHE_CERTINFO_PARAM);
   		String image_idcard = "";
@@ -2266,17 +2277,22 @@ public class CustController extends BaseController {
   		//paramsMap.put("image_best",image_best);
   		log.debug("param={}", JsonUtil.toString(svcContMap.get("params")));
   		
+  		String params = MDA.FACE_VERIFY_PARAMS_SECRET;
+  		if("ON".equals(MapUtils.getString(fzConfig, "PROVINCE_FACE_VERIFY_FLAG","")) && "OFF".equals(MapUtils.getString(fzConfig, "FACE_VERIFY_SWITCH",""))){
+  			params = MDA.XJ_FACE_VERIFY_PARAMS_SECRET;
+  		}
+  		
   		svcContMap.put("params",
-  				AESUtil.encryptToString(JsonUtil.toString(svcContMap.get("params")), MDA.FACE_VERIFY_PARAMS_SECRET));
+  				AESUtil.encryptToString(JsonUtil.toString(svcContMap.get("params")), params));
   		try {
   			rMap = custBmo.verify(reqMap, optFlowNum, sessionStaff);
   			if (rMap != null
   					&& ResultCode.R_SUCCESS.equals(rMap.get("code") + "")) {
   				if (ResultCode.R_SUCC.equals(rMap.get("result_code") + "")) {
-  					Map<String, Object> fzConfig = (HashMap<String, Object>) MDA.FACE_VERIFY_FLAG
-  							.get("FACE_VERIFY_"
-  									+ sessionStaff.getCurrentAreaId()
-  											.substring(0, 3));
+//  					Map<String, Object> fzConfig = (HashMap<String, Object>) MDA.FACE_VERIFY_FLAG
+//  							.get("FACE_VERIFY_"
+//  									+ sessionStaff.getCurrentAreaId()
+//  											.substring(0, 3));
   					String fz = MapUtils.getString(fzConfig, "FZ", "0");
   					Double  confidences = (Double) rMap.get("confidence");
   					rMap.put("fz", fz);
