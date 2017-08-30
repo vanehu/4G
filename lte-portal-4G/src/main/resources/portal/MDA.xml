@@ -56,6 +56,12 @@
 			description="人证平台配置：APP_ID对应的加密密钥" />
 		<const type="String" name="FACE_VERIFY_PARAMS_SECRET" value="FACEKEY_CRM_2017"
 			description="人证平台配置：params对应的加密密钥" />
+			
+		<const type="String" name="XJ_FACE_VERIFY_APP_ID_SECRET" value="FACEKEY_20170308"
+			description="新疆人证平台配置：APP_ID对应的加密密钥" />
+         <const type="String" name="XJ_FACE_VERIFY_PARAMS_SECRET" value="FACEKEY_CRM_2017"
+			description="新疆人证平台配置：params对应的加密密钥" />
+			
 		<const type="String" name="CSB_PIC_VERIFY"
 			value="http://10.128.90.194:8201/LTE-CSB/HttpAPIService" description="人证照片比对地址(测试)" />
 		<!-- <const type="String" name="CSB_PIC_VERIFY" value="http://cn2csb.crm.189.cn/LTE-CSB/HttpAPIService" 
@@ -3340,9 +3346,9 @@
 			},
 			'FACE_VERIFY_865':<!-- 新疆 -->
 			{
-			'FACE_VERIFY_SWITCH':'OFF','FZ':'60'
+			'FACE_VERIFY_SWITCH':'OFF','PROVINCE_FACE_VERIFY_FLAG': 'OFF','FZ':'60'
 			},
-			'FACE_VERIFY_844':<!-- 广东 -->
+            'FACE_VERIFY_844':<!-- 广东 -->
 			{
 			'FACE_VERIFY_SWITCH':'OFF','FZ':'60'
 			},

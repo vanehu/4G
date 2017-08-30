@@ -1669,7 +1669,15 @@ public class InterfaceClient {
 		String sign=AESUtils.getMD5Str(signKey);
 		TcpCont.put("Sign", sign);
 		TcpCont.put("Method", serviceCode);
-		TcpCont.put("Version", "V1.0");
+		Map<String, Object> fzConfig = (HashMap<String, Object>) MDA.FACE_VERIFY_FLAG
+				.get("FACE_VERIFY_"
+						+ sessionStaff.getCurrentAreaId()
+								.substring(0, 3));
+		if("ON".equals(MapUtils.getString(fzConfig, "PROVINCE_FACE_VERIFY_FLAG","")) && "OFF".equals(MapUtils.getString(fzConfig, "FACE_VERIFY_SWITCH",""))){
+			TcpCont.put("Version", "V1.1");
+		}else{
+			TcpCont.put("Version", "V1.0");
+		}
 		//签名串结束
 		long beginTime = System.currentTimeMillis();
 
@@ -1724,6 +1732,7 @@ public class InterfaceClient {
 							resultCode = respCode;
 							resultMsg = (String)respMap.get("RspDesc");
 							db.setResultCode(ResultCode.R_FAIL);
+							db.setReturnlmap(svcContMap);
  						}
 					}
 					
