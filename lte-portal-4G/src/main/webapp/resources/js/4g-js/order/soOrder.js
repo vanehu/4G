@@ -3341,9 +3341,11 @@ SoOrder = (function() {
 		//政企客户先校验使用人是否填写，再进行一证五号校验
         if (!(OrderInfo.actionFlag == 16 || (CacheData.isGov(order.cust.getCustCertType()) && (OrderInfo.specialtestauth || OrderInfo.dzjbakqx)))) {//如果是改号业务或政企客户有测试卡权限，不需要调用一证五号校验
             //一证五号校验
-            if (!_oneCertFiveCheckData(order.cust.getCustInfo415())) {
-                return false;
-            }
+			if(OrderInfo.needCheckFlag == "Y"){
+                if (!_oneCertFiveCheckData(order.cust.getCustInfo415())) {
+                    return false;
+                }
+			}
         }
 		
 		//补换卡校验

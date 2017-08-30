@@ -41,7 +41,7 @@ OrderInfo = (function() {
 	15 过户
 	16 改账务定制关系
 	17 改产品密码*/
-	
+    var _needCheckFlag  = "N";//是否需要调用一证五号
 	//定义新装动作
 	var newClothes="false";
 	//定义纳入老成员动作
@@ -1645,6 +1645,7 @@ OrderInfo = (function() {
 		oneCardFiveNum : _oneCardFiveNum,
 		vice_card : _vice_card,
 		custBak                 :_custBak,
-		oneCardFiveNO  : _oneCardFiveNO
+		oneCardFiveNO  : _oneCardFiveNO,
+        needCheckFlag  :_needCheckFlag
 	};
 })();
