@@ -2111,6 +2111,7 @@
 			"REGEXP_PRICE" :"^[0-9]+(.[0-9]{1,2})?$",						<!-- 批量订购裸终端价格校验正则表达式 -->
 			"REGEXP_DEALER" :"^\\d+@\\d+@\\d+@\\d+?$",						<!-- 批量修改发展人[产品发展人]正则表达式 -->
 			"REGEXP_OFFER" :"^\\d+@\\d+@\\d+@\\d+?$",						<!-- 批量修改发展人[销售品发展人]正则表达式 -->
+			"REGEXP_CANCEL":"^[CZ]$",										<!-- 批量撤单(撤单/作废)正则表达式 -->
 			"REGEXP_NOTNULL":"^\\w+?$"										<!-- 非空校验正则表达式 -->
 			}
 		</const>
@@ -2410,6 +2411,21 @@
 				"errorDataMaxCount" :10,
 				"threadsFlag" :'ON'
 			},
+			"20":{
+				"totalColumns" :3,
+				"strictColumns" :[0,1,2],
+				"govEntCheckList" :[],
+				"regexpCheckList" :[2],
+				"nameColumns" :["购物车流水","原因","撤单/作废"],
+				"maxRows" :1000,
+				"batchTypeName" :"批量撤单",
+				"repeatCheckList" :[0],
+				"regexpCheck" :{"2":"REGEXP_CANCEL"},
+				"templateType" :null,
+				"threshold" :512,
+				"errorDataMaxCount" :10,
+				"threadsFlag" :'ON'
+				},
 			"22":{
 				"totalColumns" :9,
 				"strictColumns" :[0,1,2,3,5],
@@ -3069,7 +3085,7 @@
 			'PHOTOGRAPH_REVIEW_861':'OFF',<!-- 陕西 -->
 			'PHOTOGRAPH_REVIEW_842':'OFF',<!-- 湖北 -->
 			'PHOTOGRAPH_REVIEW_835':'OFF',<!-- 福建 -->
-			'PHOTOGRAPH_REVIEW_832':'OFF',<!-- 江苏 -->
+			'PHOTOGRAPH_REVIEW_832':'ON',<!-- 江苏 -->
 			'PHOTOGRAPH_REVIEW_846':'OFF',<!-- 海南 -->
 			'PHOTOGRAPH_REVIEW_864':'OFF',<!-- 宁夏 -->
 			'PHOTOGRAPH_REVIEW_814':'OFF',<!-- 山西 -->
@@ -3510,5 +3526,6 @@
 			"COMPRESS_WIDTH"	:400,
 			"COMPRESS_HEIGHT"	:300
 		}
-		</const>		</mda>
+		</const>		
+	</mda>
 </mdas>

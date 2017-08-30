@@ -645,6 +645,7 @@ public class MDA {
 
 	/**#1614052套餐变更校验副卡数量是否满足目的套餐规则*/	
 	public static final String OFFER_CHANGE_CHECK = new String("");
+	
 	/**开启展示本地打印回执按钮*/
 	public static final Map<String, String> OPENPRINTFLAG = new HashMap<String, String>();
 	
