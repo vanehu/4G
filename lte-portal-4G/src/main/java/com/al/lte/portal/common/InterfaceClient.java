@@ -1732,7 +1732,7 @@ public class InterfaceClient {
 							resultCode = respCode;
 							resultMsg = (String)respMap.get("RspDesc");
 							db.setResultCode(ResultCode.R_FAIL);
-							svcContMap.put("tranId",tcpContMap.get("TransactionID"));
+							db.setReturnlmap(svcContMap);
  						}
 					}
 					
