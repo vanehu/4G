@@ -445,10 +445,8 @@ order.calcharge = (function(){
 					SoOrder.getToken();
 					inOpetate=false;
 					$.alertM(response.data);
-					$.alert("提示","flag="+flag+"&payType="+payType);
-					if(flag==1 && payType!="100000"){//提交接口失败，被后台拦截则,则非现金支付且金额大于0则调支付平台退款接口
+					if(flag==1){//提交接口失败，被后台拦截则,则非现金支付且金额大于0则调支付平台退款接口
 						var charge=_getCharge();//支付金额
-						$.alert("提示","进入退款流程=========");
 						_payRefund(olId,charge,response.data.errMsg);
 					}
 					//SoOrder.showAlertDialog(response.data);
@@ -1071,7 +1069,6 @@ order.calcharge = (function(){
 				"remark"   :remark
 		};
 		//params.remark=response.data.errData.resultMsg;
-		$.alert("提示","开始调用支付退款接口");
 		var url = contextPath+"/app/pay/repair/payRefund";
 		var response = $.callServiceAsJson(url, params);
 		if (response.code == 0) {
