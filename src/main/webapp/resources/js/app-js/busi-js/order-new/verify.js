@@ -131,6 +131,12 @@ verify = (function(){
         	var cert_number = "";
         	if($("#identidiesType").val()=="1" && ((OrderInfo.actionFlag!="111" && cust.isSameOne) ||(OrderInfo.actionFlag=="111" && order.broadband.isSameOne))){
         		cert_number = $("#userid").val();
+        	}else if(OrderInfo.actionFlag=="9"){
+        		if(cust.isSameOne){
+        			cert_number = $("#cmCustIdCard").val();
+        		}else{
+        			cert_number = $("#sfzorderAttrIdCard").val();
+        		}
         	}else{
         		cert_number = OrderInfo.jbr.identityNum;
         	}

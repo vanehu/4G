@@ -289,6 +289,18 @@ order.service = (function(){
 							$.alert("错误提示","无付费类型，无法新装！");
 							return false;
 						}
+						if(OrderInfo.actionFlag==2 && offerSpec.offerRoles[1]!=undefined && offerSpec.offerRoles[1].roleObjs!=undefined){
+							for(var p=0;p<offerSpec.offerRoles[1].roleObjs.length;p++){
+								if(offerSpec.offerRoles[1].roleObjs[p].objId == 235010000){
+									var fkRole = offerSpec.offerRoles[1].roleObjs[p];
+									var fkSize = offerChange.offerMemberSize-1;
+									if(fkRole.minQty > fkSize || fkRole.maxQty < fkSize){
+										$.alert("错误提示","当前产品的副卡数量为"+fkSize+"不满足目标套餐的规则要求：副卡最大数量为"+fkRole.maxQty+"。最小数量为。"+fkRole.minQty);
+										return false;
+									}
+								}
+							}
+						}
 						offerSpec = SoOrder.sortOfferSpec(offerSpec); //排序主副卡套餐
 						if((OrderInfo.actionFlag==6||OrderInfo.actionFlag==2||OrderInfo.actionFlag==1) && ec.util.isArray(OrderInfo.oldprodInstInfos)){//主副卡纳入老用户
 							OrderInfo.oldofferSpec.push({"offerSpec":offerSpec,"accNbr":param.accNbr});

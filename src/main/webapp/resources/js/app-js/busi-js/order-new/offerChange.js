@@ -7,7 +7,7 @@
 CommonUtils.regNamespace("offerChange");
 
 offerChange = (function() {
-	
+	var _offerMemberSize = 0;//主副卡成员数量
 	//初始化套餐变更页面
 	var _init = function (){
 		OrderInfo.order.step=1;
@@ -898,7 +898,8 @@ offerChange = (function() {
 		queryPortalProperties  :_queryPortalProperties,
 		orderTypeChoose			:_orderTypeChoose,
 		orderSubTypeChoose		:_orderSubTypeChoose,
-		orderingSubTypeChoose	:_orderingSubTypeChoose
+		orderingSubTypeChoose	:_orderingSubTypeChoose,
+		offerMemberSize			:_offerMemberSize
 		
 	};
 })();
