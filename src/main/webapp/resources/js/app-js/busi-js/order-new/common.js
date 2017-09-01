@@ -157,6 +157,8 @@ common = (function($) {
 		if(cust.isSameOne == undefined){
 			return;
 		}
+		var jbrAgelimitKey = "PRO_JBR_AGE_FLAG_"+(OrderInfo.staff.soAreaId+"").substring(0,3);
+		var jbrAgelimitFlag = offerChange.queryPortalProperties(jbrAgelimitKey);//经办人岁数限制开关
 		if(!cust.isSameOne){
 			var partyName = $('#orderAttrName').val();//经办人名称
 			var areaId = OrderInfo.staff.areaId;//经办人地区
@@ -180,6 +182,25 @@ common = (function($) {
 				OrderInfo.virOlId = "";
 				order.main.queryJbr();
 				return;
+			}
+		}
+		if(cust.isSameOne){//本人需判断本人年龄是否大于经办人指定最小年龄
+			if(jbrAgelimitFlag=="ON"){
+				var jbrMustAge=SoOrder.queryConstConfig("18");//经办人最小年龄
+				var custAge=OrderInfo.cust.age;//客户年龄
+				if(custAge<jbrMustAge){
+					$.alert("提示","客户年龄"+custAge+"周岁，未达到经办人指定年龄"+jbrMustAge+"周岁，请使用他人代办！");
+					return;
+				}
+			}
+		}else{//他人代办需判断该经办人年龄是否大于经办人指定最小年龄
+			if(jbrAgelimitFlag=="ON"){
+				var jbrMustAge=SoOrder.queryConstConfig("18");//经办人最小年龄
+				var jbrAge=OrderInfo.jbr.age;//经办人年龄
+				if(jbrAge<jbrMustAge){
+					$.alert("提示","经办人年龄"+jbrAge+"周岁，未达到经办人指定年龄"+jbrMustAge+"周岁，请重新选择经办人！");
+					return;
+				}
 			}
 		}
 		var arr=new Array(1);

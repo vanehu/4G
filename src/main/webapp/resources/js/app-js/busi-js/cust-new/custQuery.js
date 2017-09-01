@@ -302,7 +302,8 @@ custQuery = (function(){
 	        accountName: $(scope).attr("accountName"),//账户名
 	        userName: $(scope).attr("userName"),//使用人名
 	        userCustId: $(scope).attr("userCustId"),//使用人客户id
-	        isSame: $(scope).attr("isSame")//使用人名称与账户名称是否一致
+	        isSame: $(scope).attr("isSame"),//使用人名称与账户名称是否一致
+	        age: $(scope).attr("age")//客户年龄
 			
 		};
 		custQuery.custPic="";

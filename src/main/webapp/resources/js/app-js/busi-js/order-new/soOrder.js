@@ -8,6 +8,7 @@ CommonUtils.regNamespace("SoOrder");
 /** 受理订单对象*/
 SoOrder = (function() { 
 	var _usedNum = 0; 
+	var _jbrMustAge=16;//经办人年龄(默认值)
 	//初始化填单页面，为规则校验类型业务使用
 	var _initFillPage = function(){
 		SoOrder.initOrderData();
@@ -40,7 +41,15 @@ SoOrder = (function() {
 		var isFlag = offerChange.queryPortalProperties(propertiesKey);
 		OrderInfo.preBefore.idPicFlag = isFlag;
 		SoOrder.usedNum = cust.usedNum;
-
+		var ageJbrMustKey = "AgelimitNeedJbrFlag";
+		var ageJbrMustFlag = offerChange.queryPortalProperties(ageJbrMustKey);//岁数限制经办人必填开关
+		var custAge=OrderInfo.cust.age;//客户年龄
+		if(ageJbrMustFlag=="ON"){
+			var jbrMustAge=SoOrder.queryConstConfig("17");
+			if(custAge>=jbrMustAge){//客户年龄小于指定年龄必填经办人,大于则可以不填
+				ageJbrMustFlag="OFF";
+			}	
+		}
 		if(OrderInfo.actionFlag==8){//新增客户
 			OrderInfo.busitypeflag = 25;
 		}else if(OrderInfo.actionFlag==13){//购裸机
@@ -49,7 +58,7 @@ SoOrder = (function() {
 			OrderInfo.busitypeflag = 14;
 			OrderInfo.order.step=3;
 		}else if(OrderInfo.actionFlag==6 ||OrderInfo.actionFlag==21){//主副卡成员变更
-			if(OrderInfo.preBefore.idPicFlag == "ON" && !OrderInfo.virOlId){
+			if((OrderInfo.preBefore.idPicFlag == "ON" || ageJbrMustFlag == "ON" ) && !OrderInfo.virOlId){
 				$.alert("提示","请前往经办人页面进行实名拍照！");
 				return;
 			}
@@ -57,23 +66,27 @@ SoOrder = (function() {
 		}else if(OrderInfo.actionFlag==2){//套餐变更
 			OrderInfo.busitypeflag = 2;
 		}else if(OrderInfo.actionFlag==9){//客户返档
+			if((OrderInfo.preBefore.idPicFlag == "ON" || ageJbrMustFlag == "ON" ) && !OrderInfo.virOlId){
+				$.alert("提示","请前往经办人页面进行实名拍照！");
+				return;
+			}
 			OrderInfo.busitypeflag = 12;
 		}else if(OrderInfo.actionFlag==22){//补换卡
 			//补卡经办人必填  换卡经办人非必填
-			if(OrderInfo.preBefore.idPicFlag == "ON" && !OrderInfo.virOlId && OrderInfo.uimtypeflag == "22"){
+			if((OrderInfo.preBefore.idPicFlag == "ON" || ageJbrMustFlag == "ON" ) && !OrderInfo.virOlId && OrderInfo.uimtypeflag == "22"){
 				$.alert("提示","请前往经办人页面进行实名拍照！");
 				return;
 			}
 			OrderInfo.busitypeflag = OrderInfo.uimtypeflag;
 		}else if(OrderInfo.actionFlag==23){//异地补换卡
 			//补卡经办人必填  换卡经办人非必填
-			if(OrderInfo.preBefore.idPicFlag == "ON" && !OrderInfo.virOlId && OrderInfo.uimtypeflag == "22"){
+			if((OrderInfo.preBefore.idPicFlag == "ON" || ageJbrMustFlag == "ON" ) && !OrderInfo.virOlId && OrderInfo.uimtypeflag == "22"){
 				$.alert("提示","请前往经办人页面进行实名拍照！");
 				return;
 			}
 			OrderInfo.busitypeflag = 19;
 		}else if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==14 || OrderInfo.actionFlag==112){//新装
-			if(OrderInfo.preBefore.idPicFlag == "ON" && !OrderInfo.virOlId){
+			if((OrderInfo.preBefore.idPicFlag == "ON" || ageJbrMustFlag == "ON" ) && !OrderInfo.virOlId){
 				$.alert("提示","请前往经办人页面进行实名拍照！");
 				return;
 			}
@@ -2118,6 +2131,24 @@ SoOrder = (function() {
 			
 		}
    };
+   
+ //查询X：X周岁以下办理任何电信业务必须填写经办人(传17)  Y：经办人必须是Y周岁以上(传18)
+   var _queryConstConfig=function(typeClass){
+		var year=SoOrder.jbrMustAge;
+		var param={
+			typeClass:typeClass,
+			queryType:"3"
+		};
+		var url=contextPath+"/print/queryConstConfig";
+		//$.ecOverlay("<strong>正在查询公共数据查询的服务中,请稍后....</strong>");
+		var response = $.callServiceAsJsonGet(url,param);	
+		if (response.code==0) {
+			if(response.data!=undefined){
+				year=response.data.value
+			}
+		}
+		return year;
+	};
 	return {
 		sortOfferSpec           :_sortOfferSpec,
 		delOrder 				: _delOrder,
@@ -2143,6 +2174,8 @@ SoOrder = (function() {
 		getTokenSynchronize     :_getTokenSynchronize,
 		createMainOrder         :_createMainOrder,
 		delViceCardAndNew       :_delViceCardAndNew,
-		usedNum					:_usedNum
+		usedNum					:_usedNum,
+		jbrMustAge              :_jbrMustAge,
+		queryConstConfig        :_queryConstConfig
 	};
 })();
