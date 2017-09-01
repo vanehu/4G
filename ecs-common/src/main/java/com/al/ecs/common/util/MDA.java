@@ -34,6 +34,16 @@ public class MDA {
 	 * 问卷调查 菜单访问权限
 	 */
 	public static final String IS_QUESTION_MENU = new String("");
+	
+	/**
+	 * 2017-08-31 经办人 证件权限
+	 */
+	public static final String LESS_THAN_SEVENTEEN = new String("");
+	
+	/**
+	 * 2017-08-31 经办人校验 分省
+	 */
+	public static final Map<String,String> LESS_THAN_EIGHT = new HashMap<String,String>();
 
 //	/**
 //	 * 问卷调查 题目查询
@@ -639,13 +649,22 @@ public class MDA {
     
     /**人证平台配置：params对应的加密密钥*/
     public static final String FACE_VERIFY_PARAMS_SECRET =new String("");
+    
+    /** 新疆人证平台配置：APP_ID对应的加密密钥*/
+    public static final String XJ_FACE_VERIFY_APP_ID_SECRET=new String("");
+    
+    /**新疆人证平台配置：params对应的加密密钥*/
+    public static final String XJ_FACE_VERIFY_PARAMS_SECRET =new String("");
   
 	/**营销推荐接触反馈结果*/
 	public static final List<Map<String,String>> MKT_CONTACT_RESULT = new ArrayList<Map<String,String>>();
 
-	/**#1614052套餐变更校验副卡数量是否满足目的套餐规则*/
+	/**#1614052套餐变更校验副卡数量是否满足目的套餐规则*/	
 	public static final String OFFER_CHANGE_CHECK = new String("");
-
+	
 	/**开启展示本地打印回执按钮*/
 	public static final Map<String, String> OPENPRINTFLAG = new HashMap<String, String>();
+	
+	/**IE8图片压缩参数*/
+    public static final Map<String, Object> IE8_COMPRESS_CONFIG = new HashMap<String, Object>();
 }

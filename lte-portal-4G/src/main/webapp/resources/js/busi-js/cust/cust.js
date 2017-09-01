@@ -1414,6 +1414,11 @@ order.cust = (function(){
 		var areaId=$("#p_cust_areaId").val();
 		var menuName = $("#menuName").val();
 		OrderInfo.menuName = menuName;
+		//军人身份证件、武装警察身份证件不能作为实名登记有效证件，不允许新增客户
+		if($("#p_cust_identityCd").val() == "2" || $("#p_cust_identityCd").val() == "14"){
+			$.alert("提示", "军人身份证件、武装警察身份证件不能作为实名登记有效证件，不允许新增客户");
+			return;
+		}
 		if(areaId.indexOf("0000")>0){
 			$.alert("提示","前页受理地区为省级地区无法进行创建,请先选择市级地区！");
 			return;
@@ -3759,7 +3764,7 @@ order.cust = (function(){
 	var _callFaceVerify = function(){
 	 	 var request_id = "";
          var result =  query.common.queryPropertiesMapValue("FACE_VERIFY_FLAG", "FACE_VERIFY_"+String(OrderInfo.staff.areaId).substr(0, 3));
-		 if(ec.util.isObj(OrderInfo.bojbrCustIdentities.identidiesPic) && result.FACE_VERIFY_SWITCH == "ON" && !query.common.checkOperateSpec(CONST.RZBDGN)){
+		 if(ec.util.isObj(OrderInfo.bojbrCustIdentities.identidiesPic) && (result.FACE_VERIFY_SWITCH == "ON" ||  result.PROVINCE_FACE_VERIFY_FLAG == "ON") && !query.common.checkOperateSpec(CONST.RZBDGN)){
 			 var param={
 				 "ContractRoot":{
 						   "SvcCont":{

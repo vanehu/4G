@@ -26,6 +26,8 @@ import java.util.regex.Pattern;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.sun.image.codec.jpeg.JPEGCodec;
 import com.sun.image.codec.jpeg.JPEGEncodeParam;
 import com.sun.image.codec.jpeg.JPEGImageEncoder;
@@ -42,6 +44,8 @@ public class ImageUtil {
     private static final MediaTracker TRACKER = new MediaTracker(new Component() {
         private static final long serialVersionUID = -5147018377651299879L;
     });
+    
+    private static Pattern pattern = Pattern.compile("data:image/(.*);base64,");
 
     /**
      * @param originalFile 原图像
@@ -353,13 +357,12 @@ public class ImageUtil {
     }
 	
 	/**
-	 * 从Base64ImageStr中获取图片格式(后缀名)
+	 * get image format from base64ImageStr
 	 * @param base64ImageStr
 	 * @return image format (like jpg or png...)，<strong>null</strong> is returned if there's no head infos in base64ImageStr
 	 */
 	public static String getImageFormat(String base64ImageStr) {
 		if(base64ImageStr != null){
-			Pattern pattern = Pattern.compile("data:image/(.*);base64,");
 	        Matcher matcher = pattern.matcher(base64ImageStr);
 	        if (matcher.find()) {
 	            return matcher.group(1);
@@ -401,5 +404,21 @@ public class ImageUtil {
         length = length % 2 == 0 ? length / 2 : length / 2 + 1;
         return length;
     }
-
+	
+	public static byte[] imageResize(byte[] srcImageBytes, String imageFormat, int height, int width) throws IOException{
+		if(srcImageBytes == null || srcImageBytes.length <= 0){
+			return null;
+		}
+		imageFormat = StringUtils.isBlank(imageFormat) ? "jpeg" : imageFormat;
+		height = height <= 0 ? 300 : height;
+		width = width <= 0 ? 400 : width;
+		
+		ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(srcImageBytes);
+		BufferedImage bufferedImage = ImageIO.read(byteArrayInputStream);
+        Image scaledImage = bufferedImage.getScaledInstance(width, height, Image.SCALE_DEFAULT);
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        ImageUtil.encode(byteArrayOutputStream, scaledImage, imageFormat);
+        
+        return byteArrayOutputStream.toByteArray();
+	}
 }

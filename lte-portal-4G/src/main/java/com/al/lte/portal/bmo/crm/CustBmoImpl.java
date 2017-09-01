@@ -781,7 +781,7 @@ public class CustBmoImpl implements CustBmo {
 	private boolean verifySignature(Map<String, String> image, String venderId){
 		boolean resultFlag = false;
 		
-		Photograph photograph = Photograph.getInstanceSync();
+		Photograph photograph = Photograph.getInstance();
 		photograph.setPhotograph(image.get("photograph").toString());
 		photograph.setSignature(image.get("signature").toString());
 		resultFlag = photograph.verifySignature(venderId);
@@ -797,7 +797,7 @@ public class CustBmoImpl implements CustBmo {
 	 * @throws IOException
 	 */
 	public Map<String, String> addTextWatermark(Map<String, String> image, String venderId) throws IOException{
-		Photograph photograph = Photograph.getInstanceSync();
+		Photograph photograph = Photograph.getInstance();
 		
 		photograph.setPhotograph(image.get("photograph"));
 		image.put("photograph", photograph.addTextWatermarkMethod(venderId));
@@ -832,7 +832,7 @@ public class CustBmoImpl implements CustBmo {
 		param.put("picturesInfo", photographs);
 		param.remove("photographs");
 
-		return Photograph.getInstanceSync().uploadCustCertificate(param, sessionStaff);
+		return Photograph.getInstance().uploadCustCertificate(param, sessionStaff);
 	}
 	
 	/**
@@ -846,7 +846,7 @@ public class CustBmoImpl implements CustBmo {
 		String imageStr = EncodeUtils.urlDecode(base64ImageStr);
 		
 		if(imageStr != null){
-			Photograph photograph = Photograph.getInstanceSync();
+			Photograph photograph = Photograph.getInstance();
 			photograph.setPhotograph(imageStr);
 			result.put("photograph", photograph.addTextWatermarkMethod(venderId));
 			result.put("code", ResultCode.R_SUCCESS);

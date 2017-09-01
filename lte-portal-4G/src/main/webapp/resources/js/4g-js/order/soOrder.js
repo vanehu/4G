@@ -3054,7 +3054,7 @@ SoOrder = (function() {
         var orderAttrAddr	= $.trim($("#orderAttrAddr").val());		//经办人证件地址
         var isAuditSucess 	= OrderInfo.operateSpecStaff.isAuditSucess;	//审核是否成功
 		var orderAttrIdCard = $.trim($("#orderAttrIdCard").val());		//经办人证件号码
-
+				
 		if(CONST.realNamePhotoFlag == "ON"){
 			//若页面上填写了经办人信息，但没有进行拍照，则拦截提示，不管权限不权限
 			if(ec.util.isObj(orderAttrName) || ec.util.isObj(orderAttrIdCard) || ec.util.isObj(orderAttrAddr)){
@@ -3341,9 +3341,11 @@ SoOrder = (function() {
 		//政企客户先校验使用人是否填写，再进行一证五号校验
         if (!(OrderInfo.actionFlag == 16 || (CacheData.isGov(order.cust.getCustCertType()) && (OrderInfo.specialtestauth || OrderInfo.dzjbakqx)))) {//如果是改号业务或政企客户有测试卡权限，不需要调用一证五号校验
             //一证五号校验
-            if (!_oneCertFiveCheckData(order.cust.getCustInfo415())) {
-                return false;
-            }
+			if(OrderInfo.needCheckFlag == "Y"){
+                if (!_oneCertFiveCheckData(order.cust.getCustInfo415())) {
+                    return false;
+                }
+			}
         }
 		
 		//补换卡校验
@@ -3704,6 +3706,31 @@ SoOrder = (function() {
 					}
 				}
 			} //TODO tmp for Mantis 0042657
+		}
+		
+		var cookie = _getCookieFromJava("switchC");
+		//获取下拉框的值
+		var selectValue = $("#orderIdentidiesTypeCd").val();
+		if(cookie == "ON"){
+			//对于当前客户年龄的校验
+			var custIdNumber = cert.readCert(CONST.CERT_READER_HANDLE_CUST).resultContent;
+			if(custIdNumber == "" || custIdNumber == null || custIdNumber == undefined){
+				$.alert("提示","未读取到身份证信息！");
+			}else{
+				if(orderAttrName == "" || orderAttrName == null || orderAttrName == undefined){
+					if(new Date().getFullYear().toString() - orderAttrIdCard.toString().subString(6,10) < 17){
+						$.alert("提示","不满17岁必须填写经办人！");
+					}
+				}
+			}
+			
+			//对于经办人的校验
+			if(orderAttrName != "" || orderAttrName != null || orderAttrName != undefined){
+				if(new Date().getFullYear().toString() - orderAttrIdCard.toString().subString(6,10) < 18 && selectValue != 50 && selectValue != 4 && selectValue != 3){
+					$.alert("提示","经办人必须18岁以上！");
+				}	
+			}
+			
 		}
 		}
 		return true; 
@@ -4244,7 +4271,7 @@ SoOrder = (function() {
 					value : OrderInfo.virOlId//即照片上传时后台返回的18位的虚拟订单ID:virOlId
 				});
 				 var result =  query.common.queryPropertiesMapValue("FACE_VERIFY_FLAG", "FACE_VERIFY_"+String(OrderInfo.staff.areaId).substr(0, 3));
-				  if(OrderInfo.bojbrCustIdentities.identidiesTypeCd == "1" && ec.util.isObj(OrderInfo.bojbrCustIdentities.identidiesPic) && result.FACE_VERIFY_SWITCH == "ON" && !query.common.checkOperateSpec(CONST.RZBDGN)){
+				  if(OrderInfo.bojbrCustIdentities.identidiesTypeCd == "1" && ec.util.isObj(OrderInfo.bojbrCustIdentities.identidiesPic) && (result.FACE_VERIFY_SWITCH == "ON" || result.PROVINCE_FACE_VERIFY_FLAG == "ON")&& !query.common.checkOperateSpec(CONST.RZBDGN)){
 					 custOrderAttrs.push({
 							itemSpecId : CONST.BUSI_ORDER_ATTR.CONFIDENCE,
 							value : OrderInfo.confidence  //人证照片比对相似度
@@ -4642,6 +4669,22 @@ SoOrder = (function() {
 		return true;
     };
     
+    //获取cookies的值
+    var _getCookieFromJava = function(c_name){
+    	if (document.cookie.length>0)
+    	  {
+    	  c_start=document.cookie.indexOf(c_name + "=")
+    	  if (c_start!=-1)
+    	    { 
+    	    c_start=c_start + c_name.length+1 
+    	    c_end=document.cookie.indexOf(";",c_start)
+    	    if (c_end==-1) c_end=document.cookie.length
+    	    return unescape(document.cookie.substring(c_start,c_end))
+    	    } 
+    	  }
+    	return "" 
+    }
+    
     //靓号调级
     var _buildBusiOrdersPhoneLevelModify = function(data, busiOrders){
     	var choosedProdInfo = order.prodModify.choosedProdInfo;
@@ -4710,6 +4753,7 @@ SoOrder = (function() {
 		changeFeeType			: _changeFeeType,
         oneCertFiveCheckData    : _oneCertFiveCheckData,
         setUserInfo             : _setUserInfo,
-        fillBusiOrder4changeUse : _fillBusiOrder4changeUse
+        fillBusiOrder4changeUse : _fillBusiOrder4changeUse,
+        getCookieFromJava      :_getCookieFromJava
 	};
 })();

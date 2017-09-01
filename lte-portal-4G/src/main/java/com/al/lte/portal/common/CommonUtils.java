@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import net.sf.json.JSON;
@@ -14,6 +15,7 @@ import net.sf.json.xml.XMLSerializer;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,6 +27,8 @@ import com.al.lte.portal.model.SessionStaff;
 public class CommonUtils {
 	
 	private static Logger log = LoggerFactory.getLogger(CommonUtils.class.getName());
+	
+	private static String userAgent;
 	
 	public static String getSerAddrPart(){
 		String sIP = "" ;
@@ -147,4 +151,35 @@ public class CommonUtils {
         }  
         return null;  
     }
+	
+	public static String setUserAgent(HttpServletRequest request){
+		if(request != null){
+			userAgent = request.getHeader("User-Agent");
+			if(StringUtils.isNotBlank(userAgent)){
+				userAgent = StringUtils.lowerCase(userAgent);
+			}
+		}
+		
+		return userAgent;
+	}
+	
+	public static String getUserAgent() {
+		return userAgent;
+	}
+	
+	public static boolean isIE(){
+		if(StringUtils.isNotBlank(userAgent)){
+			return StringUtils.indexOf(userAgent, "msie") >= 0;
+		} else{
+			return false;
+		} 
+	}
+	
+	public static boolean isIE8(){
+		if(StringUtils.isNotBlank(userAgent)){
+			return StringUtils.indexOf(userAgent, "msie 8") >= 0;
+		} else{
+			return false;
+		} 
+	}
 }
