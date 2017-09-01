@@ -22,6 +22,11 @@ order.prepare = (function(){
 						$.alert("提示", "在选号码之前请先进行客户定位或者新建客户！");
 						return;
 					}
+					//军人身份证件、武装警察身份证件不能作为实名登记有效证件，不允许新装号码
+					if($("#p_cust_identityCd").val() == "2" || $("#p_cust_identityCd").val() == "14"){
+						$.alert("提示", "军人身份证件、武装警察身份证件不能作为实名登记有效证件，不允许新装号码！");
+						return;
+					}
 					var authResult = order.prodModify.querySecondBusinessAuth("30", "Y", function () {
 						if(custId !="-1"){
 							//查分省前置校验开关
@@ -82,6 +87,11 @@ order.prepare = (function(){
 					var custId = OrderInfo.cust.custId;
 					if (OrderInfo.cust == undefined || custId == undefined || custId == "") {
 						$.alert("提示", "在选号码之前请先进行客户定位或者新建客户！");
+						return;
+					}
+					//军人身份证件、武装警察身份证件不能作为实名登记有效证件，不允许新装号码
+					if($("#p_cust_identityCd").val() == "2" || $("#p_cust_identityCd").val() == "14"){
+						$.alert("提示", "军人身份证件、武装警察身份证件不能作为实名登记有效证件，不允许新装号码！");
 						return;
 					}
 					var authResult = order.prodModify.querySecondBusinessAuth("30", "Y", function () {

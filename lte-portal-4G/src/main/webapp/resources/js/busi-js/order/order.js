@@ -555,6 +555,12 @@ order.service = (function(){
 	
 	//添加一个角色
 	var _addNum = function(id,max,parentOfferRoleId){
+		//军人身份证件、武装警察身份证件不能作为实名登记有效证件，不允许添加副卡
+		if($("#p_cust_identityCd").val() == "2" || $("#p_cust_identityCd").val() == "14"){
+			$.alert("提示", "军人身份证件、武装警察身份证件不能作为实名登记有效证件，不允许添加副卡！");
+			return;
+		}
+		
 		if(ec.util.isObj(parentOfferRoleId)){
 			var viceNum = 0;
 			var offerRoles = [];
