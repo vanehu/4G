@@ -372,6 +372,9 @@ public class AppCommonOutInterfinceController extends BaseController{
 	@AuthorityValid(isCheck = false)
 	@RequestMapping(value = "/randomStaffMsg", method = RequestMethod.POST)
 	public @ResponseBody JSONObject randomStaffMsg(HttpServletResponse response,HttpServletRequest request){
+		JSONObject jo = null;
+		Map<String, Object> rMap = new HashMap<String, Object>();
+		try {
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
                 SysConstant.SESSION_KEY_LOGIN_STAFF);
 		Map<String, Object> menu_cfg = MDA.PROVENCE_MENU.get(PROV_MENU_CONST+(sessionStaff.getAreaId() + "").substring(0, 3));
@@ -384,13 +387,11 @@ public class AppCommonOutInterfinceController extends BaseController{
 				chnNbr = cl.get("chnNbr").toString();
 			}
 		}
-		Map<String, Object> rMap = new HashMap<String, Object>();
 		rMap.put(RESULT_CODE, "0");
 		rMap.put(RESULT_MSG, "");
-		JSONObject jo = null;
 		Map<String, Object> staffList = new HashMap<String, Object>();
 		String randomCode = DateFormatUtils.format(new Date(), "yyyyMMddHHmmssSSS")+RandomStringUtils.randomNumeric(4);
-			try {
+
 				staffList.put(STAFF_ID, sessionStaff.getStaffId());//sessionStaff.getStaffId()
 				staffList.put("stafflCode", sessionStaff.getStaffCode());//sessionStaff.getStaffCode()
 				staffList.put("channelId", sessionStaff.getCurrentChannelId());
@@ -411,6 +412,7 @@ public class AppCommonOutInterfinceController extends BaseController{
 //				String result = httpClient.doPost("http://123.150.141.129:8905/yxs_service/service/random?msg="+encodeRandom, encodeRandom);
 //				System.out.println(result);
 	        }  catch (Exception e) {
+	        	System.out.println(e);
 				log.error(FAIL_MSG, e);
 				rMap.put(RESULT_CODE, "1");
 				rMap.put(RESULT_MSG, FAIL_MSG);
@@ -449,7 +451,7 @@ public class AppCommonOutInterfinceController extends BaseController{
 		}
 		Map<String, Object> menu_cfg = MDA.PROVENCE_MENU.get(PROV_MENU_CONST+(areaId + "").substring(0, 3));
 			try {
-//				System.out.println("++++++++++++reqMap="+JsonUtil.toString(reqMap));
+				System.out.println("++++++++++++msgstr="+msgstr);
 //				rMap = custBmo.verify(reqMap, optFlowNum, sessionStaff);
 //	 			log.debug("return={}", JsonUtil.toString(rMap));
 				if(msg==null || msg.length()==0 || menu_cfg==null){
@@ -459,10 +461,10 @@ public class AppCommonOutInterfinceController extends BaseController{
 					jo = JSONObject.fromObject(rMap);
 					return jo;
 				}
-//				System.out.println(msg);
 				msg = msg.replaceAll("plus", "\\+");
 				String aa = Des33.decode1(msg, (String) menu_cfg.get(SECRET_KEY));//加密随机数
 				param = JSONObject.fromObject(aa);
+				System.out.println("++++++++++++param="+JsonUtil.toString(param));
 				String randomCode = param.get("randomCode").toString();
 				String appId = param.get("appId").toString();
 				String appSecret = param.get("appSecret").toString();
@@ -471,6 +473,7 @@ public class AppCommonOutInterfinceController extends BaseController{
 //				staffList.put("channelId", "111111");//sessionStaff.getChannelId()
 //				staffList.put("areaId", "8410000");//sessionStaff.getAreaId()
 				staffList = (Map<String, Object>) RedisUtil.get(randomCode);
+				System.out.println("++++++++++++staffList="+JsonUtil.toString(staffList));
 				if(staffList==null){
 					rMap.put(RESULT_CODE, "1");
 					rMap.put(RESULT_MSG, "获取登陆信息失败");
@@ -482,6 +485,7 @@ public class AppCommonOutInterfinceController extends BaseController{
 				rMap.put(TOKEN, token);
 				rMap.put(RESULT_CODE, "0");
 				rMap.put(RESULT_MSG, "");
+				System.out.println("++++++++++++TOKEN="+token);
 				RedisUtil.set(staffList.get(STAFF_ID).toString(), rMap.get(TOKEN));
 				jo = JSONObject.fromObject(rMap);
 				System.out.println("随机数："+randomCode+"--------token："+token);
