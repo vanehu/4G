@@ -260,6 +260,33 @@ order.service = (function(){
 		}
 	};
 	
+	var _loadOfferChangeView = function(param, offerSpec){
+		var url=contextPath+"/app/order/queryFeeType";
+		$.ecOverlay("<strong>正在查询是否判断付费类型的服务中,请稍后....</strong>");
+		var response = $.callServiceAsJsonGet(url,param);	
+		$.unecOverlay();
+		if (response.code==0) {
+			if(response.data!=undefined){
+				if("0"==response.data){
+					var is_same_feeType=false;
+					if(order.prodModify.choosedProdInfo.feeType=="2100" && (offerSpec.feeType=="2100"||offerSpec.feeType=="3100"||offerSpec.feeType=="3101"||offerSpec.feeType=="3103"||offerSpec.feeType=="1202"||offerSpec.feeType=="2101")){
+						is_same_feeType=true;//预付费
+					}else if(order.prodModify.choosedProdInfo.feeType=="1200" && (offerSpec.feeType=="1200"||offerSpec.feeType=="3100"||offerSpec.feeType=="3102"||offerSpec.feeType=="3103"||offerSpec.feeType=="1202"||offerSpec.feeType=="2101")){
+						is_same_feeType=true;//后付费
+					}else if(order.prodModify.choosedProdInfo.feeType=="1201" && (offerSpec.feeType=="1201"||offerSpec.feeType=="3101"||offerSpec.feeType=="3102"||offerSpec.feeType=="3103")){
+						is_same_feeType=true;//准实时预付费
+					}
+					if(!is_same_feeType){
+						alert("付费类型不一致,无法进行套餐变更。");
+						return;
+					}
+				}
+			}
+		}
+		offerChange.offerChangeView();
+		return;
+	};
+	
 	//获取销售品构成，并选择数量
 	var _opeSer = function(inParam){	
 		//老号码新增内容
@@ -290,30 +317,11 @@ order.service = (function(){
         }
 
         if(OrderInfo.actionFlag == 2){ //套餐变更
-			var url=contextPath+"/app/order/queryFeeType";
-			$.ecOverlay("<strong>正在查询是否判断付费类型的服务中,请稍后....</strong>");
-			var response = $.callServiceAsJsonGet(url,param);	
-			$.unecOverlay();
-			if (response.code==0) {
-				if(response.data!=undefined){
-					if("0"==response.data){
-						var is_same_feeType=false;
-						if(order.prodModify.choosedProdInfo.feeType=="2100" && (offerSpec.feeType=="2100"||offerSpec.feeType=="3100"||offerSpec.feeType=="3101"||offerSpec.feeType=="3103"||offerSpec.feeType=="1202"||offerSpec.feeType=="2101")){
-							is_same_feeType=true;//预付费
-						}else if(order.prodModify.choosedProdInfo.feeType=="1200" && (offerSpec.feeType=="1200"||offerSpec.feeType=="3100"||offerSpec.feeType=="3102"||offerSpec.feeType=="3103"||offerSpec.feeType=="1202"||offerSpec.feeType=="2101")){
-							is_same_feeType=true;//后付费
-						}else if(order.prodModify.choosedProdInfo.feeType=="1201" && (offerSpec.feeType=="1201"||offerSpec.feeType=="3101"||offerSpec.feeType=="3102"||offerSpec.feeType=="3103")){
-							is_same_feeType=true;//准实时预付费
-						}
-						if(!is_same_feeType){
-							alert("付费类型不一致,无法进行套餐变更。");
-							return;
-						}
-					}
-				}
-			}
-			offerChange.offerChangeView();
-			return;
+        	OrderInfo.offer.initOfferCheckRule(offerSpec);
+    		var isOfferChangeAllowed = OrderInfo.offer.getResult();
+    		if(isOfferChangeAllowed){
+    			_loadOfferChangeView(param, offerSpec);
+    		}
 		}
 		// 销售品后处理
 		offerSpecAfterDeal(offerSpec);
@@ -738,7 +746,7 @@ order.service = (function(){
 					}
 				}
 				if(offerRoleId!=""){
-					_closeChooseDialog();
+					_closeChooseDialog();					
 					order.prodModify.chooseOfferForMember(specId,subpage,specName,offerRoleId);
 				}else{
 					$.alert("提示","无法选择套餐，套餐规格查询失败！");
@@ -760,12 +768,14 @@ order.service = (function(){
      */
     function needCheck(offerSpec) {
         var needCheck = false;
+        OrderInfo.needCheckFlag = "N";
         if (ec.util.isObj(offerSpec) && ec.util.isObj(offerSpec.offerRoles) && offerSpec.offerRoles.length > 0) {
             $.each(offerSpec.offerRoles, function () {
                 if (ec.util.isObj(this.roleObjs) && this.roleObjs.length > 0) {
                     $.each(this.roleObjs, function () {
                         if (this.objId == "235010000" || this.objId == "280000000" || this.objId == "280000025") {
                             needCheck = true;
+                            OrderInfo.needCheckFlag = "Y";
                         }
                     })
                 }

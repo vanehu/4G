@@ -1941,6 +1941,7 @@ order.cust = (function(){
 					OrderInfo.offer.offerId = order.prodModify.choosedProdInfo.prodOfferInstId;
 					OrderInfo.offer.offerSpecId = order.prodModify.choosedProdInfo.prodOfferId;
 					OrderInfo.offer.offerSpecName = order.prodModify.choosedProdInfo.prodOfferName;
+					OrderInfo.offer.initOfferMemberInfo();
 				}
 			}
 			if(ec.util.isObj(response.data.offerMemberInfos)){

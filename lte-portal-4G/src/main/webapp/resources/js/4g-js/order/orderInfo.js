@@ -64,6 +64,7 @@ OrderInfo = (function() {
 	var _cust_validateType = "";//客户鉴权方式
 
 	var _cust_validateNum = "";//客户鉴权号码
+	var _needCheckFlag  = "N";//是否需要调用一证五号
 
 	
 	var _orderlonger = "";
@@ -152,9 +153,15 @@ OrderInfo = (function() {
 						var offerRole = offerRoles[i];
 						if(offerRole.memberRoleCd == CONST.MEMBER_ROLE_CD.VICE_CARD || 
 								offerRole.memberRoleCd == CONST.MEMBER_ROLE_CD.BROADBAND_VICE_CARD){//副卡
-							this._minQty = offerRole.minQty;
-							this._maxQty = offerRole.maxQty;
-							return;
+							var roleObjs = offerRole.roleObjs;
+							for(var j = 0; j < roleObjs.length; j++){
+								var roleObj = roleObjs[j];
+								if(roleObj.objType == 2){
+									this._minQty = roleObj.minQty;
+									this._maxQty = roleObj.maxQty;
+									return;
+								}
+							}
 						}
 					}
 				}
@@ -1827,9 +1834,7 @@ OrderInfo = (function() {
 
 			OrderInfo.virOlId				  = "";		//拍照上传虚拟购物车ID
 			OrderInfo.handleCust			  = {};		//针对经办人老客户缓存一些数据
-			OrderInfo.certInfoKeys	  		  = [];		//读卡客户信息列表
 			OrderInfo.handleCustId 			  = "";		//经办人为老客户时的客户ID
-			OrderInfo.certInfoKeys			  = [];		//读卡客户信息列表
 			OrderInfo.boUserCustInfos 		  = [];		//使用人：客户信息节点
 			OrderInfo.ifCreateHandleCust	  = false;	//判断是否需要新建经办人
 			OrderInfo.boUserCustIdentities	  = [];		//使用人：客户证件节点
@@ -2046,6 +2051,7 @@ OrderInfo = (function() {
         faceVerifyFlag  		: _verifyFlag,
         confidence 				: _confidence,
         certInfoKeys			:_certInfoKeys,
-        pushCertInfoKeys		:_pushCertInfoKeys
+        pushCertInfoKeys		:_pushCertInfoKeys,
+        needCheckFlag           :_needCheckFlag
 	};
 })();

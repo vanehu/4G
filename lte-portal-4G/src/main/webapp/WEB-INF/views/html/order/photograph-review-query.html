@@ -55,36 +55,15 @@
 	                        </dd>
 						</dl>
 						</form>
-			        </div>  
-			        <div id="handleCustCertificateList"  class="phone_warp">
-		        		<table class="numberList">
-							<thead>
-								<tr>
-									<td width="30%">经办人证件照片</td>
-									<td width="10%">&nbsp;</td>
-									<td width="60%">经办人人像照片</td>
-								</tr>
-							</thead>
-							<tbody id="handleCustCertificateTbody" style="display:none">
-								<tr>
-									<td>
-										<img title="经办人证件照片" alt="经办人证件照片" id="handleCustCertificateImg" height="189px" width="153px"/>
-									</td>
-									<td>&nbsp;</td>
-									<td>
-										<img title="经办人人像照片" alt="经办人人像照片" id="handleCustPhotograph" height="360px" width="640px"/>
-									</td>
-								</tr>
-							</tbody>
-						</table>
 			        </div>
-			        <div id="handleCustCertificateNoList" style="display:none">
-		        		<div class="no_search">
+			        <div id="handleCustPhotoTips" style="display:none;">
+			        	<div class="no_search">
 							<div class="h1">
-								<img style="vertical-align:middle" src="${contextPath}/image/common/query_search.gif" />&nbsp;&nbsp;抱歉，没有找到相关的记录，请准确输入查询条件。
+								<span></span>
 							</div>
 						</div>
 			        </div>
+			        <div id="handleCustCertificateList"></div>
 		        </div>
 	    	</div>
 		</div>
@@ -96,3 +75,15 @@
 <#else>
 <@extends name="/content-template.html"/>
 </#if>
+<script>
+	$(function() {
+		var browserInfos = CommonUtils.getBrowserInfos();
+		if(ec.util.isObj(browserInfos) && ec.util.isObj(browserInfos.browserMode)){
+			var browserMode = browserInfos.browserMode.toLocaleLowerCase();
+			if(browserMode.indexOf("ie8") >= 0){
+				$("#handleCustPhotoTips span").html("您当前的浏览器模式为IE8，图像质量可能经过压缩，推荐使用Firefox、Chrome、IE9+浏览器查看原始图像。");
+				$("#handleCustPhotoTips").show();
+			}
+		}
+	});
+</script>
