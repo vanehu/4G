@@ -119,7 +119,11 @@ provence = (function(){
         { 
         	if(msg.resultCode!=0){
         		$.unecOverlay();
-        		$.alert("提示","发送随机码失败");
+        		if(msg.resultCode == 1 && msg.resultMsg != undefined){
+        			$.alert("提示",msg.resultMsg);
+        		}else{
+        			$.alert("提示","发送随机码失败");
+        		}
         	}else{
         		$.unecOverlay();
             	provence.getPage();
