@@ -143,7 +143,6 @@ cust = (function(){
 		OrderInfo.cust.contactName = $.trim($('#contactName').val());//联系人
 		OrderInfo.cust.mobilePhone = $.trim($('#mobilePhone').val());//联系人手机
 		OrderInfo.cust.contactAddress = $.trim($('#contactAddress').val());//联系人地址
-		
 		//联系人不为空时才封装联系人信息上传
 		if($.trim($('#contactName').val()).length>0){
 			OrderInfo.boPartyContactInfo.contactName = $.trim($('#contactName').val());//联系人
@@ -156,6 +155,7 @@ cust = (function(){
 		}else{
 			OrderInfo.cust.identityNum = $('#cmCustIdCardOther').val();//证件号码
 		}
+		OrderInfo.cust.age=cust.getAge(OrderInfo.cust.identityNum);
 		var flag=$("#flag").val();
 		if(ec.util.isObj(flag)){//有值代表是实名制创建客户页面
 			var data = {
@@ -465,10 +465,6 @@ cust = (function(){
 			common.setBtnTimer(obj);
 			var validate=$("#custFormdata").Validform();
 			if(!validate.check()){
-				return;
-			}
-			if(OrderInfo.preBefore.idPicFlag == "ON" && !OrderInfo.virOlId){
-				$.alert("提示","请前往经办人页面进行实名拍照！");
 				return;
 			}
 				if(order.prodModify.accountInfo!=undefined&&$.trim($("#accountName").val())==""){
@@ -2171,7 +2167,8 @@ cust = (function(){
 			accountName:$(scope).attr("accountName"),//账户名
 			userName:$(scope).attr("userName"),//使用人名
 			userCustId:$(scope).attr("userCustId"),//使用人客户id
-			isSame:$(scope).attr("isSame")//使用人名称与账户名称是否一致
+			isSame:$(scope).attr("isSame"),//使用人名称与账户名称是否一致
+			age:$(scope).attr("age")//经办人年龄
 			};
 		//设置被选择标识
 		_checkUserInfo.accNbr = "";
@@ -2963,6 +2960,7 @@ cust = (function(){
 				if (response.code==0) {
 					cust.accountQuery();
 					var custInfoSize = $(response.data).find('#custInfoSize').val();
+					var custAge;
 					if (parseInt(custInfoSize) >= 1) {//老客户
 						var custInfos;
 						for(var i=0;i<parseInt(custInfoSize);i++){
@@ -2994,6 +2992,7 @@ cust = (function(){
 						var CN=$(custInfos).attr("CN");
 						var certNum=$(custInfos).attr("certNum");
 						address=$(custInfos).attr("address");
+						custAge=$(custInfos).attr("age");
 						
 						if(identityCd2==undefined || identityCd2=="" || idCardNumber2==undefined || idCardNumber2==""){//当成新客户
 							cust.readIdCardUser={
@@ -3029,6 +3028,7 @@ cust = (function(){
 							"partyName":partyName
 							
 						};
+						custAge=cust.getAge(identityNum);
 					}
 					//填充经办人信息
 						OrderInfo.jbr.custId = cust.readIdCardUser.custId;
@@ -3037,6 +3037,8 @@ cust = (function(){
 						OrderInfo.jbr.addressStr = cust.readIdCardUser.addressStr;//经办人地址
 						OrderInfo.jbr.identityCd = cust.readIdCardUser.identityCd;//证件类型
 						OrderInfo.jbr.identityNum = cust.readIdCardUser.idCardNumber;//证件号码
+						//OrderInfo.jbr.age=jbrAge;
+						OrderInfo.cust.age=custAge;
 						cust.isOldCust = false;
 						if(cust.readIdCardUser.newUserFlag != "true"){
 							cust.isOldCust = true;
@@ -3132,7 +3134,36 @@ cust = (function(){
 			cust.isRealCust =  false;
 		}
 	};
-    
+
+//根据身份证号获取年龄
+  var _getAge=function (identityCard) {
+	    var len = (identityCard + "").length;
+	    if (len == 0) {
+	        return 0;
+	    } else {
+	        if ((len != 15) && (len != 18))//身份证号码只能为15位或18位其它不合法
+	        {
+	            return 0;
+	        }
+	    }
+	    var strBirthday = "";
+	    if (len == 18)//处理18位的身份证号码从号码中得到生日和性别代码
+	    {
+	        strBirthday = identityCard.substr(6, 4) + "/" + identityCard.substr(10, 2) + "/" + identityCard.substr(12, 2);
+	    }
+	    if (len == 15) {
+	        strBirthday = "19" + identityCard.substr(6, 2) + "/" + identityCard.substr(8, 2) + "/" + identityCard.substr(10, 2);
+	    }
+	    //时间字符串里，必须是“/”
+	    var birthDate = new Date(strBirthday);
+	    var nowDateTime = new Date();
+	    var age = nowDateTime.getFullYear() - birthDate.getFullYear();
+	    //再考虑月、天的因素;.getMonth()获取的是从0开始的，这里进行比较，不需要加1
+	    if (nowDateTime.getMonth() < birthDate.getMonth() || (nowDateTime.getMonth() == birthDate.getMonth() && nowDateTime.getDate() < birthDate.getDate())) {
+	        age--;
+	    }
+	    return age;
+	}
 	return {
 		jbridentidiesTypeCdChoose 	: 		_jbridentidiesTypeCdChoose,
 		jbrvalidatorForm 			: 		_jbrvalidatorForm,
@@ -3213,6 +3244,7 @@ cust = (function(){
 		custCernum					:		_custCernum,
 		checkRealCust				:		_checkRealCust,
 		isRealCust					:		_isRealCust,
-		userFlag					:		_userFlag
+		userFlag					:		_userFlag,
+		getAge                      :       _getAge
 	};	
 })();

@@ -1,8 +1,10 @@
 package com.al.lte.portal.app.controller.crm;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +35,6 @@ import com.al.ecs.common.util.JsonUtil;
 import com.al.ecs.common.util.MapUtil;
 import com.al.ecs.common.util.PageUtil;
 import com.al.ecs.common.util.PropertiesUtils;
-import com.al.ecs.common.util.UIDGenerator;
 import com.al.ecs.common.web.ServletUtils;
 import com.al.ecs.exception.AuthorityException;
 import com.al.ecs.exception.BusinessException;
@@ -1424,6 +1425,10 @@ public class CustController extends BaseController {
 //						listCustInfos.put(MapUtils.getString(tmpCustInfo,"custId",""), tmpCustInfo);
 						
 						String tmpIdCardNumber = (String) tmpCustInfo.get("idCardNumber");
+						if (tmpIdCardNumber != null && (tmpIdCardNumber.length() == 18 || tmpIdCardNumber.length() == 15)){
+							int age=getAge(tmpIdCardNumber);//获取周岁
+							tmpCustInfo.put("age", age);
+						}						
 						tmpCustInfo.put("filterIdCardNumber", tmpIdCardNumber);
 						if (tmpIdCardNumber != null && tmpIdCardNumber.length() == 18) {
 							String preStr = tmpIdCardNumber.substring(0, 6);
@@ -2698,8 +2703,9 @@ public class CustController extends BaseController {
 					for(int i = 0; i < custInfos.size(); i++){
 						Map tmpCustInfo =(Map)custInfos.get(i);
 						listCustInfos.put(MapUtils.getString(tmpCustInfo,"custId",""), tmpCustInfo);
-						
 						String tmpIdCardNumber = (String) tmpCustInfo.get("idCardNumber");
+						int age=getAge(tmpIdCardNumber);//获取周岁
+						tmpCustInfo.put("age", age);
 						tmpCustInfo.put("filterIdCardNumber", tmpIdCardNumber);
 						if (tmpIdCardNumber != null && tmpIdCardNumber.length() == 18) {
 							String preStr = tmpIdCardNumber.substring(0, 6);
@@ -2803,5 +2809,51 @@ public class CustController extends BaseController {
 			return super.failedStr(model, ErrorCode.QUERY_CUST, e, paramMap);
 		}
 	}
-  	
+  
+  /**
+   * 根据身份证号获取年龄
+   * @param idcard
+   * @return
+   */
+    private int getAge(String idcard){
+    	 // 获取出生日期    
+        String birthday = idcard.substring(6, 14);   
+        if (idcard != null && idcard.length() == 15) {//15位的身份证特殊处理
+        	birthday = "19"+idcard.substring(6, 12);
+    	}
+        Date birthdate;
+        int age=0;
+		try {
+			birthdate = new SimpleDateFormat("yyyyMMdd").parse(birthday);
+			  //获取当前系统时间
+	        Calendar cal = Calendar.getInstance(); 
+	        //取出系统当前时间的年、月、日部分
+	        int yearNow = cal.get(Calendar.YEAR); 
+	        int monthNow = cal.get(Calendar.MONTH); 
+	        int dayOfMonthNow = cal.get(Calendar.DAY_OF_MONTH); 
+	         
+	        //将日期设置为出生日期
+	        cal.setTime(birthdate); 
+	        //取出出生日期的年、月、日部分  
+	        int yearBirth = cal.get(Calendar.YEAR); 
+	        int monthBirth = cal.get(Calendar.MONTH); 
+	        int dayOfMonthBirth = cal.get(Calendar.DAY_OF_MONTH); 
+	        //当前年份与出生年份相减，初步计算年龄
+	        age = yearNow - yearBirth; 
+	        //当前月份与出生日期的月份相比，如果月份小于出生月份，则年龄上减1，表示不满多少周岁
+	        if (monthNow <= monthBirth) { 
+	            //如果月份相等，在比较日期，如果当前日，小于出生日，也减1，表示不满多少周岁
+	            if (monthNow == monthBirth) { 
+	                if (dayOfMonthNow < dayOfMonthBirth) age--; 
+	            }else{ 
+	                age--; 
+	            } 
+	        } 
+	        return age; 
+		} catch (ParseException e) {
+			log.error(e);
+		}     
+		return age;
+    }
+    
 }
