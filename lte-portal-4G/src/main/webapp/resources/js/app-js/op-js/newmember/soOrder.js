@@ -2044,6 +2044,9 @@ SoOrder = (function() {
 		
 		var prodStatus = CONST.PROD_STATUS_CD.NORMAL_PROD;
 		//封装产品状态节点
+		if(OrderInfo.actionFlag == 6 && $("#isPreNumber_"+prodId).attr("checked")=="checked"){
+			prodStatus = CONST.PROD_STATUS_CD.READY_PROD;
+		}
 		busiOrder.data.boProdStatuses.push({
 			state : "ADD",
 			prodStatusCd : prodStatus
