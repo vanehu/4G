@@ -289,7 +289,7 @@ order.service = (function(){
 							$.alert("错误提示","无付费类型，无法新装！");
 							return false;
 						}
-						if(OrderInfo.actionFlag==2 && offerSpec.offerRoles[1]!=undefined && offerSpec.offerRoles[1].roleObjs!=undefined){
+						if(OrderInfo.actionFlag==2 && offerChange.OFFER_CHANGE_CHECK=="ON" && offerSpec.offerRoles[1]!=undefined && offerSpec.offerRoles[1].roleObjs!=undefined){
 							for(var p=0;p<offerSpec.offerRoles[1].roleObjs.length;p++){
 								if(offerSpec.offerRoles[1].roleObjs[p].objId == 235010000){
 									var fkRole = offerSpec.offerRoles[1].roleObjs[p];
