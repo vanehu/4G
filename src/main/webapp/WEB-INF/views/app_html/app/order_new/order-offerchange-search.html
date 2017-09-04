@@ -266,6 +266,7 @@
 		$(function() {
 			//前置校验
 			var custId = OrderInfo.cust.custId;
+			offerChange.OFFER_CHANGE_CHECK = '${OFFER_CHANGE_CHECK}';
 			if (custId != "-1") {
 				//查分省前置校验开关
 				var propertiesKey = "PRECHECKFLAG_"
@@ -293,9 +294,6 @@
 			OrderInfo.order.soNbr = '${soNbr}';
 			offerChange.init();
 		}
-		$(document).ready(function() {
-			App.init();
-		});
 		cust.jbrvalidatorForm();
 		
 	</script>

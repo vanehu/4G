@@ -322,6 +322,9 @@ public class OrderController extends BaseController {
 		String newUIFlag = propertiesUtils.getMessage(propertiesKey);
 		
 		String result = rulecheck(params,model,optFlowNum,httpSession);
+		
+		String OFFER_CHANGE_CHECK = MDA.OFFER_CHANGE_CHECK.toString();
+		model.addAttribute("OFFER_CHANGE_CHECK", OFFER_CHANGE_CHECK);
 		if(result != null){
 			return result;
 		}else if(("ON".equals(newUIFlag) || newUIFlag==null) && params.get("newFlag")!=null){
