@@ -3597,7 +3597,7 @@ SoOrder = (function() {
      * @private
      */
     var _oneCertFiveCheckData = function (inParam) {
-        if( OrderInfo.needCheckFlag == "N"){
+        if( OrderInfo.needCheckFlag == "N" && OrderInfo.actionFlag =="1"){
             return true;
         }
     	OrderInfo.oneCardPhone = "";
