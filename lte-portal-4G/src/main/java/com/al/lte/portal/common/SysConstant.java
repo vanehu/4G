@@ -940,4 +940,7 @@ public final class SysConstant {
 
 	/** Session Key nonce */
 	public static final String SESSION_KEY_NONCE = "nonce_session_key";
+	
+	// 副卡预装 VICE_CARD_PREASSEMBLE
+	public static final String VICE_CARD_PREASSEMBLE = "VICE_CARD_PREASSEMBLE";
 }

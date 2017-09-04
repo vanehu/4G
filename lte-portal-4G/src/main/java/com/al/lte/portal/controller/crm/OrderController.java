@@ -1447,6 +1447,24 @@ public class OrderController extends BaseController {
                 }
                 model.addAttribute("main", param);
             }
+            SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+                    SysConstant.SESSION_KEY_LOGIN_STAFF);
+            String preNumberFlag = (String) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.VICE_CARD_PREASSEMBLE
+                    + "_" + sessionStaff.getStaffId());
+            try {
+                if (preNumberFlag == null) {
+                	preNumberFlag = staffBmo.checkOperatSpec(SysConstant.VICE_CARD_PREASSEMBLE, sessionStaff);
+                    ServletUtils.setSessionAttribute(super.getRequest(), SysConstant.VICE_CARD_PREASSEMBLE + "_"
+                            + sessionStaff.getStaffId(), preNumberFlag);
+                }
+            } catch (BusinessException e) {
+            	preNumberFlag = "1";
+            } catch (InterfaceException ie) {
+            	preNumberFlag = "1";
+            } catch (Exception e) {
+            	preNumberFlag = "1";
+            }
+            model.addAttribute("preNumberFlag", preNumberFlag);
             forward = "/order/order-main-template";
         }
         String iseditOperation = "-1";
