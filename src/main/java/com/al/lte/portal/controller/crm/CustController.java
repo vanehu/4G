@@ -247,8 +247,8 @@ public class CustController extends BaseController {
 						listCustInfos.put(MapUtils.getString(tmpCustInfo,"custId",""), tmpCustInfo);
 						
 						String tmpIdCardNumber = (String) tmpCustInfo.get("idCardNumber");
-						int age=getAge(tmpIdCardNumber);//获取周岁
-						tmpCustInfo.put("age", age);
+//						int age=getAge(tmpIdCardNumber);//获取周岁
+//						tmpCustInfo.put("age", age);
 						tmpCustInfo.put("filterIdCardNumber", tmpIdCardNumber);
 						if (tmpIdCardNumber != null && tmpIdCardNumber.length() == 18) {
 							String preStr = tmpIdCardNumber.substring(0, 6);
