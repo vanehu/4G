@@ -275,7 +275,12 @@ custQuery = (function(){
 			return false;
 		}
 		var idCardNum=$("#userid").val();
-		var userAge=cust.getAge(idCardNum);
+		var userAge=999;
+		if($("#identidiesType").val() == "-1" && $("#isAppointNum").val() == "1"){
+			
+		}else{
+			userAge=cust.getAge(idCardNum);//身份证号定位
+		}
 		_choosedCustInfo = {
 			extCustId : $(scope).attr("extCustId"),
 			custId : $(scope).attr("custId"), //$(scope).find("td:eq(3)").text(),
