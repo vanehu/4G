@@ -274,6 +274,8 @@ custQuery = (function(){
 			$.alert("提示","该客户缺失证件地址，不能进行业务受理！");
 			return false;
 		}
+		var idCardNum=$("#userid").val();
+		var userAge=cust.getAge(idCardNum);
 		_choosedCustInfo = {
 			extCustId : $(scope).attr("extCustId"),
 			custId : $(scope).attr("custId"), //$(scope).find("td:eq(3)").text(),
@@ -303,7 +305,7 @@ custQuery = (function(){
 	        userName: $(scope).attr("userName"),//使用人名
 	        userCustId: $(scope).attr("userCustId"),//使用人客户id
 	        isSame: $(scope).attr("isSame"),//使用人名称与账户名称是否一致
-	        age: $(scope).attr("age")//客户年龄
+	        age: userAge//客户年龄
 			
 		};
 		custQuery.custPic="";

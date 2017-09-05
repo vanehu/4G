@@ -2142,6 +2142,8 @@ cust = (function(){
 	var _showCustAuth = function(scope,type) {
 		_custFlag = type;
 		var a=$(scope).attr("custId");
+		var idCardNum=$("#sfzorderAttrIdCard").val();
+		var jbrAge=cust.getAge(idCardNum);
 		_choosedCustInfo = {
 			custId : $(scope).attr("custId"), //$(scope).find("td:eq(3)").text(),
 			partyName : $(scope).attr("partyName"), //$(scope).find("td:eq(0)").text(),
@@ -2168,7 +2170,7 @@ cust = (function(){
 			userName:$(scope).attr("userName"),//使用人名
 			userCustId:$(scope).attr("userCustId"),//使用人客户id
 			isSame:$(scope).attr("isSame"),//使用人名称与账户名称是否一致
-			age:$(scope).attr("age")//经办人年龄
+			age:jbrAge//经办人年龄
 			};
 		//设置被选择标识
 		_checkUserInfo.accNbr = "";
@@ -2992,7 +2994,6 @@ cust = (function(){
 						var CN=$(custInfos).attr("CN");
 						var certNum=$(custInfos).attr("certNum");
 						address=$(custInfos).attr("address");
-						custAge=$(custInfos).attr("age");
 						
 						if(identityCd2==undefined || identityCd2=="" || idCardNumber2==undefined || idCardNumber2==""){//当成新客户
 							cust.readIdCardUser={
@@ -3028,9 +3029,9 @@ cust = (function(){
 							"partyName":partyName
 							
 						};
-						custAge=cust.getAge(identityNum);
 					}
 					//填充经办人信息
+					    custAge=cust.getAge(identityNum);
 						OrderInfo.jbr.custId = cust.readIdCardUser.custId;
 						OrderInfo.jbr.partyName = cust.readIdCardUser.partyName;//经办人名称
 						OrderInfo.jbr.areaId = OrderInfo.staff.areaId;//经办人地区
