@@ -810,7 +810,6 @@ order.main = (function(){
 			$('#orderAttrAddr').val(custInfo.addressStr);
 			$('#orderAttrPhoneNbr').val(custInfo.accNbr);
 			OrderInfo.jbr.partyName = custInfo.partyName;
-			OrderInfo.jbr.age = custInfo.age;
 		} 
 	};
 	
