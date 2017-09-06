@@ -309,7 +309,12 @@ common = (function($) {
 	};
 	
 	//调用客户端的二代证识别方法       method：表示回调js方法 如：order.prodModify.getIDCardInfos
-	var _callGenerationRec=function(method,type){
+	var _callGenerationRec=function(method,type,isKhjq){
+		if(isKhjq!=undefined && isKhjq == "1"){
+			cust.isKhjq = "1";
+		}else{
+			cust.isKhjq = "";
+		}
 		var arr=new Array(1);
 		arr[0]=method;
 		arr[1]=type;
