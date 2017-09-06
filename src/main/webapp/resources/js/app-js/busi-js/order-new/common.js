@@ -371,6 +371,7 @@ common = (function($) {
 			//客户信息
 			OrderInfo.cust = [];
 			cust.userFlag = "OFF";
+			cust.isRealCust = true;
 		}else{
 			var arr=new Array(1);
 			arr[0]="";

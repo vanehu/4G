@@ -1396,11 +1396,6 @@ cust = (function(){
 	};
 	
 	var _getGenerationInfos=function(name,idcard,address,identityPic){
-		cust.custCatsh = {};
-		cust.custCatsh.name = name;
-		cust.custCatsh.idcard = idcard;
-		cust.custCatsh.address = address;
-		cust.custCatsh.identityPic = identityPic;
 		
 		$("#cm_identidiesTypeCd").val("1");
 		$("#cm_identidiesTypeCd").change();
@@ -1423,12 +1418,18 @@ cust = (function(){
 				$("#idCardNumber6").val(idcard);
 			}
 		}
-		if(OrderInfo.actionFlag==9){//返档需查客户
-			OrderInfo.jbr.identityPic = identityPic;
-			cust.searchUser("1",idcard,name,address);
-		} else {
-			OrderInfo.cust.identityPic = identityPic;//证件照片
-		}
+			cust.custCatsh = {};
+			cust.custCatsh.name = name;
+			cust.custCatsh.idcard = idcard;
+			cust.custCatsh.address = address;
+			cust.custCatsh.identityPic = identityPic;
+			
+			if(OrderInfo.actionFlag==9){//返档需查客户
+				OrderInfo.jbr.identityPic = identityPic;
+				cust.searchUser("1",idcard,name,address);
+			} else {
+				OrderInfo.cust.identityPic = identityPic;//证件照片
+			}
 	};
 	
 	var _getUserGenerationInfos=function(name,idcard,address,identityPic){//采集单使用人读卡

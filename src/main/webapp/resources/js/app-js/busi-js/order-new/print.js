@@ -158,7 +158,9 @@ common.print = (function($){
 					$("#print_ok").off("click").on("click",function(){
 //						$("#order-confirm").show();
 //						$("#order-print").hide();
-						if(OrderInfo.staff.soAreaId+"" == "8210200"){
+						var sa = OrderInfo.staff.soAreaId+"";
+						sa = sa.substring(0,5)+"00";
+						if(sa == "8210200"){
 							if($("#read_llh").length>0 && $("#read_llh").attr("read")=="N"){
 								$.alert("提示","请先阅读流量壕协议！");
 								return;

@@ -295,7 +295,7 @@ order.service = (function(){
 									var fkRole = offerSpec.offerRoles[1].roleObjs[p];
 									var fkSize = offerChange.offerMemberSize-1;
 									if(fkRole.minQty > fkSize || fkRole.maxQty < fkSize){
-										$.alert("错误提示","当前产品的副卡数量为"+fkSize+"不满足目标套餐的规则要求：副卡最大数量为"+fkRole.maxQty+"。最小数量为。"+fkRole.minQty);
+										$.alert("错误提示","当前产品的副卡数量为"+fkSize+"，不满足目标套餐的规则要求：副卡最大数量为"+fkRole.maxQty+"，最小数量为"+fkRole.minQty+"。");
 										return false;
 									}
 								}
