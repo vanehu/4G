@@ -3067,19 +3067,44 @@ SoOrder = (function() {
 					return false;
 				}
 			}
+			var jbrStr =  offerChange.queryPortalProperties("JBRPZ_PZ_"+OrderInfo.staff.soAreaId.substring(0,3)+"0000");
+			var jbrStrArr = jbrStr.split(",");
+			var jbrFlag = false;
+			for(var m = 0;m<jbrStrArr.length;m++){
+                if(jbrStrArr[m].indexOf("#")>0){
+                    var newBusiFlag =  $.trim(OrderInfo.actionFlag)+"#"+ $.trim(OrderInfo.busitypeflag);
+                    if(jbrStrArr[m] == newBusiFlag){
+                        jbrFlag = true;
+                    }
+                }else{
+                    if(jbrStrArr[m] ==$.trim(OrderInfo.actionFlag)){
+                        jbrFlag = true;
+                    }
+                }
+			}
+           /* $.each(jbrStrArr,function(){
+            	if(this.test("#")>0){
+                    var newBusiFlag = OrderInfo.actionFlag.trim()+"#"+OrderInfo.busitypeflag.trim();
+                    if(this == newBusiFlag){
+                        jbrFlag = true;
+					}
+				}else{
+            		if(this ==OrderInfo.actionFlag.trim()){
+                        jbrFlag = true;
+					}
+				}
+			});*/
 
-			//若页面没有填写经办人，根据权限和业务类型进行判断和限制
-			var isActionFlagLimited = (
-				OrderInfo.actionFlag == 1	||	//办套餐入口做新装
-				OrderInfo.actionFlag == 14 	||	//购手机入口做新装(OrderInfo.busitypeflag为1)
-				OrderInfo.actionFlag == 43	||	//返档
-				(OrderInfo.actionFlag == 22 && OrderInfo.busitypeflag == 22) || //补卡(换卡busitypeflag是21)
-				(OrderInfo.actionFlag == 23 && OrderInfo.busitypeflag == 13) || //异地补换卡
-				(OrderInfo.actionFlag == 6  && OrderInfo.isHandleCustNeeded) || //主副卡成员变更，加装新号码或加装老号码且客户证件非身份证
-				(OrderInfo.actionFlag == 2  && (OrderInfo.isHandleCustNeeded || isUimAction)) ||//套餐变更，加装新号码、加装老号码且客户证件非身份证或UIM变更
-				(OrderInfo.actionFlag == 3	&& OrderInfo.busitypeflag == 14	 && isUimAction)	//可选包变更涉及UIM动作
-			) && !order.prepare.isPreInstall();//预装不限制，此时busitypeflag为1不是27，不可以busitypeflag判断业务类型
-			
+            //若页面没有填写经办人，根据权限和业务类型进行判断和限制
+            var isActionFlagLimited = (
+                    jbrFlag	||	//办套餐入口做新装//返档//购手机入口做新装(OrderInfo.busitypeflag为1)
+                    //(OrderInfo.actionFlag == 22 && OrderInfo.busitypeflag == 22) || //补卡(换卡busitypeflag是21)
+                   // (OrderInfo.actionFlag == 23 && OrderInfo.busitypeflag == 13) || //异地补换卡
+                    (OrderInfo.actionFlag == 6  && OrderInfo.isHandleCustNeeded) || //主副卡成员变更，加装新号码或加装老号码且客户证件非身份证
+                    (OrderInfo.actionFlag == 2  && (OrderInfo.isHandleCustNeeded || isUimAction)) ||//套餐变更，加装新号码、加装老号码且客户证件非身份证或UIM变更
+                    (OrderInfo.actionFlag == 3	&& OrderInfo.busitypeflag == 14	 && isUimAction)	//可选包变更涉及UIM动作
+                ) && !order.prepare.isPreInstall();//预装不限制，此时busitypeflag为1不是27，不可以busitypeflag判断业务类型
+
 			if(CONST.isHandleCustNeeded && isActionFlagLimited) {
 				//采集单不拍照
 				if((!ec.util.isObj($("#jbrForm").html()) || !ec.util.isObj(OrderInfo.virOlId)) && !OrderInfo.isCltNewOrder()){

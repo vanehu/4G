@@ -657,4 +657,7 @@ public class MDA {
 	
 	/**IE8图片压缩参数*/
     public static final Map<String, Object> IE8_COMPRESS_CONFIG = new HashMap<String, Object>();
+
+	/**经办人拍照配置*/
+	public static final Map<String, String> JBRPZ_PZ = new HashMap<String, String>();
 }
