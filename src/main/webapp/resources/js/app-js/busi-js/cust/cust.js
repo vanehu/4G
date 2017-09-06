@@ -8,6 +8,7 @@ CommonUtils.regNamespace("cust");
  * 订单准备
  */
 cust = (function(){
+	var _iskhjq = "";//是否客户鉴权调用的读卡
 	//客户鉴权跳转权限
 	var _jumpAuthflag="";
 	var _queryForChooseUser = false;
@@ -1291,6 +1292,7 @@ cust = (function(){
 				$("#idCardNumber2").val(idcard);
 			}
 		}
+		if(cust.isKhjq != "1"){
 			cust.custCatsh = {};
 			cust.custCatsh.name = name;
 			cust.custCatsh.idcard = idcard;
@@ -1303,7 +1305,7 @@ cust = (function(){
 				$('#custFormdata').data('bootstrapValidator').validate();
 			}
 			OrderInfo.cust.identityPic = identityPic;//证件照片
-		
+		}
 	};
 	
 	var _getUserGenerationInfos=function(name,idcard,address,identityPic){

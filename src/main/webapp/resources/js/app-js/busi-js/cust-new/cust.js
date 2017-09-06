@@ -12,6 +12,7 @@ cust = (function(){
 	var _checkUserInfo = {
 			 accNbr: ""
 	};
+	var _iskhjq = "";//是否客户鉴权调用的读卡
 	var _isOldCust = false;
 	var _isSameOne = false;
 	var _checkCustLog = {};//客户信息核验记录
@@ -1418,6 +1419,7 @@ cust = (function(){
 				$("#idCardNumber6").val(idcard);
 			}
 		}
+		if(cust.isKhjq != "1"){
 			cust.custCatsh = {};
 			cust.custCatsh.name = name;
 			cust.custCatsh.idcard = idcard;
@@ -1430,6 +1432,7 @@ cust = (function(){
 			} else {
 				OrderInfo.cust.identityPic = identityPic;//证件照片
 			}
+		}
 	};
 	
 	var _getUserGenerationInfos=function(name,idcard,address,identityPic){//采集单使用人读卡
@@ -3249,6 +3252,7 @@ cust = (function(){
 		isRealCust					:		_isRealCust,
 		userFlag					:		_userFlag,
 		getAge                      :       _getAge,
-		jbrAge                      :       _jbrAge
+		jbrAge                      :       _jbrAge,
+		iskhjq						:		_iskhjq
 	};	
 })();
