@@ -196,7 +196,7 @@ common = (function($) {
 		}else{//他人代办需判断该经办人年龄是否大于经办人指定最小年龄
 			if(jbrAgelimitFlag=="ON"){
 				var jbrMustAge=SoOrder.queryConstConfig("18");//经办人最小年龄
-				var jbrAge=OrderInfo.jbr.age;//经办人年龄
+				var jbrAge=cust.jbrAge;//经办人年龄
 				if(jbrAge<jbrMustAge){
 					$.alert("提示","经办人年龄"+jbrAge+"周岁，未达到经办人指定年龄"+jbrMustAge+"周岁，请重新选择经办人！");
 					return;
