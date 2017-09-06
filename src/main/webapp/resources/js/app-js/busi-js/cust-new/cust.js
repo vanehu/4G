@@ -23,6 +23,7 @@ cust = (function(){
 	var _custCatsh = {};//读卡的客户缓存
 	var _isRealCust=true;//定位客户是否实名
 	var _custCernum = [];//客户证件使用数缓存
+	var _jbrAge;//客户证件使用数缓存
 	var _clearCustForm = function(){
 		$('#cmCustName').val("");
 		$('#cmAddressStr').val("");
@@ -1123,6 +1124,7 @@ cust = (function(){
 		OrderInfo.jbr.identityPic = identityPic;//证件照片
 		OrderInfo.virOlId = "";
 		order.main.queryJbr();
+		cust.jbrAge=cust.getAge(idcard);
 	};
 	//校验表单提交
 	var _jbrvalidatorForm=function(){
@@ -2169,8 +2171,7 @@ cust = (function(){
 			accountName:$(scope).attr("accountName"),//账户名
 			userName:$(scope).attr("userName"),//使用人名
 			userCustId:$(scope).attr("userCustId"),//使用人客户id
-			isSame:$(scope).attr("isSame"),//使用人名称与账户名称是否一致
-			age:jbrAge//经办人年龄
+			isSame:$(scope).attr("isSame")//使用人名称与账户名称是否一致
 			};
 		//设置被选择标识
 		_checkUserInfo.accNbr = "";
@@ -3246,6 +3247,7 @@ cust = (function(){
 		checkRealCust				:		_checkRealCust,
 		isRealCust					:		_isRealCust,
 		userFlag					:		_userFlag,
-		getAge                      :       _getAge
+		getAge                      :       _getAge,
+		jbrAge                      :       _jbrAge
 	};	
 })();
