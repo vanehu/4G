@@ -6383,6 +6383,23 @@ public class PrintBmoImpl implements PrintBmo {
 			si6.put("isSign", "0");
 			signs.add(si6);
 		}
+		if(orderInfo.get("hbPage")!=null){
+			Map<String,Object> go7=new HashMap<String,Object>();
+			go7.put("page", orderInfo.get("hbPage"));
+			go7.put("llx", 400);
+			go7.put("lly", 60);
+			//go3.put("urx", 0);
+			//go3.put("ury", 0);
+			seals.add(go7);
+			Map<String,Object> si7=new HashMap<String,Object>();
+			si7.put("pageSign", orderInfo.get("hbPage"));
+			si7.put("llxSign", 100);
+			si7.put("llySign", 70);
+			si7.put("urxSign", 100 + 109);
+			si7.put("urySign", 100 + 57);
+			si7.put("isSign", "0");
+			signs.add(si7);
+		}
 		paramMap.put("seals", seals);
 		paramMap.put("signs", signs);
 		Map<String, Object> dataBusMap = new HashMap<String, Object>();

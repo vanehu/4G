@@ -1275,11 +1275,6 @@ cust = (function(){
 	};
 	
 	var _getGenerationInfos=function(name,idcard,address,identityPic){
-		cust.custCatsh = {};
-		cust.custCatsh.name = name;
-		cust.custCatsh.idcard = idcard;
-		cust.custCatsh.address = address;
-		cust.custCatsh.identityPic = identityPic;
 		
 		$("#cm_identidiesTypeCd").val("1");
 		$("#cm_identidiesTypeCd").change();
@@ -1296,13 +1291,19 @@ cust = (function(){
 				$("#idCardNumber2").val(idcard);
 			}
 		}
+			cust.custCatsh = {};
+			cust.custCatsh.name = name;
+			cust.custCatsh.idcard = idcard;
+			cust.custCatsh.address = address;
+			cust.custCatsh.identityPic = identityPic;
+			
+			if(ec.util.isObj(_newUIFalg) && _newUIFalg == "ON" &&  (OrderInfo.actionFlag=="35" || OrderInfo.actionFlag=="34" || OrderInfo.actionFlag=="112" ||OrderInfo.actionFlag=="1" ||OrderInfo.actionFlag=="8")){
+				$("#custFormdata").Validform().check();
+			} else {
+				$('#custFormdata').data('bootstrapValidator').validate();
+			}
+			OrderInfo.cust.identityPic = identityPic;//证件照片
 		
-		if(ec.util.isObj(_newUIFalg) && _newUIFalg == "ON" &&  (OrderInfo.actionFlag=="35" || OrderInfo.actionFlag=="34" || OrderInfo.actionFlag=="112" ||OrderInfo.actionFlag=="1" ||OrderInfo.actionFlag=="8")){
-			$("#custFormdata").Validform().check();
-		} else {
-			$('#custFormdata').data('bootstrapValidator').validate();
-		}
-		OrderInfo.cust.identityPic = identityPic;//证件照片
 	};
 	
 	var _getUserGenerationInfos=function(name,idcard,address,identityPic){
@@ -2790,6 +2791,37 @@ cust = (function(){
             return inParam.certNum;
         }
     };
+    
+  //根据身份证号获取年龄
+    var _getAge=function (identityCard) {
+  	    var len = (identityCard + "").length;
+  	    if (len == 0) {
+  	        return 0;
+  	    } else {
+  	        if ((len != 15) && (len != 18))//身份证号码只能为15位或18位其它不合法
+  	        {
+  	            return 0;
+  	        }
+  	    }
+  	    var strBirthday = "";
+  	    if (len == 18)//处理18位的身份证号码从号码中得到生日和性别代码
+  	    {
+  	        strBirthday = identityCard.substr(6, 4) + "/" + identityCard.substr(10, 2) + "/" + identityCard.substr(12, 2);
+  	    }
+  	    if (len == 15) {
+  	        strBirthday = "19" + identityCard.substr(6, 2) + "/" + identityCard.substr(8, 2) + "/" + identityCard.substr(10, 2);
+  	    }
+  	    //时间字符串里，必须是“/”
+  	    var birthDate = new Date(strBirthday);
+  	    var nowDateTime = new Date();
+  	    var age = nowDateTime.getFullYear() - birthDate.getFullYear();
+  	    //再考虑月、天的因素;.getMonth()获取的是从0开始的，这里进行比较，不需要加1
+  	    if (nowDateTime.getMonth() < birthDate.getMonth() || (nowDateTime.getMonth() == birthDate.getMonth() && nowDateTime.getDate() < birthDate.getDate())) {
+  	        age--;
+  	    }
+  	    return age;
+  	}
+    
 	return {
 		jbridentidiesTypeCdChoose 	: 		_jbridentidiesTypeCdChoose,
 		jbrvalidatorForm 			: 		_jbrvalidatorForm,
@@ -2857,7 +2889,8 @@ cust = (function(){
 		preCheckCertNumberRel       :       _preCheckCertNumberRel,
 		getCustInfo415              :       _getCustInfo415,
 		custCatsh					:		_custCatsh,
-		getCustInfo415Flag          :       _getCustInfo415Flag
+		getCustInfo415Flag          :       _getCustInfo415Flag,
+		getAge                      :       _getAge
 	};	
 })();
 // OrderInfo.boCustInfos.partyTypeCd = 1 ;//客户类型
