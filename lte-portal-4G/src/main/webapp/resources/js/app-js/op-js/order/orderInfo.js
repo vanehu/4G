@@ -41,7 +41,7 @@ OrderInfo = (function() {
 	15 过户
 	16 改账务定制关系
 	17 改产品密码*/
-	
+    var _needCheckFlag  = "N";//是否需要调用一证五号
 	//定义新装动作
 	var newClothes="false";
 	//定义纳入老成员动作
@@ -169,7 +169,102 @@ OrderInfo = (function() {
 	var _offer = { //主销售品实例构成
 		offerId : "",
 		offerSpecId : "",
-		offerMemberInfos : []
+		offerMemberInfos : [],
+		
+		_minQty			: 0,
+		_maxQty			: 0,
+		_voiceCardNum	: 0,	//副卡数量
+		_voiceCardList	: [],	//副卡成员
+		_mainCardList	: [],	//主卡成员+单产品
+		
+		getVoiceCardNum: function(){
+			return this._voiceCardNum;
+		},
+		
+		getVoiceCardList: function(){
+			return this._voiceCardList;
+		},
+		
+		getMainCardList: function(){
+			return this._mainCardList;
+		},
+		
+		initOfferMemberInfo: function(){
+			this.reset();
+			if(ec.util.isArray(this.offerMemberInfos)){
+				//在$.each()函数体中会重写this对象，导致无法正常调用类的成员变量
+				for(var i = 0; i < this.offerMemberInfos.length; i++){
+					var offerMemberInfo = this.offerMemberInfos[i];
+					if(offerMemberInfo.roleCd == CONST.MEMBER_ROLE_CD.VICE_CARD || 
+							offerMemberInfo.roleCd == CONST.MEMBER_ROLE_CD.BROADBAND_VICE_CARD){//副卡
+						this._voiceCardList.push(offerMemberInfo);
+						this._voiceCardNum++;
+					}
+					if(offerMemberInfo.roleCd == CONST.MEMBER_ROLE_CD.MAIN_CARD || 
+							offerMemberInfo.roleCd == CONST.MEMBER_ROLE_CD.BROADBAND_MAIN_CARD || 
+							offerMemberInfo.roleCd == CONST.MEMBER_ROLE_CD.COMMON_MEMBER){//主卡+单产品
+						this._mainCardList.push(offerMemberInfo);
+					}
+				}
+			}
+		},
+		
+		initOfferCheckRule: function(offerSpec){
+			if(ec.util.isObj(offerSpec)){
+				var offerRoles = offerSpec.offerRoles;
+				if(ec.util.isArray(offerRoles)){
+					for(var i = 0; i < offerRoles.length; i++){
+						var offerRole = offerRoles[i];
+						if(offerRole.memberRoleCd == CONST.MEMBER_ROLE_CD.VICE_CARD || 
+								offerRole.memberRoleCd == CONST.MEMBER_ROLE_CD.BROADBAND_VICE_CARD){//副卡
+							var roleObjs = offerRole.roleObjs;
+							for(var j = 0; j < roleObjs.length; j++){
+								var roleObj = roleObjs[j];
+								if(roleObj.objType == 2){
+									this._minQty = roleObj.minQty;
+									this._maxQty = roleObj.maxQty;
+									return;
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		
+		checkResult: function(){
+			if(this._voiceCardNum >= this._minQty && this._voiceCardNum <= this._maxQty){
+				return true;
+			}else{
+				return false;
+			} 
+		},
+		
+		getResult: function(){
+			var result = false;
+			
+			if(offerChange.queryPortalProperties("OFFER_CHANGE_CHECK") == "ON"){
+				if(this.checkResult()){
+					result = true;
+				} else{
+					var msg = "当前产品的副卡成员数量为" + this._voiceCardNum + 
+					"，不满足目标套餐的规则要求：副卡数量最大为" + this._maxQty + "，最小为" + this._minQty + "。";
+					$.alert("无法订购", msg);
+				}
+			}else{
+				result = true;
+			}
+			
+			return result;
+		},
+		
+		reset: function(){
+			this._minQty 		= 0,
+			this._maxQty 		= 0,
+			this._voiceCardNum	= 0,
+			this._voiceCardList = [],
+			this._mainCardList	= []
+		}
 	}; 
 	
 	var _oldAddNumList = [];//老用户号码
@@ -1550,6 +1645,7 @@ OrderInfo = (function() {
 		oneCardFiveNum : _oneCardFiveNum,
 		vice_card : _vice_card,
 		custBak                 :_custBak,
-		oneCardFiveNO  : _oneCardFiveNO
+		oneCardFiveNO  : _oneCardFiveNO,
+        needCheckFlag  :_needCheckFlag
 	};
 })();

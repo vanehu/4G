@@ -15,6 +15,7 @@ import com.al.lte.portal.bmo.crm.MktResBmo;
 import com.al.lte.portal.bmo.crm.OrderBmo;
 import com.al.lte.portal.bmo.staff.StaffBmo;
 import com.al.lte.portal.common.*;
+import com.al.lte.portal.common.Base64;
 import com.al.lte.portal.model.SessionStaff;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -56,6 +57,10 @@ public class CustController extends BaseController {
 	@RequestMapping(value = "/queryCust", method = { RequestMethod.POST })
     public String queryCust(@RequestBody Map<String, Object> paramMap, Model model,@LogOperatorAnn String flowNum,
             HttpServletResponse response,HttpSession httpSession,HttpServletRequest request) {
+		request.getSession().removeAttribute("checkNumber");
+		request.getSession().removeAttribute("accNbrInfos");
+		String checkNumber = (String) (paramMap.get("acctNbr")==""?paramMap.get("identityNum")==""?paramMap.get("queryTypeValue"):paramMap.get("identityNum"):paramMap.get("acctNbr"));
+		request.getSession().setAttribute("checkNumber", checkNumber);
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
                 SysConstant.SESSION_KEY_LOGIN_STAFF);
 		if(sessionStaff == null){
@@ -304,6 +309,17 @@ public class CustController extends BaseController {
 						//如果使用接入号定位客户，不需要去调用根据客户查询接入号接口
 						if (!(custInfos.size() == 1 && StringUtils.isBlank(identityCd) && StringUtils.isNotBlank(qryAcctNbr))) {
 							accNbrResultMap = custBmo.queryAccNbrByCust(accNbrParamMap, flowNum, sessionStaff);
+							if(!MapUtils.isNotEmpty(accNbrResultMap)){
+								request.getSession().removeAttribute("accNbrInfos");
+								//String checkNumber = (String) (paramMap.get("acctNbr")==""?paramMap.get("identityNum")==""?paramMap.get("queryTypeValue"):paramMap.get("identityNum"):paramMap.get("acctNbr"));
+								request.getSession().setAttribute("checkNumber", checkNumber);
+							}else{
+								request.getSession().removeAttribute("accNbrInfos");
+								request.getSession().removeAttribute("checkNumber");
+								List custInfoss = (List)accNbrResultMap.get("custInfos");
+								List accNbrInfos = (List) (((Map)custInfoss.get(0)).get("accNbrInfos"));
+								request.getSession().setAttribute("accNbrInfos", accNbrInfos);
+							}
 						}
 
 						List custInfosWithNbr = null;
@@ -372,7 +388,7 @@ public class CustController extends BaseController {
 			if(paramMap.containsKey("query")){	
 				model.addAttribute("query", paramMap.get("query"));  //综合查询调用标志
 			}
-			//日志平台busi_run_nbr字段
+ 			//日志平台busi_run_nbr字段
 			String log_busi_run_nbr = UIDGenerator.getRand();
 			ServletUtils.getSession(request).setAttribute(SysConstant.LOG_BUSI_RUN_NBR, log_busi_run_nbr);
 			long Time = Calendar.getInstance().getTimeInMillis();
@@ -765,10 +781,12 @@ public class CustController extends BaseController {
 	}
 	
 	@RequestMapping(value = "/custAuth", method = { RequestMethod.POST })
-	public String custAuth(@RequestBody Map<String, Object> param, Model model,@LogOperatorAnn String flowNum, HttpServletResponse response,HttpSession httpSession) throws BusinessException {
+	public String custAuth(@RequestBody Map<String, Object> param, Model model,@LogOperatorAnn String flowNum, HttpServletResponse response,HttpSession httpSession,HttpServletRequest request) throws BusinessException {
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils
 				.getSessionAttribute(super.getRequest(),
 						SysConstant.SESSION_KEY_LOGIN_STAFF);
+		//request.getSession().removeAttribute("dxState");
+		//request.getSession().setAttribute("dxState","Y");
 		Map map = new HashMap();
 		Map paramMap = new HashMap();
 		Map resultMap = new HashMap();
@@ -894,6 +912,7 @@ public class CustController extends BaseController {
 					return super.failedStr(model, ErrorCode.CUST_AUTH, e, paramMap);
 				}
 			}
+			request.getSession().setAttribute("dxState","Y");
 		} else {
 			String canJump = (String) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_JUMPAUTH + "_" + sessionStaff.getStaffId());
 			String custId = MapUtils.getString(param, "custId", "");
@@ -2433,6 +2452,24 @@ public class CustController extends BaseController {
 			log.error("营销任务（接触）反馈结果记录服务saveMktContactResult服务返回的数据异常", e);
 			return super.failed(ErrorCode.SAVE_MTK_RESULT, e, paramMap);
 		}
+		return jsonResponse;
+    }
+    
+    //判断用户是够篡改报文
+    @RequestMapping(value = "/isTrueJson", method = RequestMethod.POST)
+    @ResponseBody
+    public JsonResponse isTrueJson(HttpServletResponse response, HttpServletRequest request){
+		JsonResponse jsonResponse = null;
+		String state = (String)request.getSession().getAttribute("dxState");
+		Map<String, Object> resMap = new HashMap<String,Object>();
+		if(state != null){
+			resMap.put("dxState", state);
+		}else{
+			resMap.put("dxState", "");
+			//request.getSession().removeAttribute("dxState");
+		}
+		jsonResponse = super.successed(resMap, ResultConstant.SUCCESS.getCode());
+		//request.getSession().removeAttribute("dxState");
 		return jsonResponse;
     }
 }

@@ -49,6 +49,7 @@ import com.al.lte.portal.common.MySimulateData;
 import com.al.lte.portal.common.PortalServiceCode;
 import com.al.lte.portal.common.ServiceClient;
 import com.al.lte.portal.common.SysConstant;
+import com.al.lte.portal.model.Photograph;
 import com.al.lte.portal.model.SessionStaff;
 
 /**
@@ -2800,14 +2801,15 @@ public class OrderBmoImpl implements OrderBmo {
 	 * 调后台接口下载拍照证件
 	 */
 	@SuppressWarnings("unchecked")
-	public Map<String, Object> downloadCustCertificate(Map<String, Object> param, SessionStaff sessionStaff) throws Exception{	
+	public Map<String, Object> downloadCustCertificate(Map<String, Object> param, SessionStaff sessionStaff, boolean isIE8) throws Exception{	
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		String olId = MapUtils.getString(param, "olId");
 		String srcFlag = MapUtils.getString(param, "srcFlag");
+		Photograph photograph = Photograph.getNewInstance();
 		
 		if(StringUtils.isBlank(olId) || StringUtils.isBlank(srcFlag)){
 			resultMap.put("code",  ResultCode.R_FAIL);
-			resultMap.put("msg", "无效的入参olId、srcFlag。");
+			resultMap.put("msg", "无效入参，请输入正确查询参数。");
 			throw new BusinessException(ErrorCode.PORTAL_INPARAM_ERROR, param, resultMap, null);
 		}
 		
@@ -2817,12 +2819,35 @@ public class OrderBmoImpl implements OrderBmo {
 		DataBus db = InterfaceClient.callService(param, PortalServiceCode.INTF_DOWNLOAD_IMAGE, null, sessionStaff);
 		try{
 			if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db.getResultCode()))) {
+				boolean isHanleCustCertImage = false;
+				boolean isHanleCustPhotograph = false;
 				resultMap = (Map<String, Object>)db.getReturnlmap().get("result");
 				ArrayList<HashMap<String, Object>> photographs = (ArrayList<HashMap<String, Object>>) resultMap.get("picturesInfo");
 				for(int i = 0; i < photographs.size(); i++){
 					HashMap<String, Object> photographsMap = photographs.get(i);
-					photographsMap.put("photograph", photographsMap.get("orderInfo"));
+					if("D".equals(MapUtils.getString(photographsMap, "picFlag", ""))){
+						isHanleCustPhotograph = true;
+						if(isIE8){
+							photograph.setPhotograph(MapUtils.getString(photographsMap, "orderInfo"));
+							photographsMap.put("photograph", photograph.imageResize());
+						} else{
+							photographsMap.put("photograph", MapUtils.getString(photographsMap,"orderInfo"));
+						}
+					} else if("C".equals(MapUtils.getString(photographsMap, "picFlag", ""))){
+						isHanleCustCertImage = true;
+						photographsMap.put("photograph", MapUtils.getString(photographsMap,"orderInfo"));
+					}
 					photographsMap.remove("orderInfo");
+				}
+				if(!isHanleCustCertImage){
+					HashMap<String, Object> certImage = new HashMap<String,Object>();
+					certImage.put("picFlag", "noC");
+					photographs.add(certImage);
+				}
+				if(!isHanleCustPhotograph){
+					HashMap<String, Object> photo = new HashMap<String,Object>();
+					photo.put("picFlag", "noD");
+					photographs.add(photo);
 				}
 				resultMap.put("photographs", photographs);
 				resultMap.put("code", ResultCode.R_SUCCESS);

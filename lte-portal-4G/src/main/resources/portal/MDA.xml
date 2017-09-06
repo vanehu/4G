@@ -257,7 +257,7 @@
 			'YJY-8450000':'ON',
 			'YJY-8410000':'ON',
 			'YJY-8620000':'ON',
-			'YJY-8360000':'ON',
+			'YJY-8360000':'OFF',
 			'YJY-8460000':'ON',
 			'YJY-8230000':'ON'
 			}
@@ -2117,18 +2117,18 @@
 			"REGEXP_PRICE" :"^[0-9]+(.[0-9]{1,2})?$",						<!-- 批量订购裸终端价格校验正则表达式 -->
 			"REGEXP_DEALER" :"^\\d+@\\d+@\\d+@\\d+?$",						<!-- 批量修改发展人[产品发展人]正则表达式 -->
 			"REGEXP_OFFER" :"^\\d+@\\d+@\\d+@\\d+?$",						<!-- 批量修改发展人[销售品发展人]正则表达式 -->
+			"REGEXP_CANCEL":"^[CZ]$",										<!-- 批量撤单(撤单/作废)正则表达式 -->
 			"REGEXP_NOTNULL":"^\\w+?$"										<!-- 非空校验正则表达式 -->
 			}
 		</const>
 		<const type="Map" name="BATCH_CONFIGS" description="批量业务配置">
-			{
+		{
 			"0":{
 			"totalColumns" :8,				<!-- Excel共7列数据 -->
 			"strictColumns" :[0,1,2,3,5],	<!-- Excel第0,1,2,3,5列数据必填(起始列0) -->
 			"govEntCheckList" :[],			<!-- 针对政企客户需要特别校验的列 -->
 			"regexpCheckList" :[2],			<!-- 需要进行正则校验的列，例如号码和价格列 -->
-			"nameColumns"
-			:["客户ID","帐户ID","主接入号","UIM卡号","租机串码","区号","联系人","联系电话"],	<!-- Excel每列数据名称 -->
+			"nameColumns" :["客户ID","帐户ID","主接入号","UIM卡号","租机串码","区号","联系人","联系电话"],	<!-- Excel每列数据名称 -->
 			"maxRows" :50000,			<!-- Excel允许导入最大行数(不指定即为无限制) -->
 			"batchTypeName" :"批开活卡",		<!-- 批量业务名称 -->
 			"repeatCheckList" :[2,3],			<!-- 防止重复需要校验的列 -->
@@ -2401,25 +2401,55 @@
 			"threadsFlag" :'ON'
 			},
 			"19":{
-			"totalColumns" :7,
-			"strictColumns"
-			:[0,1,2,4],
-			"govEntCheckList" :[],
-			"regexpCheckList" :[1],
-			"nameColumns" :["帐户ID","主接入号","UIM卡号","租机串码","区号","联系人","联系电话"],
-			"maxRows" :50000,
-			"batchTypeName" :"政企批开",
-			"repeatCheckList" :[1,2],
-			"regexpCheck" :{
-			"1":"LTEPHONEHEAD"
+				"totalColumns" :7,
+				"strictColumns" :[0,1,2,4],
+				"govEntCheckList" :[],
+				"regexpCheckList" :[1],
+				"nameColumns" :["帐户ID","主接入号","UIM卡号","租机串码","区号","联系人","联系电话"],
+				"maxRows" :50000,
+				"batchTypeName" :"政企批开",
+				"repeatCheckList" :[1,2],
+				"regexpCheck" :{
+					"1":"LTEPHONEHEAD"
+				},
+				"templateType" :0,
+				"threshold" :512,
+				"errorDataMaxCount" :10,
+				"threadsFlag" :'ON'
 			},
-			"templateType" :0,
-			"threshold"
-			:512,
-			"errorDataMaxCount" :10,
-			"threadsFlag" :'ON'
+			"20":{
+				"totalColumns" :3,
+				"strictColumns" :[0,1,2],
+				"govEntCheckList" :[],
+				"regexpCheckList" :[2],
+				"nameColumns" :["购物车流水","原因","撤单/作废"],
+				"maxRows" :1000,
+				"batchTypeName" :"批量撤单",
+				"repeatCheckList" :[0],
+				"regexpCheck" :{"2":"REGEXP_CANCEL"},
+				"templateType" :null,
+				"threshold" :512,
+				"errorDataMaxCount" :10,
+				"threadsFlag" :'ON'
+				},
+			"22":{
+				"totalColumns" :9,
+				"strictColumns" :[0,1,2,3,5],
+				"govEntCheckList" :[],
+				"regexpCheckList" :[2],
+				"nameColumns":["客户ID","帐户ID","主接入号","UIM卡号","租机串码","区号","联系人","联系电话","副卡"],
+				"maxRows" :1000,
+				"batchTypeName" :"批开主副卡",
+				"repeatCheckList" :[2,3],
+				"regexpCheck" :{
+					"2":"LTEPHONEHEAD"
+				},
+				"templateType" :0,
+				"threshold" :512,
+				"errorDataMaxCount" :10,
+				"threadsFlag" :'ON'
 			}
-			}
+		}
 		</const>
 		<const type="String" name="TRANSFER_CUST_FLAG" value="OFF"
 			description="针对政企批开的返档优化开关" />
@@ -3061,7 +3091,7 @@
 			'PHOTOGRAPH_REVIEW_861':'OFF',<!-- 陕西 -->
 			'PHOTOGRAPH_REVIEW_842':'OFF',<!-- 湖北 -->
 			'PHOTOGRAPH_REVIEW_835':'OFF',<!-- 福建 -->
-			'PHOTOGRAPH_REVIEW_832':'OFF',<!-- 江苏 -->
+			'PHOTOGRAPH_REVIEW_832':'ON',<!-- 江苏 -->
 			'PHOTOGRAPH_REVIEW_846':'OFF',<!-- 海南 -->
 			'PHOTOGRAPH_REVIEW_864':'OFF',<!-- 宁夏 -->
 			'PHOTOGRAPH_REVIEW_814':'OFF',<!-- 山西 -->
@@ -3072,7 +3102,7 @@
 			'PHOTOGRAPH_REVIEW_843':'OFF',<!-- 湖南 -->
 			'PHOTOGRAPH_REVIEW_851':'OFF',<!-- 四川 -->
 			'PHOTOGRAPH_REVIEW_844':'OFF',<!-- 广东 -->
-			'PHOTOGRAPH_REVIEW_831':'ON',<!-- 上海 -->
+			'PHOTOGRAPH_REVIEW_831':'OFF',<!-- 上海 -->
 			'PHOTOGRAPH_REVIEW_812':'OFF',<!-- 天津 -->
 			'PHOTOGRAPH_REVIEW_813':'OFF',<!-- 河北 -->
 			'PHOTOGRAPH_REVIEW_841':'OFF',<!-- 河南 -->
@@ -3461,5 +3491,48 @@
 			]
 		</const>
 		<const type="String" name="OFFER_CHANGE_CHECK" value="OFF" description="#1614052套餐变更校验副卡数量是否满足目的套餐规则，默认OFF不校验，ON校验"/>
+		<const type="Map" name="OPENPRINTFLAG" description="开启展示本地打印回执按钮，默认ON">
+			{
+			'OPENPRINTFLAG_854':'ON',<!-- 西藏 -->
+			'OPENPRINTFLAG_863':'ON',<!-- 青海 -->
+			'OPENPRINTFLAG_815':'ON',<!-- 内蒙古 -->
+			'OPENPRINTFLAG_823':'ON',<!-- 黑龙江 -->
+			'OPENPRINTFLAG_845':'ON',<!-- 广西 -->
+			'OPENPRINTFLAG_850':'ON',<!-- 重庆 -->
+			'OPENPRINTFLAG_861':'ON',<!-- 陕西 -->
+			'OPENPRINTFLAG_842':'ON',<!-- 湖北 -->
+			'OPENPRINTFLAG_835':'ON',<!-- 福建 -->
+			'OPENPRINTFLAG_832':'ON',<!-- 江苏 -->
+			'OPENPRINTFLAG_846':'ON',<!-- 海南 -->
+			'OPENPRINTFLAG_864':'ON',<!-- 宁夏 -->
+			'OPENPRINTFLAG_814':'ON',<!-- 山西 -->
+			'OPENPRINTFLAG_853':'ON',<!-- 云南 -->
+			'OPENPRINTFLAG_836':'ON',<!-- 江西 -->
+			'OPENPRINTFLAG_837':'ON',<!-- 山东 -->
+			'OPENPRINTFLAG_811':'OFF',<!-- 北京 -->
+			'OPENPRINTFLAG_843':'ON',<!-- 湖南 -->
+			'OPENPRINTFLAG_851':'ON',<!-- 四川 -->
+			'OPENPRINTFLAG_844':'ON',<!-- 广东 -->
+			'OPENPRINTFLAG_831':'ON',<!-- 上海 -->
+			'OPENPRINTFLAG_812':'ON',<!-- 天津 -->
+			'OPENPRINTFLAG_813':'ON',<!-- 河北 -->
+			'OPENPRINTFLAG_841':'ON',<!-- 河南 -->
+			'OPENPRINTFLAG_821':'ON',<!-- 辽宁 -->
+			'OPENPRINTFLAG_822':'ON',<!-- 吉林 -->
+			'OPENPRINTFLAG_834':'ON',<!-- 安徽 -->
+			'OPENPRINTFLAG_833':'ON',<!-- 浙江 -->
+			'OPENPRINTFLAG_852':'ON',<!-- 贵州 -->
+			'OPENPRINTFLAG_862':'ON',<!-- 甘肃 -->
+			'OPENPRINTFLAG_865':'ON',<!-- 新疆 -->
+			'OPENPRINTFLAG_899':'ON'<!-- 虚拟省 -->
+			}
+		</const>
+		<const type="Map" name="IE8_COMPRESS_CONFIG" description="IE8图片压缩参数">
+		{
+			"COMPRESS_FORMAT"	:"jpeg",
+			"COMPRESS_WIDTH"	:400,
+			"COMPRESS_HEIGHT"	:300
+		}
+		</const>		
 	</mda>
 </mdas>

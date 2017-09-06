@@ -2708,6 +2708,9 @@ SoOrder = (function() {
      * @private
      */
     var _oneCertFiveCheckData = function (inParam) {
+    	if( OrderInfo.needCheckFlag == "N" && OrderInfo.actionFlag == "1"){
+    		return true;
+		}
         var oneCertFiveNum = false;//一证五号校验结果
         if (ec.util.isObj(OrderInfo.boProdAns) && OrderInfo.boProdAns.length > 0) {
         	var oneCertFiveNO = 0;

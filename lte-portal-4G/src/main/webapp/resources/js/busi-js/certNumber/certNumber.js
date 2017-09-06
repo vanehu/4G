@@ -404,6 +404,54 @@ oneFive.certNumber = (function () {
      * @private
      */
     var _selectUploadFiles = function (uploadFiles, type) {
+    	if(type=="回执"){
+    		var filetypes = [".jpg", ".pdf"];
+			var filepath = uploadFiles.value;
+			if(filepath) {
+				var isnext = false;
+				var fileend = filepath.substring(filepath.indexOf("."));
+				if(filetypes && filetypes.length > 0) {
+					for(var i = 0; i < filetypes.length; i++) {
+						if(filetypes[i] == fileend) {
+							isnext = true;
+							break;
+						}
+					}
+				}
+				if(!isnext) {
+					$.alert("提示", "只能上传PDF或者jpg类型的文件 ！");
+					target.value = "";
+					return false;
+				}
+			} else {
+				return false;
+			}
+    	}else{
+
+    		var filetypes = [".jpg"];
+			var filepath = uploadFiles.value;
+			if(filepath) {
+				var isnext = false;
+				var fileend = filepath.substring(filepath.indexOf("."));
+				if(filetypes && filetypes.length > 0) {
+					for(var i = 0; i < filetypes.length; i++) {
+						if(filetypes[i] == fileend) {
+							isnext = true;
+							break;
+						}
+					}
+				}
+				if(!isnext) {
+					$.alert("提示", "只能上传jpg类型的文件 ！");
+					target.value = "";
+					return false;
+				}
+			} else {
+				return false;
+			}
+    	
+    	}
+    	
         //清空上次文件名
         var $trs = $("#tab_oneFiveFileUpload").find("tbody").find("tr");
         $.each($trs, function () {
