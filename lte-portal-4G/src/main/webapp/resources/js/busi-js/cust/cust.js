@@ -2364,6 +2364,15 @@ order.cust = (function(){
 			};
 			order.cust.custQueryParam = param;
 		}
+		
+		//2017-09-06 新建客户时，判断人员年龄，如大于16周岁不允许使用户口簿
+		if($("#identidiesTypeCd").val() == "12" && $("#cCustIdCard").val() != "" && $("#cCustIdCard").val() != null && $("#cCustIdCard").val() != undefined){
+			var nowDate = new Date();
+			if(nowDate.getFullYear() - ($("#cCustIdCard").val()).substring(6,10) > 16){
+				$.alert("提示", "大于16周岁不允许使用户口簿");
+				
+			}
+		}
 	};
 	//切换标签
 	var _changeLabel = function(labelId){
