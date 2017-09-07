@@ -60,7 +60,7 @@ public class ReportController extends com.al.lte.portal.controller.crm.ReportCon
 	 @Autowired
     @Qualifier("com.al.lte.portal.bmo.crm.MktResBmo")
     private MktResBmo mktResBmo;
-	private String dateFormat = "yyyy-MM-dd";
+	private String dateFormat = "yyyy/MM/dd";
 	/**
 	 * 订单查询页面
 	 * @param model
