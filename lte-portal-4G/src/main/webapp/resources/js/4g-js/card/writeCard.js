@@ -989,7 +989,7 @@ order.writeCard = (function(){
 				};
 			$.callServiceAsJson(serviceName, param);
 		} catch(e) {
-			$("#cardupdate").attr("href","/phoneimg/card/"+ _cardDllInfoJson.dllName+".dll");
+			$("#cardupdate").attr("href","https://ct.crm.189.cn/phoneimg/card/"+ _cardDllInfoJson.dllName+".dll");
 			$("#writeTitle").html("写卡组件更新");
 			$("#rcard").hide();
 			$("#dllName").html(_cardDllInfoJson.dllName+".DLL");
@@ -1024,7 +1024,7 @@ order.writeCard = (function(){
 		var loaddll = ocx.TransferDll(_cardDllInfoJson.dllName + ".DLL");
 		if (loaddll != '0') {
 			$.alert("提示","您插入白卡的卡商写卡组件不存在，请将组件下载保存到以下目录：<br/>32位系统 C:\\Windows\\System32<br/>64位系统 C:\\Windows\\SysWOW64<br/>","error");
-			var url = contextPath + "/phoneimg/card/"+ _cardDllInfoJson.dllName + ".DLL";
+			var url = "https://ct.crm.189.cn/phoneimg/card/"+ _cardDllInfoJson.dllName + ".DLL";
 			location.href = url;
 			return false;
 		}
@@ -1785,7 +1785,7 @@ order.writeCard = (function(){
 		html += '</div>';
 		html += '<input type="hidden" id="iccid" value=""/>';
 		html += '<input type="hidden" id="imsi" value=""/>';
-		html += '<a href = "/phoneimg/card/CardMan3x21_V1_1_1_0.exe">下载写卡器驱动</a>';
+		html += '<a href = "https://ct.crm.189.cn/phoneimg/card/CardMan3x21_V1_1_1_0.exe">下载写卡器驱动</a>';
 		html += '</form>';
 		html += '</div>';
 		html += '</div>';
@@ -2217,7 +2217,7 @@ order.writeCard = (function(){
 		html += '</div>';
 		html += '<input type="hidden" id="iccid" value=""/>';
 		html += '<input type="hidden" id="imsi" value=""/>';
-		html += '<a href = "/phoneimg/card/CardMan3x21_V1_1_1_0.exe">下载写卡器驱动</a>';
+		html += '<a href = "https://ct.crm.189.cn/phoneimg/card/CardMan3x21_V1_1_1_0.exe">下载写卡器驱动</a>';
 		html += '</form>';
 		html += '</div>';
 		html += '</div>';
