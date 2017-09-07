@@ -42,6 +42,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.ServletOutputStream;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -99,7 +100,7 @@ public class MainController extends BaseController {
 			@RequestParam(value = "provCustIdentityCd", required = false, defaultValue = "") String identityCd,
 			@RequestParam(value = "provCustIdentityNum", required = false, defaultValue = "") String identityNum,
 			@RequestParam(value = "provCustAreaId", required = false, defaultValue = "") String areaId, Model model,
-			HttpSession session, HttpServletRequest request) throws AuthorityException {
+			HttpSession session, HttpServletRequest request,HttpServletResponse resp) throws AuthorityException {
 		model.addAttribute("current", "home");
 
 		// 省份单点登录后，甩单到集团crm，使用带入的客户信息自动定位客户
@@ -152,6 +153,14 @@ public class MainController extends BaseController {
 		} else {
 			model.addAttribute("hintCode", sessionStaff.getHintCode());
 		}
+		
+		//2017-08-31设置开关cookies值
+				Cookie cookie = new Cookie("switchC",com.al.ecs.common.util.MDA.LESS_THAN_SEVENTEEN);
+				cookie.setMaxAge(60*60*24);
+				cookie.setPath("/");
+				resp.addCookie(cookie);
+				System.out.println("-------------cookie的值为----------------："+cookie.getValue().toString());
+				System.out.println("--------------分省开关的信息---------------:"+com.al.ecs.common.util.MDA.LESS_THAN_EIGHT);
 
 		// 查询是否有问卷调查这个菜单
 		try {
