@@ -3760,20 +3760,19 @@ order.cust = (function(){
 	 	 var request_id = "";
          var result =  query.common.queryPropertiesMapValue("FACE_VERIFY_FLAG", "FACE_VERIFY_"+String(OrderInfo.staff.areaId).substr(0, 3));
 		 if(ec.util.isObj(OrderInfo.bojbrCustIdentities.identidiesPic) && (result.FACE_VERIFY_SWITCH == "ON" ||  result.PROVINCE_FACE_VERIFY_FLAG == "ON") && !query.common.checkOperateSpec(CONST.RZBDGN)){
-			 var param={
-				 "ContractRoot":{
-						   "SvcCont":{
-							     "params":{
-									    	"olid":"",
-											  "busi_type": OrderInfo.busitypeflag,
-											  "cust_id":OrderInfo.cust.custId,
-											  "area_id" : OrderInfo.getAreaId()
-                                          },
-	                             "image_best":encodeURIComponent($("#img_Photo").data("identityPic"))
-						    },
-						    "TcpCont": {
-						    }
-					    }
+			 var param = {
+				"ContractRoot":{
+					"TcpCont": {},
+					"SvcCont":{
+						"image_best":encodeURIComponent(Image.commonUtils.getCompressImageByDefault($("#img_Photo").data("identityPic"))),
+						"params":{
+							"olid":"",
+					    	"busi_type": OrderInfo.busitypeflag,
+					    	"cust_id":OrderInfo.cust.custId,
+					    	"area_id" : OrderInfo.getAreaId()
+						}
+					}
+				}
 			 };
 			 $.ecOverlay("<strong>正在处理中, 请稍等...</strong>");
 			 var response =  $.callServiceAsJson(contextPath+"/cust/pic/verify",param);
@@ -3791,27 +3790,27 @@ order.cust = (function(){
 					   $("#confirmAgree").removeClass("btna_g").addClass("btna_o");
 					   $("#confirmAgree").off("click").on("click",function(){_uploadImage();});
 					   OrderInfo.isManualAudit = "N";
-				}else{
+				 }else{
 				       if(CONST.isForcePassfaceVerify){ //有强制审核权限
 						  $("#tips").html("提示："+ "人证不符，相符度 "+confidence+'%,低于阀值'+ response.data.fz +'%，建议重新拍摄或点击人证相符强制审核通过');
 							 if(OrderInfo.confidence == 0){  
 								 $("#tips").empty();
 								 if(response && response.code == 1 && response.data){
-								 if(response.data.tranId){
-								 		request_id = response.data.tranId;
-								 	}
-								  $("#tips").html("提示："+ "人证不符，请求流水【"+ request_id +"】原因为：" + response.data.msg + ",建议重新拍摄");
+									 if(response.data.tranId){
+										 request_id = response.data.tranId;
+									 }
+									 $("#tips").html("提示："+ "人证不符，请求流水【"+ request_id +"】原因为：" + response.data.msg + ",建议重新拍摄");
 								 }
 							 }
 							 $("#confirmAgree").removeClass("btna_g").addClass("btna_o");
 							 $("#confirmAgree").off("click").on("click",function(){
 								 $.confirm("确认","人证不符，相符度 "+confidence+"，低于设定的阀值 "+ response.data.fz +"%，请确实是否强制审核通过？", {
-										yes:function(){
-											OrderInfo.isManualAudit = "N";
-											_uploadImage();
-										},
-										no:function(){}
-							     });
+									yes:function(){
+										OrderInfo.isManualAudit = "N";
+										_uploadImage();
+									},
+									no:function(){}
+								 });
 							 });
 					   }else if(CONST.isPhotographReviewNeeded && CONST.photographReviewFlag == "ON"){ //有人像审核权限
 						   $("#tips").html("提示："+ "人证不符，相符度 "+confidence+'%,低于阀值'+ response.data.fz +'%，你可以重新拍摄或点击人证相符人工审核。');
@@ -3849,7 +3848,7 @@ order.cust = (function(){
 			 $("#confirmAgree").removeClass("btna_g").addClass("btna_o");
 			 $("#confirmAgree").off("click").on("click",function(){_uploadImage();});
 		 }
-   };
+	};
 	var _rePhotos = function(){
 		//初始化页面
 		$("#tips").html("");
@@ -3935,14 +3934,11 @@ order.cust = (function(){
 	// 上传照片
 	var uploadCustCertificateParams = {};
 	
-	// 上传照片
-	var uploadCustCertificateParams = {};
-	
 	var _uploadImage = function() {
 		var auditStaff = $("#auditStaffList").val();
 		var auditMode = $("#auditMode").val();
 		
-	if(CONST.photographReviewFlag == "ON" && CONST.isPhotographReviewNeeded && OrderInfo.isManualAudit=="Y"){
+		if(CONST.photographReviewFlag == "ON" && CONST.isPhotographReviewNeeded && OrderInfo.isManualAudit=="Y"){
 			if(!ec.util.isObj(auditStaff) || auditStaff == "-1"){
 				$.alert("提示", "请选择审核人");
 				return;
@@ -3995,29 +3991,25 @@ order.cust = (function(){
 		        });
 			}
 			
-			//现场审核补充参数
+			// 现场审核补充参数
 			if(CONST.isPhotographReviewNeeded && CONST.photographReviewFlag == "ON" && auditMode == "1" && OrderInfo.isManualAudit=="Y"){
 				$.each(pictures, function(){
 					this.checkType = auditMode;
 				});
 			}
-			
-			 if(OrderInfo.faceVerifyFlag == "Y" && (!ec.util.isObj(auditMode) || auditMode == "-1")){
-				  $.each(pictures, function(){
-							this.checkType = "3";
-				  });
+			if(OrderInfo.faceVerifyFlag == "Y" && (!ec.util.isObj(auditMode) || auditMode == "-1")){
+				$.each(pictures, function(){
+					this.checkType = "3";
+				});
 			 }else if(CONST.isForcePassfaceVerify && OrderInfo.faceVerifyFlag == "N"){
-				     $.each(pictures, function(){
-							this.checkType = "4";
-							if(OrderInfo.operateSpecStaff.staffId == ""){
-								this.staffId = OrderInfo.staff.staffId;
-							}
-					});
+				 $.each(pictures, function(){
+					this.checkType = "4";
+					if(OrderInfo.operateSpecStaff.staffId == ""){
+						this.staffId = OrderInfo.staff.staffId;
+					}
+				 });
 			 }
-			 
-			
-			 
-			 
+
 			uploadCustCertificateParams = {
 				accNbr		: "",
 				areaId		: OrderInfo.getAreaId(),
