@@ -59,6 +59,7 @@
 		<const type="String" name="gKey" value="305c300d06092a864886f70d0101010500034b003048024100e738c688e669084e9a523c31b179748db82426ca3295b4797bcf9537de62273c417f5e8f69e305f17e77d1943fdea949345474cecd1b5c63c7ed84ea9bcbef0b0203010001" description="支付平台RSA加密钥"/>
 		<const type="String" name="ASYNC_FLAG" value="OFF" />
 		<const type="String" name="DEF_HTTP_FLAG" value="ON" />
+		<const type="String" name="OFFER_CHANGE_CHECK" value="ON" description="#1619064套餐变更校验副卡数量是否满足目的套餐规则(翼销售)，默认OFF不校验，ON校验"/>
 		<const type="Map" name="PROVORDERATTR_FLAG" description="是否显示省内订单属性 0-打开，1-关闭">
 		{
 		    'provOrderAttrFlag-8440000':'1',
@@ -665,7 +666,7 @@
 			'SPECIAL_AGREEMENT_812':<!-- 天津 -->[],
 			'SPECIAL_AGREEMENT_813':<!-- 河北 -->[],
 			'SPECIAL_AGREEMENT_841':<!-- 河南 -->[{'mark':'流量壕协议','provinceisopen':'ON','opencity':'all','page':'1','templet':'llh8210000'},{'mark':'特号入网协议','provinceisopen':'ON','opencity':'all','page':'1','templet':'rw8210000'},{'mark':'移动入网协议','provinceisopen':'ON','opencity':'8320400','page':'3','templet':'ydrw8210000'}],
-			'SPECIAL_AGREEMENT_821':<!-- 辽宁 -->[{'mark':'流量壕协议','provinceisopen':'ON','opencity':'8210200','page':'1','templet':'llh8210000'},{'mark':'特号入网协议','provinceisopen':'ON','opencity':'8210200','page':'1','templet':'rw8210000'},{'mark':'移动入网协议','provinceisopen':'ON','opencity':'8210200','page':'3','templet':'ydrw8210000'}],
+			'SPECIAL_AGREEMENT_821':<!-- 辽宁 -->[{'mark':'流量壕协议','provinceisopen':'ON','opencity':'8210200','page':'1','templet':'llh8210000'},{'mark':'特号入网协议','provinceisopen':'ON','opencity':'8210200','page':'1','templet':'rw8210000'},{'mark':'移动入网协议','provinceisopen':'ON','opencity':'8210200','page':'3','templet':'ydrw8210000'},{'mark':'翼支付红包通用协议','provinceisopen':'ON','opencity':'8210200','page':'1','templet':'hb8210000'}],
 			'SPECIAL_AGREEMENT_822':<!-- 吉林 -->[],
 			'SPECIAL_AGREEMENT_834':<!-- 安徽 -->[],
 			'SPECIAL_AGREEMENT_833':<!-- 浙江 -->[],
@@ -1724,7 +1725,7 @@
 				'REAL_NAME_PHOTO_861':'OFF',<!-- 陕西 -->
 				'REAL_NAME_PHOTO_842':'OFF',<!-- 湖北 -->
 				'REAL_NAME_PHOTO_835':'OFF',<!-- 福建 -->
-				'REAL_NAME_PHOTO_832':'ON',<!-- 江苏 -->
+				'REAL_NAME_PHOTO_832':'OFF',<!-- 江苏 -->
 				'REAL_NAME_PHOTO_846':'OFF',<!-- 海南 -->
 				'REAL_NAME_PHOTO_864':'OFF',<!-- 宁夏 -->
 				'REAL_NAME_PHOTO_814':'OFF',<!-- 山西 -->
@@ -1739,7 +1740,7 @@
 				'REAL_NAME_PHOTO_812':'OFF',<!-- 天津 -->
 				'REAL_NAME_PHOTO_813':'OFF',<!-- 河北 -->
 				'REAL_NAME_PHOTO_841':'ON',<!-- 河南 -->
-				'REAL_NAME_PHOTO_821':'ON',<!-- 辽宁 -->
+				'REAL_NAME_PHOTO_821':'OFF',<!-- 辽宁 -->
 				'REAL_NAME_PHOTO_822':'OFF',<!-- 吉林 -->
 				'REAL_NAME_PHOTO_834':'OFF',<!-- 安徽 -->
 				'REAL_NAME_PHOTO_833':'ON',<!-- 浙江 -->
