@@ -2313,6 +2313,9 @@ SoOrder = (function() {
 			}
 		}
 		//封装产品状态节点
+		if(OrderInfo.actionFlag == 6 && $("#isPreNumber_"+prodId).attr("checked")=="checked"){
+			prodStatus = CONST.PROD_STATUS_CD.READY_PROD;
+		}
 		busiOrder.data.boProdStatuses.push({
 			state : "ADD",
 			prodStatusCd : prodStatus
@@ -3597,7 +3600,7 @@ SoOrder = (function() {
      * @private
      */
     var _oneCertFiveCheckData = function (inParam) {
-        if( OrderInfo.needCheckFlag == "N"){
+        if( OrderInfo.needCheckFlag == "N" && OrderInfo.actionFlag =="1"){
             return true;
         }
     	OrderInfo.oneCardPhone = "";

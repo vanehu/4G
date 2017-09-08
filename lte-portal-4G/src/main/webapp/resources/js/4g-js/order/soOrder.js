@@ -2723,6 +2723,9 @@ SoOrder = (function() {
 			prodStatus = CONST.PROD_STATUS_CD.READY_PROD;
 		}
 		//封装产品状态节点
+		if(OrderInfo.actionFlag == 6 && $("#isPreNumber_"+prodId).attr("checked")=="checked"){
+			prodStatus = CONST.PROD_STATUS_CD.READY_PROD;
+		}
 		busiOrder.data.boProdStatuses.push({
 			state : "ADD",
 			prodStatusCd : prodStatus
@@ -3064,19 +3067,44 @@ SoOrder = (function() {
 					return false;
 				}
 			}
+			var jbrStr =  offerChange.queryPortalProperties("JBRPZ_PZ_"+OrderInfo.staff.soAreaId.substring(0,3)+"0000");
+			var jbrStrArr = jbrStr.split(",");
+			var jbrFlag = false;
+			for(var m = 0;m<jbrStrArr.length;m++){
+                if(jbrStrArr[m].indexOf("#")>0){
+                    var newBusiFlag =  $.trim(OrderInfo.actionFlag)+"#"+ $.trim(OrderInfo.busitypeflag);
+                    if(jbrStrArr[m] == newBusiFlag){
+                        jbrFlag = true;
+                    }
+                }else{
+                    if(jbrStrArr[m] ==$.trim(OrderInfo.actionFlag)){
+                        jbrFlag = true;
+                    }
+                }
+			}
+           /* $.each(jbrStrArr,function(){
+            	if(this.test("#")>0){
+                    var newBusiFlag = OrderInfo.actionFlag.trim()+"#"+OrderInfo.busitypeflag.trim();
+                    if(this == newBusiFlag){
+                        jbrFlag = true;
+					}
+				}else{
+            		if(this ==OrderInfo.actionFlag.trim()){
+                        jbrFlag = true;
+					}
+				}
+			});*/
 
-			//若页面没有填写经办人，根据权限和业务类型进行判断和限制
-			var isActionFlagLimited = (
-				OrderInfo.actionFlag == 1	||	//办套餐入口做新装
-				OrderInfo.actionFlag == 14 	||	//购手机入口做新装(OrderInfo.busitypeflag为1)
-				OrderInfo.actionFlag == 43	||	//返档
-				(OrderInfo.actionFlag == 22 && OrderInfo.busitypeflag == 22) || //补卡(换卡busitypeflag是21)
-				(OrderInfo.actionFlag == 23 && OrderInfo.busitypeflag == 13) || //异地补换卡
-				(OrderInfo.actionFlag == 6  && OrderInfo.isHandleCustNeeded) || //主副卡成员变更，加装新号码或加装老号码且客户证件非身份证
-				(OrderInfo.actionFlag == 2  && (OrderInfo.isHandleCustNeeded || isUimAction)) ||//套餐变更，加装新号码、加装老号码且客户证件非身份证或UIM变更
-				(OrderInfo.actionFlag == 3	&& OrderInfo.busitypeflag == 14	 && isUimAction)	//可选包变更涉及UIM动作
-			) && !order.prepare.isPreInstall();//预装不限制，此时busitypeflag为1不是27，不可以busitypeflag判断业务类型
-			
+            //若页面没有填写经办人，根据权限和业务类型进行判断和限制
+            var isActionFlagLimited = (
+                    jbrFlag	||	//办套餐入口做新装//返档//购手机入口做新装(OrderInfo.busitypeflag为1)
+                    //(OrderInfo.actionFlag == 22 && OrderInfo.busitypeflag == 22) || //补卡(换卡busitypeflag是21)
+                   // (OrderInfo.actionFlag == 23 && OrderInfo.busitypeflag == 13) || //异地补换卡
+                    (OrderInfo.actionFlag == 6  && OrderInfo.isHandleCustNeeded) || //主副卡成员变更，加装新号码或加装老号码且客户证件非身份证
+                    (OrderInfo.actionFlag == 2  && (OrderInfo.isHandleCustNeeded || isUimAction)) ||//套餐变更，加装新号码、加装老号码且客户证件非身份证或UIM变更
+                    (OrderInfo.actionFlag == 3	&& OrderInfo.busitypeflag == 14	 && isUimAction)	//可选包变更涉及UIM动作
+                ) && !order.prepare.isPreInstall();//预装不限制，此时busitypeflag为1不是27，不可以busitypeflag判断业务类型
+
 			if(CONST.isHandleCustNeeded && isActionFlagLimited) {
 				//采集单不拍照
 				if((!ec.util.isObj($("#jbrForm").html()) || !ec.util.isObj(OrderInfo.virOlId)) && !OrderInfo.isCltNewOrder()){
@@ -3341,11 +3369,9 @@ SoOrder = (function() {
 		//政企客户先校验使用人是否填写，再进行一证五号校验
         if (!(OrderInfo.actionFlag == 16 || (CacheData.isGov(order.cust.getCustCertType()) && (OrderInfo.specialtestauth || OrderInfo.dzjbakqx)))) {//如果是改号业务或政企客户有测试卡权限，不需要调用一证五号校验
             //一证五号校验
-			if(OrderInfo.needCheckFlag == "Y"){
-                if (!_oneCertFiveCheckData(order.cust.getCustInfo415())) {
+            if (!_oneCertFiveCheckData(order.cust.getCustInfo415())) {
                     return false;
-                }
-			}
+            }    
         }
 		
 		//补换卡校验
@@ -3709,28 +3735,46 @@ SoOrder = (function() {
 		}
 		
 		var cookie = _getCookieFromJava("switchC");
+		var cookieE = _getCookieFromJava("switchE");
+		console.log(cookie);
+		console.log(cookieE);
 		//获取下拉框的值
 		var selectValue = $("#orderIdentidiesTypeCd").val();
 		if(cookie == "ON"){
-			//对于当前客户年龄的校验
-			var custIdNumber = cert.readCert(CONST.CERT_READER_HANDLE_CUST).resultContent;
-			if(custIdNumber == "" || custIdNumber == null || custIdNumber == undefined){
-				$.alert("提示","未读取到身份证信息！");
-			}else{
-				if(orderAttrName == "" || orderAttrName == null || orderAttrName == undefined){
-					if(new Date().getFullYear().toString() - orderAttrIdCard.toString().subString(6,10) < 17){
-						$.alert("提示","不满17岁必须填写经办人！");
+			if($("#c").val() != "3" && $("#c").val() != "4"){
+				//对于当前客户年龄的校验
+				var custIdNumber =  $("#p_cust_identityNum").val();//cert.readCert(CONST.CERT_READER_HANDLE_CUST).resultContent;
+				if(custIdNumber == "" || custIdNumber == null || custIdNumber == undefined){
+					$.alert("提示","未读取到身份证信息！");
+				}else{
+					if(orderAttrName == "" || orderAttrName == null || orderAttrName == undefined){
+						//判断外国人永久居留证
+						if($("#p_cust_identityCd").val() == "50"){
+							if(new Date().getYear().toString() - orderAttrIdCard.toString().subString(7,9) < 17){
+								$.alert("提示","不满17岁必须填写经办人！");
+							}
+						}else{
+							if(new Date().getFullYear().toString() - orderAttrIdCard.toString().subString(6,10) < 17){
+								$.alert("提示","不满17岁必须填写经办人！");
+							}
+						}
 					}
 				}
 			}
-			
+		}
+		if(cookieE == "ON"){
 			//对于经办人的校验
 			if(orderAttrName != "" || orderAttrName != null || orderAttrName != undefined){
-				if(new Date().getFullYear().toString() - orderAttrIdCard.toString().subString(6,10) < 18 && selectValue != 50 && selectValue != 4 && selectValue != 3){
-					$.alert("提示","经办人必须18岁以上！");
-				}	
+				if($("#p_cust_identityCd").val() != "50"){
+					if(new Date().getFullYear().toString() - orderAttrIdCard.toString().subString(6,10) < 18 && selectValue != 50 && selectValue != 4 && selectValue != 3){
+						$.alert("提示","经办人必须18岁以上！");
+					}	
+				}else{
+					if(new Date().getYear().toString() - orderAttrIdCard.toString().subString(7,9) < 17){
+						$.alert("提示","经办人必须18岁以上！");
+					}
+				}
 			}
-			
 		}
 		}
 		return true; 
@@ -4517,6 +4561,9 @@ SoOrder = (function() {
      * @private
      */
     var _oneCertFiveCheckData = function (inParam) {
+		if(OrderInfo.needCheckFlag == "N" && OrderInfo.actionFlag == "1"){
+			return true;
+		}
         var oneCertFiveNum = false;//一证五号校验结果
         var isON = query.common.queryPropertiesStatus("REAL_USER_" + OrderInfo.cust.areaId.substr(0, 3));//新使用人开关
         if (ec.util.isObj(OrderInfo.boProdAns) && OrderInfo.boProdAns.length > 0) {

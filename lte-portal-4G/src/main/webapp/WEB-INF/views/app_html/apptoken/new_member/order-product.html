@@ -16,6 +16,12 @@ jb+1 /> <#if k==1>
 			<div class="panel-heading" id=${offerRole.offerRoleId}>${prod.offerRoleName}</div>
 			<form>
 				<div class="panel-body" id="item_order_${prodId}">
+				    <#if (preNumberFlag?? && preNumberFlag == -1) && (main.actionFlag?? && main.actionFlag==6)>
+					<div class="form-group">
+						<label for="exampleInputPassword1">副卡预装</label>
+						<input id="isPreNumber_${prodId}" type="checkbox">
+					</div>
+					</#if>
 					<div class="form-group">
 						<label for="exampleInputEmail1">付费方式</label> <#assign feeType_read
 						= "0"> <#if main.actionFlag==6> <#assign feeType_read = "1">
@@ -106,6 +112,12 @@ jb+1 /> <#if k==1>
 			<div class="panel-heading" id=${offerRole.offerRoleId}>${prod.offerRoleName}</div>
 			<form>
 				<div class="panel-body" id="item_order_${prodId}">
+				    <#if (preNumberFlag?? && preNumberFlag == -1) && (main.actionFlag?? && main.actionFlag==6)>
+					<div class="form-group">
+						<label for="exampleInputPassword1">副卡预装</label>
+						<input id="isPreNumber_${prodId}" type="checkbox">
+					</div>
+					</#if>
 					<div class="form-group">
 						<label for="exampleInputPassword1">接入号码</label>
 						<div class="input-group">

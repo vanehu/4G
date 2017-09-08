@@ -393,7 +393,8 @@ order.cust = (function(){
 		$("#"+id).attr("onkeyup", "value=value.replace(/[^A-Za-z0-9]/ig,'')");
 		var identidiesTypeCd=$(scope).val();
 		$("#"+id).attr("maxlength", "100");
-		if (identidiesTypeCd == 1) {
+		//新增的现役军人居民身份证、人民武装警察居民身份证,和居民身份证一样，要求必须读卡
+		if (identidiesTypeCd == 1 || identidiesTypeCd == 14 || identidiesTypeCd == 2) {
 			/*$("#"+id).attr("placeHolder","请输入合法身份证号码");
 			$("#"+id).attr("data-validate","validate(idCardCheck18:请输入合法身份证号码) on(blur)");*/
 			// 新建客户身份证读卡，隐藏表单
@@ -2363,6 +2364,18 @@ order.cust = (function(){
 				    "flag":"1"
 			};
 			order.cust.custQueryParam = param;
+		}
+		
+		//2017-09-06 新建客户时，判断人员年龄，如大于16周岁不允许使用户口簿
+		var cookieSIX = soOrder.getCookieFromJava("switchSIX");
+		if(cookieSIX == "ON"){
+			if($("#identidiesTypeCd").val() == "12" && $("#cCustIdCard").val() != "" && $("#cCustIdCard").val() != null && $("#cCustIdCard").val() != undefined){
+				var nowDate = new Date();
+				if(nowDate.getFullYear() - ($("#cCustIdCard").val()).substring(6,10) > 16){
+					$.alert("提示", "大于16周岁不允许使用户口簿");
+					
+				}
+			}
 		}
 	};
 	//切换标签

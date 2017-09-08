@@ -155,12 +155,36 @@ public class MainController extends BaseController {
 		}
 		
 		//2017-08-31设置开关cookies值
-				Cookie cookie = new Cookie("switchC",com.al.ecs.common.util.MDA.LESS_THAN_SEVENTEEN);
-				cookie.setMaxAge(60*60*24);
-				cookie.setPath("/");
-				resp.addCookie(cookie);
-				System.out.println("-------------cookie的值为----------------："+cookie.getValue().toString());
-				System.out.println("--------------分省开关的信息---------------:"+com.al.ecs.common.util.MDA.LESS_THAN_EIGHT);
+		//X周岁以下办理任何电信业务，必须填写经办人,增加全国级开关，非分省
+				String nowAreaId = sessionStaff.getAreaId();
+				Cookie cookieLessS = new Cookie("switchC",com.al.ecs.common.util.MDA.LESS_THAN_SEVENTEEN);
+				cookieLessS.setMaxAge(60*60*24);
+				cookieLessS.setPath("/");
+				resp.addCookie(cookieLessS);
+				//经办人必须是Y周岁以上的成年人,增加分省开关
+				for (Map.Entry<String, String> entry : com.al.ecs.common.util.MDA.LESS_THAN_EIGHT.entrySet()) {  
+					System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue()); 
+					String less= "LESS_THAN_EIGHT_"+nowAreaId.substring(0, 3);
+					if((entry.getKey()).toString().equals(less)){
+						String value1 = entry.getValue();
+						Cookie cookieLessE = new Cookie("switchE",value1);
+						cookieLessE.setMaxAge(60*60*24);
+						cookieLessE.setPath("/");
+						resp.addCookie(cookieLessE);
+						break;
+					}
+				 } 
+				//现有的军人身份证件、武装警察身份证件不能作为实名登记有效证件，不允许新增客户,增加全国级开关，非分省
+				Cookie cookieLessSP = new Cookie("switchSP",com.al.ecs.common.util.MDA.CHECK_SOLDIER_POLICE);
+				cookieLessS.setMaxAge(60*60*24);
+				cookieLessS.setPath("/");
+				resp.addCookie(cookieLessSP);
+				
+				//户口簿仅限于16周岁以下的人员使用,增加全国级开关，非分省。
+				Cookie cookieLessSIX = new Cookie("switchSIX",com.al.ecs.common.util.MDA.LESS_THAN_SIX);
+				cookieLessSIX.setMaxAge(60*60*24);
+				cookieLessSIX.setPath("/");
+				resp.addCookie(cookieLessSIX);
 
 		// 查询是否有问卷调查这个菜单
 		try {
