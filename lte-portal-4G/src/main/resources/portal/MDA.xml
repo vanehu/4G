@@ -127,6 +127,8 @@
 		</const>
 		<!-- 军人身份证件、武装警察身份证件不能作为实名登记有效证件，不允许在这两个类型下办理新装号码，新装副卡，不允许改号 -->
 		<const type="String" name="CHECK_SOLDIER_POLICE" value="OFF"></const>
+		<!-- 户口簿仅限于16周岁以下的人员使用 -->
+		<const type="String" name="LESS_THAN_SIX" value="OFF"></const>
 
 		<const type="String" name="ASYNC_FLAG" value="OFF" />
 		<const type="String" name="DEF_HTTP_FLAG" value="ON" />

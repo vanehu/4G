@@ -22,17 +22,23 @@ order.prepare = (function(){
 						$.alert("提示", "在选号码之前请先进行客户定位或者新建客户！");
 						return;
 					}
-					//军人身份证件、武装警察身份证件不能作为实名登记有效证件，不允许新装号码
-					if($("#p_cust_identityCd").val() == "2" || $("#p_cust_identityCd").val() == "14"){
-						$.alert("提示", "军人身份证件、武装警察身份证件不能作为实名登记有效证件，不允许新装号码！");
-						return;
+					var cookieSP = soOrder.getCookieFromJava("switchSP");
+					if(cookieSP == "ON"){
+						//军人身份证件、武装警察身份证件不能作为实名登记有效证件，不允许新装号码
+						if($("#p_cust_identityCd").val() == "2" || $("#p_cust_identityCd").val() == "14"){
+							$.alert("提示", "军人身份证件、武装警察身份证件不能作为实名登记有效证件，不允许新装号码！");
+							return;
+						}
 					}
+					var cookieSIX = soOrder.getCookieFromJava("switchSIX");
 					//对于判断是否已超16周岁，如果超过16周岁或者户口簿不是合规证件号码，不允许新装
-					if($("#p_cust_identityCd").val() == "12"){
-						var p_cust_identityNum = $("#p_cust_identityNum").val();
-						var nowDate = new Date();
-						if(nowDate.getFullYear - p_cust_identityNum > 16){
-							$.alert("提示", "户口簿上超过16周岁，不允许新装号码！");
+					if(cookieSIX == "ON"){
+						if($("#p_cust_identityCd").val() == "12"){
+							var p_cust_identityNum = $("#p_cust_identityNum").val();
+							var nowDate = new Date();
+							if(nowDate.getFullYear - p_cust_identityNum > 16){
+								$.alert("提示", "户口簿上超过16周岁，不允许新装号码！");
+							}
 						}
 					}
 					var authResult = order.prodModify.querySecondBusinessAuth("30", "Y", function () {
