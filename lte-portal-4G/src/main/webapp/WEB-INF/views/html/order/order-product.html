@@ -20,7 +20,13 @@
 				<#else>
 					<div id="newProd_${prodId}" prodId=${prodId} class="pdcardcon" offerRoleId=${prod.offerRoleId}>
 				</#if>
-					<h5 class="s_title" id="prodInfo_${prodId}">${prod.offerRoleName}产品信息</h5>
+					<h5 class="s_title" id="prodInfo_${prodId}">${prod.offerRoleName}产品信息  
+					    <#if (preNumberFlag?? && preNumberFlag == 0) && (main.actionFlag?? && main.actionFlag==6)>
+					        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					        <input id="isPreNumber_${prodId}" type="checkbox">
+                            <lable class="f_red">副卡预装</lable>
+                        </#if>
+                    </h5>
 					<ul id="item_order_${prodId}" class="fillin show" >
 						<#if prod.objId != 381001824 && prod.objId != 13409900>
 							<li>

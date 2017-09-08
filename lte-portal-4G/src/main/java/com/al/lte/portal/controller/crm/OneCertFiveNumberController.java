@@ -203,6 +203,26 @@ public class OneCertFiveNumberController extends BaseController {
 	                }
                 }
                 
+                //
+                List lists = pm.getList();
+                if(lists.size() != 0){
+	                for(int i=0;i<lists.size();i++){
+	                	 Map<String,Object> paramMap = new HashMap<String,Object>();
+	                     paramMap.put("orderId", ((Map)lists.get(i)).get("orderId"));
+	                     paramMap.put("areaId", ((Map)lists.get(i)).get("areaId"));
+	                     paramMap.put("ifFilterAreaId", "Y");
+	                     paramMap.put("staffId", ((Map)lists.get(i)).get("staffId"));
+	                     paramMap.put("ifFilterOwnAccNbr", "Y");
+	                     
+	                     paramMap.put("statusCd", SysConstant.ONE_FIVE_NUMBER_STATUS_INIT);
+	                     Map<String, Object> resMapT = cartBmo.queryCltCartOrder(paramMap, null, sessionStaff);
+	                     List listAll = (List)((Map)((Map)resMapT.get("result")).get("collectionOrderList")).get("collectionCustInfos");
+	                     if(listAll.size() != 0){
+	                    	 ((Map)((List)pm.getList()).get(i)).put("statusCd", ((Map)listAll.get(0)).get("statusCd"));
+	                     }
+	                }
+                }
+                
                 model.addAttribute("pageModel", pm);
                 model.addAttribute("code", "0");
 
