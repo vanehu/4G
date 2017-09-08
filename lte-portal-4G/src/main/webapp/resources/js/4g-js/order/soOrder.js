@@ -3735,28 +3735,46 @@ SoOrder = (function() {
 		}
 		
 		var cookie = _getCookieFromJava("switchC");
+		var cookieE = _getCookieFromJava("switchE");
+		console.log(cookie);
+		console.log(cookieE);
 		//获取下拉框的值
 		var selectValue = $("#orderIdentidiesTypeCd").val();
 		if(cookie == "ON"){
-			//对于当前客户年龄的校验
-			var custIdNumber = cert.readCert(CONST.CERT_READER_HANDLE_CUST).resultContent;
-			if(custIdNumber == "" || custIdNumber == null || custIdNumber == undefined){
-				$.alert("提示","未读取到身份证信息！");
-			}else{
-				if(orderAttrName == "" || orderAttrName == null || orderAttrName == undefined){
-					if(new Date().getFullYear().toString() - orderAttrIdCard.toString().subString(6,10) < 17){
-						$.alert("提示","不满17岁必须填写经办人！");
+			if($("#c").val() != "3" && $("#c").val() != "4"){
+				//对于当前客户年龄的校验
+				var custIdNumber =  $("#p_cust_identityNum").val();//cert.readCert(CONST.CERT_READER_HANDLE_CUST).resultContent;
+				if(custIdNumber == "" || custIdNumber == null || custIdNumber == undefined){
+					$.alert("提示","未读取到身份证信息！");
+				}else{
+					if(orderAttrName == "" || orderAttrName == null || orderAttrName == undefined){
+						//判断外国人永久居留证
+						if($("#p_cust_identityCd").val() == "50"){
+							if(new Date().getYear().toString() - orderAttrIdCard.toString().subString(7,9) < 17){
+								$.alert("提示","不满17岁必须填写经办人！");
+							}
+						}else{
+							if(new Date().getFullYear().toString() - orderAttrIdCard.toString().subString(6,10) < 17){
+								$.alert("提示","不满17岁必须填写经办人！");
+							}
+						}
 					}
 				}
 			}
-			
+		}
+		if(cookieE == "ON"){
 			//对于经办人的校验
 			if(orderAttrName != "" || orderAttrName != null || orderAttrName != undefined){
-				if(new Date().getFullYear().toString() - orderAttrIdCard.toString().subString(6,10) < 18 && selectValue != 50 && selectValue != 4 && selectValue != 3){
-					$.alert("提示","经办人必须18岁以上！");
-				}	
+				if($("#p_cust_identityCd").val() != "50"){
+					if(new Date().getFullYear().toString() - orderAttrIdCard.toString().subString(6,10) < 18 && selectValue != 50 && selectValue != 4 && selectValue != 3){
+						$.alert("提示","经办人必须18岁以上！");
+					}	
+				}else{
+					if(new Date().getYear().toString() - orderAttrIdCard.toString().subString(7,9) < 17){
+						$.alert("提示","经办人必须18岁以上！");
+					}
+				}
 			}
-			
 		}
 		}
 		return true; 
