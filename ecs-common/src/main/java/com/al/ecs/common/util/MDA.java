@@ -569,9 +569,6 @@ public class MDA {
 	/**人证比对*/
 	public static final String CSB_PIC_VERIFY  = new String("");
 	
-	/**省份特殊协议配置*/
-	public static final Map<String, List> SPECIAL_AGREEMENT  = new HashMap<String, List>();
-	
 	/** 省份菜单配置**/
 	public static final Map<String,Map<String,Object>> PROVENCE_MENU = new HashMap<String,Map<String,Object>>();
 
