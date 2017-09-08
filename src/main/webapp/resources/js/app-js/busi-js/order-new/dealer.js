@@ -35,7 +35,7 @@ order.dealer = (function() {
 			
 		}
 		if (OrderInfo.actionFlag == 1 || OrderInfo.actionFlag == 2 || OrderInfo.actionFlag == 3 || OrderInfo.actionFlag == 19
-				|| OrderInfo.actionFlag == 14 || OrderInfo.actionFlag == 22 || OrderInfo.actionFlag == 9 || OrderInfo.actionFlag == 20 || OrderInfo.actionFlag == 21 || OrderInfo.actionFlag == 6){
+				|| OrderInfo.actionFlag == 14 || OrderInfo.actionFlag == 22 || OrderInfo.actionFlag == 9 || OrderInfo.actionFlag == 20 || OrderInfo.actionFlag == 21 || OrderInfo.actionFlag == 6 || OrderInfo.actionFlag == 112){
 			$.each(AttachOffer.addTerminalList,function(){
 				var $ul = $("#tab-change-list2");
 				var $li = $("#terminalDiv_"+this.prodId);

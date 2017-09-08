@@ -165,8 +165,8 @@ common.print = (function($){
 								$.alert("提示","请先阅读流量壕协议！");
 								return;
 							}
-							if($("#read_thrw").length>0 && $("#read_thrw").attr("read")=="N"){
-								$.alert("提示","请先阅读特号入网壕协议！");
+							if($("#read_rw").length>0 && $("#read_rw").attr("read")=="N"){
+								$.alert("提示","请先阅读特号入网协议！");
 								return;
 							}
 							if($("#read_ydrw").length>0 && $("#read_ydrw").attr("read")=="N"){
