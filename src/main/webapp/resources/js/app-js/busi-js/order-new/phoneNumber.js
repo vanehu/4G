@@ -470,252 +470,295 @@ order.phoneNumber = (function(){
 				return;
 			}
 		}
-		selectedObj = obj;
-		ispurchased=purchas;
-		phoneNumberVal = $(obj).attr("numberVal");
-		// memberRoleCd=CONST.MEMBER_ROLE_CD.VICE_CARD;
-		// 订单序号：O1、O2区分暂存单允许多个订单的情况
-		//号码的预存话费
-		var preStoreFare=phoneNumberVal.split("_")[1];
-		//保底消费
-		var pnPrice=phoneNumberVal.split("_")[2];
 		var areaId=$("#p_cust_areaId").val();
 		if(areaId==null||areaId==""){
 			areaId=OrderInfo.staff.areaId;
 		}
-		var areaCode=  $(obj).attr("zoneNumber");
-		//var areaCode=$("#p_cust_areaId").attr("areaCode");
-		if(areaCode==null || areaCode==""){
-			areaCode =OrderInfo.staff.areaCode;
-		} 
-		if(order.service.offerprice!=''){
-			var minMonthFare=parseInt(pnPrice);
-			//套餐月基本费用
-			var packageMonthFare=parseInt(order.service.offerprice);
-			if(packageMonthFare<minMonthFare){
-				$.alert("提示","对不起,此号码不能被选购.(原因:套餐月基本费用必须大于号码月保底消费)");
-				return;
-			}
-		}
-		//正在被预占的号码
-		var phoneNumber=phoneNumberVal.split("_")[0];
-		var anTypeCd=phoneNumberVal.split("_")[3];
-		var plevel=phoneNumberVal.split("_")[5];
-		if(phoneNumber){
-			var phoneAreaId;
-			var params={};
-			if(needPsw){
-				 params={"phoneNumber":phoneNumber,"actionType":"E","anTypeCd":anTypeCd,"areaId":phoneAreaId,"attrList":[{"attrId":"65010036","attrValue":needPsw}]};
-			}else{
-				 params={"phoneNumber":phoneNumber,"actionType":"E","anTypeCd":anTypeCd,"areaId":phoneAreaId};
-			}
-			var oldrelease=false;
-			var oldPhoneNumber="";
-			var oldAnTypeCd="";
-			oldPhoneNumber = order.phoneNumber.boProdAn.accessNumber;
-			oldAnTypeCd = order.phoneNumber.boProdAn.anTypeCd;
-			if (oldPhoneNumber == phoneNumber) {
-				$.alert("提示", "号码已经被预占,请选择其它号码!");
-				return;
-			} else {
-				_boProdAn = {};
-			}
-			var purchaseUrl = contextPath + "/app/mktRes/phonenumber/purchase";
-			$.callServiceAsJson(purchaseUrl, params, {
-				"before" : function() {
-					$.ecOverlay("<strong>正在预占号码,请稍等会儿....</strong>");
-				},
-				"done" : function(response) {
-					$.unecOverlay();
-					if (response.code == 0) {
-						var selectedLevel="";
-						if (selectedLevel == "") {// selectedLevel缓存号码等级信息，以缓存的为准
-							selectedLevel = response.data.phoneLevelId;
-						}						
-					    var prodId;
-						if(memberRoleCd==CONST.MEMBER_ROLE_CD.MAIN_CARD){
-							prodId=-1;
-							_boProdAn.accessNumber = phoneNumber;
-							_boProdAn.anTypeCd = anTypeCd;
-							_boProdAn.level = selectedLevel;
-							_boProdAn.org_level = response.data.phoneLevelId;
-							_boProdAn.anId = response.data.phoneNumId;
-							_boProdAn.areaId = areaId;
-							_boProdAn.areaCode = areaCode;
-							_boProdAn.memberRoleCd = memberRoleCd;
-							_boProdAn.preStore = preStoreFare;
-							_boProdAn.minCharge = pnPrice;
-							order.service.boProdAn = _boProdAn;
-							$("#phoneNumber_a").hide();
-						  if(OrderInfo.actionFlag == 112){//宽带融合选号完跳往副卡界面
-							  order.phoneNumber.step=2;
-							  OrderInfo.order.step = 2;
-							  $("#nav-tab-1").removeClass("active in");
-							  $("#nav-tab-2").addClass("active in");
-							  $("#tab1_li").removeClass("active");
-							  $("#tab2_li").addClass("active");
-							  $("#tc").removeClass("active");
-							  $("#fk").addClass("active");
-							  $("#phoneNumber_a").hide();
-//							  order.amalgamation.prodSpecParamQuery();
-						  }else if(OrderInfo.actionFlag==14){//合约购机
-							  order.phoneNumber.step=3;
-							  OrderInfo.order.step = 3;
-							//选号tab隐藏，合约tab显示
-							 $("#nav-tab-2").removeClass("active in");
-						     $("#nav-tab-3").addClass("active in");
-						     $("#tab2_li").removeClass("active");
-						     $("#tab3_li").addClass("active");
-						     $("#phoneNumber_a").hide();
-						     //加载合约页
-						     order.phone.showHy();
-						  }else if(order.service.enter=="3"){//选号入口选号完跳完套餐
-							 order.phoneNumber.step=2;//选完号码标签页切到选套餐
-							 OrderInfo.order.step = 2;
-							 order.service.queryApConfig();
-							 order.service.searchPack(0,"init");
-							//选号tab隐藏，套餐tab显示
-							 $("#nav-tab-1").removeClass("active in");
-					    	 $("#nav-tab-2").addClass("active in");
-					    	 $("#tab1_li").removeClass("active");
-					    	 $("#tab2_li").addClass("active");
-						  }else if(order.service.enter=="1"){//套餐入口选号完跳往副卡（可能无副卡）或者促销界面
-							  $("#phoneNumber_a").hide();
-							  $("#offer_a").hide();
-							 order.phoneNumber.step=3;
-							 if(order.service.max!=undefined && order.service.showTab3){//存在副卡页
-								 OrderInfo.order.step = 3;
-								 $("#nav-tab-1").removeClass("active in");
-						    	 $("#nav-tab-3").addClass("active in");
-						    	 $("#tab1_li").removeClass("active");
-						    	 $("#tab3_li").addClass("active"); 
-							 } else{//无副卡展示促销
-								 if(order.service.isGiftPackage==true){//礼包订购跳转单独功能产品页
-									 OrderInfo.order.step = 4;
-									 order.main.buildGiftMainView();//展示礼包功能页
-									 $("#nav-tab-1").removeClass("active in");
-							    	 $("#nav-tab-4").addClass("active in");
-							    	 $("#tab1_li").removeClass("active");
-							    	 $("#tab4_li").addClass("active"); 
-								 }else{
-									 OrderInfo.order.step = 4;
-									 order.main.buildMainView();
-									 $("#nav-tab-1").removeClass("active in");
-							    	 $("#nav-tab-4").addClass("active in");
-							    	 $("#tab1_li").removeClass("active");
-							    	 $("#tab4_li").addClass("active");  
-								 }
-							 }
-							
-						  }
-						}else{
-							$("#phoneNumber_a").hide();
-							if(OrderInfo.actionFlag==112){
-								var $div =$('<li class="PhoneNumLi"><span class="list-title"><span class="title-lg">'+phoneNumber+'</span><span class="subtitle font-secondary">移动电话</span></span></li>');
-								$("#secondaryPhoneNumUl").append($div);			
-								$("#secondaryCardModal").modal("hide");
-//								mainFlag="true";//恢复主副卡标志
-								order.phoneNumber.secondaryCarNum=$('#secondaryPhoneNumUl').children('li').length-1;//副卡数目
-								$("#yd_min").text(order.phoneNumber.secondaryCarNum);
-								prodId=-(order.phoneNumber.secondaryCarNum+1);
-							   if(order.phoneNumber.secondaryCarNum==$("#yd_max").text()){//副卡添加到最大，添加图标置灰
-								   $("#addSecondaryCard").removeClass("font-default").addClass("font-secondary");
-								   $("#addSecondaryCard").attr("onclick","");
-							   }
-							}else{
-								var $div =$('<li><span class="list-title"><span class="title-lg">'+phoneNumber+'</span><span class="subtitle font-secondary">移动电话</span></span></li>');
-								if(OrderInfo.actionFlag==6){//主副卡成员变更加装副卡
-									var $div2 =$('<li id="li_'+phoneNumber+'"><span class="list-title"><span class="title-lg">'+phoneNumber+'</span><span class="subtitle font-secondary">移动电话</span></span><i onclick="order.memberChange.removeAddPhoneNum('+phoneNumber+')" class="iconfont absolute-right">&#xe624;</i></li>');									
-									$("#secondaryPhoneNumUl2").append($div2);
-									order.memberChange.memberAddList.push(phoneNumber);
-								}else{
-									$("#secondaryPhoneNumUl").append($div);
-								}											
-								$("#secondaryCardModal").modal("hide");
-//								mainFlag="true";//恢复主副卡标志
-								order.phoneNumber.secondaryCarNum=$('#secondaryPhoneNumUl').children('li').length-1;//副卡数目
-								prodId=-(order.phoneNumber.secondaryCarNum+1);
-								if(OrderInfo.actionFlag==6){//主副卡成员变更加装副卡
-									order.phoneNumber.secondaryCarNum=$('#secondaryPhoneNumUl2').children('li').length-1;
-									prodId=-(order.phoneNumber.secondaryCarNum);
-								}
-							   if(order.phoneNumber.secondaryCarNum==order.service.max){//副卡添加到最大，添加图标置灰
-								   $("#addSecondaryCard").removeClass("font-default").addClass("font-secondary");
-							   }
-//							   if(OrderInfo.actionFlag==6){//主副卡成员变更加装副卡,设置正确的副卡添加数量
-//									order.phoneNumber.secondaryCarNum=order.memberChange.memberAddList.length;
-//								}
-							}
-						}
-						var isExists=false;
-						if(OrderInfo.boProdAns.length>0){//判断是否选过
-							for(var i=0;i<OrderInfo.boProdAns.length;i++){
-								if(OrderInfo.boProdAns[i].prodId==prodId){
-									OrderInfo.boProdAns[i].accessNumber=phoneNumber;
-									OrderInfo.boProdAns[i].anTypeCd=anTypeCd;
-									OrderInfo.boProdAns[i].pnLevelId=selectedLevel;
-									OrderInfo.boProdAns[i].anId=response.data.phoneNumId;
-									OrderInfo.boProdAns[i].areaId=areaId;
-									OrderInfo.boProdAns[i].areaCode = areaCode;
-									OrderInfo.boProdAns[i].memberRoleCd=memberRoleCd;
-									OrderInfo.boProdAns[i].preStore=preStoreFare;
-									OrderInfo.boProdAns[i].minCharge=pnPrice;
-									isExists=true;
-									if(OrderInfo.offerSpec.offerRoles!=undefined){
-										OrderInfo.setProdAn(OrderInfo.boProdAns[i]);  //保存到产品实例列表里面
-									}
-//									order.dealer.changeAccNbr(subnum,phoneNumber); //选号玩要刷新发展人管理里面的号码
-									break;
-								}
-							}
-						}
-						if(!isExists){
-							var param={
-								prodId : prodId, //产品id,-1(主),-2（副）-3……
-								accessNumber : phoneNumber, //接入号
-								anChooseTypeCd : "2", //接入号选择方式,自动生成或手工配号，默认传2
-								anId : response.data.phoneNumId, //接入号ID
-								pnLevelId:selectedLevel,
-								anTypeCd : anTypeCd, //号码类型
-								state : "ADD", //动作	,新装默认ADD	
-								areaId:areaId,
-								areaCode:areaCode,
-								memberRoleCd:memberRoleCd,
-								preStore:preStoreFare,
-								minCharge:pnPrice
-							};
-							OrderInfo.boProdAns.push(param);
-							//OrderInfo.setProdAn(param);//保存到产品实例列表里面
-						}
-						// _qryOfferInfoByPhoneNumFee();
-						$("#phonenumber-list").empty();
-						$("#phonenumber-list2").empty();
-						$("#phonenumber-list2").hide();
-						if(mainFlag=="false"){
-							$("#secondaryPhoneNumUl").show();
-							$("#fk_phonenumber_next").show();
-						}
-					} else if (response.code == -2) {
-						$.alertM(response.data);
-					} else {
-						var msg = "";
-						if (response.data != undefined
-								&& response.data.msg != undefined) {
-							msg = response.data.msg;
-						} else {
-							msg = "号码[" + phoneNumber + "]预占失败";
-						}
-						$.alert("提示", "号码预占失败，可能原因:" + msg);
+		//证号关系校验
+		var url = contextPath + "/app/order/queryNumRealExist"; 
+		var accNbr = $(obj).attr("numberVal").split("_")[0];
+		var param={			
+				  "ContractRoot":{
+					   "SvcCont":{
+						     "lanId":areaId,
+							 "phoneNum":accNbr,
+							 "traceId":UUID.getDataId()
+					    },
+					    "TcpCont": {
+					    	
+					    }
+				   }
+		};
+		$.callServiceAsJsonGet(url,{strParam:JSON.stringify(param)},{
+			"before":function(){
+				$.ecOverlay("<strong>正在查询中,请稍等会儿....</strong>");
+			},
+			"done" : function(response){
+				$.unecOverlay();
+				if (response.code == 0) {
+					var resultExist="N";
+					if(response.data!=undefined && response.data.resultExist!=undefined){
+						resultExist=response.data.resultExist;
 					}
-				},
-				fail : function(response) {
-//					$.unecOverlay();
-					$.alert("提示", "请求可能发生异常，请稍后再试！");
+					if(resultExist!="N"){
+						$.alert("提示","该号码已存在不同的证号关系，请重新选号");
+						return;
+					}else{
+						selectedObj = obj;
+						ispurchased=purchas;
+						phoneNumberVal = $(obj).attr("numberVal");
+						// memberRoleCd=CONST.MEMBER_ROLE_CD.VICE_CARD;
+						// 订单序号：O1、O2区分暂存单允许多个订单的情况
+						//号码的预存话费
+						var preStoreFare=phoneNumberVal.split("_")[1];
+						//保底消费
+						var pnPrice=phoneNumberVal.split("_")[2];
+						var areaCode=  $(obj).attr("zoneNumber");
+						//var areaCode=$("#p_cust_areaId").attr("areaCode");
+						if(areaCode==null || areaCode==""){
+							areaCode =OrderInfo.staff.areaCode;
+						} 
+						if(order.service.offerprice!=''){
+							var minMonthFare=parseInt(pnPrice);
+							//套餐月基本费用
+							var packageMonthFare=parseInt(order.service.offerprice);
+							if(packageMonthFare<minMonthFare){
+								$.alert("提示","对不起,此号码不能被选购.(原因:套餐月基本费用必须大于号码月保底消费)");
+								return;
+							}
+						}
+						//正在被预占的号码
+						var phoneNumber=phoneNumberVal.split("_")[0];
+						var anTypeCd=phoneNumberVal.split("_")[3];
+						var plevel=phoneNumberVal.split("_")[5];
+						if(phoneNumber){
+							var phoneAreaId;
+							var params={};
+							if(needPsw){
+								 params={"phoneNumber":phoneNumber,"actionType":"E","anTypeCd":anTypeCd,"areaId":phoneAreaId,"attrList":[{"attrId":"65010036","attrValue":needPsw}]};
+							}else{
+								 params={"phoneNumber":phoneNumber,"actionType":"E","anTypeCd":anTypeCd,"areaId":phoneAreaId};
+							}
+							var oldrelease=false;
+							var oldPhoneNumber="";
+							var oldAnTypeCd="";
+							oldPhoneNumber = order.phoneNumber.boProdAn.accessNumber;
+							oldAnTypeCd = order.phoneNumber.boProdAn.anTypeCd;
+							if (oldPhoneNumber == phoneNumber) {
+								$.alert("提示", "号码已经被预占,请选择其它号码!");
+								return;
+							} else {
+								_boProdAn = {};
+							}
+							var purchaseUrl = contextPath + "/app/mktRes/phonenumber/purchase";
+							$.callServiceAsJson(purchaseUrl, params, {
+								"before" : function() {
+									$.ecOverlay("<strong>正在预占号码,请稍等会儿....</strong>");
+								},
+								"done" : function(response) {
+									$.unecOverlay();
+									if (response.code == 0) {
+										var selectedLevel="";
+										if (selectedLevel == "") {// selectedLevel缓存号码等级信息，以缓存的为准
+											selectedLevel = response.data.phoneLevelId;
+										}						
+									    var prodId;
+										if(memberRoleCd==CONST.MEMBER_ROLE_CD.MAIN_CARD){
+											prodId=-1;
+											_boProdAn.accessNumber = phoneNumber;
+											_boProdAn.anTypeCd = anTypeCd;
+											_boProdAn.level = selectedLevel;
+											_boProdAn.org_level = response.data.phoneLevelId;
+											_boProdAn.anId = response.data.phoneNumId;
+											_boProdAn.areaId = areaId;
+											_boProdAn.areaCode = areaCode;
+											_boProdAn.memberRoleCd = memberRoleCd;
+											_boProdAn.preStore = preStoreFare;
+											_boProdAn.minCharge = pnPrice;
+											order.service.boProdAn = _boProdAn;
+											$("#phoneNumber_a").hide();
+										  if(OrderInfo.actionFlag == 112){//宽带融合选号完跳往副卡界面
+											  order.phoneNumber.step=2;
+											  OrderInfo.order.step = 2;
+											  $("#nav-tab-1").removeClass("active in");
+											  $("#nav-tab-2").addClass("active in");
+											  $("#tab1_li").removeClass("active");
+											  $("#tab2_li").addClass("active");
+											  $("#tc").removeClass("active");
+											  $("#fk").addClass("active");
+											  $("#phoneNumber_a").hide();
+//											  order.amalgamation.prodSpecParamQuery();
+										  }else if(OrderInfo.actionFlag==14){//合约购机
+											  order.phoneNumber.step=3;
+											  OrderInfo.order.step = 3;
+											//选号tab隐藏，合约tab显示
+											 $("#nav-tab-2").removeClass("active in");
+										     $("#nav-tab-3").addClass("active in");
+										     $("#tab2_li").removeClass("active");
+										     $("#tab3_li").addClass("active");
+										     $("#phoneNumber_a").hide();
+										     //加载合约页
+										     order.phone.showHy();
+										  }else if(order.service.enter=="3"){//选号入口选号完跳完套餐
+											 order.phoneNumber.step=2;//选完号码标签页切到选套餐
+											 OrderInfo.order.step = 2;
+											 order.service.queryApConfig();
+											 order.service.searchPack(0,"init");
+											//选号tab隐藏，套餐tab显示
+											 $("#nav-tab-1").removeClass("active in");
+									    	 $("#nav-tab-2").addClass("active in");
+									    	 $("#tab1_li").removeClass("active");
+									    	 $("#tab2_li").addClass("active");
+										  }else if(order.service.enter=="1"){//套餐入口选号完跳往副卡（可能无副卡）或者促销界面
+											  $("#phoneNumber_a").hide();
+											  $("#offer_a").hide();
+											 order.phoneNumber.step=3;
+											 if(order.service.max!=undefined && order.service.showTab3){//存在副卡页
+												 OrderInfo.order.step = 3;
+												 $("#nav-tab-1").removeClass("active in");
+										    	 $("#nav-tab-3").addClass("active in");
+										    	 $("#tab1_li").removeClass("active");
+										    	 $("#tab3_li").addClass("active"); 
+											 } else{//无副卡展示促销
+												 if(order.service.isGiftPackage==true){//礼包订购跳转单独功能产品页
+													 OrderInfo.order.step = 4;
+													 order.main.buildGiftMainView();//展示礼包功能页
+													 $("#nav-tab-1").removeClass("active in");
+											    	 $("#nav-tab-4").addClass("active in");
+											    	 $("#tab1_li").removeClass("active");
+											    	 $("#tab4_li").addClass("active"); 
+												 }else{
+													 OrderInfo.order.step = 4;
+													 order.main.buildMainView();
+													 $("#nav-tab-1").removeClass("active in");
+											    	 $("#nav-tab-4").addClass("active in");
+											    	 $("#tab1_li").removeClass("active");
+											    	 $("#tab4_li").addClass("active");  
+												 }
+											 }
+											
+										  }
+										}else{
+											$("#phoneNumber_a").hide();
+											if(OrderInfo.actionFlag==112){
+												var $div =$('<li class="PhoneNumLi"><span class="list-title"><span class="title-lg">'+phoneNumber+'</span><span class="subtitle font-secondary">移动电话</span></span></li>');
+												$("#secondaryPhoneNumUl").append($div);			
+												$("#secondaryCardModal").modal("hide");
+//												mainFlag="true";//恢复主副卡标志
+												order.phoneNumber.secondaryCarNum=$('#secondaryPhoneNumUl').children('li').length-1;//副卡数目
+												$("#yd_min").text(order.phoneNumber.secondaryCarNum);
+												prodId=-(order.phoneNumber.secondaryCarNum+1);
+											   if(order.phoneNumber.secondaryCarNum==$("#yd_max").text()){//副卡添加到最大，添加图标置灰
+												   $("#addSecondaryCard").removeClass("font-default").addClass("font-secondary");
+												   $("#addSecondaryCard").attr("onclick","");
+											   }
+											}else{
+												var $div =$('<li><span class="list-title"><span class="title-lg">'+phoneNumber+'</span><span class="subtitle font-secondary">移动电话</span></span></li>');
+												if(OrderInfo.actionFlag==6){//主副卡成员变更加装副卡
+													var $div2 =$('<li id="li_'+phoneNumber+'"><span class="list-title"><span class="title-lg">'+phoneNumber+'</span><span class="subtitle font-secondary">移动电话</span></span><i onclick="order.memberChange.removeAddPhoneNum('+phoneNumber+')" class="iconfont absolute-right">&#xe624;</i></li>');									
+													$("#secondaryPhoneNumUl2").append($div2);
+													order.memberChange.memberAddList.push(phoneNumber);
+												}else{
+													$("#secondaryPhoneNumUl").append($div);
+												}											
+												$("#secondaryCardModal").modal("hide");
+//												mainFlag="true";//恢复主副卡标志
+												order.phoneNumber.secondaryCarNum=$('#secondaryPhoneNumUl').children('li').length-1;//副卡数目
+												prodId=-(order.phoneNumber.secondaryCarNum+1);
+												if(OrderInfo.actionFlag==6){//主副卡成员变更加装副卡
+													order.phoneNumber.secondaryCarNum=$('#secondaryPhoneNumUl2').children('li').length-1;
+													prodId=-(order.phoneNumber.secondaryCarNum);
+												}
+											   if(order.phoneNumber.secondaryCarNum==order.service.max){//副卡添加到最大，添加图标置灰
+												   $("#addSecondaryCard").removeClass("font-default").addClass("font-secondary");
+											   }
+//											   if(OrderInfo.actionFlag==6){//主副卡成员变更加装副卡,设置正确的副卡添加数量
+//													order.phoneNumber.secondaryCarNum=order.memberChange.memberAddList.length;
+//												}
+											}
+										}
+										var isExists=false;
+										if(OrderInfo.boProdAns.length>0){//判断是否选过
+											for(var i=0;i<OrderInfo.boProdAns.length;i++){
+												if(OrderInfo.boProdAns[i].prodId==prodId){
+													OrderInfo.boProdAns[i].accessNumber=phoneNumber;
+													OrderInfo.boProdAns[i].anTypeCd=anTypeCd;
+													OrderInfo.boProdAns[i].pnLevelId=selectedLevel;
+													OrderInfo.boProdAns[i].anId=response.data.phoneNumId;
+													OrderInfo.boProdAns[i].areaId=areaId;
+													OrderInfo.boProdAns[i].areaCode = areaCode;
+													OrderInfo.boProdAns[i].memberRoleCd=memberRoleCd;
+													OrderInfo.boProdAns[i].preStore=preStoreFare;
+													OrderInfo.boProdAns[i].minCharge=pnPrice;
+													isExists=true;
+													if(OrderInfo.offerSpec.offerRoles!=undefined){
+														OrderInfo.setProdAn(OrderInfo.boProdAns[i]);  //保存到产品实例列表里面
+													}
+//													order.dealer.changeAccNbr(subnum,phoneNumber); //选号玩要刷新发展人管理里面的号码
+													break;
+												}
+											}
+										}
+										if(!isExists){
+											var param={
+												prodId : prodId, //产品id,-1(主),-2（副）-3……
+												accessNumber : phoneNumber, //接入号
+												anChooseTypeCd : "2", //接入号选择方式,自动生成或手工配号，默认传2
+												anId : response.data.phoneNumId, //接入号ID
+												pnLevelId:selectedLevel,
+												anTypeCd : anTypeCd, //号码类型
+												state : "ADD", //动作	,新装默认ADD	
+												areaId:areaId,
+												areaCode:areaCode,
+												memberRoleCd:memberRoleCd,
+												preStore:preStoreFare,
+												minCharge:pnPrice
+											};
+											OrderInfo.boProdAns.push(param);
+											//OrderInfo.setProdAn(param);//保存到产品实例列表里面
+										}
+										// _qryOfferInfoByPhoneNumFee();
+										$("#phonenumber-list").empty();
+										$("#phonenumber-list2").empty();
+										$("#phonenumber-list2").hide();
+										if(mainFlag=="false"){
+											$("#secondaryPhoneNumUl").show();
+											$("#fk_phonenumber_next").show();
+										}
+									} else if (response.code == -2) {
+										$.alertM(response.data);
+									} else {
+										var msg = "";
+										if (response.data != undefined
+												&& response.data.msg != undefined) {
+											msg = response.data.msg;
+										} else {
+											msg = "号码[" + phoneNumber + "]预占失败";
+										}
+										$.alert("提示", "号码预占失败，可能原因:" + msg);
+									}
+								},
+								fail : function(response) {
+//									$.unecOverlay();
+									$.alert("提示", "请求可能发生异常，请稍后再试！");
+								}
+							});
+						} else {
+							$.alert("提示", "号码格式不正确!");
+						}
+					}
+				}else if (response.code == -2) {					
+					$.alertM(response.data);
+					
+				}else{
+					$.alert("提示","查询数据失败!");
 				}
-			});
-		} else {
-			$.alert("提示", "号码格式不正确!");
-		}
+			},
+			fail:function(response){
+				$.unecOverlay();
+				$.alert("提示","请求可能发生异常，请稍后再试！");
+			}
+		});
 	};
 	
 	
