@@ -54,6 +54,11 @@ public class MDA {
 	 * 2017-09-08 户口簿仅限于16周岁以下的人员使用
 	 */
 	public static final String LESS_THAN_SIX = new String("");
+	
+	/**
+	 * 2017-09-11 外国人居住证，要求读卡
+	 */
+	public static final String FOREGIN_LIVE = new String("");
 
 //	/**
 //	 * 问卷调查 题目查询

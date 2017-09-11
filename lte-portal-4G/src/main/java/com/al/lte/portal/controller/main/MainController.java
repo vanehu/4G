@@ -185,6 +185,12 @@ public class MainController extends BaseController {
 				cookieLessSIX.setMaxAge(60*60*24);
 				cookieLessSIX.setPath("/");
 				resp.addCookie(cookieLessSIX);
+				
+				//外国人居住证，要求读卡
+				Cookie cookieLessFOR = new Cookie("switchFOR",com.al.ecs.common.util.MDA.FOREGIN_LIVE);
+				cookieLessSIX.setMaxAge(60*60*24);
+				cookieLessSIX.setPath("/");
+				resp.addCookie(cookieLessFOR);
 
 		// 查询是否有问卷调查这个菜单
 		try {

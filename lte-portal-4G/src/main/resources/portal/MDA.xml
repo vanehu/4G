@@ -129,6 +129,8 @@
 		<const type="String" name="CHECK_SOLDIER_POLICE" value="OFF"></const>
 		<!-- 户口簿仅限于16周岁以下的人员使用 -->
 		<const type="String" name="LESS_THAN_SIX" value="OFF"></const>
+		<!-- 外国人居住证，要求读卡,增加全国级开关，非分省 -->
+		<const type="String" name="FOREGIN_LIVE" value="OFF"></const>
 
 		<const type="String" name="ASYNC_FLAG" value="OFF" />
 		<const type="String" name="DEF_HTTP_FLAG" value="ON" />
