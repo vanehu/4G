@@ -28,5 +28,10 @@ public interface CmBmo {
 	public  Map<String, Object> updateUserInfo(
 			Map<String, Object> param, String optFlowNum,
 			SessionStaff sessionStaff) throws Exception;
+	
+	//查询证号关系是否存在
+	public  Map<String, Object> queryNumRealExist(
+				Map<String, Object> param, String optFlowNum,
+				SessionStaff sessionStaff) throws Exception;
 
 }

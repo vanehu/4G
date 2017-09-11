@@ -122,4 +122,39 @@ public class CmBmoImpl implements CmBmo{
 		}	
 		return returnMap;
 	}
+	
+	//查询号码证号关系是否存在
+		public Map<String, Object> queryNumRealExist(Map<String, Object> param,
+				String optFlowNum, SessionStaff sessionStaff) throws Exception{
+			Map<String, Object> resultMap = new HashMap<String, Object>();
+			
+			Map<String,Object> contractRootMap = (Map<String, Object>) param.get("ContractRoot");
+			Map<String,Object> svcContMap = (Map<String, Object>) contractRootMap.get("SvcCont");
+			svcContMap.put("staffCode", sessionStaff.getStaffCode());
+			svcContMap.put("channelNbr", sessionStaff.getCurrentChannelCode());
+			svcContMap.put("commonRegionId", sessionStaff.getAreaId());
+			
+			DataBus db = InterfaceClient.callServiceCardFiveSys(param, PortalServiceCode.QRY_CERTPHONENUM_REL, optFlowNum, sessionStaff);
+			Map<String, Object> returnMap = new HashMap<String, Object>();
+			try{
+				if (ResultCode.R_SUCC.equals(StringUtils.defaultString(db
+						.getResultCode()))) {
+					resultMap = db.getReturnlmap();
+					
+					returnMap.put("code", ResultCode.R_SUCCESS);
+					String resultExist="N";
+					if(resultMap.get("resultExist")!=null){
+						resultExist=resultMap.get("resultExist").toString();
+					}
+					returnMap.put("resultExist",resultExist);
+					
+				} else {
+					returnMap.put("code", ResultCode.R_FAIL);
+					returnMap.put("msg", db.getResultMsg());
+				}
+			}catch(Exception e){
+				throw new BusinessException(ErrorCode.QUERY_CMP, param, db.getReturnlmap(), e);
+			}	
+			return returnMap;				
+		}
 }
