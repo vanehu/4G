@@ -1740,7 +1740,7 @@ public class InterfaceClient {
 		
 		
 		
-		String AppKey = SysConstant.CSB_SRC_SYS_ID_LTE;
+		String AppKey = SysConstant.CSB_SRC_SYS_ID_APP;
 		String TransactionID = "";
 		String ymdStr = DateFormatUtils.format(new Date(), "yyyyMMdd");
 		String str10 = "";
