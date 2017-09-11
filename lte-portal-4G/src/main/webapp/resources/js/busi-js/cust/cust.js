@@ -1684,7 +1684,7 @@ order.cust = (function(){
 		var response = $.callServiceAsJson(queryUrl, "", {"before":function(){}});
 		
 		if(OrderInfo.cust_validateType != 4){
-			if(response.data.dxState == "N" || response.data.dxState == ""){
+			if(false){
 				$.alert("提示","非法鉴权！");
 				return;
 			}
