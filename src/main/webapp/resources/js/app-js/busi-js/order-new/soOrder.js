@@ -2144,7 +2144,7 @@ SoOrder = (function() {
 		var response = $.callServiceAsJsonGet(url,param);	
 		if (response.code==0) {
 			if(response.data!=undefined){
-				year=response.data.value
+				year=response.data.value;
 			}
 		}
 		return year;
