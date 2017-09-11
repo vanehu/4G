@@ -52,6 +52,7 @@ import com.al.ecs.exception.ResultConstant;
 import com.al.ecs.spring.annotation.log.LogOperatorAnn;
 import com.al.ecs.spring.annotation.session.AuthorityValid;
 import com.al.ecs.spring.controller.BaseController;
+import com.al.lte.portal.bmo.crm.CmBmo;
 import com.al.lte.portal.bmo.crm.CommonBmo;
 import com.al.lte.portal.bmo.crm.CustBmo;
 import com.al.lte.portal.bmo.crm.MktResBmo;
@@ -108,6 +109,10 @@ public class OrderController extends BaseController {
 	@Autowired
 	@Qualifier("com.al.lte.portal.bmo.crm.MktResBmo")
 	private MktResBmo MktResBmo;
+	
+	@Autowired
+	@Qualifier("com.al.lte.portal.bmo.crm.CmBmo")
+	private CmBmo cmBmo;
 	
 	@Autowired
 	PropertiesUtils propertiesUtils;
@@ -3716,4 +3721,26 @@ public class OrderController extends BaseController {
 			}
 	        return "/app/order_new/gift-package-list";
 	    }
+	 
+	@RequestMapping(value = "/queryNumRealExist", method = RequestMethod.GET)
+	@ResponseBody
+	public JsonResponse queryNumRealExist(@RequestParam("strParam") String param, Model model) {
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
+		 Map<String, Object> paramMap =  JsonUtil.toObject(param, Map.class);
+		try {
+			 Map<String, Object> resultMap = new HashMap<String, Object>();
+			 resultMap = cmBmo.queryNumRealExist(paramMap, "",sessionStaff);
+			 return super.successed(resultMap);
+
+		} catch (BusinessException be) {
+			this.log.error("查询信息失败", be);
+			return super.failed(be);
+		} catch (InterfaceException ie) {
+			return super.failed(ie, paramMap, ErrorCode.QUERY_CMP);
+		} catch (Exception e) {
+			log.error("门户处理营业受理的CmpWeb/CmpService/queryCmcCertNumRel",e);
+			return super.failed(ErrorCode.QUERY_CMP, e, paramMap);
+		}
+	}
+
 }
