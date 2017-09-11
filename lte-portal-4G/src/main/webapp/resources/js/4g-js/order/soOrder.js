@@ -3736,8 +3736,6 @@ SoOrder = (function() {
 		
 		var cookie = _getCookieFromJava("switchC");
 		var cookieE = _getCookieFromJava("switchE");
-		console.log(cookie);
-		console.log(cookieE);
 		//获取下拉框的值
 		var selectValue = $("#orderIdentidiesTypeCd").val();
 		if(cookie == "ON"){
