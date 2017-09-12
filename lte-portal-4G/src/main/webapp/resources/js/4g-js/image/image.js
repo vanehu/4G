@@ -86,13 +86,33 @@ Image = (function() {
 		},
 		
 		getCompressImageByDefault : function(imageBase64){
-			if(provinceConfigList[6] == "ON"){
+			var isCompress = this.isNeedCompress(provinceConfigList[5] + imageBase64);
+			
+			if(isCompress){
 				this.setParams(null, provinceConfigList[5] + imageBase64, null, null, null, null);
 				this.compress();
 				return this.getResult();
-			} else{
+			}else{
 				return imageBase64;
 			}
+		},
+		
+		isNeedCompress : function(imageBase64){
+			var result = false;
+			
+			if(provinceConfigList[6] == "ON"){
+				var $image = $("<img/>").prop('src', imageBase64);
+				var originWidth = parseFloat($image[0].width);
+			    var originHeight = parseFloat($image[0].height);
+			    var thresholdWidth = parseFloat(provinceConfigList[7]);
+			    var thresholdHeight = parseFloat(provinceConfigList[8]);
+			    
+			    if(originWidth >= thresholdWidth || originHeight >= thresholdHeight){
+			    	result = true;
+			    }
+			}
+			
+			return result;
 		}
 	};
 	
