@@ -3733,7 +3733,7 @@ SoOrder = (function() {
 				}
 			} //TODO tmp for Mantis 0042657
 		}
-		
+		}
 		var cookie = _getCookieFromJava("switchC");
 		var cookieE = _getCookieFromJava("switchE");
 		var ageS = _getCookieFromJava("ageS");
@@ -3775,7 +3775,6 @@ SoOrder = (function() {
 					}
 				}
 			}
-		}
 		}
 		return true; 
 	};
