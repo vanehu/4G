@@ -314,10 +314,6 @@ order.cust = (function(){
 	};
 	//客户定位证件类型选择事件
 	var _custidentidiesTypeCdChoose = function(scope,id) {
-		var menuName = $("#menuName").attr("menuName");
-		if((menuName=="FD" || menuName=="WJHCJ" || menuName=="WSMFX")&& scope == "#p_cust_identityCd"){//#1756932 返档客户定位只能是接入号
-			$(scope).val("-1");
-		}
 		// 非接入号隐藏产品类别选择
 		$("#prodTypeCd").hide();
 		$("#"+id).val("");
@@ -1683,19 +1679,17 @@ order.cust = (function(){
 	};
 	//已订购业务
 	var _btnQueryCustProdMore=function(param){
-		var menuName = $("#menuName").attr("menuName");
-		if(menuName !="FD" && menuName!="WJHCJ" && menuName!="WSMFX"){
-			//判断用户是否篡改报文
-			var queryUrl=contextPath+"/cust/isTrueJson";
-			var response = $.callServiceAsJson(queryUrl, "", {"before":function(){}});
-			
-			if(OrderInfo.cust_validateType != 4){
-				if(response.data.dxState == "N" || response.data.dxState == ""){
-					$.alert("提示","非法鉴权！");
-					return;
-				}
+		//判断用户是否篡改报文
+		var queryUrl=contextPath+"/cust/isTrueJson";
+		var response = $.callServiceAsJson(queryUrl, "", {"before":function(){}});
+		
+		if(OrderInfo.cust_validateType != 4){
+			if(response.data.dxState == "N" || response.data.dxState == ""){
+				$.alert("提示","非法鉴权！");
+				return;
 			}
 		}
+		
 		if(OrderInfo.cust.custId==-1){
 			$.alert("提示","新建客户无法查询已订购产品！");
 			return;
