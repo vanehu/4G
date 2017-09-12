@@ -231,6 +231,14 @@ order.zdyy = (function(){
 			$.alert("提示","提货时间不能为空！");
 			return;
 		};
+		var  nbrCheck = /^[1][0-9]\d{9}$/;
+		if($("#p_nbr").val()==null || $("#p_nbr").val() ==""){
+			$.alert("提示","提货信息的联系电话不能为空！");
+			return;
+		}else if(!nbrCheck.test($("#p_nbr").val())){
+			$.alert("提示","提货信息的联系电话，请输入11位手机号码！");
+			return;
+		};
 		var zdyyData = {};
 		var deliveryMethod = {
 			itemSpecId : CONST.BUSI_ORDER_ATTR.DELIVERY_METHOD,
@@ -244,10 +252,15 @@ order.zdyy = (function(){
 			itemSpecId : CONST.BUSI_ORDER_ATTR.DELIVERY_TIME,
 			value : $("#p_startDt").val()
 		};
+		var deliveryNbr= {
+			itemSpecId : CONST.BUSI_ORDER_ATTR.DELIVERY_NBR,
+			value : $("#p_nbr").val()
+		};
 		var custOrderAttrs = []; 
 		custOrderAttrs.push(deliveryMethod);
 		custOrderAttrs.push(deliveryAddress);
 		custOrderAttrs.push(deliveryTime);
+		custOrderAttrs.push(deliveryNbr);
 		zdyyData.custOrderAttrs = custOrderAttrs;
 		zdyyData.terminalList = OrderInfo.terminalList;
 		SoOrder.getTokenSynchronize();
