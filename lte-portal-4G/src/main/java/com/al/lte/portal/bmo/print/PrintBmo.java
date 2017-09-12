@@ -52,6 +52,8 @@ public interface PrintBmo {
 			SessionStaff sessionStaff) throws Exception;
 	Map<String, Object> getEQCodeInfo(Map<String, Object> paramMap, String optFlowNum,
 			SessionStaff sessionStaff) throws Exception;
+	Map<String, Object> getVoucherData4EssRequestCreateReceiptPdf(Map<String, Object> paramMap, boolean needAgreement, String optFlowNum, HttpServletRequest request)
+			throws Exception;
 	
 	/**
 	 * 天翼高清机顶盒预约单回执打印

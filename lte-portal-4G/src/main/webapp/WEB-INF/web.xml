@@ -32,6 +32,24 @@
     	<url-pattern>/asynRecv/*</url-pattern>
   	</servlet-mapping>
 	
+	<!-- ESS调用以自动生成pdf文件  -->
+	<servlet>		
+		<display-name>HttpService for EssCreatePdf</display-name>
+		<servlet-name>HttpService4EssCreatePdf</servlet-name>
+		<servlet-class>com.al.lte.portal.servlet.ess.EssRequestCreateReceiptPdfServlet</servlet-class>
+		<init-param>
+			<param-name>ftpServiceUtilsClass</param-name>
+			<param-value>com.al.lte.portal.common.FTPServiceUtilsImpl</param-value>
+		</init-param>
+		<init-param>
+			<param-name>printBmoClass</param-name>
+			<param-value>com.al.lte.portal.bmo.print.PrintBmoImpl</param-value>
+		</init-param>
+	</servlet>
+	<servlet-mapping>
+    	<servlet-name>HttpService4EssCreatePdf</servlet-name>
+    	<url-pattern>/essCreatePdf/*</url-pattern>
+  	</servlet-mapping>
 
 	<!-- 集中会话
 	<filter>

@@ -327,6 +327,7 @@ public class PrintBmoImpl implements PrintBmo {
 			return printData;
 		}
 	}
+
 	private Map<String, Object> postPdfData(Map<String, Object> paramMap, String optFlowNum, HttpServletRequest request)
 			throws Exception {
 		Map<String, Object> returnMap = new HashMap<String, Object>();
@@ -391,7 +392,45 @@ public class PrintBmoImpl implements PrintBmo {
 		}
 		return resultMap;
 	}
+	
+	public Map<String, Object> getVoucherData4EssRequestCreateReceiptPdf(Map<String, Object> paramMap, boolean needAgreement, String optFlowNum, HttpServletRequest request)
+			throws Exception {
+		Map<String, Object> resultMap = new HashMap<String, Object>();
 
+		DataBus db = InterfaceClient.essInvoke4PdfDataInfo(paramMap,
+				PortalServiceCode.INTF_GET_VOUCHER_DATA);
+		try{
+			if(ResultCode.R_SUCC.equals(db.getResultCode())) {
+				resultMap = MapUtils.getMap(db.getReturnlmap(), "result");
+				if (resultMap != null) {
+					resultMap.put("chargeItems", paramMap.get("chargeItems"));
+					if(paramMap.get("orderType")!=null && paramMap.get("orderType").equals("preInstall")){
+						resultMap.put("orderType", paramMap.get("orderType"));
+						String extCustOrderId = (String) paramMap.get("extCustOrderId");
+						resultMap.put("extCustOrderId",extCustOrderId);
+					}
+				}
+				Map<String,Object> objCust=getCustNameAndIdCard(resultMap);
+				resultMap = parseVoucherData(resultMap, needAgreement);
+				if(paramMap.get("orderType")!=null && paramMap.get("orderType").equals("preInstall")){
+					resultMap.put("orderType", paramMap.get("orderType"));
+					String extCustOrderId = (String) paramMap.get("extCustOrderId");
+					resultMap.put("extCustOrderId",extCustOrderId);
+					String extSystem = (String) paramMap.get("extSystem");
+					resultMap.put("extSystem",extSystem);
+				}
+				resultMap.putAll(objCust);
+			}else{
+				resultMap.put("resultCode", db.getResultCode());
+				resultMap.put("resultMsg", db.getResultMsg());
+			}
+		} catch (Exception e) {
+			log.error("门户处理营业受理后台的service/intf.soService/queryOrderListInfoForPrint服务返回的数据异常", e);
+			throw new BusinessException(ErrorCode.PRINT_VOUCHER, paramMap, db.getReturnlmap(), e);
+		}
+		return resultMap;
+	}
+	
 	private Map<String, Object> getVoucherDataForApp(Map<String, Object> paramMap, boolean needAgreement, String optFlowNum, HttpServletRequest request)
 			throws Exception {
 		Map<String, Object> resultMap = null;
