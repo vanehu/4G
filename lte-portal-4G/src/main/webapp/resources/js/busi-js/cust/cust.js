@@ -1905,6 +1905,7 @@ order.cust = (function(){
 			$("#p_cust_areaId_val").val("");
 			$("#p_cust_areaId").val($("#provAreaId").val());
 			$("#p_cust_identityCd").val($("#provIdentityCd").val());
+			_custidentidiesTypeCdChoose("#p_cust_identityCd", "p_cust_identityNum");
 			$("#p_cust_identityNum").val($("#provIdentityNum").val());
 			if($("#provIdentityCd").val()!=-1){
 				$("#isAppointNum").attr("checked",false);
