@@ -499,6 +499,9 @@ order.phoneNumber = (function(){
 					var resultExist="N";
 					if(response.data!=undefined && response.data.resultExist!=undefined){
 						resultExist=response.data.resultExist;
+					}else if(response.data.msg!=undefined){
+						$.alert("提示","证号关系查询:"+response.data.msg);
+						return;
 					}
 					if(resultExist!="N"){
 						$.alert("提示","该号码已存在不同的证号关系，请重新选号");
