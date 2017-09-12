@@ -3098,6 +3098,91 @@ SoOrder = (function() {
 				}
 			}
 		}
+		
+		ar cookie = _getCookieFromJava("switchC");
+		var cookieE = _getCookieFromJava("switchE");
+		var ageS = _getCookieFromJava("ageS");
+		var ageE = _getCookieFromJava("ageE");
+		//获取下拉框的值
+		var selectValue = $("#orderIdentidiesTypeCd").val();
+		if(cookie == "ON"){
+			if($("#c").val() != "3" && $("#c").val() != "4"){
+				//对于当前客户年龄的校验
+				var custIdNumber =  $("#p_cust_identityNum").val();//cert.readCert(CONST.CERT_READER_HANDLE_CUST).resultContent;
+				if(custIdNumber == "" || custIdNumber == null || custIdNumber == undefined){
+					$.alert("提示","未读取到身份证信息！");
+				}else{
+					if(orderAttrName == "" || orderAttrName == null || orderAttrName == undefined){
+						//判断外国人永久居留证
+						if($("#p_cust_identityCd").val() == "50"){
+							if(new Date().getYear().toString() - orderAttrIdCard.toString().subString(7,9) < ageS){
+								$.alert("提示","不满'"+ageS+"'岁必须填写经办人！");
+							}
+						}else{
+							if(new Date().getFullYear().toString() - orderAttrIdCard.toString().subString(6,10) < ageS){
+								$.alert("提示","不满'"+ageS+"'岁必须填写经办人！");
+							}
+						}
+					}
+				}
+			}
+		}
+		if(cookieE == "ON"){
+			//对于经办人的校验
+			if(orderAttrName != "" || orderAttrName != null || orderAttrName != undefined){
+				if($("#p_cust_identityCd").val() != "50"){
+					if(new Date().getFullYear().toString() - orderAttrIdCard.toString().subString(6,10) < ageE && selectValue != 50 && selectValue != 4 && selectValue != 3){
+						$.alert("提示","经办人必须'"+ageE+"'岁以上！");
+					}	
+				}else{
+					if(new Date().getYear().toString() - orderAttrIdCard.toString().subString(7,9) < ageE){
+						$.alert("提示","经办人必须'"+ageE+"'岁以上！");
+					}
+				}
+			}
+		}
+		var cookie = _getCookieFromJava("switchC");
+		var cookieE = _getCookieFromJava("switchE");
+		var ageS = _getCookieFromJava("ageS");
+		var ageE = _getCookieFromJava("ageE");
+		//获取下拉框的值
+		var selectValue = $("#orderIdentidiesTypeCd").val();
+		if(cookie == "ON"){
+			if($("#c").val() != "3" && $("#c").val() != "4"){
+				//对于当前客户年龄的校验
+				var custIdNumber =  $("#p_cust_identityNum").val();//cert.readCert(CONST.CERT_READER_HANDLE_CUST).resultContent;
+				if(custIdNumber == "" || custIdNumber == null || custIdNumber == undefined){
+					$.alert("提示","未读取到身份证信息！");
+				}else{
+					if(orderAttrName == "" || orderAttrName == null || orderAttrName == undefined){
+						//判断外国人永久居留证
+						if($("#p_cust_identityCd").val() == "50"){
+							if(new Date().getYear().toString() - orderAttrIdCard.toString().subString(7,9) < ageS){
+								$.alert("提示","不满'"+ageS+"'岁必须填写经办人！");
+							}
+						}else{
+							if(new Date().getFullYear().toString() - orderAttrIdCard.toString().subString(6,10) < ageS){
+								$.alert("提示","不满'"+ageS+"'岁必须填写经办人！");
+							}
+						}
+					}
+				}
+			}
+		}
+		if(cookieE == "ON"){
+			//对于经办人的校验
+			if(orderAttrName != "" || orderAttrName != null || orderAttrName != undefined){
+				if($("#p_cust_identityCd").val() != "50"){
+					if(new Date().getFullYear().toString() - orderAttrIdCard.toString().subString(6,10) < ageE && selectValue != 50 && selectValue != 4 && selectValue != 3){
+						$.alert("提示","经办人必须'"+ageE+"'岁以上！");
+					}	
+				}else{
+					if(new Date().getYear().toString() - orderAttrIdCard.toString().subString(7,9) < ageE){
+						$.alert("提示","经办人必须'"+ageE+"'岁以上！");
+					}
+				}
+			}
+		}
 		return true; 
 	};
 	//判断是否包含有3G的机型
