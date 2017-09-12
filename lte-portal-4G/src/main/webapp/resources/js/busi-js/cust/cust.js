@@ -1683,17 +1683,19 @@ order.cust = (function(){
 	};
 	//已订购业务
 	var _btnQueryCustProdMore=function(param){
-		//判断用户是否篡改报文
-		var queryUrl=contextPath+"/cust/isTrueJson";
-		var response = $.callServiceAsJson(queryUrl, "", {"before":function(){}});
-		
-		if(OrderInfo.cust_validateType != 4){
-			if(response.data.dxState == "N" || response.data.dxState == ""){
-				$.alert("提示","非法鉴权！");
-				return;
+		var menuName = $("#menuName").attr("menuName");
+		if(menuName !="FD" && menuName!="WJHCJ" && menuName!="WSMFX"){
+			//判断用户是否篡改报文
+			var queryUrl=contextPath+"/cust/isTrueJson";
+			var response = $.callServiceAsJson(queryUrl, "", {"before":function(){}});
+			
+			if(OrderInfo.cust_validateType != 4){
+				if(response.data.dxState == "N" || response.data.dxState == ""){
+					$.alert("提示","非法鉴权！");
+					return;
+				}
 			}
 		}
-		
 		if(OrderInfo.cust.custId==-1){
 			$.alert("提示","新建客户无法查询已订购产品！");
 			return;
