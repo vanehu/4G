@@ -504,7 +504,7 @@ order.phoneNumber = (function(){
 						return;
 					}
 					if(resultExist!="N"){
-						$.alert("提示","该号码已存在不同的证号关系，请重新选号");
+						$.alert("提示","该号码已存在证号关系，请重新选号");
 						return;
 					}else{
 						selectedObj = obj;
