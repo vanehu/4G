@@ -649,19 +649,29 @@ public class InterfaceClient {
 					}else if(rootMap.containsKey("code")){
 						resultCode = MapUtils.getString(rootMap, "code");
 						resultMsg = MapUtils.getString(rootMap, "message");
+						returnMapSet(serviceCode, db, paramString, retnJson,
+								resultCode, resultMsg, logSeqId, sys, rootMap);
 					}else if(rootMap.containsKey("respCode")){
 						resultCode = MapUtils.getString(rootMap, "respCode");
 						resultMsg = MapUtils.getString(rootMap, "message");
+						returnMapSet(serviceCode, db, paramString, retnJson,
+								resultCode, resultMsg, logSeqId, sys, rootMap);
 					}else if(rootMap.containsKey("resFlag")) {
 						resultCode = MapUtils.getString(rootMap, "resFlag");
 						resultMsg = MapUtils.getString(rootMap, "resMsg");
+						returnMapSet(serviceCode, db, paramString, retnJson,
+								resultCode, resultMsg, logSeqId, sys, rootMap);
 					} else {
 						resultCode = MapUtils.getString(rootMap, "rspCode");
 						resultMsg = MapUtils.getString(rootMap, "rspDesc");
+						returnMapSet(serviceCode, db, paramString, retnJson,
+								resultCode, resultMsg, logSeqId, sys, rootMap);
 					}
 				}else{
 					resultCode = MapUtils.getString(rootMap, "resultCode");
 					resultMsg = MapUtils.getString(rootMap, "resultMsg");
+					returnMapSet(serviceCode, db, paramString, retnJson,
+							resultCode, resultMsg, logSeqId, sys, rootMap);
 				}
 			}
 	

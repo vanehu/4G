@@ -24,6 +24,7 @@ import net.sf.json.JSONObject;
 import net.sf.json.util.JSONUtils;
 
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.StringUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.slf4j.Logger;
@@ -131,7 +132,7 @@ public class EssRequestCreateReceiptPdfServlet extends HttpServlet implements
 			paramMap.put("chargeItems", "");// 默认为 “” 没啥用途
 			// busiType 固定为 1
 			paramMap.put("busiType", BUSI_TYPE_1);
-
+			
 			String busiType = MapUtils.getString(paramMap, "busiType");
 			String printType = MapUtils.getString(paramMap, "printType");// 请求参数中没传，为 null
 			String agreement = MapUtils.getString(paramMap, "needAgreement");// 请求参数中没传，为 null
@@ -197,12 +198,24 @@ public class EssRequestCreateReceiptPdfServlet extends HttpServlet implements
 				printDataMap = (Map<String, Object>) it.next();
 			}
 
-			if (printDataMap.get("orderType") != null 
-					&& (printDataMap.get("orderType").equals("preInstall") 
-							|| printDataMap.get("orderType").equals("offerChange"))) {
+			String orderType = (String)printDataMap.get("orderType");
+			if(StringUtils.isNotBlank(orderType)){
+				orderType = MapUtils.getString(paramMap, "orderType");
+			}
+			if (orderType.equals("preInstall")
+					|| orderType.equals("offerChange")
+					|| orderType.equals("newInstall")
+					|| orderType.equals("addCard")) {
 				// 预装和主套餐变更需要上传协议单
+				// 20170912 新增 新装、补换卡 订单需要上传协议单
 				String extCustOrderId = (String) printDataMap.get("extCustOrderId");
+				if(StringUtils.isNotBlank(extCustOrderId)){
+					extCustOrderId = MapUtils.getString(paramMap, "extCustOrderId");
+				}
 				String extSystem = (String) printDataMap.get("extSystem");
+				if(StringUtils.isNotBlank(extSystem)){
+					extSystem = MapUtils.getString(paramMap, "extSystem");
+				}
 				InputStream fileInputStream = new ByteArrayInputStream(bytes);
 				String uploadFileName = extCustOrderId + extSystem + ".pdf";
 				Map<String, Object> ftpEvidenceFileResultMap = ftpServiceUtils.pdfFileFTP(fileInputStream, uploadFileName);

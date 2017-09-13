@@ -847,7 +847,7 @@ public class PrintBmoImpl implements PrintBmo {
 	private Map<String, Object> parseVoucherData(Map<String, Object> dataMap, boolean needAgreement) {
 		Map<String, Object> retnMap = new HashMap<String, Object>();
 		int speCustInfoLen = SysConstant.INT_0;
-		if (SysConstant.ON.equals(propertiesUtils.getMessage(SysConstant.PRINTNEW))) {
+		if (SysConstant.ON.equals(PropertiesUtils.getInstance().getMessage(SysConstant.PRINTNEW))) {
 			//通用信息
 			retnMap.putAll(parseCommonInfos_V2(dataMap));
 			speCustInfoLen = MapUtils.getIntValue(retnMap, "speCustInfoLen", 0);
@@ -874,7 +874,7 @@ public class PrintBmoImpl implements PrintBmo {
 		retnMap.put("remarkInfos", parseRemarkInfos(dataMap));
 		//协议信息
 		retnMap.put("agreements", parseAgreements(dataMap, needAgreement));
-		if(null!=retnMap.get("deliveryMethod")&&SysConstant.OFF.equals(propertiesUtils.getMessage(SysConstant.PRINTNEW))) {
+		if(null!=retnMap.get("deliveryMethod")&&SysConstant.OFF.equals(PropertiesUtils.getInstance().getMessage(SysConstant.PRINTNEW))) {
 			List<StringBeanSet> list= (List<StringBeanSet>) MapUtils.getObject(retnMap,"deliveryMethod");
 			if (null!=list&&list.size()>0) {
 				retnMap.put("feeInfos", new ArrayList<FeeInfoSet>());
