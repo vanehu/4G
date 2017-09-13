@@ -579,6 +579,110 @@ public class InterfaceClient {
 		return db;
 	}
 	
+	
+	/**
+	 * 用于ESS请求生成回执单pdf调用
+	 * @param dataBusMap 入参
+	 * @param serviceCode 服务层的服务编码
+	 * @return DataBus 返回
+	 * @throws IOException 
+	 * @throws DocumentException 
+	 * @throws Exception
+	 */
+	public static DataBus essInvoke4PdfDataInfo(Map<String, Object> dataBusMap,
+			String serviceCode)
+			throws InterfaceException, IOException, Exception {
+		
+		String dbKeyWord = MapUtils.getString(dataBusMap, DATABUS_DBKEYWORD,"");
+		dataBusMap.remove(DATABUS_DBKEYWORD);
+		
+		DataBus db = new DataBus();
+		long beginTime = System.currentTimeMillis();
+		
+		String paramString = "";
+		String paramJson="";
+		String retnJson = "";
+		String rawRetn = "";
+		String intfUrl = "";
+		String resultCode = "";
+		String resultMsg = "";
+		String errCode = "";
+		String errorStack = "";
+		String prefix = "";
+		String logSeqId = "essInvoke4VoucherDataInfo";
+		//判断是否启用默认HTTP调用方式
+		String invokeWay = propertiesUtils.getMessage(SysConstant.DEF_HTTP_FLAG);
+		if (SysConstant.ON.equals(invokeWay)) {
+			invokeWay = HTTP_WAY;
+		} else {
+			//未启用则从simulate配置文件中读取各接口对应的调用方式
+			invokeWay = getInvokeWay(serviceCode);
+		}
+		
+		try {
+			prefix = serviceCode.substring(0, serviceCode.indexOf("-"));
+			if (HTTP_WAY.equals(invokeWay)) {
+				String contentType = JSON_CONTENT_TYPE;
+				String sys = "";
+				// get url, contentType by serviceCode
+				if (BIZ_PREFIX.equals(prefix)) {
+					serviceCode = serviceCode.substring(4);
+					intfUrl = getNeeded(dbKeyWord,URL_KEY, BIZ_PREFIX);
+					intfUrl += serviceCode;
+					sys = "集团营业受理后台";
+					if(AREA_CHINA.equals(dataBusMap.get("areaId"))){
+						dataBusMap.put("areaId", AREA_BEIJING);
+					}
+					paramString = JsonUtil.toString(dataBusMap);
+					paramJson=paramString;
+				}
+				
+				db = httpCall(sys, serviceCode, paramString, intfUrl, contentType, null, null, beginTime, logSeqId);
+				rawRetn = db.getResultMsg();
+				retnJson = rawRetn;
+	
+				Map<String, Object> rootMap = JsonUtil.toObject(retnJson, Map.class);
+				if (MapUtils.isEmpty(rootMap) || !rootMap.containsKey("resultCode")) {
+					if (rootMap == null || (!rootMap.containsKey("rspCode")&&!rootMap.containsKey("code")&&!rootMap.containsKey("respCode")&&!rootMap.containsKey("resFlag"))) {
+						//异常判断：返回不是个JSON对象或没有包含resultCode
+						throw new InterfaceException(ErrType.OPPOSITE, serviceCode, retnJson, paramString, logSeqId);
+					}else if(rootMap.containsKey("code")){
+						resultCode = MapUtils.getString(rootMap, "code");
+						resultMsg = MapUtils.getString(rootMap, "message");
+						returnMapSet(serviceCode, db, paramString, retnJson,
+								resultCode, resultMsg, logSeqId, sys, rootMap);
+					}else if(rootMap.containsKey("respCode")){
+						resultCode = MapUtils.getString(rootMap, "respCode");
+						resultMsg = MapUtils.getString(rootMap, "message");
+						returnMapSet(serviceCode, db, paramString, retnJson,
+								resultCode, resultMsg, logSeqId, sys, rootMap);
+					}else if(rootMap.containsKey("resFlag")) {
+						resultCode = MapUtils.getString(rootMap, "resFlag");
+						resultMsg = MapUtils.getString(rootMap, "resMsg");
+						returnMapSet(serviceCode, db, paramString, retnJson,
+								resultCode, resultMsg, logSeqId, sys, rootMap);
+					} else {
+						resultCode = MapUtils.getString(rootMap, "rspCode");
+						resultMsg = MapUtils.getString(rootMap, "rspDesc");
+						returnMapSet(serviceCode, db, paramString, retnJson,
+								resultCode, resultMsg, logSeqId, sys, rootMap);
+					}
+				}else{
+					resultCode = MapUtils.getString(rootMap, "resultCode");
+					resultMsg = MapUtils.getString(rootMap, "resultMsg");
+					returnMapSet(serviceCode, db, paramString, retnJson,
+							resultCode, resultMsg, logSeqId, sys, rootMap);
+				}
+			}
+	
+		} finally {
+			db.setResultCode(resultCode);
+			db.setResultMsg(resultMsg);
+			db.setParammap(dataBusMap);
+		}
+		return db;
+	}
+	
 	// 重复代码封装
 	private static void returnMapSet(String serviceCode, DataBus db,
 			String paramString, String retnJson, String resultCode,
