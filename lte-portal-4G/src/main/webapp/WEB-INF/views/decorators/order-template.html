@@ -502,7 +502,7 @@
                           <tr>
                                 <td> 联系人名称：</td>
                                 <td>
-                                  <input type="text" placeHolder="请填写联系人名称" data-validate="validate(required:请准确填写联系人姓名) on(blur)"  class="inputWidth228px" maxlength="32" id="discontactName" onchange="javascript:$('#contactName').val($(this).val());"/>
+                                  <input type="text" placeHolder="请填写联系人名称" onkeyup="value=$.trim(value.replace(/[(^\*+)|(\*+$)]/ig,''))" data-validate="validate(required:请准确填写联系人姓名) on(blur)"  class="inputWidth228px" maxlength="32" id="discontactName" onchange="javascript:$('#contactName').val($(this).val());"/>
                                   <label class="f_red">*</label>
                                 </td>
                           </tr><tr>
