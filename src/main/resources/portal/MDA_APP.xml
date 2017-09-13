@@ -52,11 +52,12 @@
 		<const type="String" name="CSB_HTTP_QUERCHEN_URL" value="http://10.128.90.2:8888/channel-mobile-web/" description="宽带融合-定位渠道"/>
 		<const type="String" name="ZHIMA_URL" value="http://4gpay.asiainfo.org/pay_web/credit/queryCreditState" description="芝麻信用值查询地址"/>
 		<const type="String" name="WORD_FONT" value="F:\\打版本\\2017-3-29\\font\\" description="字体文件目录"/>
-		<const type="String" name="CSB_FLAG" value="OFF" />
+		<const type="String" name="CSB_FLAG" value="ON" />
 		<const type="String" name="PAY_TOKEN_URL" value="http://10.128.90.195:7001/payconf/" />
 		<const type="String" name="PAY_URL" value="http://42.99.16.141:7001/upay/platpay/index?" />
 		<const type="String" name="SecretKey" value="DJKF34ER35D58D" description="EOP协议加密钥"/>
-		<const type="String" name="gKey" value="305c300d06092a864886f70d0101010500034b003048024100e738c688e669084e9a523c31b179748db82426ca3295b4797bcf9537de62273c417f5e8f69e305f17e77d1943fdea949345474cecd1b5c63c7ed84ea9bcbef0b0203010001" description="支付平台RSA加密钥"/>
+		<const type="String" name="gKey" value="305c300d06092a864886f70d0101010500034b003048024100e738c688e669084e9a523c31b179748db82426ca3295b4797bcf9537de62273c417f5e8f69e305f17e77d1943fdea949345474cecd1b5c63c7ed84ea9bcbef0b0203010001" description="支付平台RSA加密钥"/>	
+		<const type="String" name="OneFiveSecretKey" value="JTPTCMPTESTMY" description="一五协议加密钥,测试环境为JTPTCMPTESTMY"/>	
 		<const type="String" name="ASYNC_FLAG" value="OFF" />
 		<const type="String" name="DEF_HTTP_FLAG" value="ON" />
 		<const type="String" name="OFFER_CHANGE_CHECK" value="ON" description="#1619064套餐变更校验副卡数量是否满足目的套餐规则(翼销售)，默认OFF不校验，ON校验"/>
@@ -1184,7 +1185,7 @@
 			},
 			'832':<!-- 江苏 -->
 			{
-				'QRCODE_LOGIN_SWITCH':'OFF','PIC_VERIFY':'OFF','FZ':'60'
+				'QRCODE_LOGIN_SWITCH':'ON','PIC_VERIFY':'ON','FZ':'60'
 			},
 			'851':<!-- 四川 -->
 			{
@@ -1474,14 +1475,14 @@
 			'NEWPAYFLAG_861':'OFF',<!-- 陕西 -->
 			'NEWPAYFLAG_842':'OFF',<!-- 湖北 -->
 			'NEWPAYFLAG_835':'OFF',<!-- 福建 -->
-			'NEWPAYFLAG_832':'OFF',<!-- 江苏 -->
+			'NEWPAYFLAG_832':'ON',<!-- 江苏 -->
 			'NEWPAYFLAG_846':'OFF',<!-- 海南 -->
 			'NEWPAYFLAG_864':'OFF',<!-- 宁夏 -->
 			'NEWPAYFLAG_814':'OFF',<!-- 山西 -->
 			'NEWPAYFLAG_853':'OFF',<!-- 云南 -->
 			'NEWPAYFLAG_836':'OFF',<!-- 江西 -->
 			'NEWPAYFLAG_837':'OFF',<!-- 山东 -->
-			'NEWPAYFLAG_811':'OFF',<!-- 北京 -->
+			'NEWPAYFLAG_811':'ON',<!-- 北京 -->
 			'NEWPAYFLAG_843':'OFF',<!-- 湖南 -->
 			'NEWPAYFLAG_851':'ON',<!-- 四川 -->
 			'NEWPAYFLAG_844':'OFF',<!-- 广东 -->
@@ -2162,7 +2163,7 @@
             'ONE_CERT_5_NUMBER_861':'OFF',<!-- 陕西 -->
             'ONE_CERT_5_NUMBER_842':'OFF',<!-- 湖北 -->
             'ONE_CERT_5_NUMBER_835':'OFF',<!-- 福建 -->
-            'ONE_CERT_5_NUMBER_832':'ON',<!-- 江苏 -->
+            'ONE_CERT_5_NUMBER_832':'OFF',<!-- 江苏 -->
             'ONE_CERT_5_NUMBER_846':'OFF',<!-- 海南 -->
             'ONE_CERT_5_NUMBER_864':'OFF',<!-- 宁夏 -->
             'ONE_CERT_5_NUMBER_814':'OFF',<!-- 山西 -->
@@ -3204,7 +3205,7 @@
             'PRO_PAY_KEY_8120000':'PRO_PAY_8120000',<!-- 天津 -->
             'PRO_PAY_KEY_8130000':'PRO_PAY_8130000',<!-- 河北 -->
             'PRO_PAY_KEY_8410000':'PRO_PAY_8410000',<!-- 河南 -->
-            'PRO_PAY_KEY_8210000':'PRO_PAY_8210000',<!-- 辽宁 -->
+            'PRO_PAY_KEY_8210000':'PRO_UPP_2016JH#77',<!-- 辽宁 -->
             'PRO_PAY_KEY_8220000':'PRO_PAY_8220000',<!-- 吉林 -->
             'PRO_PAY_KEY_8340000':'PRO_PAY_8340000',<!-- 安徽 -->
             'PRO_PAY_KEY_8330000':'PRO_PAY_8330000',<!-- 浙江 -->
@@ -3257,5 +3258,42 @@
 			'823'<!-- 黑龙江 -->			
 		]
 		</const>
+		<const type="String" name="AgelimitNeedJbrFlag" value="ON" description="客户年龄限制经办人是否必填开关，全国统一"/>
+		<const type="Map" name="PRO_JBR_AGE_FLAG" description="经办人岁数限制开关，分省,开启后会对经办人证件进行岁数限制">
+            {
+            'PRO_JBR_AGE_FLAG_854':'ON',<!-- 西藏 -->
+            'PRO_JBR_AGE_FLAG_863':'ON',<!-- 青海 -->
+            'PRO_JBR_AGE_FLAG_815':'ON',<!-- 内蒙古 -->
+            'PRO_JBR_AGE_FLAG_823':'ON',<!-- 黑龙江 -->
+            'PRO_JBR_AGE_FLAG_845':'ON',<!-- 广西 -->
+            'PRO_JBR_AGE_FLAG_850':'ON',<!-- 重庆 -->
+            'PRO_JBR_AGE_FLAG_861':'ON',<!-- 陕西 -->
+            'PRO_JBR_AGE_FLAG_842':'ON',<!-- 湖北 -->
+            'PRO_JBR_AGE_FLAG_835':'ON',<!-- 福建 -->
+            'PRO_JBR_AGE_FLAG_832':'ON',<!-- 江苏 -->
+            'PRO_JBR_AGE_FLAG_846':'ON',<!-- 海南 -->
+            'PRO_JBR_AGE_FLAG_864':'ON',<!-- 宁夏 -->
+            'PRO_JBR_AGE_FLAG_814':'ON',<!-- 山西 -->
+            'PRO_JBR_AGE_FLAG_853':'ON',<!-- 云南 -->
+            'PRO_JBR_AGE_FLAG_836':'ON',<!-- 江西 -->
+            'PRO_JBR_AGE_FLAG_837':'ON',<!-- 山东 -->
+            'PRO_JBR_AGE_FLAG_811':'ON',<!-- 北京 -->
+            'PRO_JBR_AGE_FLAG_843':'ON',<!-- 湖南 -->
+            'PRO_JBR_AGE_FLAG_851':'ON',<!-- 四川 -->
+            'PRO_JBR_AGE_FLAG_844':'ON',<!-- 广东 -->
+            'PRO_JBR_AGE_FLAG_831':'ON',<!-- 上海 -->
+            'PRO_JBR_AGE_FLAG_812':'ON',<!-- 天津 -->
+            'PRO_JBR_AGE_FLAG_813':'ON',<!-- 河北 -->
+            'PRO_JBR_AGE_FLAG_841':'ON',<!-- 河南 -->
+            'PRO_JBR_AGE_FLAG_821':'ON',<!-- 辽宁 -->
+            'PRO_JBR_AGE_FLAG_822':'ON',<!-- 吉林 -->
+            'PRO_JBR_AGE_FLAG_834':'ON',<!-- 安徽 -->
+            'PRO_JBR_AGE_FLAG_833':'ON',<!-- 浙江 -->
+            'PRO_JBR_AGE_FLAG_852':'ON',<!-- 贵州 -->
+            'PRO_JBR_AGE_FLAG_862':'ON',<!-- 甘肃 -->
+            'PRO_JBR_AGE_FLAG_865':'ON',<!-- 新疆 -->
+            'PRO_JBR_AGE_FLAG_899':'ON'<!-- 虚拟省 -->
+            }
+        </const>
 	</mda>
 </mdas>
