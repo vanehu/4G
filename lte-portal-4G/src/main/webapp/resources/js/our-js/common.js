@@ -335,5 +335,19 @@ CommonUtils = {
 		};
 		
 		return browserInfos;
+	},
+
+	getCookieFromJava : function(param) {
+		if (document.cookie.length > 0) {
+			var start = document.cookie.indexOf(param + "=");
+			if (start != -1) {
+				start = start + param.length + 1
+				var end = document.cookie.indexOf(";", start);
+				if (end == -1)
+					end = document.cookie.length
+				return unescape(document.cookie.substring(start, end))
+			}
+		}
+		return ""
 	}
 };

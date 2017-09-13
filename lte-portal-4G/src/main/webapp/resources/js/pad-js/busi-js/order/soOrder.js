@@ -2349,10 +2349,10 @@ SoOrder = (function() {
 				}
 			}
 		}
-		var cookie = _getCookieFromJava("switchC");
-		var cookieE = _getCookieFromJava("switchE");
-		var ageS = _getCookieFromJava("ageS");
-		var ageE = _getCookieFromJava("ageE");
+		var cookie = CommonUtils.getCookieFromJava("switchC");
+		var cookieE = CommonUtils.getCookieFromJava("switchE");
+		var ageS = CommonUtils.getCookieFromJava("ageS");
+		var ageE = CommonUtils.getCookieFromJava("ageE");
 		//获取下拉框的值
 		var selectValue = $("#orderIdentidiesTypeCd").val();
 		if(cookie == "ON"){

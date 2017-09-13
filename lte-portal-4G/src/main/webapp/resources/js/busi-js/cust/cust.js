@@ -398,7 +398,7 @@ order.cust = (function(){
 		var identidiesTypeCd=$(scope).val();
 		$("#"+id).attr("maxlength", "100");
 		//2017-09-11 新建客户时候，要求读卡
-		var cookieLessFOR = soOrder.getCookieFromJava("cookieLessFOR");
+		var cookieLessFOR = CommonUtils.getCookieFromJava("cookieLessFOR");
 		if(cookieLessFOR == "ON"){
 			if($("#identidiesTypeCd").val() == "50"){
 
@@ -2464,7 +2464,7 @@ order.cust = (function(){
 		}
 		
 		//2017-09-06 新建客户时，判断人员年龄，如大于16周岁不允许使用户口簿
-		var cookieSIX = soOrder.getCookieFromJava("switchSIX");
+		var cookieSIX = CommonUtils.getCookieFromJava("switchSIX");
 		if(cookieSIX == "ON"){
 			if($("#identidiesTypeCd").val() == "12" && $("#cCustIdCard").val() != "" && $("#cCustIdCard").val() != null && $("#cCustIdCard").val() != undefined){
 				var nowDate = new Date();

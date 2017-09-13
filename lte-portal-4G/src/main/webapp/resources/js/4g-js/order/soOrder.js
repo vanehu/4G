@@ -3734,10 +3734,10 @@ SoOrder = (function() {
 			} //TODO tmp for Mantis 0042657
 		}
 		}
-		var cookie = _getCookieFromJava("switchC");
-		var cookieE = _getCookieFromJava("switchE");
-		var ageS = _getCookieFromJava("ageS");
-		var ageE = _getCookieFromJava("ageE");
+		var cookie = CommonUtils.getCookieFromJava("switchC");
+		var cookieE = CommonUtils.getCookieFromJava("switchE");
+		var ageS = CommonUtils.getCookieFromJava("ageS");
+		var ageE = CommonUtils.getCookieFromJava("ageE");
 		//获取下拉框的值
 		var selectValue = $("#orderIdentidiesTypeCd").val();
 		if(cookie == "ON"){
@@ -4715,22 +4715,6 @@ SoOrder = (function() {
 		return true;
     };
     
-    //获取cookies的值
-    var _getCookieFromJava = function(c_name){
-    	if (document.cookie.length>0)
-    	  {
-    	  c_start=document.cookie.indexOf(c_name + "=")
-    	  if (c_start!=-1)
-    	    { 
-    	    c_start=c_start + c_name.length+1 
-    	    c_end=document.cookie.indexOf(";",c_start)
-    	    if (c_end==-1) c_end=document.cookie.length
-    	    return unescape(document.cookie.substring(c_start,c_end))
-    	    } 
-    	  }
-    	return "" 
-    }
-    
     //靓号调级
     var _buildBusiOrdersPhoneLevelModify = function(data, busiOrders){
     	var choosedProdInfo = order.prodModify.choosedProdInfo;
@@ -4799,7 +4783,6 @@ SoOrder = (function() {
 		changeFeeType			: _changeFeeType,
         oneCertFiveCheckData    : _oneCertFiveCheckData,
         setUserInfo             : _setUserInfo,
-        fillBusiOrder4changeUse : _fillBusiOrder4changeUse,
-        getCookieFromJava      :_getCookieFromJava
+        fillBusiOrder4changeUse : _fillBusiOrder4changeUse
 	};
 })();
