@@ -34,6 +34,31 @@ public class MDA {
 	 * 问卷调查 菜单访问权限
 	 */
 	public static final String IS_QUESTION_MENU = new String("");
+	
+	/**
+	 * 2017-08-31 经办人 证件权限
+	 */
+	public static final String LESS_THAN_SEVENTEEN = new String("");
+	
+	/**
+	 * 2017-08-31 经办人校验 分省
+	 */
+	public static final Map<String,String> LESS_THAN_EIGHT = new HashMap<String,String>();
+	
+	/**
+	 * 2017-09-01 军人身份证件、武装警察身份证件不能作为实名登记有效证件
+	 */
+	public static final String CHECK_SOLDIER_POLICE = new String("");
+	
+	/**
+	 * 2017-09-08 户口簿仅限于16周岁以下的人员使用
+	 */
+	public static final String LESS_THAN_SIX = new String("");
+	
+	/**
+	 * 2017-09-11 外国人居住证，要求读卡
+	 */
+	public static final String FOREGIN_LIVE = new String("");
 
 //	/**
 //	 * 问卷调查 题目查询

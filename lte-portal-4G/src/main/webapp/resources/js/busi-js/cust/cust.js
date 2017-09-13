@@ -397,7 +397,98 @@ order.cust = (function(){
 		$("#"+id).attr("onkeyup", "value=value.replace(/[^A-Za-z0-9]/ig,'')");
 		var identidiesTypeCd=$(scope).val();
 		$("#"+id).attr("maxlength", "100");
-		if (identidiesTypeCd == 1) {
+		//2017-09-11 新建客户时候，要求读卡
+		var cookieLessFOR = soOrder.getCookieFromJava("cookieLessFOR");
+		if(cookieLessFOR == "ON"){
+			if($("#identidiesTypeCd").val() == "50"){
+
+				/*$("#"+id).attr("placeHolder","请输入合法身份证号码");
+				$("#"+id).attr("data-validate","validate(idCardCheck18:请输入合法身份证号码) on(blur)");*/
+				// 新建客户身份证读卡，隐藏表单
+				if (id == "cCustIdCard") {
+					$("#readCertBtnCreate").show();
+					$('#td_custIdCard').removeData("flag");
+					// 获取pushBusi.js里绑定状态
+					if(CONST.GET_BIND_STATUS()){
+						$("#discernBtn_2").show();
+					}
+					$("#btn_readCert").show(); // 预受理
+//					$("#td_custName").data("custName", $("#td_custName").html());
+//					$("#td_custName").html("");
+//					$("#td_custIdCard").data("custIdCard", $("#td_custIdCard").html());
+//					$("#td_custIdCard").html("");
+					$("#td_custIdCard").data("flag", "0");
+//					$("#td_addressStr").data("addressStr", $("#td_addressStr").html());
+//					$("#td_addressStr").html("");
+					
+					$('#cCustName').val("");	//姓名
+					$('#cCustIdCard').val("");	//身份证号
+					$('#cAddressStr').val("");	//地址
+					$("#td_custName span").text("");
+					$("#td_custIdCard span").text("");
+					$("#td_addressStr span").text("");
+					
+					$("#cCustName").hide();
+					$("#cCustIdCard").hide();
+					$("#cAddressStr").hide();
+					$("#td_custName span").show();
+					$("#td_custIdCard span").show();
+					$("#td_addressStr span").show();
+					
+					_certInfo = {};
+					var identityPic = $("#img_custPhoto").data("identityPic");
+					if (identityPic != undefined) {
+						$("#img_custPhoto").removeData("identityPic").attr("src", "");
+					}
+				}
+				// 填单页面经办人读卡
+				if (id == "orderAttrIdCard") {
+					if(CONST.GET_BIND_STATUS()){
+						$("#discernBtn_4").show();
+					}
+		    		//展示读卡按钮
+		    		$("#orderAttrReadCertBtn").show();
+		    		//隐藏查询按钮
+		    		$("#orderAttrQueryCertBtn").hide();
+		    		//隐藏input标签
+		    		$("#orderAttrName").hide();
+		    		$("#orderAttrIdCard").hide();
+		    		$("#orderAttrAddr").hide();
+		    		//展示span标签
+		    		$("#li_order_attr span").show();
+		    		$("#li_order_remark2 span").show();
+		    		$("#li_order_remark3 span").show();
+				}
+				// 填单页面使用人读卡
+				if (id == "orderUserAttrIdCard") {
+					$("#orderUserAttrReadCertBtn").show();
+					$("#orderUserAttrName").hide();
+					$("#orderUserAttrIdCard").hide();
+					$("#orderUserAttrAddr").hide();
+					$("#orderUserAttrQueryCertBtn").hide();
+					$("#li_order_name span").show();
+					$("#li_order_cert span").show();
+					$("#li_order_nbr span").show();
+				}
+				// 新建客户经办人读卡
+				if (id == "custCAttrIdCard") {
+					$("#custCAttrReadCertBtn").show();
+					if(CONST.GET_BIND_STATUS()){
+						$("#discernBtn_3").show();
+					}
+					// 元素id由后台传来，这边读卡隐藏输入框，只能先写死
+					$("#" + CONST.BUSI_ORDER_ATTR.orderAttrName).hide();
+					$("#" + CONST.BUSI_ORDER_ATTR.orderAttrIdCard).hide();
+					$("#" + CONST.BUSI_ORDER_ATTR.orderAttrAddr).hide();
+					$("span[name='" + CONST.BUSI_ORDER_ATTR.orderAttrName + "']").show();
+					$("span[name='" + CONST.BUSI_ORDER_ATTR.orderAttrIdCard + "']").show();
+					$("span[name='" + CONST.BUSI_ORDER_ATTR.orderAttrAddr + "']").show();
+				}
+			
+			}
+		}
+		//新增的现役军人居民身份证、人民武装警察居民身份证,和居民身份证一样，要求必须读卡
+		if (identidiesTypeCd == 1 || identidiesTypeCd == 14 || identidiesTypeCd == 2) {
 			/*$("#"+id).attr("placeHolder","请输入合法身份证号码");
 			$("#"+id).attr("data-validate","validate(idCardCheck18:请输入合法身份证号码) on(blur)");*/
 			// 新建客户身份证读卡，隐藏表单
@@ -1418,6 +1509,11 @@ order.cust = (function(){
 		var areaId=$("#p_cust_areaId").val();
 		var menuName = $("#menuName").val();
 		OrderInfo.menuName = menuName;
+		//军人身份证件、武装警察身份证件不能作为实名登记有效证件，不允许新增客户
+		if($("#p_cust_identityCd").val() == "2" || $("#p_cust_identityCd").val() == "14"){
+			$.alert("提示", "军人身份证件、武装警察身份证件不能作为实名登记有效证件，不允许新增客户");
+			return;
+		}
 		if(areaId.indexOf("0000")>0){
 			$.alert("提示","前页受理地区为省级地区无法进行创建,请先选择市级地区！");
 			return;
@@ -2365,6 +2461,18 @@ order.cust = (function(){
 				    "flag":"1"
 			};
 			order.cust.custQueryParam = param;
+		}
+		
+		//2017-09-06 新建客户时，判断人员年龄，如大于16周岁不允许使用户口簿
+		var cookieSIX = soOrder.getCookieFromJava("switchSIX");
+		if(cookieSIX == "ON"){
+			if($("#identidiesTypeCd").val() == "12" && $("#cCustIdCard").val() != "" && $("#cCustIdCard").val() != null && $("#cCustIdCard").val() != undefined){
+				var nowDate = new Date();
+				if(nowDate.getFullYear() - ($("#cCustIdCard").val()).substring(6,10) > 16){
+					$.alert("提示", "大于16周岁不允许使用户口簿");
+					
+				}
+			}
 		}
 	};
 	//切换标签
