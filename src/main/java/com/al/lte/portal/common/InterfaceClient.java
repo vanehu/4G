@@ -1760,7 +1760,7 @@ public class InterfaceClient {
 		
 		
 		String svcString=JsonUtil.toString(svcCont);
-		String signKey=TransactionID+"\"SvcCont\":"+svcString+MDA.SecretKey.toString();
+		String signKey=TransactionID+"\"SvcCont\":"+svcString+MDA.OneFiveSecretKey.toString();
 		String sign=AESUtils.getMD5Str(signKey);
 		TcpCont.put("Sign", sign);
 		TcpCont.put("Method", serviceCode);
