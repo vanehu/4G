@@ -3616,5 +3616,41 @@
 			'JBRPZ_PZ_8540000':'1,43,22#22,23#13'
 			}
 		</const>
+		<const type="Map" name="FACE_VERIFY_COMPRESS_CONFIG" description="人证比对图片压缩配置[压缩比率/压缩质量/压缩格式/压缩长度/压缩宽度/base64头/开关(默认OFF)/宽度压缩阀值/高度压缩阀值]">
+		{
+			"FACE_VERIFY_COMPRESS_854": ["0.5", "0.95", "image/jpeg", "0", "0", "data:image/jpeg;base64,", "OFF", "1024", "768"],<!-- 西藏 -->
+			"FACE_VERIFY_COMPRESS_863": ["0.5", "0.95", "image/jpeg", "0", "0", "data:image/jpeg;base64,", "OFF", "1024", "768"],<!-- 青海 -->
+			"FACE_VERIFY_COMPRESS_815": ["0.5", "0.95", "image/jpeg", "0", "0", "data:image/jpeg;base64,", "OFF", "1024", "768"],<!-- 内蒙古 -->
+			"FACE_VERIFY_COMPRESS_823": ["0.5", "0.95", "image/jpeg", "0", "0", "data:image/jpeg;base64,", "OFF", "1024", "768"],<!-- 黑龙江 -->
+			"FACE_VERIFY_COMPRESS_845": ["0.5", "0.95", "image/jpeg", "0", "0", "data:image/jpeg;base64,", "OFF", "1024", "768"],<!-- 广西 -->
+			"FACE_VERIFY_COMPRESS_850": ["0.5", "0.95", "image/jpeg", "0", "0", "data:image/jpeg;base64,", "OFF", "1024", "768"],<!-- 重庆 -->
+			"FACE_VERIFY_COMPRESS_861": ["0.5", "0.95", "image/jpeg", "0", "0", "data:image/jpeg;base64,", "OFF", "1024", "768"],<!-- 陕西 -->
+			"FACE_VERIFY_COMPRESS_842": ["0.5", "0.95", "image/jpeg", "0", "0", "data:image/jpeg;base64,", "OFF", "1024", "768"],<!-- 湖北 -->
+			"FACE_VERIFY_COMPRESS_835": ["0.5", "0.95", "image/jpeg", "0", "0", "data:image/jpeg;base64,", "OFF", "1024", "768"],<!-- 福建 -->
+			"FACE_VERIFY_COMPRESS_832": ["0.5", "0.95", "image/jpeg", "0", "0", "data:image/jpeg;base64,", "OFF", "1024", "768"],<!-- 江苏 -->
+			"FACE_VERIFY_COMPRESS_846": ["0.5", "0.95", "image/jpeg", "0", "0", "data:image/jpeg;base64,", "OFF", "1024", "768"],<!-- 海南 -->
+			"FACE_VERIFY_COMPRESS_864": ["0.5", "0.95", "image/jpeg", "0", "0", "data:image/jpeg;base64,", "OFF", "1024", "768"],<!-- 宁夏 -->
+			"FACE_VERIFY_COMPRESS_814": ["0.5", "0.95", "image/jpeg", "0", "0", "data:image/jpeg;base64,", "OFF", "1024", "768"],<!-- 山西 -->
+			"FACE_VERIFY_COMPRESS_853": ["0.5", "0.95", "image/jpeg", "0", "0", "data:image/jpeg;base64,", "OFF", "1024", "768"],<!-- 云南 -->
+			"FACE_VERIFY_COMPRESS_836": ["0.5", "0.95", "image/jpeg", "0", "0", "data:image/jpeg;base64,", "OFF", "1024", "768"],<!-- 江西 -->
+			"FACE_VERIFY_COMPRESS_837": ["0.5", "0.95", "image/jpeg", "0", "0", "data:image/jpeg;base64,", "OFF", "1024", "768"],<!-- 山东 -->
+			"FACE_VERIFY_COMPRESS_811": ["0.5", "0.95", "image/jpeg", "0", "0", "data:image/jpeg;base64,", "OFF", "1024", "768"],<!-- 北京 -->
+			"FACE_VERIFY_COMPRESS_843": ["0.5", "0.95", "image/jpeg", "0", "0", "data:image/jpeg;base64,", "OFF", "1024", "768"],<!-- 湖南 -->
+			"FACE_VERIFY_COMPRESS_851": ["0.5", "0.95", "image/jpeg", "0", "0", "data:image/jpeg;base64,", "OFF", "1024", "768"],<!-- 四川 -->
+			"FACE_VERIFY_COMPRESS_844": ["0.5", "0.95", "image/jpeg", "0", "0", "data:image/jpeg;base64,", "OFF", "1024", "768"],<!-- 广东 -->
+			"FACE_VERIFY_COMPRESS_831": ["0.5", "0.95", "image/jpeg", "0", "0", "data:image/jpeg;base64,", "OFF", "1024", "768"],<!-- 上海 -->
+			"FACE_VERIFY_COMPRESS_812": ["0.5", "0.95", "image/jpeg", "0", "0", "data:image/jpeg;base64,", "OFF", "1024", "768"],<!-- 天津 -->
+			"FACE_VERIFY_COMPRESS_813": ["0.5", "0.95", "image/jpeg", "0", "0", "data:image/jpeg;base64,", "OFF", "1024", "768"],<!-- 河北 -->
+			"FACE_VERIFY_COMPRESS_841": ["0.5", "0.95", "image/jpeg", "0", "0", "data:image/jpeg;base64,", "OFF", "1024", "768"],<!-- 河南 -->
+			"FACE_VERIFY_COMPRESS_821": ["0.5", "0.95", "image/jpeg", "0", "0", "data:image/jpeg;base64,", "OFF", "1024", "768"],<!-- 辽宁 -->
+			"FACE_VERIFY_COMPRESS_822": ["0.5", "0.95", "image/jpeg", "0", "0", "data:image/jpeg;base64,", "OFF", "1024", "768"],<!-- 吉林 -->
+			"FACE_VERIFY_COMPRESS_834": ["0.5", "0.95", "image/jpeg", "0", "0", "data:image/jpeg;base64,", "OFF", "1024", "768"],<!-- 安徽 -->
+			"FACE_VERIFY_COMPRESS_833": ["0.5", "0.95", "image/jpeg", "0", "0", "data:image/jpeg;base64,", "OFF", "1024", "768"],<!-- 浙江 -->
+			"FACE_VERIFY_COMPRESS_852": ["0.5", "0.95", "image/jpeg", "0", "0", "data:image/jpeg;base64,", "OFF", "1024", "768"],<!-- 贵州 -->
+			"FACE_VERIFY_COMPRESS_862": ["0.5", "0.95", "image/jpeg", "0", "0", "data:image/jpeg;base64,", "OFF", "1024", "768"],<!-- 甘肃 -->
+			"FACE_VERIFY_COMPRESS_865": ["0.5", "0.95", "image/jpeg", "0", "0", "data:image/jpeg;base64,", "OFF", "1024", "768"],<!-- 新疆 -->
+			"FACE_VERIFY_COMPRESS_899": ["0.5", "0.95", "image/jpeg", "0", "0", "data:image/jpeg;base64,", "OFF", "1024", "768"]<!-- 虚拟省 -->
+		}
+		</const>
 	</mda>
 </mdas>

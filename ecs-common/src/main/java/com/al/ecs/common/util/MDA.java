@@ -682,4 +682,7 @@ public class MDA {
 
 	/**经办人拍照配置*/
 	public static final Map<String, String> JBRPZ_PZ = new HashMap<String, String>();
+	
+	/**人证比对图片压缩参数*/
+    public static final Map<String, List<String>> FACE_VERIFY_COMPRESS_CONFIG = new HashMap<String, List<String>>();
 }

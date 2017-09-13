@@ -13,8 +13,10 @@ public class TestImage {
 
 	public static String base64ImageStr = "=";
 //	public static String base64ImageStr = "data:image/jpeg;base64,";
+	
 	public static void main(String[] args){
-		testResize();
+//		testResize();
+//		saveImage(base64ImageStr);
 	}
 	
 	public static void testResize(){
@@ -26,6 +28,18 @@ public class TestImage {
 		    out.write(scaledImageBytes);
 		    out.flush();
 		    out.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void saveImage(String base64ImageStr){
+		byte[] imageBytes = Base64.decodeBase64(base64ImageStr);
+		try {
+            OutputStream out = new FileOutputStream("D:\\image\\imageOrigin.jpg");
+            out.write(imageBytes);
+            out.flush();
+            out.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
