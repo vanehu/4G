@@ -71,6 +71,7 @@ import com.al.lte.portal.bmo.crm.SignBmo;
 import com.al.lte.portal.bmo.staff.StaffBmo;
 import com.al.lte.portal.bmo.staff.StaffChannelBmo;
 import com.al.lte.portal.bmo.system.MenuBmo;
+import com.al.lte.portal.common.AESUtils;
 import com.al.lte.portal.common.CommonMethods;
 import com.al.lte.portal.common.CommonUtils;
 import com.al.lte.portal.common.Const;
@@ -983,6 +984,7 @@ public class LoginController extends BaseController {
 		if (smsPwdSession.equals(smsPwd)&&numberSession.equals(number)) {
 			Map<String,Object> resData=new HashMap<String,Object>();
 			resData.put("msg", "短信验证成功.");
+			resData.put("smsPwd", AESUtils.getMD5Str("SMS"+smsPwdSession+"SMS"));
 			return super.successed(resData);
 		}else {
 			return super.failed("短信验证码错误!", ResultConstant.FAILD.getCode());
@@ -1305,6 +1307,7 @@ public class LoginController extends BaseController {
 			Map<String, Object> successedData = new HashMap<String, Object>();
 			successedData.put("data", "短信验证码发送成功!");
 			successedData.put("randomCode", ServletUtils.getSessionAttribute(request, SysConstant.SESSION_KEY_CUSTAUTH_RANDONCODE));
+			successedData.put("phoneNum", AESUtils.getMD5Str("SMS"+(String) paramMap.get("phoneNum")+"SMS"));
 			return super.successed(successedData, ResultConstant.SUCCESS.getCode());			
 		}else{
 			return super.failed(ErrorCode.CHANGEUIM_MSG_SEND, ret, new HashMap<String, Object>());	
@@ -1378,6 +1381,7 @@ public class LoginController extends BaseController {
 		if (smsPwdSession.equals(smsPwd)) {
 			Map<String,Object> resData=new HashMap<String,Object>();
 			resData.put("msg", "短信验证成功.");
+			resData.put("smsPwd", AESUtils.getMD5Str("SMS"+smsPwdSession+"SMS"));
 			return super.successed(resData);
 		}else {
 			return super.failed("短信验证码错误!", ResultConstant.FAILD.getCode());

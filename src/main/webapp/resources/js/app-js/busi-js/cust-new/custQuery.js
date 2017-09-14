@@ -8,6 +8,7 @@ CommonUtils.regNamespace("custQuery");
  * 订单准备
  */
 custQuery = (function(){
+	var smsPass = true;
 	//客户鉴权跳转权限
 	var _jumpAuthflag="";
 	var _queryForChooseUser = false;
@@ -857,6 +858,7 @@ custQuery = (function(){
 	
 	//短信发送
 	var _smsResend = function (level) {
+		smsPass = true;
 		$("#smspwd2").val("");
 		var accNbr = "";
 		if (level == "1") {
@@ -877,6 +879,11 @@ custQuery = (function(){
 		$.callServiceAsJsonGet(contextPath + "/staff/login/custAuthSmsSend", param, {
 			"done": function (response) {
 				if (response.code == 0) {
+					if(response.data==undefined || response.data.phoneNum==undefined || MD5("SMS"+accNbr+"SMS")!=response.data.phoneNum.toUpperCase()){
+						$.alert("提示","验证码发送失败！");
+						smsPass = false;
+						return;
+					}
 					if(response.data.randomCode != null ){
 						$("#num").val(response.data.randomCode);
 					}
@@ -898,6 +905,10 @@ custQuery = (function(){
 			$.alert("提示","验证码不能为空！");
 			return;
 		}
+		if(smsPass == false){
+			$.alert("提示","短信校验失败！");
+			return;
+		}
 		var param = _choosedCustInfo;
 		var recordParam={};
 		recordParam.validateType="2";
@@ -915,6 +926,12 @@ custQuery = (function(){
 			"done" : function(response){
 				$.unecOverlay();
 				if(response.code==0){
+					if(response.data==undefined || response.data.smsPwd==undefined || MD5("SMS"+$("#smspwd2").val()+"SMS")!=response.data.smsPwd.toUpperCase()){
+						$.alert("提示","短信校验失败！");
+						recordParam.resultCode = "1";
+						_saveAuthRecord(recordParam);
+						return;
+					}
 					$('#auth3').modal('hide');
 					if (level == "1") {
 						var param = _choosedCustInfo;

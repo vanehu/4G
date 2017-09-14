@@ -231,6 +231,10 @@ product.uim = (function() {
 			"done" : function(response){
 				$.unecOverlay();
 				if (response.code == 0) {
+					if(response.data==undefined || response.data.smsPwd==undefined || MD5("SMS"+smspwd+"SMS")!=response.data.smsPwd.toUpperCase()){
+						$.alert("提示","短信校验失败！");
+						return;
+					}
 					$("#alert-modal").modal("hide");
 					if(OrderInfo.actionFlag == 3 || OrderInfo.actionFlag == 2){
 						_checkUimFunction(prodId);
