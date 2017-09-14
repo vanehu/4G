@@ -3736,6 +3736,7 @@ public class OrderController extends BaseController {
 			this.log.error("查询信息失败", be);
 			return super.failed(be);
 		} catch (InterfaceException ie) {
+			log.error("查询信息接口返回异常", ie);
 			return super.failed(ie, paramMap, ErrorCode.QUERY_CMP);
 		} catch (Exception e) {
 			log.error("门户处理营业受理的CmpWeb/CmpService/queryCmcCertNumRel",e);
