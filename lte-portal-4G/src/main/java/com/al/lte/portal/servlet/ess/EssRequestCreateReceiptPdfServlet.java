@@ -199,7 +199,7 @@ public class EssRequestCreateReceiptPdfServlet extends HttpServlet implements
 			}
 
 			String orderType = (String)printDataMap.get("orderType");
-			if(StringUtils.isNotBlank(orderType)){
+			if(StringUtils.isBlank(orderType)){
 				orderType = MapUtils.getString(paramMap, "orderType");
 			}
 			if (orderType.equals("preInstall")
@@ -209,16 +209,21 @@ public class EssRequestCreateReceiptPdfServlet extends HttpServlet implements
 				// 预装和主套餐变更需要上传协议单
 				// 20170912 新增 新装、补换卡 订单需要上传协议单
 				String extCustOrderId = (String) printDataMap.get("extCustOrderId");
-				if(StringUtils.isNotBlank(extCustOrderId)){
+				if(StringUtils.isBlank(extCustOrderId)){
 					extCustOrderId = MapUtils.getString(paramMap, "extCustOrderId");
 				}
 				String extSystem = (String) printDataMap.get("extSystem");
-				if(StringUtils.isNotBlank(extSystem)){
+				if(StringUtils.isBlank(extSystem)){
 					extSystem = MapUtils.getString(paramMap, "extSystem");
 				}
 				InputStream fileInputStream = new ByteArrayInputStream(bytes);
 				String uploadFileName = extCustOrderId + extSystem + ".pdf";
 				Map<String, Object> ftpEvidenceFileResultMap = ftpServiceUtils.pdfFileFTP(fileInputStream, uploadFileName);
+				String ftpDealCode = (String)ftpEvidenceFileResultMap.get("code");
+				if(!ResultCode.R_SUCCESS.equals(ftpDealCode)){
+					result.setCode(RESULT_CODE_FAIL);
+					result.setMsg((String)ftpEvidenceFileResultMap.get("mess"));
+				}
 			}
 
 		} catch (Exception e) {

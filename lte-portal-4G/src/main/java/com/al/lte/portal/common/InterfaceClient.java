@@ -610,14 +610,17 @@ public class InterfaceClient {
 		String errorStack = "";
 		String prefix = "";
 		String logSeqId = "essInvoke4VoucherDataInfo";
-		//判断是否启用默认HTTP调用方式
-		String invokeWay = propertiesUtils.getMessage(SysConstant.DEF_HTTP_FLAG);
-		if (SysConstant.ON.equals(invokeWay)) {
-			invokeWay = HTTP_WAY;
-		} else {
-			//未启用则从simulate配置文件中读取各接口对应的调用方式
-			invokeWay = getInvokeWay(serviceCode);
-		}
+//		//判断是否启用默认HTTP调用方式
+//		String invokeWay = propertiesUtils.getMessage(SysConstant.DEF_HTTP_FLAG);
+//		if (SysConstant.ON.equals(invokeWay)) {
+//			invokeWay = HTTP_WAY;
+//		} else {
+//			//未启用则从simulate配置文件中读取各接口对应的调用方式
+//			invokeWay = getInvokeWay(serviceCode);
+//		}
+		
+		//默认使用http方式调用
+		String invokeWay = HTTP_WAY;
 		
 		try {
 			prefix = serviceCode.substring(0, serviceCode.indexOf("-"));
