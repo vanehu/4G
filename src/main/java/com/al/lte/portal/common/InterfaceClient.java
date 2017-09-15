@@ -1787,9 +1787,6 @@ public class InterfaceClient {
 		String retnJson = "";
 		String rawRetn = "";
 		String intfUrl = "";
-		String csbFlag = propertiesUtils.getMessage(SysConstant.CSB_FLAG);
-		String asyncFlag = propertiesUtils.getMessage(SysConstant.ASYNC_FLAG);
-		boolean asyncWay = false;
 		if(MDA.CSB_HTTP_CMP_URL.toString()!=null && MDA.CSB_HTTP_CMP_URL.toString().length()>0){
 	        	intfUrl = MDA.CSB_HTTP_CMP_URL.toString();
 	        			//"http://10.128.90.194:8201/LTE-CSB/HttpAPIService";  
