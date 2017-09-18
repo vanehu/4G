@@ -322,6 +322,35 @@ public class OfferController extends BaseController {
 			paramMap.remove("queryType");
 			paramMap.put("operatorsId", sessionStaff.getOperatorsId()!=""?sessionStaff.getOperatorsId():"99999");
 			Map<String, Object> openMap = offerBmo.queryMustAttOffer(paramMap,null,sessionStaff);
+			//#1766024 关于集团CRM销售品依赖功能优化的需求       --- start
+			//再调用一次默认必开
+			Map<String, Object> paramMaps = paramMap;
+			Map<String, Object> result = (Map<String, Object>) openMap.get("result");
+			List<Map<String, Object>> offerSpecs = (List<Map<String, Object>>) result.get("offerSpec");
+			if(offerSpecs!=null && offerSpecs.size()>0){
+				List offerAIds = new ArrayList();
+				for(int i = 0; i < offerSpecs.size(); i++){
+					Map<String, Object> offerSpec = (Map<String, Object>)offerSpecs.get(i);
+					offerAIds.add(offerSpec.get("offerSpecId"));
+				}
+				paramMaps.put("offerAIds", offerAIds);
+				paramMaps.remove("offerSpecId");
+				Map<String, Object> openMaps = offerBmo.queryMustAttOffer(paramMaps,null,sessionStaff);
+				//把返回的默认必开合并到套餐返回的默认必开,去掉重复的
+				Map<String, Object> openMapsResult = (Map<String, Object>) openMaps.get("result");
+				List<Map<String, Object>> openMapsOfferSpecs = (List<Map<String, Object>>) openMapsResult.get("offerSpec");
+				if(openMapsOfferSpecs!=null && openMapsOfferSpecs.size()>0){
+					List<Map<String, Object>> openMapsOfferSpecsList = new ArrayList<Map<String, Object>>();
+					for(int j = 0; j < openMapsOfferSpecs.size(); j++){
+						Map<String, Object> openMapsOfferSpec = (Map<String, Object>)openMapsOfferSpecs.get(j);
+						if(!offerAIds.contains(openMapsOfferSpec.get("offerSpecId"))){
+							openMapsOfferSpecsList.add(openMapsOfferSpec);
+						}
+					}
+					offerSpecs.addAll(openMapsOfferSpecsList);
+				}
+			}
+			//#1766024  ---end
 			model.addAttribute("openMap",openMap);
 			model.addAttribute("openMapJson", JsonUtil.buildNormal().objectToJson(openMap));
 			
