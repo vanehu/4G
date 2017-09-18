@@ -63,10 +63,10 @@ public class Photograph {
 			synchronized (Photograph.class) {
 				if (photograph == null) {
 					photograph = new Photograph();
-					photograph.setContext(MDA.WARTER_MARKER_CONEXT + " " + DateUtil.getFormatTimeString(new Date(), "yyyy/MM/dd"));
 				}
 			}
 		}
+		photograph.setContext(MDA.WARTER_MARKER_CONEXT + " " + DateUtil.getFormatTimeString(new Date(), "yyyy/MM/dd"));
 		
 		return photograph;
 	}
