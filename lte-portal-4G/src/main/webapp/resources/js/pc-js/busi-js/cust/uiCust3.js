@@ -72,6 +72,7 @@ var _choosedCustInfo = {};
 		var identityNum="";
 		var queryType="";
 		var queryTypeValue="";
+        $("#p_cust_identityCd").val("-1");
 		identityCd=$("#p_cust_identityCd").val();
 		identityNum=$.trim($("#p_cust_identityNum").val());
 		//判断是否是号码或身份证输入
