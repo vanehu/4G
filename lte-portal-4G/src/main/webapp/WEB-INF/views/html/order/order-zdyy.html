@@ -238,7 +238,8 @@ function createDialog(){
                           <tr>
                                 <td width="60"> 客户姓名：</td>
                                 <td width="430" id="td_custName">
-                                  <input type="text" placeHolder="请准确填写客户姓名" data-validate="validate(required:请准确填写客户姓名) on(blur)" class="inputWidth228px" maxlength="64" id="cCustName"/><label class="f_red">*</label>
+                                  	<input type="text" placeHolder="请准确填写客户姓名" data-validate="validate(required:请准确填写客户姓名) on(blur)" class="inputWidth228px" maxlength="64" id="cCustName"/><label class="f_red">*</label>
+                                	<span style="line-height: 28px; float:left;"></span>
                                 </td>
                           </tr>
                           <tr>
@@ -264,14 +265,16 @@ function createDialog(){
                           <tr>
                                 <td> 证件号码：</td>
                                 <td id="td_custIdCard">
-                                  <input type="text" onkeyup="value=value.replace(/[^\w\.\/]/ig,'')" placeHolder="请输入合法身份证号码" data-validate="validate(idCardCheck:请输入合法身份证号码) on(blur)" maxLength="100" class="inputWidth228px" id="cCustIdCard"/><label class="f_red">*</label>
+                                  	<input type="text" onkeyup="value=value.replace(/[^\w\.\/]/ig,'')" placeHolder="请输入合法身份证号码" data-validate="validate(idCardCheck:请输入合法身份证号码) on(blur)" maxLength="100" class="inputWidth228px" id="cCustIdCard"/><label class="f_red">*</label>
+                                	<span style="line-height: 28px; float:left;"></span>
                                 </td>
                           </tr>
 
                           <tr>
                                 <td width="60"> 客户地址：</td>
                                 <td width="430" id="td_addressStr">
-                                  <input type="text" placeHolder="请填写客户地址"  class="inputWidth228px" data-validate="validate(required:请准确填写客户地址) on(blur)" maxlength="128" id="cAddressStr"/><label class="f_red">*</label>
+                                  	<input type="text" placeHolder="请填写客户地址"  class="inputWidth228px" data-validate="validate(required:请准确填写客户地址) on(blur)" maxlength="128" id="cAddressStr"/><label class="f_red">*</label>
+                                	<span style="line-height: 28px; float:left;"></span>
                                 </td>
                           </tr>
                           <tr>
