@@ -11,6 +11,18 @@ $(function() {
 		}
 	});
 });
+$(function() {
+	$(".noUiSlidere1").noUiSlider({
+		range: [0, 500],
+		start: [0, 500],
+		step: 10,
+		slide: function() {
+			var values = $(this).val();
+			$("#Greater1").val(values[0]);
+			$("#Less1").val(values[1]);
+		}
+	});
+});
 </script>
 <input type="hidden" id="subnum" value="" />
 <input type="hidden" id="subPage" value="" />
