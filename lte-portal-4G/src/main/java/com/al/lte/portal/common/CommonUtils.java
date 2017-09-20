@@ -1,12 +1,10 @@
 package com.al.lte.portal.common;
 
-import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import net.sf.json.JSON;
@@ -15,7 +13,6 @@ import net.sf.json.xml.XMLSerializer;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,42 +24,13 @@ import com.al.lte.portal.model.SessionStaff;
 public class CommonUtils {
 	
 	private static Logger log = LoggerFactory.getLogger(CommonUtils.class.getName());
-	
-	private static String userAgent;
-	
-	public static String getSerAddrPart(){
-		String sIP = "" ;
-		try{
-            InetAddress address = InetAddress.getLocalHost();  
-            sIP = ""+ address.getHostAddress();//10.128.21.56
-            String[] sIPS = sIP.split("\\.");
-            if(sIPS.length>3){
-            	sIP = sIPS[2]+"."+sIPS[3];
-            }
-    	}catch(Exception e){
-    		log.error("获取服务当前IP失败");
-    		//e.printStackTrace();
-    	}
-		return sIP ;
-	}
-	public static String getAllAddrPart(){
-		String sIP = "" ;
-		try{
-            InetAddress address = InetAddress.getLocalHost();  
-            sIP = ""+ address.getHostAddress();//10.128.21.56
-    	}catch(Exception e){
-    		log.error("获取服务当前IP失败");
-    		//e.printStackTrace();
-    	}
-		return sIP ;
-	}
 
 	/**
 	 * pdf文件下载
 	 * 
 	 * @param map
 	 * @param response
-	 * @throws Exception
+	 * @throws Exception 
 	 */
 	public static void downLoadPdf(Map<String,Object> map,String fileName,HttpServletResponse response)
 			throws Exception {
@@ -151,35 +119,4 @@ public class CommonUtils {
         }  
         return null;  
     }
-	
-	public static String setUserAgent(HttpServletRequest request){
-		if(request != null){
-			userAgent = request.getHeader("User-Agent");
-			if(StringUtils.isNotBlank(userAgent)){
-				userAgent = StringUtils.lowerCase(userAgent);
-			}
-		}
-		
-		return userAgent;
-	}
-	
-	public static String getUserAgent() {
-		return userAgent;
-	}
-	
-	public static boolean isIE(){
-		if(StringUtils.isNotBlank(userAgent)){
-			return StringUtils.indexOf(userAgent, "msie") >= 0;
-		} else{
-			return false;
-		} 
-	}
-	
-	public static boolean isIE8(){
-		if(StringUtils.isNotBlank(userAgent)){
-			return StringUtils.indexOf(userAgent, "msie 8") >= 0;
-		} else{
-			return false;
-		} 
-	}
 }

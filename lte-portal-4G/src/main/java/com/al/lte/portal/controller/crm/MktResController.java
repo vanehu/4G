@@ -40,6 +40,7 @@ import com.al.ecs.common.util.JsonUtil;
 import com.al.ecs.common.util.MapUtil;
 import com.al.ecs.common.util.PageUtil;
 import com.al.ecs.common.util.PropertiesUtils;
+import com.al.ecs.common.web.HttpUtils;
 import com.al.ecs.common.web.ServletUtils;
 import com.al.ecs.exception.AuthorityException;
 import com.al.ecs.exception.BusinessException;
@@ -440,7 +441,7 @@ public class MktResController extends BaseController {
 				logmap.put("STATUS_CD", "选择号码");
 				logmap.put("STAFF_ID", sessionStaff.getStaffId());
 				logmap.put("SALES_CODE", sessionStaff.getSalesCode());
-				logmap.put("HOST_IP", CommonUtils.getAllAddrPart());
+				logmap.put("HOST_IP", HttpUtils.getHostIpAddress());
 				logmap.put("INTF_URL", "PnQueryService");
 				logmap.put("IDENTIDIES_TYPE", "");
 				logmap.put("IDENTITY_NUM", "");

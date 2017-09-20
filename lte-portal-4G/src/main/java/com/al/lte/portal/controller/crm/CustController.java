@@ -5,6 +5,7 @@ import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ecs.common.entity.JsonResponse;
 import com.al.ecs.common.entity.PageModel;
 import com.al.ecs.common.util.*;
+import com.al.ecs.common.web.HttpUtils;
 import com.al.ecs.common.web.ServletUtils;
 import com.al.ecs.exception.*;
 import com.al.ecs.spring.annotation.log.LogOperatorAnn;
@@ -75,7 +76,7 @@ public class CustController extends BaseController {
 				logmap.put("STAFF_CODE", sessionStaff.getStaffCode());
 				logmap.put("STAFF_ID", sessionStaff.getStaffId());
 				logmap.put("SALES_CODE", sessionStaff.getSalesCode());
-				logmap.put("HOST_IP", CommonUtils.getAllAddrPart());
+				logmap.put("HOST_IP", HttpUtils.getHostIpAddress());
 				logmap.put("SESSIONINFO", "");
 				logmap.put("STATUS_CD", "客户定位");
 				logmap.put("INTF_URL", "service/intf.custService/queryCust");
@@ -153,7 +154,7 @@ public class CustController extends BaseController {
 							logmap.put("STAFF_CODE", sessionStaff.getStaffCode());
 							logmap.put("STAFF_ID", sessionStaff.getStaffId());
 							logmap.put("SALES_CODE", sessionStaff.getSalesCode());
-							logmap.put("HOST_IP", CommonUtils.getAllAddrPart());
+							logmap.put("HOST_IP", HttpUtils.getHostIpAddress());
 							logmap.put("SESSIONINFO", "");
 							logmap.put("STATUS_CD", "客户定位传入的areaID被篡改areaId+"+areaId);
 							logmap.put("INTF_URL", "service/intf.custService/queryCust");
@@ -535,7 +536,7 @@ public class CustController extends BaseController {
 				logmap.put("STATUS_CD", "客户定位");
 				logmap.put("STAFF_ID", sessionStaff.getStaffId());
 				logmap.put("SALES_CODE", sessionStaff.getSalesCode());
-				logmap.put("HOST_IP", CommonUtils.getSerAddrPart());
+				logmap.put("HOST_IP", HttpUtils.getHostIpAddress());
 				logmap.put("INTF_URL", "service/intf.custService/queryCust");
 				logmap.put("IDENTIDIES_TYPE", paramMap.get("identidies_type").toString());
 				logmap.put("IDENTITY_NUM", (String) (paramMap.get("acctNbr")==""?paramMap.get("identityNum")==""?paramMap.get("queryTypeValue"):paramMap.get("identityNum"):paramMap.get("acctNbr")));

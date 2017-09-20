@@ -5,6 +5,7 @@ import com.al.common.utils.StringUtil;
 import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ecs.common.entity.JsonResponse;
 import com.al.ecs.common.entity.PageModel;
+import com.al.ecs.common.util.BrowserUtil;
 import com.al.ecs.common.util.EncodeUtils;
 import com.al.ecs.common.util.FtpUtils;
 import com.al.ecs.common.util.JsonUtil;
@@ -5071,13 +5072,12 @@ public class OrderController extends BaseController {
      * 实名制客户身份证件下载
      */
     @RequestMapping(value = "/downloadCustCertificate", method = RequestMethod.POST)
-    public String downloadCustCertificate(@RequestBody Map<String, Object> param, @LogOperatorAnn String flowNum, Model model) {
+    public String downloadCustCertificate(@RequestBody Map<String, Object> param, @LogOperatorAnn String flowNum, Model model, HttpServletRequest request) {
         SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
         Map<String, Object> result = null;
-        CommonUtils.setUserAgent(super.getRequest());
         
         try {
-        	result = orderBmo.downloadCustCertificate(param, sessionStaff, CommonUtils.isIE8());
+        	result = orderBmo.downloadCustCertificate(param, sessionStaff, BrowserUtil.isIE8(request));
             if (result != null && ResultCode.R_SUCCESS.equals(MapUtils.getString(result, "code", ""))) {
             	model.addAttribute("code", ResultCode.R_SUCC);
             	model.addAttribute("list", result.get("photographs"));
