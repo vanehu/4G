@@ -763,7 +763,6 @@ order.cust = (function(){
 		if(order.cust.fromProvFlag == "1" || (identityCd!=-1 && CONST.getAppDesc()!=0)){
 			identityCd=$("#p_cust_identityCd").val();
 			authFlag="1";
-            OrderInfo.cust_validateType = "1";
 		}else{
 			//4G所有证件类型定位都需要客户鉴权
 			authFlag="0";
@@ -1779,19 +1778,15 @@ order.cust = (function(){
 	};
 	//已订购业务
 	var _btnQueryCustProdMore=function(param){
-		var menuName = $("#menuName").attr("menuName");
-		if(menuName !="FD" && menuName!="WJHCJ" && menuName!="WSMFX"){
 			//判断用户是否篡改报文
+        if(OrderInfo.cust_validateType != 4 && OrderInfo.cust_validateType != ""){
 			var queryUrl=contextPath+"/cust/isTrueJson";
 			var response = $.callServiceAsJson(queryUrl, "", {"before":function(){}});
-			
-			if(OrderInfo.cust_validateType != 4){
-				if(false){
+            if(response.data.dxState == "N" || response.data.dxState == ""){
 					$.alert("提示","非法鉴权！");
 					return;
 				}
 			}
-		}
 		if(OrderInfo.cust.custId==-1){
 			$.alert("提示","新建客户无法查询已订购产品！");
 			return;
