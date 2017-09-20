@@ -338,6 +338,7 @@ order.cust = (function(){
 			$("#"+id).attr("placeHolder","请输入军官证");
 			$("#"+id).attr("data-validate","validate(required:请准确填写军官证) on(keyup)");
 		}else if(identidiesTypeCd==3){
+			$("#"+id).attr("onkeyup", "value=value.replace(/[^A-Za-z0-9-]/ig,'')");
 			$("#"+id).attr("placeHolder","请输入护照");
 			$("#"+id).attr("data-validate","validate(required:请准确填写护照) on(keyup)");
 		}else if(identidiesTypeCd==15){
@@ -673,6 +674,7 @@ order.cust = (function(){
 				$("#"+id).attr("placeHolder","请输入合法军官证");
         		$("#"+id).attr("data-validate","validate(required:请准确填写军官证) on(blur)");
 			}else if(identidiesTypeCd==3){
+				$("#"+id).attr("onkeyup", "value=value.replace(/[^A-Za-z0-9-]/ig,'')");
 				$("#"+id).attr("placeHolder","请输入合法护照");
 				$("#"+id).attr("data-validate","validate(required:请准确填写护照) on(blur)");
 			}else if(identidiesTypeCd==15) {
