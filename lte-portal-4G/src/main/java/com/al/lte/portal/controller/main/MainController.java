@@ -208,6 +208,7 @@ public class MainController extends BaseController {
 					cookieLessSIX.setMaxAge(60*60*24);
 					cookieLessSIX.setPath("/");
 					resp.addCookie(ageE);
+					request.getSession().setAttribute("valueAgeE", valueE);
 					//17岁
 					newMap.put("typeClass", "17");
 					db = InterfaceClient.callService(newMap, PortalServiceCode.REAL_NAME_SERVICE, "", sessionStaff);
@@ -217,6 +218,7 @@ public class MainController extends BaseController {
 					cookieLessSIX.setMaxAge(60*60*24);
 					cookieLessSIX.setPath("/");
 					resp.addCookie(ageS);
+					request.getSession().setAttribute("valueAgeS", valueS);
 					
 				} catch (InterfaceException e2) {
 					// TODO Auto-generated catch block

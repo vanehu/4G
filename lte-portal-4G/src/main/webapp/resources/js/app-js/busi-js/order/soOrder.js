@@ -2613,8 +2613,8 @@ SoOrder = (function() {
 		
 		var cookie = CommonUtils.getCookieFromJava("switchC");
 		var cookieE = CommonUtils.getCookieFromJava("switchE");
-		var ageS = CommonUtils.getCookieFromJava("ageS");
-		var ageE = CommonUtils.getCookieFromJava("ageE");
+		var ageS = CommonUtils.getCookieFromJava("nAgeS");
+		var ageE = CommonUtils.getCookieFromJava("nAgeE");
 		//获取下拉框的值
 		var selectValue = $("#orderIdentidiesTypeCd").val();
 		if(cookie == "ON"){
@@ -2627,12 +2627,14 @@ SoOrder = (function() {
 					if(orderAttrName == "" || orderAttrName == null || orderAttrName == undefined){
 						//判断外国人永久居留证
 						if($("#p_cust_identityCd").val() == "50"){
-							if(new Date().getYear().toString() - orderAttrIdCard.toString().subString(7,9) < ageS){
+							if(new Date().getYear() - orderAttrIdCard.substring(7,9) < ageS){
 								$.alert("提示","不满'"+ageS+"'岁必须填写经办人！");
+								return false;
 							}
 						}else{
-							if(new Date().getFullYear().toString() - orderAttrIdCard.toString().subString(6,10) < ageS){
+							if(new Date().getFullYear() - orderAttrIdCard.substring(6,10) < ageS){
 								$.alert("提示","不满'"+ageS+"'岁必须填写经办人！");
+								return false;
 							}
 						}
 					}
@@ -2642,13 +2644,15 @@ SoOrder = (function() {
 		if(cookieE == "ON"){
 			//对于经办人的校验
 			if(orderAttrName != "" || orderAttrName != null || orderAttrName != undefined){
-				if($("#p_cust_identityCd").val() != "50"){
-					if(new Date().getFullYear().toString() - orderAttrIdCard.toString().subString(6,10) < ageE && selectValue != 50 && selectValue != 4 && selectValue != 3){
+				if($("#orderIdentidiesTypeCd").val() != "50"){
+					if(new Date().getFullYear() - orderAttrIdCard.substring(6,10) < ageE && selectValue != 50 && selectValue != 4 && selectValue != 3){
 						$.alert("提示","经办人必须'"+ageE+"'岁以上！");
+						return false;
 					}	
 				}else{
-					if(new Date().getYear().toString() - orderAttrIdCard.toString().subString(7,9) < ageE){
+					if(new Date().getYear() - orderAttrIdCard.substring(7,9) < ageE){
 						$.alert("提示","经办人必须'"+ageE+"'岁以上！");
+						return false;
 					}
 				}
 			}

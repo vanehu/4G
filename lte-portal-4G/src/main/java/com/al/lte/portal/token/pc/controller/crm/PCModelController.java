@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -134,6 +135,20 @@ public class PCModelController extends BaseController {
 				model.addAttribute("errorMsg", "获取员工信息异常");
 				return "/common/error";
 			}
+			//保存session信息
+			String valueAgeE = (String)request.getSession().getAttribute("valueAgeE");
+			String valueAgeS = (String)request.getSession().getAttribute("valueAgeS");
+			Cookie nAgeE = new Cookie("nAgeE",valueAgeE);
+			nAgeE.setMaxAge(60*60*24);
+			nAgeE.setPath("/");
+			response.addCookie(nAgeE);
+			
+			Cookie nAgeS = new Cookie("nAgeS",valueAgeS);
+			nAgeS.setMaxAge(60*60*24);
+			nAgeS.setPath("/");
+			response.addCookie(nAgeS);
+			
+			
 			staffInfo.put("accessToken", accessToken);
 			staffInfo.put("staffProvCode", provinceCode);
 			staffInfo.put("channelCode", channelCode);

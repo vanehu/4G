@@ -392,13 +392,21 @@ order.cust = (function(){
 
 	//创建客户证件类型选择事件
 	var _identidiesTypeCdChoose = function(scope,id) {
+		var cookieSP = CommonUtils.getCookieFromJava("switchSP");
+		if(cookieSP == "ON"){
+			//军人身份证件、武装警察身份证件不能作为实名登记有效证件，不允许新装号码
+			if($("#identidiesTypeCd").val() == "2" || $("#identidiesTypeCd").val() == "14"){
+				$.alert("提示", "军人身份证件、武装警察身份证件不能作为实名登记有效证件，不允许新增！");
+				return;
+			}
+		}
 		$("#identidiesTypeCd").removeAttr("disabled");
 		$("#"+id).val("");
 		$("#"+id).attr("onkeyup", "value=value.replace(/[^A-Za-z0-9]/ig,'')");
 		var identidiesTypeCd=$(scope).val();
 		$("#"+id).attr("maxlength", "100");
 		//2017-09-11 新建客户时候，要求读卡
-		var cookieLessFOR = CommonUtils.getCookieFromJava("cookieLessFOR");
+		var cookieLessFOR = CommonUtils.getCookieFromJava("switchFOR");
 		if(cookieLessFOR == "ON"){
 			if($("#identidiesTypeCd").val() == "50"){
 
@@ -488,7 +496,7 @@ order.cust = (function(){
 			}
 		}
 		//新增的现役军人居民身份证、人民武装警察居民身份证,和居民身份证一样，要求必须读卡
-		if (identidiesTypeCd == 1 || identidiesTypeCd == 14 || identidiesTypeCd == 2) {
+		if (identidiesTypeCd == 1 || identidiesTypeCd == 51 || identidiesTypeCd == 52 || (identidiesTypeCd== 50 && cookieLessFOR == "ON")) {
 			/*$("#"+id).attr("placeHolder","请输入合法身份证号码");
 			$("#"+id).attr("data-validate","validate(idCardCheck18:请输入合法身份证号码) on(blur)");*/
 			// 新建客户身份证读卡，隐藏表单
@@ -739,6 +747,8 @@ order.cust = (function(){
 			$('#cCustName').attr("disabled",isID&&(!isIdTypeOff));
 			$('#cAddressStr').attr("disabled",isID&&(!isIdTypeOff));
 		}
+		
+		//
 	};
 	 var _custLookforButton = function() {
 	//客户定位查询按钮
@@ -2155,6 +2165,18 @@ order.cust = (function(){
 	var _mvnoCustCreate = function(callParam) {};
 	
 	var _createCustConfirm = function(inData) {
+		//2017-09-06 新建客户时，判断人员年龄，如大于16周岁不允许使用户口簿
+		var cookieSIX = CommonUtils.getCookieFromJava("switchSIX");
+		var nowCard = CommonUtils.getCookieFromJava("cookCard");
+		if(cookieSIX == "ON"){
+			if($("#identidiesTypeCd").val() == "12"){
+				var nowDate = new Date();
+				if(nowDate.getFullYear() - nowCard > 16){
+					$.alert("提示", "大于16周岁不允许使用户口簿");
+					return false;
+				}
+			}
+		}
 		//验证客户信息的长度（字符长度）--解决maxleng中中文只占一个字符导致后台数据库存储长度溢出
 		var isLengthFlag = true;
 		$("#user_add  input").each(function(){
@@ -2332,6 +2354,7 @@ order.cust = (function(){
    };
    //验证证件号码是否存在
 	var _checkIdentity = function() {
+		
 		var identidiesTypeCd = $.trim($("#identidiesTypeCd option:selected").val());
 		if (!ec.util.isObj(identidiesTypeCd)) {
 			$.alert("提示", "证件类型不能为空！", "information");
@@ -2456,18 +2479,6 @@ order.cust = (function(){
 				    "flag":"1"
 			};
 			order.cust.custQueryParam = param;
-		}
-		
-		//2017-09-06 新建客户时，判断人员年龄，如大于16周岁不允许使用户口簿
-		var cookieSIX = CommonUtils.getCookieFromJava("switchSIX");
-		if(cookieSIX == "ON"){
-			if($("#identidiesTypeCd").val() == "12" && $("#cCustIdCard").val() != "" && $("#cCustIdCard").val() != null && $("#cCustIdCard").val() != undefined){
-				var nowDate = new Date();
-				if(nowDate.getFullYear() - ($("#cCustIdCard").val()).substring(6,10) > 16){
-					$.alert("提示", "大于16周岁不允许使用户口簿");
-					
-				}
-			}
 		}
 	};
 	//切换标签

@@ -678,9 +678,11 @@ prod.telnum = (function(){
 		//规则校验
 		var _initPage = function(){
 			var cookieSP = CommonUtils.getCookieFromJava("switchSP");
+			var identityName = $("#identityName").text();
+			var theName = identityName.split("/")[0];
 			//军人身份证件、武装警察身份证件不能作为实名登记有效证件，不允许改号码
 			if(cookieSP == "ON"){
-				if($("#p_cust_identityCd").val() == "2" || $("#p_cust_identityCd").val() == "14"){
+				if($("#p_cust_identityCd").val() == "2" || $("#p_cust_identityCd").val() == "14" || theName.trim() == "军人身份证件" || theName.trim() == "武装警察身份证件"){
 					$.alert("提示", "军人身份证件、武装警察身份证件不能作为实名登记有效证件，不允许改号！");
 					return;
 				}
