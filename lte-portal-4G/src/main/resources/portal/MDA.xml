@@ -85,6 +85,52 @@
 		
 		<!-- 配置问卷 菜单权限开关 -->
 		<const type="String" name="IS_QUESTION_MENU" value="OFF" />
+		
+		<!-- 2017-08-31经办人检验 开关 -->
+		<const type="String" name="LESS_THAN_SEVENTEEN" value="OFF"/>
+		<!-- 2017-08-31经办人分省开关 -->
+		<const type="Map" name="LESS_THAN_EIGHT" description="经办人校验分省开关，默认关闭">
+			{
+			'LESS_THAN_EIGHT_854':'OFF',<!-- 西藏 -->
+			'LESS_THAN_EIGHT_863':'OFF',<!-- 青海 -->
+			'LESS_THAN_EIGHT_815':'OFF',<!-- 内蒙古 -->
+			'LESS_THAN_EIGHT_823':'OFF',<!-- 黑龙江 -->
+			'LESS_THAN_EIGHT_845':'OFF',<!-- 广西 -->
+			'LESS_THAN_EIGHT_850':'OFF',<!-- 重庆 -->
+			'LESS_THAN_EIGHT_861':'OFF',<!-- 陕西 -->
+			'LESS_THAN_EIGHT_842':'OFF',<!-- 湖北 -->
+			'LESS_THAN_EIGHT_835':'OFF',<!-- 福建 -->
+			'LESS_THAN_EIGHT_832':'OFF',<!-- 江苏 -->
+			'LESS_THAN_EIGHT_846':'OFF',<!-- 海南 -->
+			'LESS_THAN_EIGHT_864':'OFF',<!-- 宁夏 -->
+			'LESS_THAN_EIGHT_814':'OFF',<!-- 山西 -->
+			'LESS_THAN_EIGHT_853':'OFF',<!-- 云南 -->
+			'LESS_THAN_EIGHT_836':'OFF',<!-- 江西 -->
+			'LESS_THAN_EIGHT_837':'OFF',<!-- 山东 -->
+			'LESS_THAN_EIGHT_811':'OFF',<!-- 北京 -->
+			'LESS_THAN_EIGHT_843':'OFF',<!-- 湖南 -->
+			'LESS_THAN_EIGHT_851':'OFF',<!-- 四川 -->
+			'LESS_THAN_EIGHT_844':'OFF',<!-- 广东 -->
+			'LESS_THAN_EIGHT_831':'OFF',<!-- 上海 -->
+			'LESS_THAN_EIGHT_812':'OFF',<!-- 天津 -->
+			'LESS_THAN_EIGHT_813':'OFF',<!-- 河北 -->
+			'LESS_THAN_EIGHT_841':'OFF',<!-- 河南 -->
+			'LESS_THAN_EIGHT_821':'OFF',<!-- 辽宁 -->
+			'LESS_THAN_EIGHT_822':'OFF',<!-- 吉林 -->
+			'LESS_THAN_EIGHT_834':'OFF',<!-- 安徽 -->
+			'LESS_THAN_EIGHT_833':'OFF',<!-- 浙江 -->
+			'LESS_THAN_EIGHT_852':'OFF',<!-- 贵州 -->
+			'LESS_THAN_EIGHT_862':'OFF',<!-- 甘肃 -->
+			'LESS_THAN_EIGHT_865':'OFF',<!-- 新疆 -->
+			'LESS_THAN_EIGHT_899':'OFF'<!-- 虚拟省 -->
+			}
+		</const>
+		<!-- 军人身份证件、武装警察身份证件不能作为实名登记有效证件，不允许在这两个类型下办理新装号码，新装副卡，不允许改号 -->
+		<const type="String" name="CHECK_SOLDIER_POLICE" value="OFF"></const>
+		<!-- 户口簿仅限于16周岁以下的人员使用 -->
+		<const type="String" name="LESS_THAN_SIX" value="OFF"></const>
+		<!-- 外国人居住证，要求读卡,增加全国级开关，非分省 -->
+		<const type="String" name="FOREGIN_LIVE" value="OFF"></const>
 
 		<const type="String" name="ASYNC_FLAG" value="OFF" />
 		<const type="String" name="DEF_HTTP_FLAG" value="ON" />
@@ -1772,7 +1818,7 @@
 			'CHECK_RULES_861':'OFF',<!-- 陕西 -->
 			'CHECK_RULES_842':'OFF',<!-- 湖北 -->
 			'CHECK_RULES_835':'OFF',<!-- 福建 -->
-			'CHECK_RULES_832':'OFF',<!-- 江苏 -->
+			'CHECK_RULES_832':'ON',<!-- 江苏 -->
 			'CHECK_RULES_846':'OFF',<!-- 海南 -->
 			'CHECK_RULES_864':'OFF',<!-- 宁夏 -->
 			'CHECK_RULES_814':'OFF',<!-- 山西 -->
@@ -3189,43 +3235,6 @@
 			}
 		</const>
 
-		<const type="Map" name="ADD_OLD_USER_MOD_ACCT" description="加装老用户为副卡，修改副卡账户为主卡账户，默认OFF(4G能力开放公用)">
-			{
-			'ADD_OLD_USER_MOD_ACCT_854':'OFF',<!-- 西藏 -->
-			'ADD_OLD_USER_MOD_ACCT_863':'OFF',<!-- 青海 -->
-			'ADD_OLD_USER_MOD_ACCT_815':'OFF',<!-- 内蒙古 -->
-			'ADD_OLD_USER_MOD_ACCT_823':'OFF',<!-- 黑龙江 -->
-			'ADD_OLD_USER_MOD_ACCT_845':'OFF',<!-- 广西 -->
-			'ADD_OLD_USER_MOD_ACCT_850':'OFF',<!-- 重庆 -->
-			'ADD_OLD_USER_MOD_ACCT_861':'OFF',<!-- 陕西 -->
-			'ADD_OLD_USER_MOD_ACCT_842':'OFF',<!-- 湖北 -->
-			'ADD_OLD_USER_MOD_ACCT_835':'OFF',<!-- 福建 -->
-			'ADD_OLD_USER_MOD_ACCT_832':'OFF',<!-- 江苏 -->
-			'ADD_OLD_USER_MOD_ACCT_846':'OFF',<!-- 海南 -->
-			'ADD_OLD_USER_MOD_ACCT_864':'OFF',<!-- 宁夏 -->
-			'ADD_OLD_USER_MOD_ACCT_814':'OFF',<!-- 山西 -->
-			'ADD_OLD_USER_MOD_ACCT_853':'OFF',<!-- 云南 -->
-			'ADD_OLD_USER_MOD_ACCT_836':'OFF',<!-- 江西 -->
-			'ADD_OLD_USER_MOD_ACCT_837':'OFF',<!-- 山东 -->
-			'ADD_OLD_USER_MOD_ACCT_811':'OFF',<!-- 北京 -->
-			'ADD_OLD_USER_MOD_ACCT_843':'OFF',<!-- 湖南 -->
-			'ADD_OLD_USER_MOD_ACCT_851':'OFF',<!-- 四川 -->
-			'ADD_OLD_USER_MOD_ACCT_844':'OFF',<!-- 广东 -->
-			'ADD_OLD_USER_MOD_ACCT_831':'OFF',<!-- 上海 -->
-			'ADD_OLD_USER_MOD_ACCT_812':'OFF',<!-- 天津 -->
-			'ADD_OLD_USER_MOD_ACCT_813':'OFF',<!-- 河北 -->
-			'ADD_OLD_USER_MOD_ACCT_841':'OFF',<!-- 河南 -->
-			'ADD_OLD_USER_MOD_ACCT_821':'OFF',<!-- 辽宁 -->
-			'ADD_OLD_USER_MOD_ACCT_822':'OFF',<!-- 吉林 -->
-			'ADD_OLD_USER_MOD_ACCT_834':'OFF',<!-- 安徽 -->
-			'ADD_OLD_USER_MOD_ACCT_833':'OFF',<!-- 浙江 -->
-			'ADD_OLD_USER_MOD_ACCT_852':'OFF',<!-- 贵州 -->
-			'ADD_OLD_USER_MOD_ACCT_862':'OFF',<!-- 甘肃 -->
-			'ADD_OLD_USER_MOD_ACCT_865':'OFF',<!-- 新疆 -->
-			'ADD_OLD_USER_MOD_ACCT_899':'OFF'<!-- 虚拟省 -->
-			}
-		</const>
-
 		<const type="Map" name="CERT_SIGNATURE_UNIFY" description="USB二代证读卡统一控件配置,增加分省开开，开关打开用统一控件读卡，关闭老模式">
 			{
 			"appId":"wx8b39f1a66f31e6ed",
@@ -3533,6 +3542,78 @@
 			"COMPRESS_WIDTH"	:400,
 			"COMPRESS_HEIGHT"	:300
 		}
-		</const>		
+		</const>
+		<const type="Map" name="JBRPZ_PZ" description="经办人拍照分省配置">
+			<!--目前配置的业务动作，1新装，43返档，22补换卡#22，23异地补换卡#13-->
+			{
+			'JBRPZ_PZ_8320000':'1,43,22#22,23#13',
+			'JBRPZ_PZ_8330000':'1,43,22#22,23#13',
+			'JBRPZ_PZ_8340000':'1,43,22#22,23#13',
+			'JBRPZ_PZ_8350000':'1,43,22#22,23#13',
+			'JBRPZ_PZ_8430000':'1,43,22#22,23#13',
+			'JBRPZ_PZ_8420000':'1,43,22#22,23#13',
+			'JBRPZ_PZ_8310000':'1,43,22#22,23#13',
+			'JBRPZ_PZ_8360000':'1,43,22#22,23#13',
+			'JBRPZ_PZ_8440000':'1,43,22#22,23#13',
+			'JBRPZ_PZ_8640000':'1,43,22#22,23#13',
+			'JBRPZ_PZ_8510000':'1,43,22#22,23#13',
+			'JBRPZ_PZ_8610000':'1,43,22#22,23#13',
+			'JBRPZ_PZ_8130000':'1,43,22#22,23#13',
+			'JBRPZ_PZ_8150000':'1,43,22#22,23#13',
+			'JBRPZ_PZ_8210000':'1,43,22#22,23#13',
+			'JBRPZ_PZ_8520000':'1,43,22#22,23#13',
+			'JBRPZ_PZ_8370000':'1,43,22#22,23#13',
+			'JBRPZ_PZ_8500000':'1,43,22#22,23#13',
+			'JBRPZ_PZ_8650000':'1,43,22#22,23#13',
+			'JBRPZ_PZ_8110000':'1,43,22#22,23#13',
+			'JBRPZ_PZ_8120000':'1,43,22#22,23#13',
+			'JBRPZ_PZ_8630000':'1,43,22#22,23#13',
+			'JBRPZ_PZ_8620000':'1,43,22#22,23#13',
+			'JBRPZ_PZ_8220000':'1,43,22#22,23#13',
+			'JBRPZ_PZ_8410000':'1,43,22#22,23#13',
+			'JBRPZ_PZ_8230000':'1,43,22#22,23#13',
+			'JBRPZ_PZ_8530000':'1,43,22#22,23#13',
+			'JBRPZ_PZ_8450000':'1,43,22#22,23#13',
+			'JBRPZ_PZ_8140000':'1,43,22#22,23#13',
+			'JBRPZ_PZ_8460000':'1,43,22#22,23#13',
+			'JBRPZ_PZ_8540000':'1,43,22#22,23#13'
+			}
+		</const>
+		<const type="Map" name="FACE_VERIFY_COMPRESS_CONFIG" description="人证比对图片压缩配置[压缩比率/压缩质量/压缩格式/压缩长度/压缩宽度/base64头/开关(默认OFF)/宽度压缩阀值/高度压缩阀值]">
+		{
+			"FACE_VERIFY_COMPRESS_854": ["0.5", "0.95", "image/jpeg", "0", "0", "data:image/jpeg;base64,", "OFF", "1024", "768"],<!-- 西藏 -->
+			"FACE_VERIFY_COMPRESS_863": ["0.5", "0.95", "image/jpeg", "0", "0", "data:image/jpeg;base64,", "OFF", "1024", "768"],<!-- 青海 -->
+			"FACE_VERIFY_COMPRESS_815": ["0.5", "0.95", "image/jpeg", "0", "0", "data:image/jpeg;base64,", "OFF", "1024", "768"],<!-- 内蒙古 -->
+			"FACE_VERIFY_COMPRESS_823": ["0.5", "0.95", "image/jpeg", "0", "0", "data:image/jpeg;base64,", "OFF", "1024", "768"],<!-- 黑龙江 -->
+			"FACE_VERIFY_COMPRESS_845": ["0.5", "0.95", "image/jpeg", "0", "0", "data:image/jpeg;base64,", "OFF", "1024", "768"],<!-- 广西 -->
+			"FACE_VERIFY_COMPRESS_850": ["0.5", "0.95", "image/jpeg", "0", "0", "data:image/jpeg;base64,", "OFF", "1024", "768"],<!-- 重庆 -->
+			"FACE_VERIFY_COMPRESS_861": ["0.5", "0.95", "image/jpeg", "0", "0", "data:image/jpeg;base64,", "OFF", "1024", "768"],<!-- 陕西 -->
+			"FACE_VERIFY_COMPRESS_842": ["0.5", "0.95", "image/jpeg", "0", "0", "data:image/jpeg;base64,", "OFF", "1024", "768"],<!-- 湖北 -->
+			"FACE_VERIFY_COMPRESS_835": ["0.5", "0.95", "image/jpeg", "0", "0", "data:image/jpeg;base64,", "OFF", "1024", "768"],<!-- 福建 -->
+			"FACE_VERIFY_COMPRESS_832": ["0.5", "0.95", "image/jpeg", "0", "0", "data:image/jpeg;base64,", "OFF", "1024", "768"],<!-- 江苏 -->
+			"FACE_VERIFY_COMPRESS_846": ["0.5", "0.95", "image/jpeg", "0", "0", "data:image/jpeg;base64,", "OFF", "1024", "768"],<!-- 海南 -->
+			"FACE_VERIFY_COMPRESS_864": ["0.5", "0.95", "image/jpeg", "0", "0", "data:image/jpeg;base64,", "OFF", "1024", "768"],<!-- 宁夏 -->
+			"FACE_VERIFY_COMPRESS_814": ["0.5", "0.95", "image/jpeg", "0", "0", "data:image/jpeg;base64,", "OFF", "1024", "768"],<!-- 山西 -->
+			"FACE_VERIFY_COMPRESS_853": ["0.5", "0.95", "image/jpeg", "0", "0", "data:image/jpeg;base64,", "OFF", "1024", "768"],<!-- 云南 -->
+			"FACE_VERIFY_COMPRESS_836": ["0.5", "0.95", "image/jpeg", "0", "0", "data:image/jpeg;base64,", "OFF", "1024", "768"],<!-- 江西 -->
+			"FACE_VERIFY_COMPRESS_837": ["0.5", "0.95", "image/jpeg", "0", "0", "data:image/jpeg;base64,", "OFF", "1024", "768"],<!-- 山东 -->
+			"FACE_VERIFY_COMPRESS_811": ["0.5", "0.95", "image/jpeg", "0", "0", "data:image/jpeg;base64,", "OFF", "1024", "768"],<!-- 北京 -->
+			"FACE_VERIFY_COMPRESS_843": ["0.5", "0.95", "image/jpeg", "0", "0", "data:image/jpeg;base64,", "OFF", "1024", "768"],<!-- 湖南 -->
+			"FACE_VERIFY_COMPRESS_851": ["0.5", "0.95", "image/jpeg", "0", "0", "data:image/jpeg;base64,", "OFF", "1024", "768"],<!-- 四川 -->
+			"FACE_VERIFY_COMPRESS_844": ["0.5", "0.95", "image/jpeg", "0", "0", "data:image/jpeg;base64,", "OFF", "1024", "768"],<!-- 广东 -->
+			"FACE_VERIFY_COMPRESS_831": ["0.5", "0.95", "image/jpeg", "0", "0", "data:image/jpeg;base64,", "OFF", "1024", "768"],<!-- 上海 -->
+			"FACE_VERIFY_COMPRESS_812": ["0.5", "0.95", "image/jpeg", "0", "0", "data:image/jpeg;base64,", "OFF", "1024", "768"],<!-- 天津 -->
+			"FACE_VERIFY_COMPRESS_813": ["0.5", "0.95", "image/jpeg", "0", "0", "data:image/jpeg;base64,", "OFF", "1024", "768"],<!-- 河北 -->
+			"FACE_VERIFY_COMPRESS_841": ["0.5", "0.95", "image/jpeg", "0", "0", "data:image/jpeg;base64,", "OFF", "1024", "768"],<!-- 河南 -->
+			"FACE_VERIFY_COMPRESS_821": ["0.5", "0.95", "image/jpeg", "0", "0", "data:image/jpeg;base64,", "OFF", "1024", "768"],<!-- 辽宁 -->
+			"FACE_VERIFY_COMPRESS_822": ["0.5", "0.95", "image/jpeg", "0", "0", "data:image/jpeg;base64,", "OFF", "1024", "768"],<!-- 吉林 -->
+			"FACE_VERIFY_COMPRESS_834": ["0.5", "0.95", "image/jpeg", "0", "0", "data:image/jpeg;base64,", "OFF", "1024", "768"],<!-- 安徽 -->
+			"FACE_VERIFY_COMPRESS_833": ["0.5", "0.95", "image/jpeg", "0", "0", "data:image/jpeg;base64,", "OFF", "1024", "768"],<!-- 浙江 -->
+			"FACE_VERIFY_COMPRESS_852": ["0.5", "0.95", "image/jpeg", "0", "0", "data:image/jpeg;base64,", "OFF", "1024", "768"],<!-- 贵州 -->
+			"FACE_VERIFY_COMPRESS_862": ["0.5", "0.95", "image/jpeg", "0", "0", "data:image/jpeg;base64,", "OFF", "1024", "768"],<!-- 甘肃 -->
+			"FACE_VERIFY_COMPRESS_865": ["0.5", "0.95", "image/jpeg", "0", "0", "data:image/jpeg;base64,", "OFF", "1024", "768"],<!-- 新疆 -->
+			"FACE_VERIFY_COMPRESS_899": ["0.5", "0.95", "image/jpeg", "0", "0", "data:image/jpeg;base64,", "OFF", "1024", "768"]<!-- 虚拟省 -->
+		}
+		</const>
 	</mda>
 </mdas>

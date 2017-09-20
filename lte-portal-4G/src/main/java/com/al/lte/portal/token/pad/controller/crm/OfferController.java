@@ -267,7 +267,8 @@ public class OfferController extends BaseController {
 			SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
 					SysConstant.SESSION_KEY_LOGIN_STAFF);	
 			paramMap =  JsonUtil.toObject(param, Map.class);
-			
+			paramMap.put("staffId",sessionStaff.getStaffId());
+	        paramMap.put("channelId", sessionStaff.getCurrentChannelId());
 			//默认必开功能产品
 			Map<String, Object> openServMap = offerBmo.queryServSpec(paramMap,null,sessionStaff);
 			model.addAttribute("openServMap",openServMap);
@@ -360,6 +361,8 @@ public class OfferController extends BaseController {
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
 				SysConstant.SESSION_KEY_LOGIN_STAFF);
 		JsonResponse jsonResponse = null;
+		paramMap.put("staffId",sessionStaff.getStaffId());
+        paramMap.put("channelId", sessionStaff.getCurrentChannelId());
         try {
         	Map<String, Object> resMap = offerBmo.queryCanBuyServ(paramMap,null,sessionStaff);
         	jsonResponse = super.successed(resMap,ResultConstant.SUCCESS.getCode());
@@ -394,6 +397,9 @@ public class OfferController extends BaseController {
     		
         	//搜索可订购功能产品
     		paramMap.put("matchString", paramMap.get("offerSpecName"));
+    		paramMap.put("staffId",sessionStaff.getStaffId());
+            paramMap.put("channelId", sessionStaff.getCurrentChannelId());
+
     		Map<String, Object> servMap = offerBmo.queryCanBuyServ(paramMap,null,sessionStaff);
     		model.addAttribute("servMap",servMap);
     		

@@ -3266,8 +3266,7 @@ order.main = (function(){
 		$("#"+id).attr("onkeyup", "value=value.replace(/[^A-Za-z0-9]/ig,'')");
 		var identidiesTypeCd = $(scope).val();
 		$("#"+id).attr("maxlength", "100");
-//		if (identidiesTypeCd == 1 && $(dom).attr("servType") != 2) {
-		if (identidiesTypeCd == 1) {
+		if (identidiesTypeCd == 1 && $(dom).attr("servType") != 2) {
 			$("#orderUserResetBtn").hide();
 			$("#orderUserQryBtn").hide();
 			$("#orderUserReadCertBtn").show();

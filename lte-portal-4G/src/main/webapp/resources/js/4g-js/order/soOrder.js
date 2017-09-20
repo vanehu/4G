@@ -3057,7 +3057,7 @@ SoOrder = (function() {
         var orderAttrAddr	= $.trim($("#orderAttrAddr").val());		//经办人证件地址
         var isAuditSucess 	= OrderInfo.operateSpecStaff.isAuditSucess;	//审核是否成功
 		var orderAttrIdCard = $.trim($("#orderAttrIdCard").val());		//经办人证件号码
-
+				
 		if(CONST.realNamePhotoFlag == "ON"){
 			//若页面上填写了经办人信息，但没有进行拍照，则拦截提示，不管权限不权限
 			if(ec.util.isObj(orderAttrName) || ec.util.isObj(orderAttrIdCard) || ec.util.isObj(orderAttrAddr)){
@@ -3067,19 +3067,44 @@ SoOrder = (function() {
 					return false;
 				}
 			}
+			var jbrStr =  offerChange.queryPortalProperties("JBRPZ_PZ_"+OrderInfo.staff.soAreaId.substring(0,3)+"0000");
+			var jbrStrArr = jbrStr.split(",");
+			var jbrFlag = false;
+			for(var m = 0;m<jbrStrArr.length;m++){
+                if(jbrStrArr[m].indexOf("#")>0){
+                    var newBusiFlag =  $.trim(OrderInfo.actionFlag)+"#"+ $.trim(OrderInfo.busitypeflag);
+                    if(jbrStrArr[m] == newBusiFlag){
+                        jbrFlag = true;
+                    }
+                }else{
+                    if(jbrStrArr[m] ==$.trim(OrderInfo.actionFlag)){
+                        jbrFlag = true;
+                    }
+                }
+			}
+           /* $.each(jbrStrArr,function(){
+            	if(this.test("#")>0){
+                    var newBusiFlag = OrderInfo.actionFlag.trim()+"#"+OrderInfo.busitypeflag.trim();
+                    if(this == newBusiFlag){
+                        jbrFlag = true;
+					}
+				}else{
+            		if(this ==OrderInfo.actionFlag.trim()){
+                        jbrFlag = true;
+					}
+				}
+			});*/
 
-			//若页面没有填写经办人，根据权限和业务类型进行判断和限制
-			var isActionFlagLimited = (
-				OrderInfo.actionFlag == 1	||	//办套餐入口做新装
-				OrderInfo.actionFlag == 14 	||	//购手机入口做新装(OrderInfo.busitypeflag为1)
-				OrderInfo.actionFlag == 43	||	//返档
-				(OrderInfo.actionFlag == 22 && OrderInfo.busitypeflag == 22) || //补卡(换卡busitypeflag是21)
-				(OrderInfo.actionFlag == 23 && OrderInfo.busitypeflag == 13) || //异地补换卡
-				(OrderInfo.actionFlag == 6  && OrderInfo.isHandleCustNeeded) || //主副卡成员变更，加装新号码或加装老号码且客户证件非身份证
-				(OrderInfo.actionFlag == 2  && (OrderInfo.isHandleCustNeeded || isUimAction)) ||//套餐变更，加装新号码、加装老号码且客户证件非身份证或UIM变更
-				(OrderInfo.actionFlag == 3	&& OrderInfo.busitypeflag == 14	 && isUimAction)	//可选包变更涉及UIM动作
-			) && !order.prepare.isPreInstall();//预装不限制，此时busitypeflag为1不是27，不可以busitypeflag判断业务类型
-			
+            //若页面没有填写经办人，根据权限和业务类型进行判断和限制
+            var isActionFlagLimited = (
+                    jbrFlag	||	//办套餐入口做新装//返档//购手机入口做新装(OrderInfo.busitypeflag为1)
+                    //(OrderInfo.actionFlag == 22 && OrderInfo.busitypeflag == 22) || //补卡(换卡busitypeflag是21)
+                   // (OrderInfo.actionFlag == 23 && OrderInfo.busitypeflag == 13) || //异地补换卡
+                    (OrderInfo.actionFlag == 6  && OrderInfo.isHandleCustNeeded) || //主副卡成员变更，加装新号码或加装老号码且客户证件非身份证
+                    (OrderInfo.actionFlag == 2  && (OrderInfo.isHandleCustNeeded || isUimAction)) ||//套餐变更，加装新号码、加装老号码且客户证件非身份证或UIM变更
+                    (OrderInfo.actionFlag == 3	&& OrderInfo.busitypeflag == 14	 && isUimAction)	//可选包变更涉及UIM动作
+                ) && !order.prepare.isPreInstall();//预装不限制，此时busitypeflag为1不是27，不可以busitypeflag判断业务类型
+
 			if(CONST.isHandleCustNeeded && isActionFlagLimited) {
 				//采集单不拍照
 				if((!ec.util.isObj($("#jbrForm").html()) || !ec.util.isObj(OrderInfo.virOlId)) && !OrderInfo.isCltNewOrder()){
@@ -3708,6 +3733,48 @@ SoOrder = (function() {
 				}
 			} //TODO tmp for Mantis 0042657
 		}
+		}
+		var cookie = CommonUtils.getCookieFromJava("switchC");
+		var cookieE = CommonUtils.getCookieFromJava("switchE");
+		var ageS = CommonUtils.getCookieFromJava("ageS");
+		var ageE = CommonUtils.getCookieFromJava("ageE");
+		//获取下拉框的值
+		var selectValue = $("#orderIdentidiesTypeCd").val();
+		if(cookie == "ON"){
+			if($("#c").val() != "3" && $("#c").val() != "4"){
+				//对于当前客户年龄的校验
+				var custIdNumber =  $("#p_cust_identityNum").val();//cert.readCert(CONST.CERT_READER_HANDLE_CUST).resultContent;
+				if(custIdNumber == "" || custIdNumber == null || custIdNumber == undefined){
+					$.alert("提示","未读取到身份证信息！");
+				}else{
+					if(orderAttrName == "" || orderAttrName == null || orderAttrName == undefined){
+						//判断外国人永久居留证
+						if($("#p_cust_identityCd").val() == "50"){
+							if(new Date().getYear().toString() - orderAttrIdCard.toString().subString(7,9) < ageS){
+								$.alert("提示","不满'"+ageS+"'岁必须填写经办人！");
+							}
+						}else{
+							if(new Date().getFullYear().toString() - orderAttrIdCard.toString().subString(6,10) < ageS){
+								$.alert("提示","不满'"+ageS+"'岁必须填写经办人！");
+							}
+						}
+					}
+				}
+			}
+		}
+		if(cookieE == "ON"){
+			//对于经办人的校验
+			if(orderAttrName != "" || orderAttrName != null || orderAttrName != undefined){
+				if($("#p_cust_identityCd").val() != "50"){
+					if(new Date().getFullYear().toString() - orderAttrIdCard.toString().subString(6,10) < ageE && selectValue != 50 && selectValue != 4 && selectValue != 3){
+						$.alert("提示","经办人必须'"+ageE+"'岁以上！");
+					}	
+				}else{
+					if(new Date().getYear().toString() - orderAttrIdCard.toString().subString(7,9) < ageE){
+						$.alert("提示","经办人必须'"+ageE+"'岁以上！");
+					}
+				}
+			}
 		}
 		return true; 
 	};

@@ -145,6 +145,7 @@ order.phoneNumber = (function(){
 				var orderAreaId = $("#p_areaId").val();
 				if(order.prepare.isPreInstall() && orderAreaId!=""){
 					$("#p_cust_areaId").val(orderAreaId);
+					OrderInfo.cust.areaId = orderAreaId;
 				}
 			},
 			fail:function(response){

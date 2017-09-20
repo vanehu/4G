@@ -564,7 +564,7 @@ order.memberChange = function(){
 				$.alert("提示",accNbr+"和主卡的客户不一致！");
 				return false;
 			}
-			custinfolist.push({"accNbr":accNbr,"custId":custId});
+			custinfolist.push({"accNbr":accNbr,"custId":custId,"custInfos":response.data.custInfos});
 		}else{
 			$.unecOverlay();
 			$.alertM(response.data);
@@ -602,6 +602,7 @@ order.memberChange = function(){
 					if (list[j].accNbr == custinfolist[i].accNbr){
 						var prodInstInfos = list[j];
 						prodInstInfos.custId = custinfolist[i].custId;
+						prodInstInfos.custInfos = custinfolist[i].custInfos;
 						if(prodInstInfos.prodStateCd!=CONST.PROD_STATUS_CD.NORMAL_PROD){
 							orderflag = false;
 							$.alert("提示",custinfolist[i].accNbr+"不是在用产品！");
@@ -716,7 +717,8 @@ order.memberChange = function(){
 						"offerId":OrderInfo.oldprodInstInfos[z].mainProdOfferInstInfos[0].prodOfferInstId,
 						"offerSpecId":OrderInfo.oldprodInstInfos[z].mainProdOfferInstInfos[0].prodOfferId,
 						"offerSpecName":OrderInfo.oldprodInstInfos[z].mainProdOfferInstInfos[0].prodOfferName,
-						"accNbr":OrderInfo.oldprodInstInfos[z].accNbr
+						"accNbr":OrderInfo.oldprodInstInfos[z].accNbr,
+						"custInfos":OrderInfo.oldprodInstInfos[z].custInfos
 					};
 					OrderInfo.oldoffer.push(offerinfos);
 				}else{//销售品成员实例为空
