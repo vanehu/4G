@@ -58,8 +58,7 @@ public class CustController extends BaseController {
 
 	@RequestMapping(value = "/queryCust", method = { RequestMethod.POST })
 	public String queryCust(@RequestBody Map<String, Object> paramMap, Model model, @LogOperatorAnn String flowNum,
-			HttpServletResponse response, HttpSession httpSession, HttpServletRequest request,
-			HttpServletResponse resp) {
+			HttpServletResponse response, HttpSession httpSession, HttpServletRequest request) {
 		request.getSession().removeAttribute("checkNumber");
 		request.getSession().removeAttribute("accNbrInfos");
 		String checkNumber = (String) (paramMap.get("acctNbr") == ""
@@ -277,7 +276,7 @@ public class CustController extends BaseController {
 			Cookie cookCard = new Cookie("cookCard", strCard);
 			cookCard.setMaxAge(86400);
 			cookCard.setPath("/");
-			resp.addCookie(cookCard);
+			response.addCookie(cookCard);
 			if (MapUtils.isNotEmpty(resultMap)) {
 				custInfos = (List<Map<String, Object>>) resultMap.get("custInfos");
 				if (!MapUtils.getString(paramMap, "queryTypeValue", "").equals("")
