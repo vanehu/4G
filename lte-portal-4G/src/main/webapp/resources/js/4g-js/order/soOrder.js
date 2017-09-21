@@ -3748,7 +3748,7 @@ SoOrder = (function() {
 			if($("#c").val() != "3" && $("#c").val() != "4"){
 				//对于当前客户年龄的校验
 				var custIdNumber =  $("#p_cust_identityNum").val();//cert.readCert(CONST.CERT_READER_HANDLE_CUST).resultContent;
-				if(custIdNumber == "" || custIdNumber == null || custIdNumber == undefined){
+				if(theName == "" || theName == null || theName == undefined){
 					$.alert("提示","未读取到身份证信息！");
 				}else{
 					if(orderAttrName == "" || orderAttrName == null || orderAttrName == undefined){
