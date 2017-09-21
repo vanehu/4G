@@ -3734,6 +3734,14 @@ SoOrder = (function() {
 			} //TODO tmp for Mantis 0042657
 		}
 		}
+		_checkCustAndOperator();
+		return true; 
+	};
+	
+	/***
+	 * 对于经办人和客户办理业务的校验
+	 */
+	var _checkCustAndOperator = function(){
 		var cookie = CommonUtils.getCookieFromJava("switchC");
 		var cookieE = CommonUtils.getCookieFromJava("switchE");
 		var ageS = CommonUtils.getCookieFromJava("ageS");
@@ -3819,8 +3827,7 @@ SoOrder = (function() {
 				}
 			}
 		}
-		return true; 
-	};
+	}
 
 	/**
 	 * 政企客户并且有专用测试权限，责任人和使用人2选一
@@ -4826,6 +4833,7 @@ SoOrder = (function() {
 		changeFeeType			: _changeFeeType,
         oneCertFiveCheckData    : _oneCertFiveCheckData,
         setUserInfo             : _setUserInfo,
-        fillBusiOrder4changeUse : _fillBusiOrder4changeUse
+        fillBusiOrder4changeUse : _fillBusiOrder4changeUse,
+        checkCustAndOperator	: _checkCustAndOperator
 	};
 })();
