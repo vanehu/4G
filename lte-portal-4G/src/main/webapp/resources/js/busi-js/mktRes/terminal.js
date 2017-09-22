@@ -1515,7 +1515,7 @@ mktRes.terminal = (function($){
 			$.alert("提示","预约类型不能为空");
 			return;
 		}
-		if(identityCd != 1){
+		if(identityCd != 1 && $("#identidiesTypeCd").val() != 1){
 			if($.inArray(parseInt($("#mktResId").val()), phoneModelArr) != -1){
 				if($("#yyType").val() != 0){
 					$.alert("提示","请使用居民身份证进行"+$("#mktResName").val()+"的预约");
