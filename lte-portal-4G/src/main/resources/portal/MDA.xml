@@ -984,7 +984,7 @@
 			'FEETYPE_861':'OFF',<!-- 陕西 -->
 			'FEETYPE_842':'OFF',<!-- 湖北 -->
 			'FEETYPE_835':'OFF',<!-- 福建 -->
-			'FEETYPE_832':'OFF',<!-- 江苏 -->
+			'FEETYPE_832':'ON',<!-- 江苏 -->
 			'FEETYPE_846':'OFF',<!-- 海南 -->
 			'FEETYPE_864':'OFF',<!-- 宁夏 -->
 			'FEETYPE_814':'OFF',<!-- 山西 -->
@@ -1002,7 +1002,7 @@
 			'FEETYPE_821':'OFF',<!-- 辽宁 -->
 			'FEETYPE_822':'OFF',<!-- 吉林 -->
 			'FEETYPE_834':'OFF',<!-- 安徽 -->
-			'FEETYPE_833':'OFF',<!-- 浙江 -->
+			'FEETYPE_833':'ON',<!-- 浙江 -->
 			'FEETYPE_852':'OFF',<!-- 贵州 -->
 			'FEETYPE_862':'OFF',<!-- 甘肃 -->
 			'FEETYPE_865':'OFF',<!-- 新疆 -->
