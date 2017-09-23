@@ -86,6 +86,8 @@ order.query = (function(){
 			"done" : function(response) {
 				if(response.code == 0 && response.data){
 					$("#handleCustCertificateList").html(response.data).show();
+					$("#photographReviewSuccess").show();
++					$("#photographReviewFail").show();
 				}else if(response.code == -2 && response.data){
 					$.alertM(response.data);
 				}else{

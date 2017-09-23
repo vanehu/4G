@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.StringUtils;
+
 /**
  * 浏览器工具 类 概述 .
  * <P>
@@ -22,6 +26,8 @@ public class BrowserUtil {
 	/** 操作系统 */
 	public static final String platform ="platform";
 	
+	private static String userAgentStr;
+
 	/**
 	 * 获取浏览器名称和版本号
 	 * @param userAgent 代理信息
@@ -92,5 +98,46 @@ public class BrowserUtil {
 		 }else{
 			 return false;
 		 }
+	}
+	
+	public static String setUserAgent(HttpServletRequest request){
+		if(request != null){
+			userAgentStr = request.getHeader("User-Agent");
+			if(StringUtils.isNotBlank(userAgentStr)){
+				userAgentStr = StringUtils.lowerCase(userAgentStr);
+			}
+		}
+		
+		return userAgentStr;
+	}
+	
+	public static String getUserAgent() {
+		return userAgentStr;
+	}
+	
+	public static boolean isIE(){
+		if(StringUtils.isNotBlank(userAgentStr)){
+			return StringUtils.indexOf(userAgentStr, "msie") >= 0;
+		} else{
+			return false;
+		}
+	}
+	
+	public static boolean isIE8(){
+		if(StringUtils.isNotBlank(userAgentStr)){
+			return StringUtils.indexOf(userAgentStr, "msie 8") >= 0;
+		} else{
+			return false;
+		}
+	}
+	
+	public static boolean isIE(HttpServletRequest request){
+		setUserAgent(request);
+		return isIE();
+	}
+	
+	public static boolean isIE8(HttpServletRequest request){
+		setUserAgent(request);
+		return isIE8();
 	}
 }

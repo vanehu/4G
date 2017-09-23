@@ -16,11 +16,11 @@ import javax.servlet.http.HttpSession;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.UrlPathHelper;
 
+import com.al.ecs.common.web.HttpUtils;
 import com.al.ecs.common.web.ServletUtils;
 import com.al.ecs.log.Log;
 import com.al.lte.portal.bmo.staff.StaffBmo;
 import com.al.lte.portal.bmo.staff.StaffBmoImpl;
-import com.al.lte.portal.common.CommonUtils;
 import com.al.lte.portal.common.MySimulateData;
 import com.al.lte.portal.common.SysConstant;
 import com.al.lte.portal.model.SessionStaff;
@@ -128,7 +128,7 @@ public class OverFrequencyFilter extends OncePerRequestFilter{
 							logmap.put("STAFF_CODE", sessionStaff.getStaffCode());
 							logmap.put("STAFF_ID", sessionStaff.getStaffId());
 							logmap.put("SALES_CODE", sessionStaff.getSalesCode());
-							logmap.put("HOST_IP", CommonUtils.getAllAddrPart());
+							logmap.put("HOST_IP", HttpUtils.getHostIpAddress());
 							logmap.put("SESSIONINFO", "");
 							if("custType".equals(type)){
 								logmap.put("STATUS_CD", "客户定位次数超过阀值"+limit_count);

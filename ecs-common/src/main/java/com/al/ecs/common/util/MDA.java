@@ -54,6 +54,11 @@ public class MDA {
 	 * 2017-09-08 户口簿仅限于16周岁以下的人员使用
 	 */
 	public static final String LESS_THAN_SIX = new String("");
+	
+	/**
+	 * 2017-09-11 外国人居住证，要求读卡
+	 */
+	public static final String FOREGIN_LIVE = new String("");
 
 //	/**
 //	 * 问卷调查 题目查询
@@ -589,9 +594,6 @@ public class MDA {
 	/**人证比对*/
 	public static final String CSB_PIC_VERIFY  = new String("");
 	
-	/**省份特殊协议配置*/
-	public static final Map<String, List> SPECIAL_AGREEMENT  = new HashMap<String, List>();
-	
 	/** 省份菜单配置**/
 	public static final Map<String,Map<String,Object>> PROVENCE_MENU = new HashMap<String,Map<String,Object>>();
 
@@ -680,4 +682,7 @@ public class MDA {
 
 	/**经办人拍照配置*/
 	public static final Map<String, String> JBRPZ_PZ = new HashMap<String, String>();
+	
+	/**人证比对图片压缩参数*/
+    public static final Map<String, List<String>> FACE_VERIFY_COMPRESS_CONFIG = new HashMap<String, List<String>>();
 }

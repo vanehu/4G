@@ -3098,8 +3098,62 @@ SoOrder = (function() {
 				}
 			}
 		}
+		
+		var cookie = CommonUtils.getCookieFromJava("switchC");
+		var cookieE = CommonUtils.getCookieFromJava("switchE");
+		var ageS = CommonUtils.getCookieFromJava("nAgeS");
+		var ageE = CommonUtils.getCookieFromJava("nAgeE");
+		var cookieSP = CommonUtils.getCookieFromJava("switchSP");
+		if(cookieSP == "ON"){
+			//军人身份证件、武装警察身份证件不能作为实名登记有效证件，不允许新装号码
+			if(selectValue == "2" || selectValue == "14"){
+				$.alert("提示", "军人身份证件、武装警察身份证件不能作为实名登记有效证件，不允许办理业务！");
+				return;
+			}
+		}
+		if(cookieE == "ON"){
+			//对于经办人的校验
+			if(orderAttrName != "" || orderAttrName != null || orderAttrName != undefined){
+				if(selectValue != "50"){
+					if(cookieSP == "ON"){
+						//军人身份证件、武装警察身份证件不能作为实名登记有效证件，不允许新装号码
+						if(selectValue == "2" || selectValue == "14"){
+							$.alert("提示", "军人身份证件、武装警察身份证件不能作为实名登记有效证件，不允许办理业务！");
+							return;
+						}
+					}else if(selectValue != "1" && selectValue != "51" && selectValue != "52"){
+						if(new Date().getFullYear() - orderAttrIdCard.substring(6,10) < ageE && selectValue != "50" && selectValue != "4" && selectValue != "3"){
+							$.alert("提示","经办人必须'"+ageE+"'岁以上！");
+							return false;
+						}
+					}else{
+						var cardNumber = newMan.resultContent.certNumber;
+						if(new Date().getFullYear() - cardNumber.substring(6,10) < ageE && selectValue != "50" && selectValue != "4" && selectValue != "3"){
+							$.alert("提示","经办人必须'"+ageE+"'岁以上！");
+							return false;
+						}
+					}
+						
+				}else{
+					var nowYear = (new Date().getFullYear()).toString();
+					var twoNumber = orderAttrIdCard.substring(7,9);
+					if(nowYear.substring(2,4) < twoNumber){
+						if(new Date().getYear() - orderAttrIdCard.substring(7,9) < ageE){
+							$.alert("提示","经办人必须'"+ageE+"'岁以上！");
+							return false;
+						}
+					}else{
+						if(nowYear.substring(2,4) - orderAttrIdCard.substring(7,9) < ageE){
+							$.alert("提示","经办人必须'"+ageE+"'岁以上！");
+							return false;
+						}
+					}
+				}
+			}
+		}
 		return true; 
 	};
+	
 	//判断是否包含有3G的机型
 	var _isThreeTerminal=function(termTypeFlags,isTerminal){
 		var threeTerminal=false;

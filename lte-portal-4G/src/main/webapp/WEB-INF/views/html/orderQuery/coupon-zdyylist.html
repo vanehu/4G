@@ -9,6 +9,7 @@
                   <td width="150">订单项ID</td>
                   <td width="80">预约码状态</td>
                   <td width="150">业务受理购物车流水</td>
+                  <td width="80">联系电话</td>
                   <td width="80">操作</td>
                	 </tr>
               </thead>
@@ -30,6 +31,7 @@
                   <td>已销售</td>
                   </#if>
                   <td>${orderLists.useCustSoNumber}</td>
+                  <td>${orderLists.reserveContactNbr}</td>
                   <td>
                   <#if orderLists.codeStatus ?? && (orderLists.codeStatus=="N")>
                   <a class="purchase" href="javascript:order.zdyy.zdyyUnsubscribe('${orderLists.id}')" boId="${orderLists.boId}"id="${orderLists.id}" apCharge="${orderLists.apCharge}" reserveNbr = "${orderLists.reserveNbr}"  couponName = "${orderLists.couponName}" couponId="${orderLists.couponId}" reserveNbr="${orderLists.reserveNbr}">取消预约</a>

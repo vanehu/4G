@@ -16,7 +16,7 @@ jb+1 /> <#if k==1>
 			<div class="panel-heading" id=${offerRole.offerRoleId}>${prod.offerRoleName}</div>
 			<form>
 				<div class="panel-body" id="item_order_${prodId}">
-				    <#if (preNumberFlag?? && preNumberFlag == -1) && (main.actionFlag?? && main.actionFlag==6)>
+				    <#if (preNumberFlag?? && preNumberFlag == 0) && (main.actionFlag?? && main.actionFlag==6)>
 					<div class="form-group">
 						<label for="exampleInputPassword1">副卡预装</label>
 						<input id="isPreNumber_${prodId}" type="checkbox">
@@ -112,7 +112,7 @@ jb+1 /> <#if k==1>
 			<div class="panel-heading" id=${offerRole.offerRoleId}>${prod.offerRoleName}</div>
 			<form>
 				<div class="panel-body" id="item_order_${prodId}">
-				    <#if (preNumberFlag?? && preNumberFlag == -1) && (main.actionFlag?? && main.actionFlag==6)>
+				    <#if (preNumberFlag?? && preNumberFlag == 0) && (main.actionFlag?? && main.actionFlag==6)>
 					<div class="form-group">
 						<label for="exampleInputPassword1">副卡预装</label>
 						<input id="isPreNumber_${prodId}" type="checkbox">

@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -32,6 +33,7 @@ import com.al.ecs.common.entity.JsonResponse;
 import com.al.ecs.common.util.JsonUtil;
 import com.al.ecs.common.util.MDA;
 import com.al.ecs.common.util.PropertiesUtils;
+import com.al.ecs.common.web.HttpUtils;
 import com.al.ecs.common.web.ServletUtils;
 import com.al.ecs.exception.BusinessException;
 import com.al.ecs.exception.ErrorCode;
@@ -132,7 +134,7 @@ public class PCModelController extends BaseController {
 			if(staffInfo.get("resultCode") != null){				
 				model.addAttribute("errorMsg", "获取员工信息异常");
 				return "/common/error";
-			}
+			}	
 			staffInfo.put("accessToken", accessToken);
 			staffInfo.put("staffProvCode", provinceCode);
 			staffInfo.put("channelCode", channelCode);
@@ -312,7 +314,7 @@ public class PCModelController extends BaseController {
 		RedisUtil.set((String) session.getAttribute(SysConstant.SESSION_DATASOURCE_KEY),sessionStaff.getStaffId(),session.getId());
 		session.setAttribute(SysConstant.SESSION_KEY_STAFF_CHANNEL,(List<Map<String,Object>>) chanelMap.get("channelList"));
 		session.setAttribute(SysConstant.SESSION_KEY_PORTAL_TYPE, propertiesUtils.getMessage(SysConstant.APPDESC));
-		session.setAttribute(SysConstant.SERVER_IP,CommonUtils.getSerAddrPart());
+		session.setAttribute(SysConstant.SERVER_IP,HttpUtils.getSimplifyHostIpAddress());
 
 		Map<String, Object> dataBusMap = new HashMap<String, Object>();
 		dataBusMap.put("staffId", sessionStaff.getStaffId());

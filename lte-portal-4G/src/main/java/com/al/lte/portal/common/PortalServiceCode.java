@@ -484,6 +484,8 @@ public final class PortalServiceCode {
 
 //	2013.12.11 终端出库改走营业受理后台，不直接调用营销资源
 //  public static final String INTF_TERM_OUT="res-TermUimResInoutService";
+	
+	public static final String REAL_NAME_SERVICE="biz-service/intf.soService/querySoConstConfigByConditions";
 
     public static final String INTF_QUERY_AP_CONFIG = "queryApConfig";
 

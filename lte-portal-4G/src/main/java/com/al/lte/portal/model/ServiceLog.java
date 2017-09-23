@@ -10,6 +10,7 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 
 import com.al.ec.serviceplatform.client.DataBus;
+import com.al.ecs.common.web.HttpUtils;
 import com.al.ecs.common.web.ServletUtils;
 import com.al.ecs.log.Log;
 import com.al.lte.portal.common.InterfaceClient;
@@ -354,13 +355,8 @@ public class ServiceLog{
 
 	public String getLocalAddr() {
 		if(this.localAddr == null){
-			try {
-				this.localAddr = InetAddress.getLocalHost().getHostAddress();
-			} catch (UnknownHostException e) {
-				this.localAddr = "UnknownHostException:" + e.getMessage();
-			}
+			this.localAddr = HttpUtils.getHostIpAddress();
 		}
-		
 		return this.localAddr;
 	}
 
