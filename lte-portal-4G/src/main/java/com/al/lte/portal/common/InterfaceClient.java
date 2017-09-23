@@ -49,6 +49,7 @@ import com.al.ecs.common.util.JsonUtil;
 import com.al.ecs.common.util.MDA;
 import com.al.ecs.common.util.PropertiesUtils;
 import com.al.ecs.common.util.UIDGenerator;
+import com.al.ecs.common.web.HttpUtils;
 import com.al.ecs.common.web.ServletUtils;
 import com.al.ecs.common.web.SpringContextUtil;
 import com.al.ecs.exception.ErrorCode;
@@ -378,27 +379,6 @@ public class InterfaceClient {
 							}
 						}
 					}
-//					String reqPlatForm=dataBusMap.get("reqPlatForm").toString();
-//					Map<String, Object> paramMap2 = (Map<String, Object>) dataBusMap.get("params");
-//					StringBuffer xml = new StringBuffer();
-//					xml.append("<proot>");
-//					xml.append("<reqPlatForm>"+reqPlatForm+"</reqPlatForm>");
-//					xml.append("<params>");
-//					xml.append("<provinceCode>"+paramMap2.get("provinceCode").toString()+"</provinceCode>");
-//					xml.append("<cityCode>"+paramMap2.get("cityCode").toString()+"</cityCode>");
-//					xml.append("<channelId>"+paramMap2.get("channelId").toString()+"</channelId>");
-//					xml.append("<payAmount>"+paramMap2.get("payAmount").toString()+"</payAmount>");		
-//					xml.append("<detail>"+paramMap2.get("detail").toString()+"</detail>");
-//					xml.append("<olNbr>"+paramMap2.get("olNbr").toString()+"</olNbr>");
-//					xml.append("<reqNo>"+paramMap2.get("reqNo").toString()+"</reqNo>");
-//					xml.append("<olNumber>"+paramMap2.get("olNumber").toString()+"</olNumber>");
-//					xml.append("<customerId>"+paramMap2.get("customerId").toString()+"</customerId>");
-//					xml.append("<customerName>"+paramMap2.get("customerName").toString()+"</customerName>");
-//					xml.append("<sign>"+paramMap2.get("sign").toString()+"</sign>");
-//					xml.append("</params>");
-//					xml.append("</proot>");		
-//					paramString=xml.toString();
-//					paramJson=paramString;
 					String s2 = JsonUtil.toString(dataBusMap);
 					String xml2 = CommonUtils.jsontoXml(s2);
 					paramString = xml2.substring(xml2.indexOf("<proot"),
@@ -413,13 +393,11 @@ public class InterfaceClient {
 					paramString = JsonUtil.toString(dataBusMap);
 					paramJson=paramString;
 				}
-				
-				String csbFlag = propertiesUtils.getMessage(SysConstant.CSB_FLAG);
 				String asyncFlag = propertiesUtils.getMessage(SysConstant.ASYNC_FLAG);
 				boolean asyncWay = false;
 				Object serviceCodeObj = null;
 				// 终端销售系统只允许通过csb调用（只支持xml）
-				if (SysConstant.ON.equals(csbFlag) || TER_PREFIX.equals(prefix)){
+				if (SysConstant.ON.equals(MDA.CSB_FLAG) || TER_PREFIX.equals(prefix)){
 					serviceCodeObj = DataRepository.getInstence().getCommonParam(dbKeyWord,serviceCode);
 					Object serviceCodeObjAsyn = DataRepository.getInstence().getCommonParam(dbKeyWord,serviceCode + SysConstant.ASYNC_KEY);
 					if (SysConstant.ON.equals(asyncFlag) && serviceCodeObjAsyn != null) {
@@ -467,7 +445,7 @@ public class InterfaceClient {
 					retnJson = rawRetn;
 				}
 	
-				if ((SysConstant.ON.equals(csbFlag) || TER_PREFIX.equals(prefix)) && serviceCodeObj != null){
+				if ((SysConstant.ON.equals(MDA.CSB_FLAG) || TER_PREFIX.equals(prefix)) && serviceCodeObj != null){
 					Node svcCont = checkCSBXml(serviceCode, rawRetn, paramString);
 					if (PAY_PREFIX.equals(prefix)) {// 支付平台
 						retnJson = svcCont.asXML();
@@ -576,6 +554,113 @@ public class InterfaceClient {
 			}
 		}
 		db.setBusiFlowId(transactionId);
+		return db;
+	}
+	
+	
+	/**
+	 * 用于ESS请求生成回执单pdf调用
+	 * @param dataBusMap 入参
+	 * @param serviceCode 服务层的服务编码
+	 * @return DataBus 返回
+	 * @throws IOException 
+	 * @throws DocumentException 
+	 * @throws Exception
+	 */
+	public static DataBus essInvoke4PdfDataInfo(Map<String, Object> dataBusMap,
+			String serviceCode)
+			throws InterfaceException, IOException, Exception {
+		
+		String dbKeyWord = MapUtils.getString(dataBusMap, DATABUS_DBKEYWORD,"");
+		dataBusMap.remove(DATABUS_DBKEYWORD);
+		
+		DataBus db = new DataBus();
+		long beginTime = System.currentTimeMillis();
+		
+		String paramString = "";
+		String paramJson="";
+		String retnJson = "";
+		String rawRetn = "";
+		String intfUrl = "";
+		String resultCode = "";
+		String resultMsg = "";
+		String errCode = "";
+		String errorStack = "";
+		String prefix = "";
+		String logSeqId = "essInvoke4VoucherDataInfo";
+//		//判断是否启用默认HTTP调用方式
+//		String invokeWay = propertiesUtils.getMessage(SysConstant.DEF_HTTP_FLAG);
+//		if (SysConstant.ON.equals(invokeWay)) {
+//			invokeWay = HTTP_WAY;
+//		} else {
+//			//未启用则从simulate配置文件中读取各接口对应的调用方式
+//			invokeWay = getInvokeWay(serviceCode);
+//		}
+		
+		//默认使用http方式调用
+		String invokeWay = HTTP_WAY;
+		
+		try {
+			prefix = serviceCode.substring(0, serviceCode.indexOf("-"));
+			if (HTTP_WAY.equals(invokeWay)) {
+				String contentType = JSON_CONTENT_TYPE;
+				String sys = "";
+				// get url, contentType by serviceCode
+				if (BIZ_PREFIX.equals(prefix)) {
+					serviceCode = serviceCode.substring(4);
+					intfUrl = getNeeded(dbKeyWord,URL_KEY, BIZ_PREFIX);
+					intfUrl += serviceCode;
+					sys = "集团营业受理后台";
+					if(AREA_CHINA.equals(dataBusMap.get("areaId"))){
+						dataBusMap.put("areaId", AREA_BEIJING);
+					}
+					paramString = JsonUtil.toString(dataBusMap);
+					paramJson=paramString;
+				}
+				
+				db = httpCall(sys, serviceCode, paramString, intfUrl, contentType, null, null, beginTime, logSeqId);
+				rawRetn = db.getResultMsg();
+				retnJson = rawRetn;
+	
+				Map<String, Object> rootMap = JsonUtil.toObject(retnJson, Map.class);
+				if (MapUtils.isEmpty(rootMap) || !rootMap.containsKey("resultCode")) {
+					if (rootMap == null || (!rootMap.containsKey("rspCode")&&!rootMap.containsKey("code")&&!rootMap.containsKey("respCode")&&!rootMap.containsKey("resFlag"))) {
+						//异常判断：返回不是个JSON对象或没有包含resultCode
+						throw new InterfaceException(ErrType.OPPOSITE, serviceCode, retnJson, paramString, logSeqId);
+					}else if(rootMap.containsKey("code")){
+						resultCode = MapUtils.getString(rootMap, "code");
+						resultMsg = MapUtils.getString(rootMap, "message");
+						returnMapSet(serviceCode, db, paramString, retnJson,
+								resultCode, resultMsg, logSeqId, sys, rootMap);
+					}else if(rootMap.containsKey("respCode")){
+						resultCode = MapUtils.getString(rootMap, "respCode");
+						resultMsg = MapUtils.getString(rootMap, "message");
+						returnMapSet(serviceCode, db, paramString, retnJson,
+								resultCode, resultMsg, logSeqId, sys, rootMap);
+					}else if(rootMap.containsKey("resFlag")) {
+						resultCode = MapUtils.getString(rootMap, "resFlag");
+						resultMsg = MapUtils.getString(rootMap, "resMsg");
+						returnMapSet(serviceCode, db, paramString, retnJson,
+								resultCode, resultMsg, logSeqId, sys, rootMap);
+					} else {
+						resultCode = MapUtils.getString(rootMap, "rspCode");
+						resultMsg = MapUtils.getString(rootMap, "rspDesc");
+						returnMapSet(serviceCode, db, paramString, retnJson,
+								resultCode, resultMsg, logSeqId, sys, rootMap);
+					}
+				}else{
+					resultCode = MapUtils.getString(rootMap, "resultCode");
+					resultMsg = MapUtils.getString(rootMap, "resultMsg");
+					returnMapSet(serviceCode, db, paramString, retnJson,
+							resultCode, resultMsg, logSeqId, sys, rootMap);
+				}
+			}
+	
+		} finally {
+			db.setResultCode(resultCode);
+			db.setResultMsg(resultMsg);
+			db.setParammap(dataBusMap);
+		}
 		return db;
 	}
 	
@@ -738,7 +823,7 @@ public class InterfaceClient {
 					try{
 						logObj.put("REMOTE_ADDR", ServletUtils.getIpAddr(request));
 						logObj.put("REMOTE_PORT", String.valueOf(request.getRemotePort()));
-						logObj.put("LOCAL_ADDR", InetAddress.getLocalHost().getHostAddress());
+						logObj.put("LOCAL_ADDR", HttpUtils.getHostIpAddress());
 						logObj.put("LOCAL_PORT", String.valueOf(request.getLocalPort()));
 					} catch(Exception e){
 						logObj.put("REMOTE_ADDR", e.getMessage());
@@ -930,6 +1015,10 @@ public class InterfaceClient {
 			}else{
 			   post.addHeader("Content-Type", contentType);
 			}
+			post.addHeader("channelNbr", sessionStaff.getCurrentChannelCode());	//渠道编码
+			post.addHeader("commonRegionId", sessionStaff.getCurrentAreaId());	//地区编码(当前渠道)
+			post.addHeader("salesCode", sessionStaff.getSalesCode());			//受理员工编码
+			post.addHeader("IP", HttpUtils.getHostIpAddress());					//当前应用服务器Ip
 			entity = new StringEntity(paramString, ENCODING);
 			post.setEntity(entity);
 			HttpResponse httpresponse = MyHttpclient.getInstance()

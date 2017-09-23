@@ -25,6 +25,7 @@ import com.al.ec.serviceplatform.client.DataBus;
 import com.al.ec.sm.MDA;
 import com.al.ecs.common.util.JsonUtil;
 import com.al.ecs.common.util.PropertiesUtils;
+import com.al.ecs.common.web.HttpUtils;
 import com.al.ecs.common.web.ServletUtils;
 import com.al.ecs.common.web.SpringContextUtil;
 import com.al.ecs.exception.InterfaceException;
@@ -397,7 +398,7 @@ public class MySessionInterceptor implements ISessionInterceptor {
 		RedisUtil.set((String) session.getAttribute(SysConstant.SESSION_DATASOURCE_KEY),sessionStaff.getStaffId(),session.getId());
 		session.setAttribute(SysConstant.SESSION_KEY_STAFF_CHANNEL,(List) chanel_map.get("channelList"));
 		session.setAttribute(SysConstant.SESSION_KEY_PORTAL_TYPE, propertiesUtils.getMessage(SysConstant.APPDESC));
-		session.setAttribute(SysConstant.SERVER_IP,CommonUtils.getSerAddrPart());
+		session.setAttribute(SysConstant.SERVER_IP,HttpUtils.getSimplifyHostIpAddress());
 
 		Map<String, Object> dataBusMap = new HashMap<String, Object>();
 		dataBusMap.put("staffId", sessionStaff.getStaffId());

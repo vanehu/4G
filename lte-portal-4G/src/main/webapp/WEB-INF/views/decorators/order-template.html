@@ -488,21 +488,22 @@
                           <tr>
                                 <td width="60"> 客户地址：</td>
                                 <td width="430" id="td_addressStr">
-                                  	<input type="text" placeHolder="请填写客户地址"  class="inputWidth228px" data-validate="validate(address)  on(blur)" maxlength="128" id="cAddressStr"/><label class="f_red">*</label>
+                                  	<input type="text" placeHolder="请填写客户地址"  class="inputWidth228px" data-validate="validate(address)  on(blur)" maxlength="128" id="cAddressStr"/>
+                                  	<label class="f_red">*</label>
                                 	<span style="line-height: 28px; float:left;"></span>
                                 </td>
                           </tr>
                           <tr>
                                 <td width="60"> 通信地址：</td>
                                 <td width="430">
-                                  <input type="text" placeHolder="请填写通信地址"  class="inputWidth228px" data-validate="validate(required:请准确填写通信地址) on(blur)" maxlength="128" id="cMailAddressStr"/><label class="f_red">*</label>
+                                  <input type="text" placeHolder="请填写通信地址"  class="inputWidth228px" onkeyup="value=$.trim(value.replace(/[(^\*+)|(\*+$)]/ig,''))" data-validate="validate(required:请准确填写通信地址) on(blur)" maxlength="128" id="cMailAddressStr"/><label class="f_red">*</label>
                                 </td>
                           </tr>
                           <tr>
                           <tr>
                                 <td> 联系人名称：</td>
                                 <td>
-                                  <input type="text" placeHolder="请填写联系人名称" data-validate="validate(required:请准确填写联系人姓名) on(blur)"  class="inputWidth228px" maxlength="32" id="discontactName" onchange="javascript:$('#contactName').val($(this).val());"/>
+                                  <input type="text" placeHolder="请填写联系人名称" onkeyup="value=$.trim(value.replace(/[(^\*+)|(\*+$)]/ig,''))" data-validate="validate(required:请准确填写联系人姓名) on(blur)"  class="inputWidth228px" maxlength="32" id="discontactName" onchange="javascript:$('#contactName').val($(this).val());"/>
                                   <label class="f_red">*</label>
                                 </td>
                           </tr><tr>

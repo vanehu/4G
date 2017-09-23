@@ -275,7 +275,8 @@ CONST = (function(){
 		CREDIT_LINE:"800000091",//征信信用额度
 		CONFIDENCE : "40010049",//人证照片比对相似度
 		FACE_VERIFY_FLAG : "40010050",//人证比对是否成功 
-		VERIFY_STAFF : "40010051"//人工审核工号   
+		VERIFY_STAFF : "40010051",//人工审核工号   
+		DELIVERY_NBR : "800000093"//终端预约页面-联系电话属性
 	};
 	
 	//属性规格

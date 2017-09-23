@@ -53,6 +53,7 @@ import com.al.ecs.common.util.DateUtil;
 import com.al.ecs.common.util.JsonUtil;
 import com.al.ecs.common.util.PropertiesUtils;
 import com.al.ecs.common.util.UIDGenerator;
+import com.al.ecs.common.web.HttpUtils;
 import com.al.ecs.common.web.ServletUtils;
 import com.al.ecs.exception.AuthorityException;
 import com.al.ecs.exception.BusinessException;
@@ -178,7 +179,7 @@ public class LoginController extends BaseController {
 				.getSessionAttribute(super.getRequest(),
 						SysConstant.SESSION_KEY_LOGIN_STAFF);	
 		session.setAttribute(SysConstant.SERVER_NAME,getSerName());
-		session.setAttribute(SysConstant.SERVER_IP,getSerAddrPart());
+		session.setAttribute(SysConstant.SERVER_IP,HttpUtils.getSimplifyHostIpAddress());
 		// 已经登录
 		if (sessionStaff != null && !("tokenLogin".equals(sessionStaff.getLogintype()))) {
 			String lastUrl = ServletUtils.getCookieValue(request, "_last_url");
@@ -343,7 +344,7 @@ public class LoginController extends BaseController {
 					session.setAttribute(SysConstant.SERVER_NAME,getSerName());
 					session.setAttribute(SysConstant.SESSION_KEY_MENU_LIST, menuResultMap.get("menuList"));
 					session.setAttribute(SysConstant.SESSION_KEY_MENU_AUTH_URL_LIST, EhcacheUtil.getAuthUrlInMenuList(menuResultMap.get("menuList")));
-					session.setAttribute(SysConstant.SERVER_IP,CommonUtils.getSerAddrPart());
+					session.setAttribute(SysConstant.SERVER_IP,HttpUtils.getSimplifyHostIpAddress());
 					
 					RedisUtil.set((String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),sessionStaff.getStaffId(),session.getId());
 					//对登录成功用户名进行加密储存至cookie
@@ -1153,7 +1154,7 @@ public class LoginController extends BaseController {
 			session.setAttribute(SysConstant.SESSION_KEY_MENU_AUTH_URL_LIST, EhcacheUtil.getAuthUrlInMenuList(menuResultMap.get("menuList")));
 			
 			session.setAttribute(SysConstant.SERVER_NAME,getSerName());
-			session.setAttribute(SysConstant.SERVER_IP,getSerAddrPart());
+			session.setAttribute(SysConstant.SERVER_IP,HttpUtils.getSimplifyHostIpAddress());
 			//对登录成功用户名进行加密储存至cookie
 			String staffCode = sessionStaff.getStaffCode();
 			staffCode = (new Date()).toString() + "_" + staffCode;
@@ -1882,11 +1883,8 @@ public class LoginController extends BaseController {
 	
 	public String getSerName(){
 		String result = "" ;
-		String sIP = "" ;
 		try{
-            InetAddress address = InetAddress.getLocalHost();  
-            sIP = ""+ address.getHostAddress();  
-            result = "服务器IP：" + sIP + ",机器名："+address.getHostName()+",";
+            result = "服务器IP：" + HttpUtils.getHostIpAddress() + ",机器名："+HttpUtils.getHostName()+",";
     	}catch(Exception e){
     		log.error("获取服务当前IP失败");
     		//e.printStackTrace();
@@ -1906,23 +1904,8 @@ public class LoginController extends BaseController {
 		//System.out.println("当前应用信息："+result);
 		return result;
 	}
-	
-	public String getSerAddrPart(){
-		String sIP = "" ;
-		try{
-            InetAddress address = InetAddress.getLocalHost();  
-            sIP = ""+ address.getHostAddress();//10.128.21.56
-            String[] sIPS = sIP.split("\\.");
-            if(sIPS.length>3){
-            	sIP = sIPS[2]+"."+sIPS[3];
-            }
-    	}catch(Exception e){
-    		log.error("获取服务当前IP失败");
-    		//e.printStackTrace();
-    	}
-		return sIP ;
-	}
-	   /**
+
+	/**
      * 员工修改/重置密码
      * @param param 
      * @return

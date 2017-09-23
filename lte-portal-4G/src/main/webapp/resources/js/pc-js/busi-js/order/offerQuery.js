@@ -428,7 +428,7 @@ query.offer = (function() {
                         param.offerSpecId=OrderInfo.offerSpec.offerSpecId;
                         if(ec.util.isObj(OrderInfo.offerSpec.offerRoles)){
                             $.each(OrderInfo.offerSpec.offerRoles,function(){
-                                if(this.memberRoleCd==OrderInfo.oldoffer[j].offerMemberInfos[i].roleCd){
+                                if(this.memberRoleCd==CONST.MEMBER_ROLE_CD.VICE_CARD || this.memberRoleCd==CONST.MEMBER_ROLE_CD.COMMON_MEMBER){
                                     param.offerRoleId = this.offerRoleId;
                                 }
                             });

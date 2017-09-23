@@ -1,5 +1,6 @@
 package com.al.lte.portal.controller.main;
 
+import com.al.ec.serviceplatform.client.DataBus;
 import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ecs.common.entity.JsonResponse;
 import com.al.ecs.common.entity.PageModel;
@@ -25,6 +26,8 @@ import com.al.lte.portal.common.AESUtils;
 import com.al.lte.portal.common.CommonMethods;
 import com.al.lte.portal.common.CommonUtils;
 import com.al.lte.portal.common.EhcacheUtil;
+import com.al.lte.portal.common.InterfaceClient;
+import com.al.lte.portal.common.PortalServiceCode;
 import com.al.lte.portal.common.SysConstant;
 import com.al.lte.portal.model.SessionStaff;
 import com.octo.captcha.service.CaptchaService;
@@ -185,6 +188,47 @@ public class MainController extends BaseController {
 				cookieLessSIX.setMaxAge(60*60*24);
 				cookieLessSIX.setPath("/");
 				resp.addCookie(cookieLessSIX);
+				
+				//外国人居住证，要求读卡
+				Cookie cookieLessFOR = new Cookie("switchFOR",com.al.ecs.common.util.MDA.FOREGIN_LIVE);
+				cookieLessSIX.setMaxAge(60*60*24);
+				cookieLessSIX.setPath("/");
+				resp.addCookie(cookieLessFOR);
+				
+				Map<String,Object> newMap = new HashMap();
+				newMap.put("areaId", sessionStaff.getAreaId());
+				newMap.put("queryType", "3");
+				newMap.put("typeClass", "18");
+				DataBus db;
+				try {
+					db = InterfaceClient.callService(newMap, PortalServiceCode.REAL_NAME_SERVICE, "", sessionStaff);
+					Map<String, Object> mapOne = db.getReturnlmap();
+					if(((List)((Map)mapOne.get("result")).get("soConstConfigs")).size()!= 0){
+						String valueE = (String)((Map)((List)((Map)mapOne.get("result")).get("soConstConfigs")).get(0)).get("value");
+						Cookie ageE = new Cookie("ageE",valueE);
+						cookieLessSIX.setMaxAge(60*60*24);
+						cookieLessSIX.setPath("/");
+						resp.addCookie(ageE);
+						request.getSession().setAttribute("valueAgeE", valueE);
+						//17岁
+						newMap.put("typeClass", "17");
+						db = InterfaceClient.callService(newMap, PortalServiceCode.REAL_NAME_SERVICE, "", sessionStaff);
+						Map<String, Object> mapTwo = db.getReturnlmap();
+						String valueS = (String)((Map)((List)((Map)mapTwo.get("result")).get("soConstConfigs")).get(0)).get("value");
+						Cookie ageS = new Cookie("ageS",valueS);
+						cookieLessSIX.setMaxAge(60*60*24);
+						cookieLessSIX.setPath("/");
+						resp.addCookie(ageS);
+						request.getSession().setAttribute("valueAgeS", valueS);
+					}
+				} catch (InterfaceException e2) {
+					e2.printStackTrace();
+				} catch (IOException e2) {
+					e2.printStackTrace();
+				} catch (Exception e2) {
+					e2.printStackTrace();
+				}
+				
 
 		// 查询是否有问卷调查这个菜单
 		try {

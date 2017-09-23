@@ -555,23 +555,32 @@ order.service = (function(){
 	
 	//添加一个角色
 	var _addNum = function(id,max,parentOfferRoleId){
-		var cookieSP = soOrder.getCookieFromJava("switchSP");
+		var cookieSP = CommonUtils.getCookieFromJava("switchSP");
+		var identityName = $("#identityName").text();
+		var theName = identityName.split("/")[0];
+		var nowCard = CommonUtils.getCookieFromJava("cookCard");
+		var newDate = new Date();
 		//军人身份证件、武装警察身份证件不能作为实名登记有效证件，不允许添加副卡
 		if(cookieSP == "ON"){
-			if($("#p_cust_identityCd").val() == "2" || $("#p_cust_identityCd").val() == "14"){
+			if($("#p_cust_identityCd").val() == "2" || $("#p_cust_identityCd").val() == "14" || theName.trim() == "军人身份证件" || theName.trim() == "武装警察身份证件"){
 				$.alert("提示", "军人身份证件、武装警察身份证件不能作为实名登记有效证件，不允许添加副卡！");
 				return;
 			}
 		}
-		var cookieSIX = soOrder.getCookieFromJava("switchSIX");
+		var cookieSIX = CommonUtils.getCookieFromJava("switchSIX");
 		//对于判断是否已超16周岁，如果超过16周岁或者户口簿不是合规证件号码，不允许新装
 		if(cookieSIX == "ON"){
 			if($("#p_cust_identityCd").val() == "12"){
 				var p_cust_identityNum = $("#p_cust_identityNum").val();
 				var nowDate = new Date();
-				if(nowDate.getFullYear - p_cust_identityNum > 16){
+				if(nowDate.getFullYear() - p_cust_identityNum.substring(6,10) > 16){
 					$.alert("提示", "户口簿上超过16周岁，不允许添加副卡！");
+					return;
 				}
+			}
+			if(theName == "户口簿" && newDate.getFullYear() - nowCard > 16){
+				$.alert("提示", "户口簿上超过16周岁，不允许添加副卡！");
+				return;
 			}
 		}
 		
