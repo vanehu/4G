@@ -80,6 +80,7 @@ SoOrder = (function() {
 	
 	//完成订单提交（设置标识，还原提交按钮）
 	var _completeSubmitOrder = function(){
+		_checkCustAndOperator();
 		//激活提交按钮（或链接）
 		var $eles = $("#fillNextStep"); //可在此添加 需要还原click效果的元素，如 $("#fillNextStep,#submitButtonId")
 		if($eles.length > 0){
@@ -3734,7 +3735,7 @@ SoOrder = (function() {
 			} //TODO tmp for Mantis 0042657
 		}
 		}
-		_checkCustAndOperator();
+		//_checkCustAndOperator();
 		return true; 
 	};
 	
@@ -3750,13 +3751,15 @@ SoOrder = (function() {
 		var identityName = $("#identityName").text();
 		var theName = identityName.split("/")[0];
 		var newMan = cert.readCert(CONST.CERT_READER_HANDLE_CUST);
+		var orderAttrName = $("#orderAttrName").val();
+		var orderAttrIdCard = $("#orderAttrIdCard").val();
 		//获取下拉框的值
 		var selectValue = $("#orderIdentidiesTypeCd").val();
 		if(cookie == "ON"){
 			if($("#c").val() != "3" && $("#c").val() != "4"){
 				//对于当前客户年龄的校验
 				var custIdNumber =  $("#p_cust_identityNum").val();//cert.readCert(CONST.CERT_READER_HANDLE_CUST).resultContent;
-				if(theName == "" || theName == null || theName == undefined){
+				if(false){
 					$.alert("提示","未读取到身份证信息！");
 				}else{
 					if(orderAttrName == "" || orderAttrName == null || orderAttrName == undefined){
@@ -3791,20 +3794,21 @@ SoOrder = (function() {
 			//对于经办人的校验
 			if(orderAttrName != "" || orderAttrName != null || orderAttrName != undefined){
 				if(selectValue != "50"){
-					if(cookieSP == "ON"){
+					if(cookieSP == "ON" && (selectValue == "2" || selectValue == "14")){
 						//军人身份证件、武装警察身份证件不能作为实名登记有效证件，不允许新装号码
 						if(selectValue == "2" || selectValue == "14"){
 							$.alert("提示", "军人身份证件、武装警察身份证件不能作为实名登记有效证件，不允许办理业务！");
 							return;
 						}
-					}else if(selectValue != "1" && selectValue != "51" && selectValue != "52"){
-						if(new Date().getFullYear() - orderAttrIdCard.substring(6,10) < ageE && selectValue != "50" && selectValue != "4" && selectValue != "3"){
+					}
+					else if(selectValue != "1" && selectValue != "51" && selectValue != "52"){
+						if(new Date().getFullYear() - orderAttrIdCard.toString().substring(6,10) < ageE && selectValue != "50" && selectValue != "4" && selectValue != "3"){
 							$.alert("提示","经办人必须'"+ageE+"'岁以上！");
 							return false;
 						}
 					}else{
 						var cardNumber = newMan.resultContent.certNumber;
-						if(new Date().getFullYear() - cardNumber.substring(6,10) < ageE && selectValue != "50" && selectValue != "4" && selectValue != "3"){
+						if(new Date().getFullYear() - cardNumber.toString().substring(6,10) < ageE && selectValue != "50" && selectValue != "4" && selectValue != "3"){
 							$.alert("提示","经办人必须'"+ageE+"'岁以上！");
 							return false;
 						}
