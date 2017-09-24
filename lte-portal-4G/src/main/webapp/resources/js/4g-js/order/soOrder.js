@@ -3792,7 +3792,7 @@ SoOrder = (function() {
 		}
 		if(cookieE == "ON"){
 			//对于经办人的校验
-			if(orderAttrName != "" || orderAttrName != null || orderAttrName != undefined){
+			if(orderAttrName != "" && orderAttrName != null && orderAttrName != undefined){
 				if(selectValue != "50"){
 					if(cookieSP == "ON" && (selectValue == "2" || selectValue == "14")){
 						//军人身份证件、武装警察身份证件不能作为实名登记有效证件，不允许新装号码
