@@ -1020,6 +1020,11 @@ public class OrderController extends BaseController {
 
     @RequestMapping(value = "/offerSpecList", method = RequestMethod.GET, produces = "text/html;charset=UTF-8")
     public String getOfferSpecList(@RequestParam Map<String, Object> prams,Model model,HttpServletResponse response){
+		String valiDateResult = (String)ServletUtils.getSessionAttribute(super.getRequest(),"VALIDATERESULT");
+		if("N".equals(valiDateResult)){
+			model.addAttribute("errorMsg", "非法鉴权！");
+			return "/common/error";
+		}
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
                 SysConstant.SESSION_KEY_LOGIN_STAFF);	
 		prams.put("channelId", sessionStaff.getCurrentChannelId());

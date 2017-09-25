@@ -766,6 +766,8 @@ public class CustController extends BaseController {
 						jsonResponse = super.successed(map,ResultConstant.SUCCESS.getCode());
 					}
 					else{
+						//鉴权失败记录到session中用于判断非法操作
+						httpSession.setAttribute("VALIDATERESULT","N");
 						map.put("code", "-1");
 						map.put("isValidate", "false");
 						map.put("message","证件号码错误");
@@ -794,6 +796,8 @@ public class CustController extends BaseController {
 					jsonResponse = super.successed(map,ResultConstant.SUCCESS.getCode());
 				}
 				else{
+					//鉴权失败记录到session中用于判断非法操作
+					httpSession.setAttribute("VALIDATERESULT","N");
 					map.put("code", "-1");
 					map.put("isValidate", "false");
 					map.put("message","产品密码错误");
