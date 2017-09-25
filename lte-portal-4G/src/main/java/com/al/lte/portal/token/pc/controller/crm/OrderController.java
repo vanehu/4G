@@ -1337,7 +1337,7 @@ public class OrderController extends BaseController {
 		}
 
 		//如果是新装，判断mda里该场景是否配置了经办人拍照
-		if("1".equals(String.valueOf(param.get("actionFlag")))) {  //新装
+		if("1".equals(String.valueOf(param.get("actionFlag"))) && "ON".equals(userFlag)) {  //新装
 			String jbrpz = propertiesUtils.getMessage("JBRPZ_PZ_"+sessionStaff.getCurrentAreaId().substring(0,3)+"0000");
 			if(jbrpz.indexOf("1,")>=0){
 				model.addAttribute("orderAttrFlag","Y");//必填
