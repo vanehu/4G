@@ -54,6 +54,7 @@ jQuery.getCookie = function(name, isUnescape) {
                 var cookieList = document.cookie.split(";");
                 for(var i = 0, length = cookieList.length; i < length; i++){
                     var smallCookie = cookieList[i].split("=");
+                    //基础js，避免jQuery未加载完整，暂不使用$.trim()
                     var cookieKey = smallCookie[0].replace(regExp,"");
                     if (name == cookieKey) {
                         result = unescape(smallCookie[1].replace(regExp,""));
