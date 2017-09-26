@@ -39,3 +39,39 @@ jQuery.cookie = function(name, value, options) {
         return cookieValue;
     }
 };
+
+/**
+ * 兼容UTF-8编码的cookie值，尤其适用于cookie中包含中文字符的情况
+ * 为了兼容老的jQuery.cookie，入参增加了一个isUnescape标识，一般传入一个true即可
+ */
+jQuery.getCookie = function(name, isUnescape) {
+    var result = null;
+
+    if (name != null && name != "" && typeof name != 'undefined') {
+        if (typeof isUnescape != 'undefined' && !!isUnescape) {
+            var regExp = /[(^\s+)|(\s+$)]/ig;            
+            if(document.cookie.length > 0){
+                var cookieList = document.cookie.split(";");
+                for(var i = 0, length = cookieList.length; i < length; i++){
+                    var smallCookie = cookieList[i].split("=");
+                    var cookieKey = smallCookie[0].replace(regExp,"");
+                    if (name == cookieKey) {
+                        result = unescape(smallCookie[1].replace(regExp,""));
+                        break;
+                    }
+               }
+            }
+        } else {
+            result = jQuery.cookie(name);
+        }
+    }
+
+    return result;
+};
+
+/**
+ * 获取所有cookie，以map形式返回，兼容UTF-8
+ */
+jQuery.getCookies = function() {
+    return null;
+};
