@@ -80,7 +80,7 @@ SoOrder = (function() {
 	
 	//完成订单提交（设置标识，还原提交按钮）
 	var _completeSubmitOrder = function(){
-		_checkCustAndOperator();
+		//_checkCustAndOperator();
 		//激活提交按钮（或链接）
 		var $eles = $("#fillNextStep"); //可在此添加 需要还原click效果的元素，如 $("#fillNextStep,#submitButtonId")
 		if($eles.length > 0){
@@ -107,6 +107,27 @@ SoOrder = (function() {
 			return;
 		}
 		_beginSubmitOrder();
+		var checkNowCust = _checkCustAndOperator();
+		if(checkNowCust == false && checkNowCust != null && checkNowCust != undefined){
+			//激活提交按钮（或链接）
+			var $eles = $("#fillNextStep"); //可在此添加 需要还原click效果的元素，如 $("#fillNextStep,#submitButtonId")
+			if($eles.length > 0){
+				for(var i=0;i<$eles.length;i++){
+					//去除置灰，从href_o参数还原href参数 ，然后去除href_o参数
+					$($eles[i]).removeClass("btna_g").addClass("btna_o").attr("href",$($eles[i]).attr("href_o")).removeAttr("href_o").removeAttr("disabled");
+					//从绑定的click_o事件中还原绑定click事件，然后解绑click_o事件
+					var events = $.data($eles[i],"events");
+					if(events && events.click_o){
+						for(var j=0;j<events.click_o.length;j++){
+							$($eles[i]).on("click",events.click_o[j].data,events.click_o[j].handler);
+						}
+						$($eles[i]).off("click_o");
+					}
+				}
+			}
+			SoOrder.inSubmit = false;
+			return;
+		}
 		var async = false; //是否是异步请求
 		try {
 			_getCheckOperatSpec();
@@ -3787,7 +3808,7 @@ SoOrder = (function() {
 			//军人身份证件、武装警察身份证件不能作为实名登记有效证件，不允许新装号码
 			if(selectValue == "2" || selectValue == "14"){
 				$.alert("提示", "军人身份证件、武装警察身份证件不能作为实名登记有效证件，不允许办理业务！");
-				return;
+				return false;
 			}
 		}
 		if(cookieE == "ON"){
@@ -3798,7 +3819,7 @@ SoOrder = (function() {
 						//军人身份证件、武装警察身份证件不能作为实名登记有效证件，不允许新装号码
 						if(selectValue == "2" || selectValue == "14"){
 							$.alert("提示", "军人身份证件、武装警察身份证件不能作为实名登记有效证件，不允许办理业务！");
-							return;
+							return false;
 						}
 					}
 					else if(selectValue != "1" && selectValue != "51" && selectValue != "52"){
