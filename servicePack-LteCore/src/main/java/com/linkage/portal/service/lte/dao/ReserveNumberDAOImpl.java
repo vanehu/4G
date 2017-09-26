@@ -26,21 +26,24 @@ import com.linkage.portal.service.lte.DBUtil;
 public class ReserveNumberDAOImpl implements ReserveNumberDAO {
 
     private JdbcTemplate jdbc = (JdbcTemplate) SpringContextUtil.getBean(DBUtil.PORTAL_TEMPLATE);
-    StringBuffer stringBuffer = new StringBuffer();
+    private StringBuffer sql = new StringBuffer();
+    private StringBuffer middleResultSql = new StringBuffer();
 
     public Map<String, Object> QueryAccNbrToRelease(Map<String,Object> param) throws Exception {
         String accNbrType = MapUtils.getString(param, "accNbrType", "");		
-        String interval = DataRepository.getInstence().getSysParamValue("sys.preNumberDate","1");
+        String interval = DataRepository.getInstence().getSysParamValue("sys.preNumberDate", "1");
         interval = StringUtils.isBlank(interval) ? "5" : interval;
         	
-		StringBuffer sql = new StringBuffer();
 		List<Object> params = new LinkedList<Object>();
 		List<Integer> sqlType = new LinkedList<Integer>();
 		
-        sql.append(" (SELECT rownum RN, R.ACC_ID,R.ACC_NBR,R.ACC_NBR_TYPE,R.IS_RELEASE state,R.AREA_ID,S.STAFF_NAME STAFF_NAME,CR.REGION_NAME AREA_NAME,to_char(R.CREATE_DATE,'YYYY-MM-DD HH24:MI:SS') as CREATE_DATE");
-        sql.append("  FROM RESERVE_NUMBER R  JOIN COMMON_REGION CR ON R.AREA_ID=CR.COMMON_REGION_ID JOIN STAFF S ON R.STAFF_ID = S.STAFF_ID");
-        sql.append(" WHERE  (SYSDATE - R.CREATE_DATE) * 1440 >= ?");
-        sql.append(" AND R.IS_RELEASE='1' AND R.ACC_NBR_TYPE = ?");
+		this.middleResultSql.setLength(0);
+		this.sql.setLength(0);
+		
+        this.sql.append(" SELECT rownum RN, R.ACC_ID,R.ACC_NBR,R.ACC_NBR_TYPE,R.IS_RELEASE state,R.AREA_ID,S.STAFF_NAME STAFF_NAME,CR.REGION_NAME AREA_NAME,to_char(R.CREATE_DATE,'YYYY-MM-DD HH24:MI:SS') as CREATE_DATE");
+        this.sql.append(" FROM RESERVE_NUMBER R  JOIN COMMON_REGION CR ON R.AREA_ID=CR.COMMON_REGION_ID JOIN STAFF S ON R.STAFF_ID = S.STAFF_ID");
+        this.sql.append(" WHERE  (SYSDATE - R.CREATE_DATE) * 1440 >= ?");
+        this.sql.append(" AND R.IS_RELEASE='1' AND R.ACC_NBR_TYPE = ?");
         
         params.add(interval);
         sqlType.add(Types.VARCHAR);
@@ -48,17 +51,17 @@ public class ReserveNumberDAOImpl implements ReserveNumberDAO {
         sqlType.add(Types.VARCHAR);
         
 		if(StringUtils.isNotBlank(MapUtils.getString(param, "accNbr", ""))){
-			sql.append(" AND R.ACC_NBR = ?");
+			this.sql.append(" AND R.ACC_NBR = ?");
 			params.add(MapUtils.getString(param, "accNbr"));
 	        sqlType.add(Types.VARCHAR);
 		}
 		if(StringUtils.isNotBlank(MapUtils.getString(param, "channelId", ""))){
-			sql.append(" AND R.CHANNEL_ID = ?");
+			this.sql.append(" AND R.CHANNEL_ID = ?");
 			params.add(MapUtils.getString(param, "channelId"));
 	        sqlType.add(Types.VARCHAR);
 		}
 		else if(StringUtils.isNotBlank(MapUtils.getString(param, "staffId", ""))){
-			sql.append(" AND R.STAFF_ID = ?");
+			this.sql.append(" AND R.STAFF_ID = ?");
 			params.add(MapUtils.getString(param, "staffId"));
 	        sqlType.add(Types.VARCHAR);
 		}
@@ -67,41 +70,46 @@ public class ReserveNumberDAOImpl implements ReserveNumberDAO {
 		String endDate = MapUtils.getString(param, "endDate", "");;
 		
 		if(StringUtils.isNotBlank(beginDate)){
-			sql.append(" AND R.CREATE_DATE >= TO_DATE(?,yyyy-MM-dd HH24:MI:SS)");
+			this.sql.append(" AND R.CREATE_DATE >= TO_DATE(?,'yyyy-MM-dd HH24:MI:SS')");
 			params.add(beginDate + " 00:00:00");
-	        sqlType.add(Types.DATE);
+	        sqlType.add(Types.VARCHAR);
 		}
 		if(StringUtils.isNotBlank(beginDate) && StringUtils.isNotBlank(endDate)){
-			sql.append(" AND R.CREATE_DATE <= TO_DATE(?,'yyyy-MM-dd HH24:MI:SS')");
+			this.sql.append(" AND R.CREATE_DATE <= TO_DATE(?,'yyyy-MM-dd HH24:MI:SS')");
 			params.add(endDate + " 23:59:59");
-	        sqlType.add(Types.DATE);
+	        sqlType.add(Types.VARCHAR);
 		}
 		if(StringUtils.isNotBlank(endDate) && StringUtils.isBlank(beginDate)){
-			sql.append(" AND R.CREATE_DATE<=TO_DATE(?,'yyyy-MM-dd HH24:MI:SS')");
+			this.sql.append(" AND R.CREATE_DATE<=TO_DATE(?,'yyyy-MM-dd HH24:MI:SS')");
 			params.add(endDate + " 23:59:59");
-	        sqlType.add(Types.DATE);
+	        sqlType.add(Types.VARCHAR);
 		}
 		
-//		int count=jdbc.queryForInt("SELECT COUNT(*) FROM "+sql.toString()+")");
-		int count = jdbc.update(sql.toString(), params, sqlType);
+		this.middleResultSql.append("SELECT COUNT(*) FROM (");
+		this.middleResultSql.append(this.sql);
+		this.middleResultSql.append(")");
+		int count = jdbc.queryForInt(this.middleResultSql.toString(), params.toArray(), this.convertList2Array(sqlType));
 		int pageSize = Integer.valueOf(MapUtils.getString(param, "pageSize", "10"));  
 		int pageIndex = StringUtils.isBlank(MapUtils.getString(param, "pageIndex", "")) ? 1 : Integer.valueOf(MapUtils.getString(param, "pageIndex"));
 		
+		this.middleResultSql.setLength(0);
+		this.middleResultSql.append("SELECT * FROM ( ");
+		this.middleResultSql.append(this.sql);
+		this.middleResultSql.append(" ) RESULT");
+		
 		if(pageIndex == 1){
-			sql.append(" AND rownum <= ?").append(")").append(" WHERE rn > 0");
+			this.middleResultSql.append(" WHERE RESULT.RN <= ?").append(" AND RESULT.RN > 0");
 			params.add(pageSize);
 	        sqlType.add(Types.INTEGER);
 		}else{
-			sql.append(" AND rownum <= ?").append(")").append(" WHERE rn > ?");
+			this.middleResultSql.append(" WHERE RESULT.RN <= ?").append(" AND RESULT.RN > ?");
 			params.add(pageIndex * pageSize);
 	        sqlType.add(Types.INTEGER);
 	        params.add((pageIndex - 1) * pageSize);
 	        sqlType.add(Types.INTEGER);
 		}
 		
-//		List rList = jdbc.queryForList("SELECT * FROM"+sql.toString());
-		sql.insert(0, "SELECT * FROM ");
-		List<?> rList = jdbc.queryForList(sql.toString(), params, sqlType);
+		List<?> rList = jdbc.queryForList(this.middleResultSql.toString(), params.toArray(), this.convertList2Array(sqlType));
 
 		Map<String, Object> rtMap = new HashMap<String, Object>();
         rtMap.put("numberList", rList);
@@ -132,5 +140,15 @@ public class ReserveNumberDAOImpl implements ReserveNumberDAO {
         Object[] sbParamObj ={phoneNumber};
         int[] sbParamType = {Types.VARCHAR};
         return jdbc.update(sb.toString(),sbParamObj,sbParamType);
+    }
+    
+    private int[] convertList2Array(List<Integer> param){
+    	int[] result = new int[param.size()];
+    	
+    	for(int i = 0; i < param.size(); i++){
+			result[i] = param.get(i);
+		}
+
+		return result;
     }
 }
