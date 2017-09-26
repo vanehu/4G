@@ -41,6 +41,33 @@ jQuery.cookie = function(name, value, options) {
 };
 
 /**
+ * 获取所有cookie，以map形式返回，兼容UTF-8
+ */
+jQuery.getCookies = function() {
+    var result = {};
+    var regExp = /[(^\s+)|(\s+$)]/ig;
+
+    try {
+        if(document.cookie.length > 0){
+            var cookieList = document.cookie.split(";");
+            for(var i = 0, length = cookieList.length; i < length; i++){
+                var smallCookie = cookieList[i].split("=");
+                //基础js，避免jQuery未加载完整，暂不使用$.trim()
+                var cookieKey = smallCookie[0].replace(regExp,"");
+                if (cookieKey != null && cookieKey != "" && cookieKey != undefined) {
+                    result[cookieKey] = unescape(smallCookie[1].replace(regExp,""));
+                }
+            }
+        }
+    } catch (error) {
+        result = {};
+        window.console && window.console.log && (console.log("%c" + error, "color:red"));
+    }
+    
+    return result;
+};
+
+/**
  * 兼容UTF-8编码的cookie值，尤其适用于cookie中包含中文字符的情况
  * 为了兼容老的jQuery.cookie，入参增加了一个isUnescape标识，一般传入一个true即可
  */
@@ -49,30 +76,21 @@ jQuery.getCookie = function(name, isUnescape) {
 
     if (name != null && name != "" && typeof name != 'undefined') {
         if (typeof isUnescape != 'undefined' && !!isUnescape) {
-            var regExp = /[(^\s+)|(\s+$)]/ig;            
-            if(document.cookie.length > 0){
-                var cookieList = document.cookie.split(";");
-                for(var i = 0, length = cookieList.length; i < length; i++){
-                    var smallCookie = cookieList[i].split("=");
-                    //基础js，避免jQuery未加载完整，暂不使用$.trim()
-                    var cookieKey = smallCookie[0].replace(regExp,"");
-                    if (name == cookieKey) {
-                        result = unescape(smallCookie[1].replace(regExp,""));
-                        break;
-                    }
-               }
-            }
-        } else {
+            var cookies = jQuery.getCookies();
+            result = cookies[name];
+        } else{
             result = jQuery.cookie(name);
         }
+    } else{
+        result = "";
     }
 
     return result;
 };
 
 /**
- * 获取所有cookie，以map形式返回，兼容UTF-8
+ * 以json字符串返回所有cookie
  */
-jQuery.getCookies = function() {
-    return null;
+jQuery.getJsonCookies = function() {
+    return JSON.stringify(jQuery.getCookies());
 };
