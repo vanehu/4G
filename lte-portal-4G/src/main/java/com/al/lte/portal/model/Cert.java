@@ -82,16 +82,12 @@ public class Cert {
 	private List<String> specialNodeList;
 	
 	private String mac;
-		
+	
+	static {
+		cert = new Cert();
+	}
+
 	public static Cert getInstance(){
-		if(cert == null){
-			synchronized(Cert.class){
-				if(cert == null){
-					cert = new Cert();
-				}
-			}
-		}
-		
 		return cert;
 	}
 	

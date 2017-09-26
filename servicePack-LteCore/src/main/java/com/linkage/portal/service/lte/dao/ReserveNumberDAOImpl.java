@@ -2,6 +2,7 @@ package com.linkage.portal.service.lte.dao;
 
 import java.sql.Types;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -25,65 +26,88 @@ import com.linkage.portal.service.lte.DBUtil;
 public class ReserveNumberDAOImpl implements ReserveNumberDAO {
 
     private JdbcTemplate jdbc = (JdbcTemplate) SpringContextUtil.getBean(DBUtil.PORTAL_TEMPLATE);
+    StringBuffer stringBuffer = new StringBuffer();
 
-    @SuppressWarnings("unchecked")
-    public Map<String, Object> QueryAccNbrToRelease(Map param) throws Exception {
-		Map<String, Object> rtMap = new HashMap();
-    	String pageIndex = MapUtils.getString(param, "pageIndex", "");
-        String accNbrType = MapUtils.getString(param, "accNbrType", "");
-		String startDt = MapUtils.getString(param, "beginDate", "")+ " 00:00:00";
-		String endDt = MapUtils.getString(param, "endDate", "")+" 23:59:59";
-		boolean startDtCondition = StringUtils.isNotBlank(MapUtils.getString(param, "beginDate", ""));
-		boolean endDtCondition = StringUtils.isNotBlank(MapUtils.getString(param, "endDate", ""));
+    public Map<String, Object> QueryAccNbrToRelease(Map<String,Object> param) throws Exception {
+        String accNbrType = MapUtils.getString(param, "accNbrType", "");		
         String interval = DataRepository.getInstence().getSysParamValue("sys.preNumberDate","1");
-        if (interval == null) interval = "5";
+        interval = StringUtils.isBlank(interval) ? "5" : interval;
+        	
 		StringBuffer sql = new StringBuffer();
+		List<Object> params = new LinkedList<Object>();
+		List<Integer> sqlType = new LinkedList<Integer>();
+		
         sql.append(" (SELECT rownum RN, R.ACC_ID,R.ACC_NBR,R.ACC_NBR_TYPE,R.IS_RELEASE state,R.AREA_ID,S.STAFF_NAME STAFF_NAME,CR.REGION_NAME AREA_NAME,to_char(R.CREATE_DATE,'YYYY-MM-DD HH24:MI:SS') as CREATE_DATE");
         sql.append("  FROM RESERVE_NUMBER R  JOIN COMMON_REGION CR ON R.AREA_ID=CR.COMMON_REGION_ID JOIN STAFF S ON R.STAFF_ID = S.STAFF_ID");
-        sql.append(" WHERE  (SYSDATE - R.CREATE_DATE) * 1440 >= '" +interval+"'"+
-        		" AND R.IS_RELEASE='1' AND R.ACC_NBR_TYPE = '"+accNbrType+"'");
+        sql.append(" WHERE  (SYSDATE - R.CREATE_DATE) * 1440 >= ?");
+        sql.append(" AND R.IS_RELEASE='1' AND R.ACC_NBR_TYPE = ?");
+        
+        params.add(interval);
+        sqlType.add(Types.VARCHAR);
+        params.add(accNbrType);
+        sqlType.add(Types.VARCHAR);
+        
 		if(StringUtils.isNotBlank(MapUtils.getString(param, "accNbr", ""))){
-			sql.append(" AND R.ACC_NBR = '"+MapUtils.getString(param, "accNbr", "")+"'");
+			sql.append(" AND R.ACC_NBR = ?");
+			params.add(MapUtils.getString(param, "accNbr"));
+	        sqlType.add(Types.VARCHAR);
 		}
 		if(StringUtils.isNotBlank(MapUtils.getString(param, "channelId", ""))){
-			sql.append(" AND R.CHANNEL_ID = '"+MapUtils.getString(param, "channelId", "")+"'");
+			sql.append(" AND R.CHANNEL_ID = ?");
+			params.add(MapUtils.getString(param, "channelId"));
+	        sqlType.add(Types.VARCHAR);
 		}
 		else if(StringUtils.isNotBlank(MapUtils.getString(param, "staffId", ""))){
-			sql.append(" AND R.STAFF_ID = '"+MapUtils.getString(param, "staffId", "")+"'");
+			sql.append(" AND R.STAFF_ID = ?");
+			params.add(MapUtils.getString(param, "staffId"));
+	        sqlType.add(Types.VARCHAR);
 		}
-//		if(StringUtils.isNotBlank(MapUtils.getString(param, "areaId", ""))){
-//			String areaId = MapUtils.getString(param, "areaId");
-//			if(areaId.endsWith("0000")&& areaId.length()==7){
-//			sql.append(" AND R.AREA_ID like '"+areaId.substring(0,3)+"%'");
-//			}else{
-//			sql.append(" AND R.AREA_ID = '"+MapUtils.getString(param, "areaId", "")+"'");
-//			}
-//		}
-		if(startDtCondition){
-			sql.append(" AND R.CREATE_DATE>=TO_DATE(").append("'"+startDt+"'").append(",'yyyy-MM-dd HH24:MI:SS')");
+		
+		String beginDate = MapUtils.getString(param, "beginDate", "");
+		String endDate = MapUtils.getString(param, "endDate", "");;
+		
+		if(StringUtils.isNotBlank(beginDate)){
+			sql.append(" AND R.CREATE_DATE >= TO_DATE(?,yyyy-MM-dd HH24:MI:SS)");
+			params.add(beginDate + " 00:00:00");
+	        sqlType.add(Types.DATE);
 		}
-		if(endDtCondition &&  startDtCondition){
-			sql.append(" AND R.CREATE_DATE<=TO_DATE(").append("'"+endDt+"'").append(",'yyyy-MM-dd HH24:MI:SS')");
+		if(StringUtils.isNotBlank(beginDate) && StringUtils.isNotBlank(endDate)){
+			sql.append(" AND R.CREATE_DATE <= TO_DATE(?,'yyyy-MM-dd HH24:MI:SS')");
+			params.add(endDate + " 23:59:59");
+	        sqlType.add(Types.DATE);
 		}
-		if(endDtCondition &&  ! startDtCondition){
-			sql.append(" AND R.CREATE_DATE<=TO_DATE(").append("'"+endDt+"'").append(",'yyyy-MM-dd HH24:MI:SS')");
+		if(StringUtils.isNotBlank(endDate) && StringUtils.isBlank(beginDate)){
+			sql.append(" AND R.CREATE_DATE<=TO_DATE(?,'yyyy-MM-dd HH24:MI:SS')");
+			params.add(endDate + " 23:59:59");
+	        sqlType.add(Types.DATE);
 		}
-		int count=jdbc.queryForInt("SELECT COUNT(*) FROM "+sql.toString()+")");
-		int onePageCount=Integer.valueOf(MapUtils.getString(param, "pageSize", "10"));        
-		if(StringUtils.isBlank(pageIndex) || "1".equals(pageIndex)){
-			sql.append(" AND rownum <="+onePageCount)
-			.append(")")
-			.append(" WHERE rn>0");
+		
+//		int count=jdbc.queryForInt("SELECT COUNT(*) FROM "+sql.toString()+")");
+		int count = jdbc.update(sql.toString(), params, sqlType);
+		int pageSize = Integer.valueOf(MapUtils.getString(param, "pageSize", "10"));  
+		int pageIndex = StringUtils.isBlank(MapUtils.getString(param, "pageIndex", "")) ? 1 : Integer.valueOf(MapUtils.getString(param, "pageIndex"));
+		
+		if(pageIndex == 1){
+			sql.append(" AND rownum <= ?").append(")").append(" WHERE rn > 0");
+			params.add(pageSize);
+	        sqlType.add(Types.INTEGER);
 		}else{
-			sql.append(" AND rownum<=").append(Integer.valueOf(pageIndex)*onePageCount)
-			.append(")")
-			.append(" WHERE rn>")
-			.append((Integer.valueOf(pageIndex)-1)*onePageCount);
+			sql.append(" AND rownum <= ?").append(")").append(" WHERE rn > ?");
+			params.add(pageIndex * pageSize);
+	        sqlType.add(Types.INTEGER);
+	        params.add((pageIndex - 1) * pageSize);
+	        sqlType.add(Types.INTEGER);
 		}
-        List rList = jdbc.queryForList("SELECT * FROM"+sql.toString());
+		
+//		List rList = jdbc.queryForList("SELECT * FROM"+sql.toString());
+		sql.insert(0, "SELECT * FROM ");
+		List<?> rList = jdbc.queryForList(sql.toString(), params, sqlType);
+
+		Map<String, Object> rtMap = new HashMap<String, Object>();
         rtMap.put("numberList", rList);
         rtMap.put("totalNumber", count);
-        rtMap.put("totalPage", (count/onePageCount+1));
+        rtMap.put("totalPage", (count / pageSize + 1));
+        
         return rtMap;
     }
 
