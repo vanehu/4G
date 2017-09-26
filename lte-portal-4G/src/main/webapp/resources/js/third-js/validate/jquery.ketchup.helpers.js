@@ -17,6 +17,9 @@ jQuery.ketchup
         sum += str.indexOf(codes[0].charAt(i)) * ws[i];
     }
     var c18 = 31 - (sum % 31);
+    if(c18 == 31){
+        c18 = 0;
+    }
     if (str.charAt(c18) != codes[1]) {
         return false;
     }
