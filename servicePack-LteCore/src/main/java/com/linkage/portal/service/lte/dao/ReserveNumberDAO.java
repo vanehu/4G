@@ -1,6 +1,5 @@
 package com.linkage.portal.service.lte.dao;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -14,7 +13,7 @@ public interface ReserveNumberDAO {
      * @return
      * @throws Exception
      */
-    Map<String, Object> QueryAccNbrToRelease(Map param) throws Exception;
+    Map<String, Object> QueryAccNbrToRelease(Map<String,Object> param) throws Exception;
 	/**
 	 * 保存预占号码(UIM卡)信息
 	 * @param param
