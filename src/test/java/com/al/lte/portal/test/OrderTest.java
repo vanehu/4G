@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.al.lte.portal.bmo.crm.OfferBmo;
 import com.al.lte.portal.bmo.crm.OrderBmo;
+import com.al.lte.portal.bmo.crm.ProdBmo;
 import com.al.lte.portal.bmo.crm.SecondBusiness;
 import com.al.lte.portal.model.SessionStaff;
 
@@ -25,6 +26,9 @@ public class OrderTest extends BaseJunit {
 	private SecondBusiness secondBusiness;
 	@Autowired
 	private OfferBmo offerBmo;
+	@Autowired
+	private ProdBmo prodBmo;
+	//prodSpecParamQuery
 	
 	
 	private SessionStaff setSessionStaff() throws Exception {
@@ -39,6 +43,9 @@ public class OrderTest extends BaseJunit {
     	Map paramMap = new HashMap();
     	Map ret = new HashMap();
     	String optFlowNum = "13324324";
+    	String paramJson = "{}";
+    	ObjectMapper mapper = new ObjectMapper();
+    	paramMap = mapper.readValue(paramJson, Map.class);    	
     	System.out.println("**************begin********");
     	ret = orderBmo.queryChannel(paramMap, optFlowNum, setSessionStaff());
     	System.out.println("**************end********"+JSONArray.fromObject(ret).toString());
@@ -80,5 +87,17 @@ public class OrderTest extends BaseJunit {
     	ret = offerBmo.queryMyfavorite(paramMap, optFlowNum, setSessionStaff());
     	System.out.println("**************end********"+JSONArray.fromObject(ret).toString());
     }    
-    
+    @Test
+    public void prodSpecParamQuery() throws Exception {
+    	Map paramMap = new HashMap();
+    	Map ret = new HashMap();
+    	String optFlowNum = "13324324";
+    	String paramJson = "{\"transactionId\":\"17081616400285064210605\",\"roleCd\":null,\"staffId\":\"5176843\",\"partyId\":\"700000652018\",\"channelId\":\"1385688\",\"offerSpecId\":\"86327\",\"prodSpecId\":\"235010000\",\"offerRoleId\":\"42958\",\"areaId\":\"8320400\"}";
+    	ObjectMapper mapper = new ObjectMapper();
+    	paramMap = mapper.readValue(paramJson, Map.class);
+    	System.out.println("**************begin********");
+    	ret = prodBmo.prodSpecParamQuery(paramMap, optFlowNum, setSessionStaff());
+    	System.out.println("**************end********"+JSONArray.fromObject(ret).toString());
+    	
+    }
 }
