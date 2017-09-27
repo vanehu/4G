@@ -75,7 +75,8 @@ public class CustTest extends BaseJunit {
     	System.out.println("**************begin********");
     	ret = custBmo.queryAccNbrByCust(paramMap, optFlowNum, setSessionStaff());
     	System.out.println("**************end********"+JSONArray.fromObject(ret).toString());
-    }      
+    }   
+    /*
     @Test
     public void test111() throws Exception {
     	HttpPost post = null;
@@ -94,5 +95,6 @@ public class CustTest extends BaseJunit {
 			e.printStackTrace();
 		}
     }     
+    */
 }
 
