@@ -3117,6 +3117,7 @@ SoOrder = (function() {
 				}
 			});*/
 
+			var isAllPreInstall = _isAllPreInstall();
             //若页面没有填写经办人，根据权限和业务类型进行判断和限制
             var isActionFlagLimited = (
                     jbrFlag	||	//办套餐入口做新装//返档//购手机入口做新装(OrderInfo.busitypeflag为1)
@@ -3125,7 +3126,9 @@ SoOrder = (function() {
                     (OrderInfo.actionFlag == 6  && OrderInfo.isHandleCustNeeded) || //主副卡成员变更，加装新号码或加装老号码且客户证件非身份证
                     (OrderInfo.actionFlag == 2  && (OrderInfo.isHandleCustNeeded || isUimAction)) ||//套餐变更，加装新号码、加装老号码且客户证件非身份证或UIM变更
                     (OrderInfo.actionFlag == 3	&& OrderInfo.busitypeflag == 14	 && isUimAction)	//可选包变更涉及UIM动作
-                ) && !order.prepare.isPreInstall();//预装不限制，此时busitypeflag为1不是27，不可以busitypeflag判断业务类型
+                ) && !order.prepare.isPreInstall() //预装不限制，此时busitypeflag为1不是27，不可以busitypeflag判断业务类型
+                  && !isAllPreInstall;//全部勾选副卡预装
+                ;
 
 			if(CONST.isHandleCustNeeded && isActionFlagLimited) {
 				//采集单不拍照
@@ -4824,6 +4827,22 @@ SoOrder = (function() {
 		};
     	
     	busiOrders.push(busiOrder);
+    };
+    
+    //判断加装移动副卡是否全部勾选副卡预装
+    var _isAllPreInstall = function(){
+        var isAllPreInstallState = false;
+        for(var i = 0;i < OrderInfo.boProdAns.length;i++){
+            //获取每个加载号码的副卡预选状态
+            var preInstallState = $("#isPreNumber_" + OrderInfo.boProdAns[i].prodId).attr("checked") == "checked";
+            if(preInstallState){
+                isAllPreInstallState = true;
+            }else{
+                isAllPreInstallState = false;
+                break;
+            }
+        }
+        return isAllPreInstallState;
     };
 
     return {
