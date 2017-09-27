@@ -4991,6 +4991,12 @@ order.cust = (function(){
 		$("#bt_"+id+"_"+activityId).removeClass("yes_btn").addClass("no_btn");
 		$("#bt_"+id+"_"+activityId).removeAttr("onclick");
 	};
+	
+	var _checkValueSyn = function(){
+		var data = document.getElementById("discontactName");
+		data.value = $.trim(data.value.replace(/[(^\*+)|(\*+$)]/ig,''));
+		$('#contactName').val(data.value);
+	}
 
 	return {
 		form_valid_init : _form_valid_init,
@@ -5088,7 +5094,8 @@ order.cust = (function(){
         changeActiLabel:_changeActiLabel,
         activityList:_activityList,
         queryMktCustList:_queryMktCustList,
-        saveMktContactResult:_saveMktContactResult
+        saveMktContactResult:_saveMktContactResult,
+        checkValueSyn:_checkValueSyn
 	};
 })();
 $(function() {
