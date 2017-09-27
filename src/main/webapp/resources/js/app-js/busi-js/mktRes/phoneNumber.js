@@ -1120,8 +1120,7 @@ order.phoneNumber = (function(){
 	//结束选号，不通的模块要做的动作不相同
 	var _endSelectNum=function(obj,purchas){
 		// 号码资源状态前置校验
-		var flagQueryRes = $.callServiceAsJson(contextPath + "/common/queryPortalProperties", {"propertiesKey": "NUMBER_CHECK_" + (OrderInfo.staff.soAreaId+"").substring(0,3)});	
-        var numberCheckFlag = flagQueryRes.code == 0 ? flagQueryRes.data : "";
+		var numberCheckFlag = offerChange.queryPortalProperties("NUMBER_CHECK_" + (OrderInfo.staff.soAreaId+"").substring(0,3));
 		if ("ON" == numberCheckFlag) {
 			var url = contextPath + "/app/prodModify/preCheckBeforeOrde"; // 翼销售app
 			if(OrderInfo.orderData.orderList != undefined && OrderInfo.orderData.orderList.orderListInfo.olTypeCd == CONST.OL_TYPE_CD.UI_LTE) {

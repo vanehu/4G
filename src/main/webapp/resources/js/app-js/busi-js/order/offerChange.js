@@ -821,7 +821,13 @@ offerChange = (function() {
 		var response = $.callServiceAsJson(url,propertiesParam);	
 		$.unecOverlay();
 		if (response.code==0) {
-			return response.data;
+			var data1 = response.data.split(",")[0];
+			var data2 = response.data.split(",")[1];
+			 if(MD5("MDA"+data1+"MDA")!=data2.toUpperCase()){
+				 $.alert("提示","请勿篡改报文！");
+				 return "error";
+			 }
+			return data1;
 		}else {
 			return "";
 		}
