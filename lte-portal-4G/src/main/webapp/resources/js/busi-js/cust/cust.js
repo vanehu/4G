@@ -5080,6 +5080,12 @@ order.cust = (function(){
 		}
 		return true;
 	}
+		
+	var _checkValueSyn = function(){
+		var data = document.getElementById("discontactName");
+		data.value = $.trim(data.value.replace(/[(^\*+)|(\*+$)]/ig,''));
+		$('#contactName').val(data.value);
+	}
 
 	return {
 		form_valid_init : _form_valid_init,
@@ -5180,7 +5186,8 @@ order.cust = (function(){
         saveMktContactResult:_saveMktContactResult,
         checkAddPoliceAndHr:_checkAddPoliceAndHr,
         checkAddHr:_checkAddHr,
-        checkAddNumberAndMeal:_checkAddNumberAndMeal
+        checkAddNumberAndMeal:_checkAddNumberAndMeal,
+        checkValueSyn:_checkValueSyn
 	};
 })();
 $(function() {
