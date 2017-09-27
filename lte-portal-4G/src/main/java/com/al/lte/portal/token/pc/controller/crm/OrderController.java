@@ -1020,6 +1020,11 @@ public class OrderController extends BaseController {
 
     @RequestMapping(value = "/offerSpecList", method = RequestMethod.GET, produces = "text/html;charset=UTF-8")
     public String getOfferSpecList(@RequestParam Map<String, Object> prams,Model model,HttpServletResponse response){
+		String valiDateResult = (String)ServletUtils.getSessionAttribute(super.getRequest(),"VALIDATERESULT");
+		if("N".equals(valiDateResult)){
+			model.addAttribute("errorMsg", "非法鉴权！");
+			return "/common/error";
+		}
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
                 SysConstant.SESSION_KEY_LOGIN_STAFF);	
 		prams.put("channelId", sessionStaff.getCurrentChannelId());
@@ -1337,7 +1342,7 @@ public class OrderController extends BaseController {
 		}
 
 		//如果是新装，判断mda里该场景是否配置了经办人拍照
-		if("1".equals(String.valueOf(param.get("actionFlag")))) {  //新装
+		if("1".equals(String.valueOf(param.get("actionFlag"))) && "ON".equals(userFlag)) {  //新装
 			String jbrpz = propertiesUtils.getMessage("JBRPZ_PZ_"+sessionStaff.getCurrentAreaId().substring(0,3)+"0000");
 			if(jbrpz.indexOf("1,")>=0){
 				model.addAttribute("orderAttrFlag","Y");//必填

@@ -321,7 +321,11 @@ public class SecondBusinessController extends BaseController {
     @RequestMapping(value = "/saveAuthRecord", method = {RequestMethod.POST})
     @AuthorityValid(isCheck = false)
 	@ResponseBody
-    public JsonResponse saveAuthRecord(@RequestBody Map<String, Object> paramMap, Model model, HttpServletResponse response, @LogOperatorAnn String flowNum) throws BusinessException {
+    public JsonResponse saveAuthRecord(@RequestBody Map<String, Object> paramMap, Model model, HttpServletResponse response, @LogOperatorAnn String flowNum, HttpSession httpSession) throws BusinessException {
+        //如果是跳过鉴权，去掉session中缓存的鉴权失败记录
+        if("4".equals(MapUtils.getString(paramMap, "validateType", ""))){
+            httpSession.removeAttribute("VALIDATERESULT");
+        }
 
         JsonResponse jsonResponse = new JsonResponse();
         try {

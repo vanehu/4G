@@ -201,6 +201,9 @@ var _choosedCustInfo = {};
 			segmentName :$(scope).attr("segmentName"),
 			custFlag :$(scope).attr("custFlag"),
 			vipLevel :$(scope).attr("vipLevel"),
+            CN : $(scope).attr("CN"),
+            address: $(scope).attr("address"),
+            certNum: $(scope).attr("certNum"),
 			vipLevelName :$(scope).attr("vipLevelName")
 		};
 		if(order.uiCustes.queryForChooseUser && _choosedCustInfo.segmentId != 1100){
