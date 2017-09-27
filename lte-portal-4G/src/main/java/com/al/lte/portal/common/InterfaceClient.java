@@ -49,6 +49,7 @@ import com.al.ecs.common.util.JsonUtil;
 import com.al.ecs.common.util.MDA;
 import com.al.ecs.common.util.PropertiesUtils;
 import com.al.ecs.common.util.UIDGenerator;
+import com.al.ecs.common.web.HttpUtils;
 import com.al.ecs.common.web.ServletUtils;
 import com.al.ecs.common.web.SpringContextUtil;
 import com.al.ecs.exception.ErrorCode;
@@ -378,27 +379,6 @@ public class InterfaceClient {
 							}
 						}
 					}
-//					String reqPlatForm=dataBusMap.get("reqPlatForm").toString();
-//					Map<String, Object> paramMap2 = (Map<String, Object>) dataBusMap.get("params");
-//					StringBuffer xml = new StringBuffer();
-//					xml.append("<proot>");
-//					xml.append("<reqPlatForm>"+reqPlatForm+"</reqPlatForm>");
-//					xml.append("<params>");
-//					xml.append("<provinceCode>"+paramMap2.get("provinceCode").toString()+"</provinceCode>");
-//					xml.append("<cityCode>"+paramMap2.get("cityCode").toString()+"</cityCode>");
-//					xml.append("<channelId>"+paramMap2.get("channelId").toString()+"</channelId>");
-//					xml.append("<payAmount>"+paramMap2.get("payAmount").toString()+"</payAmount>");		
-//					xml.append("<detail>"+paramMap2.get("detail").toString()+"</detail>");
-//					xml.append("<olNbr>"+paramMap2.get("olNbr").toString()+"</olNbr>");
-//					xml.append("<reqNo>"+paramMap2.get("reqNo").toString()+"</reqNo>");
-//					xml.append("<olNumber>"+paramMap2.get("olNumber").toString()+"</olNumber>");
-//					xml.append("<customerId>"+paramMap2.get("customerId").toString()+"</customerId>");
-//					xml.append("<customerName>"+paramMap2.get("customerName").toString()+"</customerName>");
-//					xml.append("<sign>"+paramMap2.get("sign").toString()+"</sign>");
-//					xml.append("</params>");
-//					xml.append("</proot>");		
-//					paramString=xml.toString();
-//					paramJson=paramString;
 					String s2 = JsonUtil.toString(dataBusMap);
 					String xml2 = CommonUtils.jsontoXml(s2);
 					paramString = xml2.substring(xml2.indexOf("<proot"),
@@ -413,13 +393,11 @@ public class InterfaceClient {
 					paramString = JsonUtil.toString(dataBusMap);
 					paramJson=paramString;
 				}
-				
-				String csbFlag = propertiesUtils.getMessage(SysConstant.CSB_FLAG);
 				String asyncFlag = propertiesUtils.getMessage(SysConstant.ASYNC_FLAG);
 				boolean asyncWay = false;
 				Object serviceCodeObj = null;
 				// 终端销售系统只允许通过csb调用（只支持xml）
-				if (SysConstant.ON.equals(csbFlag) || TER_PREFIX.equals(prefix)){
+				if (SysConstant.ON.equals(MDA.CSB_FLAG) || TER_PREFIX.equals(prefix)){
 					serviceCodeObj = DataRepository.getInstence().getCommonParam(dbKeyWord,serviceCode);
 					Object serviceCodeObjAsyn = DataRepository.getInstence().getCommonParam(dbKeyWord,serviceCode + SysConstant.ASYNC_KEY);
 					if (SysConstant.ON.equals(asyncFlag) && serviceCodeObjAsyn != null) {
@@ -467,7 +445,7 @@ public class InterfaceClient {
 					retnJson = rawRetn;
 				}
 	
-				if ((SysConstant.ON.equals(csbFlag) || TER_PREFIX.equals(prefix)) && serviceCodeObj != null){
+				if ((SysConstant.ON.equals(MDA.CSB_FLAG) || TER_PREFIX.equals(prefix)) && serviceCodeObj != null){
 					Node svcCont = checkCSBXml(serviceCode, rawRetn, paramString);
 					if (PAY_PREFIX.equals(prefix)) {// 支付平台
 						retnJson = svcCont.asXML();
@@ -845,7 +823,7 @@ public class InterfaceClient {
 					try{
 						logObj.put("REMOTE_ADDR", ServletUtils.getIpAddr(request));
 						logObj.put("REMOTE_PORT", String.valueOf(request.getRemotePort()));
-						logObj.put("LOCAL_ADDR", InetAddress.getLocalHost().getHostAddress());
+						logObj.put("LOCAL_ADDR", HttpUtils.getHostIpAddress());
 						logObj.put("LOCAL_PORT", String.valueOf(request.getLocalPort()));
 					} catch(Exception e){
 						logObj.put("REMOTE_ADDR", e.getMessage());
@@ -1037,6 +1015,10 @@ public class InterfaceClient {
 			}else{
 			   post.addHeader("Content-Type", contentType);
 			}
+			post.addHeader("channelNbr", sessionStaff.getCurrentChannelCode());	//渠道编码
+			post.addHeader("commonRegionId", sessionStaff.getCurrentAreaId());	//地区编码(当前渠道)
+			post.addHeader("salesCode", sessionStaff.getSalesCode());			//受理员工编码
+			post.addHeader("IP", HttpUtils.getHostIpAddress());					//当前应用服务器Ip
 			entity = new StringEntity(paramString, ENCODING);
 			post.setEntity(entity);
 			HttpResponse httpresponse = MyHttpclient.getInstance()

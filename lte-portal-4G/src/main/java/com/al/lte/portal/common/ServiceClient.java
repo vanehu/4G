@@ -21,6 +21,7 @@ import com.al.ec.serviceplatform.client.ServiceCall;
 import com.al.ecs.common.util.JsonUtil;
 import com.al.ecs.common.util.PropertiesUtils;
 import com.al.ecs.common.util.UIDGenerator;
+import com.al.ecs.common.web.HttpUtils;
 import com.al.ecs.common.web.ServletUtils;
 import com.al.ecs.common.web.SpringContextUtil;
 import com.al.ecs.log.Log;
@@ -191,7 +192,7 @@ public class ServiceClient {
 					try{
 						logObj.put("REMOTE_ADDR", ServletUtils.getIpAddr(request));
 						logObj.put("REMOTE_PORT", String.valueOf(request.getRemotePort()));
-						logObj.put("LOCAL_ADDR", InetAddress.getLocalHost().getHostAddress());
+						logObj.put("LOCAL_ADDR", HttpUtils.getHostIpAddress());
 						logObj.put("LOCAL_PORT", String.valueOf(request.getLocalPort()));
 					} catch(Exception e){
 						logObj.put("REMOTE_ADDR", "Exception");

@@ -743,6 +743,8 @@ order.phoneNumber = (function(){
 		var numPrice  = $("#numPrice").val();
 		var Greater= $("#Greater").val();
 		var Less= $("#Less").val();
+		var Greater1 = $("#Greater1").val();
+		var Less1 = $("#Less1").val();
 		/*if(numPrice>-1){
 			var attr = $("#numPrice").find("option:selected").text().split("-"); 
 			if(attr.length >1){
@@ -770,7 +772,7 @@ order.phoneNumber = (function(){
 //		}
 		pnCharacterId = ec.util.defaultStr(pnCharacterId);
 		return {"pnHead":pnHead,"pnEnd":pnEnd,"pnNotExitNum":pnNotExitNum,"goodNumFlag":pnCharacterId,"maxPrePrice":Less,
-			"minPrePrice":Greater,"pnLevelId":'',"pageSize":"10","phoneNum":phoneNum,"areaId":areaId,"poolId":poolId,"subPage":subPage,   
+			"minPrePrice":Greater,"pnLevelId":'',"pageSize":"10","minLowPrice":Greater1, "maxLowPrice":Less1,"phoneNum":phoneNum,"areaId":areaId,"poolId":poolId,"subPage":subPage,   
 			"queryFlag":query_flag_01
 		};
 	};
@@ -970,7 +972,7 @@ order.phoneNumber = (function(){
 				  		featureLength=9;
 				  	}
 					var $sel = $('<select id="pnCharacterId_basic" class="selectpicker show-tick form-control"></select>');  
-					var $defaultopt = $('<option value="" selected="selected">请选择类型</option>');
+					var $defaultopt = $('<option value="" selected="selected">请选择号码类型</option>');
 					$sel.append($defaultopt);
 				  	for(var m=0;m<featureLength;m++){
 				  		var numberFeature=(PHONE_NUMBER_FEATURE[m].COLUMN_VALUE_NAME).replace(/\"/g, "");
