@@ -144,7 +144,7 @@
 				if (err.errorInstNbr) {
 					content += '【' + err.errorInstNbr + '】';
 				}
-				$("#content-title").html(content);
+				$("#content-title").html("V"+home.appVersion+"&nbsp&nbsp"+content);
 				
 			} else {
 				var re=new RegExp("&#10;","g");
@@ -153,7 +153,7 @@
 				if (err.errorInstNbr) {
 					c += '【' + err.errorInstNbr + '】';
 				}
-				$("#content-title").html(c);
+				$("#content-title").html("V"+home.appVersion+"&nbsp&nbsp"+c);
 				var str = '<font>【详细信息】</font><br/>';
 				if (err.resultMap) {
 					str += '<font>回参：</font><br/><span>'+ec.util.defaultStr(err.resultMap, "未知")+'</span><br/>';

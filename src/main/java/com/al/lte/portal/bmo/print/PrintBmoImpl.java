@@ -369,7 +369,7 @@ public class PrintBmoImpl implements PrintBmo {
 						resultMap.put("chargeItems", paramMap.get("chargeItems"));
 						if(paramMap.get("orderType")!=null && paramMap.get("orderType").equals("preInstall")){
 							resultMap.put("orderType", paramMap.get("orderType"));
-							String extCustOrderId = (String) paramMap.get("extCustOrderId");
+							String extCustOrderId = String.valueOf(paramMap.get("extCustOrderId"));
 							resultMap.put("extCustOrderId",extCustOrderId);
 						}
 

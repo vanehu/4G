@@ -230,8 +230,38 @@
 							$("#modal-content").html("您当前的版本已经发生了重大变化，请到http://ct.crm.189.cn/ltePad/上下载翼销售最新版本");
 							$("#alert-modal").modal();						 					              					              
 				     }, 500);
-				}
+				} 
 				common.info = '${info}';
+				
+			 window.setTimeout(function() {
+			 try{ 
+				//安全套件方法调用 
+				require.config({ 
+					paths: {
+						'fingerprint2': '${contextPath}/js/app-js/third-js/fingerprint2', 
+						'rc': '${contextPath}/js/app-js/third-js/rc.fp' 
+					}, 
+				shim: { 
+				'md5': { 
+				deps: ['jquery'], 
+				exports: 'md5' 
+				}, 
+				'fingerprint2': { 
+				exports: 'Fingerprint2' 
+				} 
+				} 
+				});
+				require(['fingerprint2', 'rc'], 
+				function(fingerprint2, rc) { 
+				new fingerprint2().get(function(result, components) { 
+				var uuid = rc.generateUUID(); 
+				rc.picking('${BROWSER_FINGERPRINT_URL}',uuid,result); 
+				}); 
+				}); 
+				}catch(e){ 
+				//alert(e); 
+				} 
+				}, 600);
 			});
 		</script>
 

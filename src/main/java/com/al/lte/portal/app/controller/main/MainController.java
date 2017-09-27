@@ -372,6 +372,7 @@ public class MainController extends BaseController {
     	}
     	model.addAttribute("staff", sessionStaff);
     	model.addAttribute("urlstr", urlstr);
+    	model.addAttribute("BROWSER_FINGERPRINT_URL", MDA.BROWSER_FINGERPRINT_URL);
 		return "/app/home/app-menu-home";
     }
 	/**

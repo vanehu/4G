@@ -142,6 +142,10 @@
 </div>
 <script>
 $(function() {
+	var app_version = '${app_version}';
+	if(app_version.length>0){
+		home.appVersion=app_version;
+	}
 	OrderInfo.actionFlag = 111;
 	OrderInfo.order.step = 1;
       

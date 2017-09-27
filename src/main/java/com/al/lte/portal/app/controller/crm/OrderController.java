@@ -3064,6 +3064,8 @@ public class OrderController extends BaseController {
     public String broadband_enter(@RequestBody Map<String, Object> params, HttpServletRequest request,Model model,HttpSession session) throws AuthorityException {
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
 		model.addAttribute("currentCT", sessionStaff.getCurrentChannelType());
+		String app_version=(String) ServletUtils.getSessionAttribute(request,SysConstant.SESSION_KEY_APP_VERSION);
+		model.addAttribute("app_version",app_version);//客户端版本号
        return "/app/order/order-broadband-address";
     }
 	
