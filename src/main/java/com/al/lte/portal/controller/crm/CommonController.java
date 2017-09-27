@@ -41,6 +41,7 @@ import com.al.ecs.spring.controller.BaseController;
 import com.al.lte.portal.bmo.crm.CommonBmo;
 import com.al.lte.portal.bmo.crm.CustBmo;
 import com.al.lte.portal.bmo.staff.StaffBmo;
+import com.al.lte.portal.common.AESUtils;
 import com.al.lte.portal.common.CommonMethods;
 import com.al.lte.portal.common.Const;
 import com.al.lte.portal.common.SysConstant;
@@ -137,7 +138,9 @@ public class CommonController extends BaseController {
   			HttpServletResponse response,HttpServletRequest request) {
 		String propertiesKey = param.get("propertiesKey").toString();
 		//身份证类型开发
-		return propertiesUtils.getMessage(propertiesKey);
+		String data = propertiesUtils.getMessage(propertiesKey);
+		data = data + "," + AESUtils.getMD5Str("MDA"+data+"MDA");
+		return data;
     }
 	
     /*2级菜单信息查询*/
