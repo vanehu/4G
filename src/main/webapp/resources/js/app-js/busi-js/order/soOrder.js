@@ -47,6 +47,9 @@ SoOrder = (function() {
 	var _submitOrder = function(data) {
 		var propertiesKey = "REAL_NAME_PHOTO_"+(OrderInfo.staff.soAreaId+"").substring(0,3);
 		var isFlag = offerChange.queryPortalProperties(propertiesKey);
+		if(isFlag == "error"){
+			return false;
+		}
 		OrderInfo.preBefore.idPicFlag = isFlag;
 		
 		if(OrderInfo.actionFlag==8){//新增客户
