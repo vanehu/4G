@@ -235,6 +235,9 @@ public class PayAndOrderRepairController extends BaseController{
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
 		Map<String, Object> rMap = null;
 		JsonResponse jsonResponse = null;
+		if (session.getAttribute(SESSION_OL_ID) != null) {
+			param.put("olId", session.getAttribute(SESSION_OL_ID).toString());
+		}
 		try {
 			rMap = cartBmo.queryOrderStatus(param, flowNum, sessionStaff);
 			log.debug("return={}", JsonUtil.toString(rMap));
@@ -274,6 +277,9 @@ public class PayAndOrderRepairController extends BaseController{
 						SysConstant.SESSION_KEY_LOGIN_STAFF);
 		Map<String, Object> rMap = null;
 		JsonResponse jsonResponse = null;
+		if (session.getAttribute(SESSION_OL_ID) != null) {
+			param.put("olId", session.getAttribute(SESSION_OL_ID).toString());
+		}
 		String olId=param.get("olId").toString();
 		//先从redis中获取支付状态和支付方式，若支付状态不存在或redis异常，则调支付平台订单查询接口获取
 		if(RedisUtil.get("app_status_"+olId)!=null && RedisUtil.get("app_payCode_"+olId)!=null && RedisUtil.get("app_payAmount_"+olId)!=null){
@@ -352,6 +358,9 @@ public class PayAndOrderRepairController extends BaseController{
 		String dbKeyWord = sessionStaff == null ? null : sessionStaff.getDbKeyWord();
 		if(StringUtils.isBlank(dbKeyWord)){
 			dbKeyWord = "";
+		}
+		if (session.getAttribute(SESSION_OL_ID) != null) {
+			param.put("olId", session.getAttribute(SESSION_OL_ID).toString());
 		}
 		try {
 			rMap = orderBmo.PayRefundOrder(param, flowNum, sessionStaff);
