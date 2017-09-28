@@ -197,6 +197,9 @@ public class OrderController extends BaseController {
 //				chargeFlag = false;// 信息可能被篡改，不允许调用收费接口
 //			}
 //		}
+		if (request.getSession().getAttribute(SESSION_OL_ID) != null) {
+			param.put("olId", request.getSession().getAttribute(SESSION_OL_ID).toString());
+		}
 		try {
 			if (commonBmo.checkToken(request, SysConstant.ORDER_SUBMIT_TOKEN)) {
 				log.debug("param={}", JsonUtil.toString(param));
@@ -1330,7 +1333,7 @@ public class OrderController extends BaseController {
      public String getChargeList(@RequestParam Map<String, Object> param, Model model,
  			@LogOperatorAnn String flowNum,HttpServletResponse response){
     	SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
-					SysConstant.SESSION_KEY_LOGIN_STAFF);
+					SysConstant.SESSION_KEY_LOGIN_STAFF);   	
 		try {
 			if(param.get("actionFlag")!=null){
 	 		String actionFlag=(String)param.get("actionFlag");
@@ -2846,7 +2849,10 @@ public class OrderController extends BaseController {
 						SysConstant.SESSION_KEY_LOGIN_STAFF);
 		Map<String, Object> rMap = null;
 		JsonResponse jsonResponse = null;
-		String olId=param.get("olId").toString();
+		if (session.getAttribute(SESSION_OL_ID) != null) {
+			param.put("olId", session.getAttribute(SESSION_OL_ID).toString());
+		}
+		String olId=param.get("olId").toString();		
 		try {
 			rMap = orderBmo.queryPayOrderStatus(param, flowNum, sessionStaff);
 			if(rMap.get("chargeItems")!=null){
@@ -2907,6 +2913,9 @@ public class OrderController extends BaseController {
 		String dbKeyWord = sessionStaff == null ? null : sessionStaff.getDbKeyWord();
 		if(StringUtils.isBlank(dbKeyWord)){
 			dbKeyWord = "";
+		}
+		if (session.getAttribute(SESSION_OL_ID) != null) {
+			param.put("olId", session.getAttribute(SESSION_OL_ID).toString());
 		}
 		try {
 			String url=MySimulateData.getInstance().getNeeded(dbKeyWord, "url", "pay");//支付页面url
