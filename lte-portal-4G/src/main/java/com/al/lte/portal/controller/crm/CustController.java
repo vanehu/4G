@@ -247,18 +247,22 @@ public class CustController extends BaseController {
 			List<String> custInfosList = (List<String>) resultMap.get("custInfos");
 			if(custInfosList.size() != 0){
 				String mEs = (String) ((Map) ((List) resultMap.get("custInfos")).get(0)).get("certNum");
+				String mIdentityCd = (String) ((Map) ((List) resultMap.get("custInfos")).get(0)).get("identityCd");
 				String nowIdCard = AESDecUtil.aesDecrypt(mEs);
 				String strCard = "";
-				if (nowIdCard.length() == 18)
-					strCard = nowIdCard.substring(6, 10);
-				else{
-					strCard = nowIdCard.substring(7, 9);
-				}
+				//判断需要截取的几种证件类型
+				if(mIdentityCd.equals("1") || mIdentityCd.equals("12") || mIdentityCd.equals("50") || mIdentityCd.equals("51") || mIdentityCd.equals("52") || mIdentityCd.equals("41")){
+					if (nowIdCard.length() == 18){
+						strCard = nowIdCard.substring(6, 10);
+					}else{
+						strCard = nowIdCard.substring(7, 9);
+					}
 
-				Cookie cookCard = new Cookie("cookCard", strCard);
-				cookCard.setMaxAge(86400);
-				cookCard.setPath("/");
-				response.addCookie(cookCard);
+					Cookie cookCard = new Cookie("cookCard", strCard);
+					cookCard.setMaxAge(86400);
+					cookCard.setPath("/");
+					response.addCookie(cookCard);
+				}
 			}
 			if (MapUtils.isNotEmpty(resultMap)) {
 				custInfos=(List<Map<String, Object>>) resultMap.get("custInfos");
@@ -732,16 +736,18 @@ public class CustController extends BaseController {
 		//设置新增的客户的cookie
 		String strCard = "";
 		String nowIdCard = (String)paramMap.get("identityNum");
-		if (nowIdCard.length() == 18)
-			strCard = nowIdCard.substring(6, 10);
-		else{
-			strCard = nowIdCard.substring(7, 9);
+		String mIdentityCd = (String)paramMap.get("identityCd");
+		if(mIdentityCd.equals("1") || mIdentityCd.equals("12") || mIdentityCd.equals("50") || mIdentityCd.equals("51") || mIdentityCd.equals("52") || mIdentityCd.equals("41")){
+			if (nowIdCard.length() == 18){
+				strCard = nowIdCard.substring(6, 10);
+			}else{
+				strCard = nowIdCard.substring(7, 9);
+			}
+			Cookie cookCard = new Cookie("cookCard", strCard);
+			cookCard.setMaxAge(86400);
+			cookCard.setPath("/");
+			response.addCookie(cookCard);
 		}
-
-		Cookie cookCard = new Cookie("cookCard", strCard);
-		cookCard.setMaxAge(86400);
-		cookCard.setPath("/");
-		response.addCookie(cookCard);
 		List<Map<String, Object>> list = null;
 		try {
 			resultMap = custBmo.queryCustInfo(paramMap,
