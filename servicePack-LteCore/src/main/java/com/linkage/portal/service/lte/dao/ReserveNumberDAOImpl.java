@@ -11,6 +11,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import com.ailk.ecsp.core.DataRepository;
+import com.ailk.ecsp.core.SysConstant;
 import com.ailk.ecsp.util.SpringContextUtil;
 import com.linkage.portal.service.lte.DBUtil;
 
@@ -71,17 +72,17 @@ public class ReserveNumberDAOImpl implements ReserveNumberDAO {
 		
 		if(StringUtils.isNotBlank(beginDate)){
 			this.sql.append(" AND R.CREATE_DATE >= TO_DATE(?,'yyyy-MM-dd HH24:MI:SS')");
-			params.add(beginDate + " 00:00:00");
+			params.add(beginDate + SysConstant.START_DATE_SUFFIX);
 	        sqlType.add(Types.VARCHAR);
 		}
 		if(StringUtils.isNotBlank(beginDate) && StringUtils.isNotBlank(endDate)){
 			this.sql.append(" AND R.CREATE_DATE <= TO_DATE(?,'yyyy-MM-dd HH24:MI:SS')");
-			params.add(endDate + " 23:59:59");
+			params.add(endDate + SysConstant.END_DATE_SUFFIX);
 	        sqlType.add(Types.VARCHAR);
 		}
 		if(StringUtils.isNotBlank(endDate) && StringUtils.isBlank(beginDate)){
 			this.sql.append(" AND R.CREATE_DATE<=TO_DATE(?,'yyyy-MM-dd HH24:MI:SS')");
-			params.add(endDate + " 23:59:59");
+			params.add(endDate + SysConstant.END_DATE_SUFFIX);
 	        sqlType.add(Types.VARCHAR);
 		}
 		
