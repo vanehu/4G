@@ -166,7 +166,6 @@ public class MainController extends BaseController {
 				resp.addCookie(cookieLessS);
 				//经办人必须是Y周岁以上的成年人,增加分省开关
 				for (Map.Entry<String, String> entry : com.al.ecs.common.util.MDA.LESS_THAN_EIGHT.entrySet()) {  
-					System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue()); 
 					String less= "LESS_THAN_EIGHT_"+nowAreaId.substring(0, 3);
 					if((entry.getKey()).toString().equals(less)){
 						String value1 = entry.getValue();
