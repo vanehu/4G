@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -132,7 +133,7 @@ public class PCModelController extends BaseController {
 			if(staffInfo.get("resultCode") != null){				
 				model.addAttribute("errorMsg", "获取员工信息异常");
 				return "/common/error";
-			}
+			}	
 			staffInfo.put("accessToken", accessToken);
 			staffInfo.put("staffProvCode", provinceCode);
 			staffInfo.put("channelCode", channelCode);
