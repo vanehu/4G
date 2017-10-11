@@ -745,6 +745,9 @@ offerChange = (function() {
 		if(OrderInfo.provinceInfo.salesCode!=""&&OrderInfo.reloadFlag=="Y"){
 			order.main.queryDealer();
 		}
+		
+		//初始化 付费类型 和 是否信控 变更规则
+		_initChangeProdAttrs();
 	};
 	
 	function cleckUim(uim,prodId){
