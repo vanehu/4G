@@ -263,20 +263,6 @@ public class CustController extends BaseController {
 				return "/cust/cust-list";
 			}
 			resultMap = custBmo.queryCustInfo(paramMap, flowNum, sessionStaff);
-			String mEs = (String) ((Map) ((List) resultMap.get("custInfos")).get(0)).get("certNum");
-
-			String nowIdCard = AESDecUtil.aesDecrypt(mEs);
-			String strCard = "";
-			if (nowIdCard.length() == 18)
-				strCard = nowIdCard.substring(6, 10);
-			else{
-				strCard = nowIdCard.substring(7, 9);
-			}
-
-			Cookie cookCard = new Cookie("cookCard", strCard);
-			cookCard.setMaxAge(86400);
-			cookCard.setPath("/");
-			response.addCookie(cookCard);
 			List<String> custInfosList = (List<String>) resultMap.get("custInfos");
 			if(custInfosList.size() != 0){
 				String mEs = (String) ((Map) ((List) resultMap.get("custInfos")).get(0)).get("certNum");
