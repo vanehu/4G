@@ -3773,6 +3773,9 @@ SoOrder = (function() {
 		var ageE = CommonUtils.getCookieFromJava("ageE");
 		var nowCard = CommonUtils.getCookieFromJava("cookCard");
 		var identityName = $("#identityName").text();
+		if(!ec.util.isObj(identityName)){
+			return true;
+		}
 		var theName = identityName.split("/")[0];
 		var newMan = cert.readCert(CONST.CERT_READER_HANDLE_CUST);
 		var orderAttrName = $("#orderAttrName").val();

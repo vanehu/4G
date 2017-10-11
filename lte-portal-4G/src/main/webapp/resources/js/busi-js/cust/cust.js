@@ -5080,7 +5080,7 @@ order.cust = (function(){
 		}
 		return true;
 	}
-		
+	
 	var _checkValueSyn = function(){
 		var data = document.getElementById("discontactName");
 		data.value = $.trim(data.value.replace(/[(^\*+)|(\*+$)]/ig,''));
@@ -5187,7 +5187,7 @@ order.cust = (function(){
         checkAddPoliceAndHr:_checkAddPoliceAndHr,
         checkAddHr:_checkAddHr,
         checkAddNumberAndMeal:_checkAddNumberAndMeal,
-        checkValueSyn:_checkValueSyn
+		checkValueSyn:_checkValueSyn
 	};
 })();
 $(function() {
