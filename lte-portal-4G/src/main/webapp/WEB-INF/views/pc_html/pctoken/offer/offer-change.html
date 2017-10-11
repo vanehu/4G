@@ -65,6 +65,43 @@
 			<!-- 产品信息展示 -->
 			<div class="cardtabcon">
 				<div id="productDiv">
+				
+				<!-- 变更 付费类型选项及是否信控--jinjian -->
+				<#if showChangeFeeTypeInput?? && showChangeFeeTypeInput=='ON'> <!-- 功能开关 -->
+				<h5 class="s_title" id="prodInfo_${prodId}">产品信息</h5>
+				<ul id="item_order_${prodId}" class="fillin show">
+					<li>
+						<label>付费类型：</label> 
+						<!-- newOfferFeeTypes 新套餐付费类型，原子类型-->
+						<select ss=${offerSpec.feeType} class="inputWidth183px" prodId="${prodId}" name="pay_type_${prodId}" id="offerChangeFeeTypeSelect">
+						<#if offerSpec.feeType?? && offerSpec.feeType!="" && newOfferFeeTypes?? &&(newOfferFeeTypes?size>0)>
+							<!--  修改后的付费类型为后付费时，“是否信控”才可以修改。修改后的付费类型为预付费时，“是否信控”是固定的值“是” -->
+							<#list newOfferFeeTypes as newOfferFeeType>
+								<option value="${newOfferFeeType.paymentModeCd}">${newOfferFeeType.paymentModeName}</option>
+							</#list>
+						<#else>
+							<option value="">无</option>
+						</#if>
+						</select>
+					</li>
+					<li>
+						<label>是否信控：</label> 
+						<!-- xinkongAttrs 是否信控 属性列表-->
+						<select class="inputWidth183px" prodId="${prodId}" name="xinkong_${prodId}" oldValue="${isXinkongValue}" id="offerChangeXinkongSelect">
+						<#if newOfferFeeTypes?? &&(newOfferFeeTypes?size>0) && xinkongAttrs?? &&(xinkongAttrs?size>0)>
+							<!-- 修改后的付费类型为后付费时，“是否信控”才可以修改。修改后的付费类型为预付费时，“是否信控”是固定的值“是” -->
+							<#list xinkongAttrs as xinkongAttr>
+								<option value="${xinkongAttr.attrValue}">${xinkongAttr.attrName}</option>
+							</#list>
+						<#else>
+							<option value="">无</option>
+						</#if>
+						</select>
+					</li>
+				</ul>
+				<div class="height18"></div>
+				</#if>
+				
 				<#if main.offerMembers?? &&(main.offerMembers?size>0)>	
 					<#assign i = 0 />		
 					<#list main.offerMembers as item>		
