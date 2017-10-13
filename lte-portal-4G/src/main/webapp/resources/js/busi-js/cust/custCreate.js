@@ -81,6 +81,7 @@ cust.create = (function(){
 			$("#ccCustIdCard").attr("placeHolder","请输入合法军官证");
 			$("#ccCustIdCard").attr("data-validate","validate(required:请准确填写军官证) on(keyup)");
 		}else if(identidiesTypeCd==3){
+			$("#ccCustIdCard").attr("onkeyup", "value=value.replace(/[^A-Za-z0-9-]/ig,'')");
 			$("#ccCustIdCard").attr("placeHolder","请输入合法护照");
 			$("#ccCustIdCard").attr("data-validate","validate(required:请准确填写护照) on(keyup)");
 		}else{
