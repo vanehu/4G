@@ -336,6 +336,7 @@ public class CustController extends BaseController {
 						accNbrParamMap.put("custIds", custIds);
 						Map accNbrResultMap = new HashMap();
 						// 如果使用接入号定位客户，不需要去调用根据客户查询接入号接口
+						String identityCd = MapUtils.getString(paramMap, "identityCd", "");
 						if (!(custInfos.size() == 1 && StringUtils.isBlank(identityCd)
 								&& StringUtils.isNotBlank(qryAcctNbr))) {
 							accNbrResultMap = custBmo.queryAccNbrByCust(accNbrParamMap, flowNum, sessionStaff);
