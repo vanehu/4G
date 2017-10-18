@@ -55,6 +55,7 @@ import com.al.lte.portal.bmo.crm.CommonBmo;
 import com.al.lte.portal.bmo.crm.CustBmo;
 import com.al.lte.portal.bmo.crm.OfferBmo;
 import com.al.lte.portal.bmo.crm.OrderBmo;
+import com.al.lte.portal.bmo.crm.ProdBmo;
 import com.al.lte.portal.bmo.print.PrintBmo;
 import com.al.lte.portal.bmo.staff.StaffBmo;
 import com.al.lte.portal.common.AESUtils;
@@ -92,6 +93,10 @@ public class OrderController extends BaseController {
 	@Autowired
 	@Qualifier("com.al.lte.portal.bmo.crm.CommonBmo")
 	private CommonBmo commonBmo;
+	
+	@Autowired
+	@Qualifier("com.al.lte.portal.bmo.crm.ProdBmo")
+	private ProdBmo prodBmo;
 	
 	@Autowired
 	@Qualifier("com.al.lte.portal.bmo.staff.StaffBmo")
@@ -1020,6 +1025,11 @@ public class OrderController extends BaseController {
 
     @RequestMapping(value = "/offerSpecList", method = RequestMethod.GET, produces = "text/html;charset=UTF-8")
     public String getOfferSpecList(@RequestParam Map<String, Object> prams,Model model,HttpServletResponse response){
+		String valiDateResult = (String)ServletUtils.getSessionAttribute(super.getRequest(),"VALIDATERESULT");
+		if("N".equals(valiDateResult)){
+			model.addAttribute("errorMsg", "非法鉴权！");
+			return "/common/error";
+		}
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
                 SysConstant.SESSION_KEY_LOGIN_STAFF);	
 		prams.put("channelId", sessionStaff.getCurrentChannelId());
@@ -1278,6 +1288,7 @@ public class OrderController extends BaseController {
 		return jsonResponse;
     }
     
+
     @RequestMapping(value = "/main", method = RequestMethod.POST)
     public String main(@RequestBody Map<String, Object> param, Model model, HttpServletResponse response,HttpSession session) {
     	String forward = "" ;
@@ -1337,7 +1348,7 @@ public class OrderController extends BaseController {
 		}
 
 		//如果是新装，判断mda里该场景是否配置了经办人拍照
-		if("1".equals(String.valueOf(param.get("actionFlag")))) {  //新装
+		if("1".equals(String.valueOf(param.get("actionFlag"))) && "ON".equals(userFlag)) {  //新装
 			String jbrpz = propertiesUtils.getMessage("JBRPZ_PZ_"+sessionStaff.getCurrentAreaId().substring(0,3)+"0000");
 			if(jbrpz.indexOf("1,")>=0){
 				model.addAttribute("orderAttrFlag","Y");//必填
@@ -1362,6 +1373,106 @@ public class OrderController extends BaseController {
     		}
     		if (MapUtils.isNotEmpty(param)) {
         		model.addAttribute("main", param);
+        		//功能开关，套餐变更时是否显示付费类型变更选项（分省开关改造，移至mda）
+                String showChangeFeeTypeInput = propertiesUtils.getMessage(SysConstant.SHOW_CHANGE_FEETYPE_INPUT + sessionStaff.getAreaId().substring(0, 3));
+                model.addAttribute("showChangeFeeTypeInput", showChangeFeeTypeInput);
+                if (SysConstant.ON.equals(showChangeFeeTypeInput)) {
+                    SessionStaff sessionStaff2 = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+                            SysConstant.SESSION_KEY_LOGIN_STAFF);
+                    String areaId = (String) param.get("areaId");
+
+                    //1、查询当前产品实例的 是否信控 属性值
+                    String isXinkongValue = null; //套餐变更时，变更是否信控需要用到
+                    Map<String, Object> prodDetailQueryParam = new HashMap<String, Object>();
+                    try {
+                        String prodId =  param.get("prodId")+"";
+                        String acctNbr = null;
+                        List<Map<String, Object>> offerMembers = (List<Map<String, Object>>) param.get("offerMembers");
+                        if (offerMembers != null) {
+                            for (Map<String, Object> offerMember : offerMembers) {
+                                if (offerMember != null && "2".equals(offerMember.get("objType"))
+                                        && "400".equals(offerMember.get("roleCd"))) {
+                                    acctNbr = (String) offerMember.get("accessNumber");
+                                    break;
+                                }
+                            }
+                        }
+                        prodDetailQueryParam.put("areaId", areaId);
+                        prodDetailQueryParam.put("prodId", prodId);
+                        prodDetailQueryParam.put("acctNbr", acctNbr);
+                        //{"_":1419651037445,"acctNbr":17705164069,"prodId":"700019514770","areaId":"8320100"}
+                        Map<String, Object> resultMap = new HashMap<String, Object>();
+                        resultMap = prodBmo.prodDetailQuery(prodDetailQueryParam, null, sessionStaff2);
+                        if (MapUtils.getString(resultMap, "resultCode", "").equals("0")) {
+                            if (!MapUtils.getMap(resultMap, "result", new HashMap<String, Object>()).isEmpty()) {
+                                Map<String, Object> result = (Map<String, Object>) resultMap.get("result");
+                                List<Map<String, Object>> offerProdItems = (List<Map<String, Object>>) result
+                                        .get("offerProdItems"); //产品属性
+                                if (offerProdItems != null) {
+                                    for (Map<String, Object> offerProdItem : offerProdItems) {
+                                        if (offerProdItem != null
+                                                && SysConstant.IS_XINKONG_SPEC_ID.equals(offerProdItem.get("attrId"))) { //是否信控 产品属性值
+                                            isXinkongValue = (String) offerProdItem.get("value");
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        if (isXinkongValue != null) {
+                            model.addAttribute("isXinkongValue", isXinkongValue);
+                        }
+                    } catch (BusinessException e) {
+                        return super.failedStr(model, e);
+                    } catch (InterfaceException ie) {
+                        return super.failedStr(model, ie, prodDetailQueryParam, ErrorCode.PROD_INST_DETAIL);
+                    } catch (Exception e) {
+                        return super.failedStr(model, ErrorCode.PROD_INST_DETAIL, e, prodDetailQueryParam);
+                    }
+
+                    //2、套餐变更/二次业务 时查询是否信控可选项
+                    Map<String, Object> queryConfigDataParam = new HashMap<String, Object>();
+                    try {
+                        queryConfigDataParam.put("areaId", areaId);
+                        queryConfigDataParam.put("attrId", SysConstant.IS_XINKONG_SPEC_ID);
+                        Map<String, Object> queryConfigDataParamResult = orderBmo.queryConfigData(queryConfigDataParam,
+                                null, sessionStaff2);
+                        if (queryConfigDataParamResult != null
+                                && ResultCode.R_SUCC.equals(queryConfigDataParamResult.get("resultCode"))) {
+                            model.addAttribute("xinkongAttrs", queryConfigDataParamResult.get("result"));
+                        }
+                    } catch (BusinessException e) {
+                        return super.failedStr(model, e);
+                    } catch (InterfaceException ie) {
+                        return super.failedStr(model, ie, queryConfigDataParam, ErrorCode.CONFIG_DATA_QUERY);
+                    } catch (Exception e) {
+                        return super.failedStr(model, ErrorCode.CONFIG_DATA_QUERY, e, queryConfigDataParam);
+                    }
+                    //3、套餐变更/二次业务 时查询 新/旧 套餐的付费类型可选项
+                    Map<String, Object> queryOfferFeeTypeParam = new HashMap<String, Object>();
+                    try {
+                        Map<String, Object> offerSpec = (Map<String, Object>) param.get("offerSpec");
+                        if (offerSpec != null && offerSpec.get("offerSpecId") != null) {
+                            queryOfferFeeTypeParam.put("areaId", areaId);
+                            queryOfferFeeTypeParam.put("prodOfferId", offerSpec.get("offerSpecId"));
+                            Map<String, Object> queryOfferFeeTypeResult = orderBmo.queryOfferFeeType(
+                                    queryOfferFeeTypeParam, null, sessionStaff2);
+                            if (queryOfferFeeTypeResult != null
+                                    && ResultCode.R_SUCC.equals(queryOfferFeeTypeResult.get("resultCode"))
+                                    && queryOfferFeeTypeResult.get("result") != null) {
+                                model.addAttribute("newOfferFeeTypes", ((Map<String, Object>) queryOfferFeeTypeResult
+                                        .get("result")).get("payments"));
+                            }
+                        }
+                    } catch (BusinessException e) {
+                        return super.failedStr(model, e);
+                    } catch (InterfaceException ie) {
+                        return super.failedStr(model, ie, queryOfferFeeTypeParam, ErrorCode.QUERY_OFFER_FEE_TYPE);
+                    } catch (Exception e) {
+                        return super.failedStr(model, ErrorCode.QUERY_OFFER_FEE_TYPE, e, queryOfferFeeTypeParam);
+                    }
+                }
+
         	}
     		forward = "/pctoken/offer/offer-change";
     	}else if("21".equals(String.valueOf(param.get("actionFlag")))){

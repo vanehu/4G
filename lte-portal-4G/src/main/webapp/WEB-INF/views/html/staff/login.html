@@ -295,6 +295,41 @@
 		}
 	}
 </script>
+<!-- 安全套件项目 --> 
+<script type="text/javascript" src="${contextPath}/js/third-js/RiskManagement/require.js?${jsversion}"></script>
+<script type="text/javascript" src="${contextPath}/js/busi-js/query/common.js?${jsversion}"></script>
+<script type="text/javascript"> 
+    try{ 
+        //安全套件方法调用 
+        var fingerprintAddress = query.common.queryPropertiesObject("FINGER_PRINT_ADDRESS");
+        require.config({
+            paths: { 
+            	'jquery': '${contextPath}/js/third-js/jquery/jquery-1.7.2.js?${jsversion}',
+                'md5': '${contextPath}/js/third-js/utils/md5.js?${jsversion}',            	
+                'fingerprint2': '${contextPath}/js/third-js/RiskManagement/fingerprint2.js?${jsversion}', 
+                'rc': '${contextPath}/js/third-js/RiskManagement/rc.fp.js?${jsversion}' 
+            }, 
+            shim: { 
+            	'md5': {
+                    deps: ['jquery'],
+                    exports: 'md5'
+                },
+                'fingerprint2': { 
+                    exports: 'Fingerprint2' 
+                } 
+            } 
+        }); 
+        require(['jquery', 'md5', 'fingerprint2', 'rc'], 
+        function($, md5, fingerprint2, rc) { 
+            new fingerprint2().get(function(result, components) { 
+            	var uuid = rc.generateUUID(); 
+                rc.picking(fingerprintAddress,uuid,result); 
+            }); 
+        }); 
+    }catch(e){ 
+        //alert(e); 
+    } 
+</script> 
 </html>
 
 

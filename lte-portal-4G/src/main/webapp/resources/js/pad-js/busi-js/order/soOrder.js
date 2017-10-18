@@ -2351,42 +2351,57 @@ SoOrder = (function() {
 		}
 		var cookie = CommonUtils.getCookieFromJava("switchC");
 		var cookieE = CommonUtils.getCookieFromJava("switchE");
-		var ageS = CommonUtils.getCookieFromJava("ageS");
-		var ageE = CommonUtils.getCookieFromJava("ageE");
+		var ageS = CommonUtils.getCookieFromJava("nAgeS");
+		var ageE = CommonUtils.getCookieFromJava("nAgeE");
+		var cookieSP = CommonUtils.getCookieFromJava("switchSP");
+		var newMan = cert.readCert(CONST.CERT_READER_HANDLE_CUST)
 		//获取下拉框的值
 		var selectValue = $("#orderIdentidiesTypeCd").val();
-		if(cookie == "ON"){
-			if($("#c").val() != "3" && $("#c").val() != "4"){
-				//对于当前客户年龄的校验
-				var custIdNumber =  $("#p_cust_identityNum").val();//cert.readCert(CONST.CERT_READER_HANDLE_CUST).resultContent;
-				if(custIdNumber == "" || custIdNumber == null || custIdNumber == undefined){
-					$.alert("提示","未读取到身份证信息！");
-				}else{
-					if(orderAttrName == "" || orderAttrName == null || orderAttrName == undefined){
-						//判断外国人永久居留证
-						if($("#p_cust_identityCd").val() == "50"){
-							if(new Date().getYear().toString() - orderAttrIdCard.toString().subString(7,9) < ageS){
-								$.alert("提示","不满'"+ageS+"'岁必须填写经办人！");
-							}
-						}else{
-							if(new Date().getFullYear().toString() - orderAttrIdCard.toString().subString(6,10) < ageS){
-								$.alert("提示","不满'"+ageS+"'岁必须填写经办人！");
-							}
-						}
-					}
-				}
+		var orderAttrName = $("#orderAttrName").val();
+		var orderAttrIdCard = $("#orderAttrIdCard").val();
+		if(cookieSP == "ON"){
+			//军人身份证件、武装警察身份证件不能作为实名登记有效证件，不允许新装号码
+			if(selectValue == "2" || selectValue == "14"){
+				$.alert("提示", "军人身份证件、武装警察身份证件不能作为实名登记有效证件，不允许办理业务！");
+				return;
 			}
 		}
 		if(cookieE == "ON"){
 			//对于经办人的校验
-			if(orderAttrName != "" || orderAttrName != null || orderAttrName != undefined){
-				if($("#p_cust_identityCd").val() != "50"){
-					if(new Date().getFullYear().toString() - orderAttrIdCard.toString().subString(6,10) < ageE && selectValue != 50 && selectValue != 4 && selectValue != 3){
-						$.alert("提示","经办人必须'"+ageE+"'岁以上！");
-					}	
+			if(orderAttrName != "" && orderAttrName != null && orderAttrName != undefined){
+				if(selectValue != "50"){
+					if(cookieSP == "ON"){
+						//军人身份证件、武装警察身份证件不能作为实名登记有效证件，不允许新装号码
+						if(selectValue == "2" || selectValue == "14"){
+							$.alert("提示", "军人身份证件、武装警察身份证件不能作为实名登记有效证件，不允许办理业务！");
+							return;
+						}
+					}else if(selectValue != "1" && selectValue != "51" && selectValue != "52"){
+						if(new Date().getFullYear() - orderAttrIdCard.substring(6,10) < ageE && selectValue != "50" && selectValue != "4" && selectValue != "3"){
+							$.alert("提示","经办人必须'"+ageE+"'岁以上！");
+							return false;
+						}
+					}else{
+						var cardNumber = newMan.resultContent.certNumber;
+						if(new Date().getFullYear() - cardNumber.substring(6,10) < ageE && selectValue != "50" && selectValue != "4" && selectValue != "3"){
+							$.alert("提示","经办人必须'"+ageE+"'岁以上！");
+							return false;
+						}
+					}
+						
 				}else{
-					if(new Date().getYear().toString() - orderAttrIdCard.toString().subString(7,9) < ageE){
-						$.alert("提示","经办人必须'"+ageE+"'岁以上！");
+					var nowYear = (new Date().getFullYear()).toString();
+					var twoNumber = orderAttrIdCard.substring(7,9);
+					if(nowYear.substring(2,4) < twoNumber){
+						if(new Date().getYear() - orderAttrIdCard.substring(7,9) < ageE){
+							$.alert("提示","经办人必须'"+ageE+"'岁以上！");
+							return false;
+						}
+					}else{
+						if(nowYear.substring(2,4) - orderAttrIdCard.substring(7,9) < ageE){
+							$.alert("提示","经办人必须'"+ageE+"'岁以上！");
+							return false;
+						}
 					}
 				}
 			}

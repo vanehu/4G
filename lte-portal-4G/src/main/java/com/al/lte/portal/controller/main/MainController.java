@@ -166,7 +166,6 @@ public class MainController extends BaseController {
 				resp.addCookie(cookieLessS);
 				//经办人必须是Y周岁以上的成年人,增加分省开关
 				for (Map.Entry<String, String> entry : com.al.ecs.common.util.MDA.LESS_THAN_EIGHT.entrySet()) {  
-					System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue()); 
 					String less= "LESS_THAN_EIGHT_"+nowAreaId.substring(0, 3);
 					if((entry.getKey()).toString().equals(less)){
 						String value1 = entry.getValue();
@@ -203,29 +202,29 @@ public class MainController extends BaseController {
 				try {
 					db = InterfaceClient.callService(newMap, PortalServiceCode.REAL_NAME_SERVICE, "", sessionStaff);
 					Map<String, Object> mapOne = db.getReturnlmap();
-					String valueE = (String)((Map)((List)((Map)mapOne.get("result")).get("soConstConfigs")).get(0)).get("value");
-					Cookie ageE = new Cookie("ageE",valueE);
-					cookieLessSIX.setMaxAge(60*60*24);
-					cookieLessSIX.setPath("/");
-					resp.addCookie(ageE);
-					//17岁
-					newMap.put("typeClass", "17");
-					db = InterfaceClient.callService(newMap, PortalServiceCode.REAL_NAME_SERVICE, "", sessionStaff);
-					Map<String, Object> mapTwo = db.getReturnlmap();
-					String valueS = (String)((Map)((List)((Map)mapTwo.get("result")).get("soConstConfigs")).get(0)).get("value");
-					Cookie ageS = new Cookie("ageS",valueS);
-					cookieLessSIX.setMaxAge(60*60*24);
-					cookieLessSIX.setPath("/");
-					resp.addCookie(ageS);
-					
+					if(((List)((Map)mapOne.get("result")).get("soConstConfigs")).size()!= 0){
+						String valueE = (String)((Map)((List)((Map)mapOne.get("result")).get("soConstConfigs")).get(0)).get("value");
+						Cookie ageE = new Cookie("ageE",valueE);
+						cookieLessSIX.setMaxAge(60*60*24);
+						cookieLessSIX.setPath("/");
+						resp.addCookie(ageE);
+						request.getSession().setAttribute("valueAgeE", valueE);
+						//17岁
+						newMap.put("typeClass", "17");
+						db = InterfaceClient.callService(newMap, PortalServiceCode.REAL_NAME_SERVICE, "", sessionStaff);
+						Map<String, Object> mapTwo = db.getReturnlmap();
+						String valueS = (String)((Map)((List)((Map)mapTwo.get("result")).get("soConstConfigs")).get(0)).get("value");
+						Cookie ageS = new Cookie("ageS",valueS);
+						cookieLessSIX.setMaxAge(60*60*24);
+						cookieLessSIX.setPath("/");
+						resp.addCookie(ageS);
+						request.getSession().setAttribute("valueAgeS", valueS);
+					}
 				} catch (InterfaceException e2) {
-					// TODO Auto-generated catch block
 					e2.printStackTrace();
 				} catch (IOException e2) {
-					// TODO Auto-generated catch block
 					e2.printStackTrace();
 				} catch (Exception e2) {
-					// TODO Auto-generated catch block
 					e2.printStackTrace();
 				}
 				

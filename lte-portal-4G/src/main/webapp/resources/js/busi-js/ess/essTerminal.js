@@ -81,11 +81,12 @@ essMktRes.terminal = (function() {
 		});
 	};
 
-	var _showTerminalBackfill = function(extCustOrderId,commonRegionId,channelId) {
+	var _showTerminalBackfill = function(extCustOrderId,commonRegionId,channelId,channelName) {
 		var param = {
 			extCustOrderId : extCustOrderId,
 			commonRegionId : commonRegionId,
-			channelId : channelId
+			channelId : channelId,
+			channelName : channelName
 		};
 		$.callServiceAsHtml(contextPath + "/ess/order/showTerminalBackfill",param,{
 			"before" : function() {
@@ -103,7 +104,7 @@ essMktRes.terminal = (function() {
 					container : "div_orderEvent_dialog"
 				});
 				$("#chkTsnAForm").off('formIsValid').on('formIsValid',function(event,form){				
-					_mktResInstMakeUp();
+					_mktResInstMakeUp(param.channelName);
 				}).ketchup({bindElement:"bt_backFill"});
 			}
 		});
@@ -111,10 +112,11 @@ essMktRes.terminal = (function() {
 	};
 	
 
-	var _mktResInstMakeUp = function() {
+	var _mktResInstMakeUp = function(channelName) {
 		var extCustOrderId = $("#s_extCustOrderId").val();
 		var areaId = $("#s_commonRegionId").val();
 		var channelId = $("#s_channelId").val();
+		//var channelName = $("#s_channelName").val();
 		var mktResInstCode = $("#s_mktResInstCode").val();
 		if(!ec.util.isObj(mktResInstCode)){
 			$.alert("提示", "请输入终端串号！");
@@ -124,7 +126,8 @@ essMktRes.terminal = (function() {
 			extCustOrderId : extCustOrderId,
 			commonRegionId : areaId,
 			instCode : mktResInstCode,
-			channelId : channelId
+			channelId : channelId,
+			channelName : channelName
 		};
 		var url = contextPath + "/ess/order/mktResInstMakeUp";
 		$.callServiceAsJson(url, param, {

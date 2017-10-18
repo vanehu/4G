@@ -5342,7 +5342,7 @@ AttachOffer = (function() {
 		addMyfavoriteSpec:_addMyfavoriteSpec,
 		delMyfavoriteSpec:_delMyfavoriteSpec,
 		myFavoriteList:_myFavoriteList,
-		qryPreliminaryInfo : _qryPreliminaryInfo
-		
+		qryPreliminaryInfo : _qryPreliminaryInfo,
+		terminCheckShow: _terminCheckShow
 	};
 })();

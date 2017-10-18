@@ -1,12 +1,14 @@
 package com.al.lte.portal.token.controller.crm;
 
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -29,16 +31,21 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.al.ec.serviceplatform.client.DataBus;
 import com.al.ec.toolkit.JacksonUtil;
 import com.al.ecs.common.entity.JsonResponse;
 import com.al.ecs.common.util.JsonUtil;
 import com.al.ecs.common.web.ServletUtils;
+import com.al.ecs.exception.InterfaceException;
 import com.al.ecs.spring.controller.BaseController;
 import com.al.lte.portal.common.AESUtils;
+import com.al.lte.portal.common.InterfaceClient;
 import com.al.lte.portal.common.MySimulateData;
+import com.al.lte.portal.common.PortalServiceCode;
 import com.al.lte.portal.common.StringUtil;
 import com.al.lte.portal.common.SysConstant;
 import com.al.lte.portal.httpclient.HttpClientConnectionManager;
+import com.al.lte.portal.model.SessionStaff;
 
 
 @Controller("com.al.lte.portal.token.controller.crm.TestController")
@@ -107,7 +114,42 @@ public class TestController extends BaseController {
 			map.put("handleprovCustAreaId",handleprovCustAreaId);
 			log.error("生成令牌参数:"+JacksonUtil.objectToJson(map));
 			log.error("省份私钥:"+privateKey);
-
+			
+			SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
+			sessionStaff = SessionStaff.setStaffInfoFromMap(map);
+			Map<String,Object> newMap = new HashMap();
+			newMap.put("areaId", sessionStaff.getAreaId());
+			newMap.put("queryType", "3");
+			newMap.put("typeClass", "18");
+			DataBus db;
+			try {
+				db = InterfaceClient.callService(newMap, PortalServiceCode.REAL_NAME_SERVICE, "", sessionStaff);
+				Map<String, Object> mapOne = db.getReturnlmap();
+				if(((List)((Map)mapOne.get("result")).get("soConstConfigs")).size()!= 0){
+					String valueE = (String)((Map)((List)((Map)mapOne.get("result")).get("soConstConfigs")).get(0)).get("value");
+					Cookie nAgeE = new Cookie("nAgeE",valueE);
+					nAgeE.setMaxAge(60*60*24);
+					nAgeE.setPath("/");
+					response.addCookie(nAgeE);
+					//17岁
+					newMap.put("typeClass", "17");
+					db = InterfaceClient.callService(newMap, PortalServiceCode.REAL_NAME_SERVICE, "", sessionStaff);
+					Map<String, Object> mapTwo = db.getReturnlmap();
+					String valueS = (String)((Map)((List)((Map)mapTwo.get("result")).get("soConstConfigs")).get(0)).get("value");
+					Cookie nAgeS = new Cookie("nAgeS",valueS);
+					nAgeS.setMaxAge(60*60*24);
+					nAgeS.setPath("/");
+					response.addCookie(nAgeS);
+				}
+				
+			} catch (InterfaceException e2) {
+				e2.printStackTrace();
+			} catch (IOException e2) {
+				e2.printStackTrace();
+			} catch (Exception e2) {
+				e2.printStackTrace();
+			}
+			
 			String dbKeyWord = (String) request.getSession().getAttribute(SysConstant.SESSION_DATASOURCE_KEY);
 			if(unifyLoginUri == null || "".equals(unifyLoginUri)){
 				unifyLoginUri = MySimulateData.getInstance().getParam("UNIFY_LOGIN_URI", dbKeyWord, "UNIFY_LOGIN_URI");
