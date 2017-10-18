@@ -4378,7 +4378,7 @@ order.cust = (function(){
     var _removeDisabled = function(){
     	var backgroundColorWhite = "white;";
     	var orderIdentidiesTypeCd = $("#orderIdentidiesTypeCd").val();
-    	if(orderIdentidiesTypeCd == 1){
+    	if(orderIdentidiesTypeCd == 1||orderIdentidiesTypeCd ==51||orderIdentidiesTypeCd ==52){
     		$("#orderAttrResetBtn").hide();
         	$("#orderAttrReadCertBtn").show();
         	$("#orderAttrQueryCertBtn").hide();
