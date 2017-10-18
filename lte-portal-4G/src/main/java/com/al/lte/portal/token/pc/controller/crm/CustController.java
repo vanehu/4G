@@ -763,6 +763,7 @@ public class CustController extends BaseController {
 					if (ResultCode.R_SUCC.equals(code)) {
 						map.put("code", "0");
 						map.put("isValidate", "true");
+						httpSession.removeAttribute("VALIDATERESULT");
 						jsonResponse = super.successed(map,ResultConstant.SUCCESS.getCode());
 					}
 					else{
@@ -793,6 +794,7 @@ public class CustController extends BaseController {
 				String resultCode = MapUtils.getString(map, "code");
 				String isValidateStr = MapUtils.getString(map, "isValidate");
 				if ("true".equals(isValidateStr)) {
+					httpSession.removeAttribute("VALIDATERESULT");
 					jsonResponse = super.successed(map,ResultConstant.SUCCESS.getCode());
 				}
 				else{

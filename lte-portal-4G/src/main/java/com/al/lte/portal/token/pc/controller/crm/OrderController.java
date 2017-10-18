@@ -177,6 +177,7 @@ public class OrderController extends BaseController {
 	@RequestMapping(value = "/prodoffer/prepare", method = RequestMethod.GET)
     @AuthorityValid(isCheck = false)
     public String main(@RequestParam Map<String, Object> params, HttpServletRequest request,HttpSession httpSession,Model model,HttpSession session) throws AuthorityException {
+		httpSession.removeAttribute("VALIDATERESULT");//去掉套餐变更场景鉴权结果记录
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
                 SysConstant.SESSION_KEY_LOGIN_STAFF);
 		Map<String, Object> custMap = new HashMap<String, Object>();
@@ -1025,11 +1026,6 @@ public class OrderController extends BaseController {
 
     @RequestMapping(value = "/offerSpecList", method = RequestMethod.GET, produces = "text/html;charset=UTF-8")
     public String getOfferSpecList(@RequestParam Map<String, Object> prams,Model model,HttpServletResponse response){
-		String valiDateResult = (String)ServletUtils.getSessionAttribute(super.getRequest(),"VALIDATERESULT");
-		if("N".equals(valiDateResult)){
-			model.addAttribute("errorMsg", "非法鉴权！");
-			return "/common/error";
-		}
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
                 SysConstant.SESSION_KEY_LOGIN_STAFF);	
 		prams.put("channelId", sessionStaff.getCurrentChannelId());
@@ -3010,6 +3006,10 @@ public class OrderController extends BaseController {
     @ResponseBody
 	public JsonResponse orderSubmit(@RequestBody Map<String, Object> param,HttpServletResponse response,HttpServletRequest request) {
 		JsonResponse jsonResponse = null;
+		String valiDateResult = (String)ServletUtils.getSessionAttribute(request,"VALIDATERESULT");
+		if("N".equals(valiDateResult)){
+			return super.failed(ErrorCode.PORTAL_INPARAM_ERROR, "非法鉴权。", param);
+		}
         SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
 		Object realNameFlag =  MDA.REAL_NAME_PHOTO_FLAG.get("REAL_NAME_PHOTO_"+sessionStaff.getCurrentAreaId().substring(0, 3));
     	boolean isRealNameFlagOn  = realNameFlag == null ? false : "ON".equals(realNameFlag.toString()) ? true : false;//实名制拍照开关是否打开
@@ -3696,6 +3696,7 @@ public class OrderController extends BaseController {
 	@RequestMapping(value = "/memberChange/prepare", method = RequestMethod.GET)
     @AuthorityValid(isCheck = false)
     public String showOfferCfgDialog(@RequestParam Map<String, Object> params,@LogOperatorAnn String flowNum,HttpServletRequest request,Model model,HttpSession session) throws AuthorityException {
+		session.removeAttribute("VALIDATERESULT");//去掉套餐变更场景鉴权结果记录
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
 		String areaId = "";
 		String custId = "";
@@ -3902,6 +3903,7 @@ public class OrderController extends BaseController {
 		@RequestMapping(value = "/changeoffer", method = RequestMethod.GET)
 	    @AuthorityValid(isCheck = false)
 	    public String goPackages(@RequestParam Map<String, Object> params, HttpServletRequest request,Model model,HttpSession httpSession,@LogOperatorAnn String flowNum) throws AuthorityException {
+			httpSession.removeAttribute("VALIDATERESULT");//去掉套餐变更场景鉴权结果记录
 			SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
 			try{
 				String commonParamKey = MySimulateData.getInstance().getParam((String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),"common.param.key");//公共参数加密KEY
