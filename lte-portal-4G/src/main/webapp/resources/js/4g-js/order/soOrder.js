@@ -3782,7 +3782,7 @@ SoOrder = (function() {
 			var custAgeLocation = $("#custAgeLocation").val();
 			if(ec.util.isObj(custAgeLocation) == true){
 				nowCard = custAgeLocation;
-			}else{
+			}else if(ec.util.isObj(OrderInfo.getCustAgeByCheck.data) == true){
 				nowCard = OrderInfo.getCustAgeByCheck.data.custAge;
 			}
 			//对于当前客户年龄的校验
@@ -3795,7 +3795,7 @@ SoOrder = (function() {
 						return false;
 					}
 				}else{
-					if($("#p_cust_identityCd").val() != "3" && $("#p_cust_identityCd").val() != "4" && theName.trim() != "外国公民护照" && theName.trim() != "港澳居民来往内地通行证"){
+					if(OrderInfo.cust.identityCd == "1" || OrderInfo.cust.identityCd == "12" || OrderInfo.cust.identityCd == "41" || OrderInfo.cust.identityCd == "51" || OrderInfo.cust.identityCd == "52"){
 						if(nowCard < ageS){
 							$.alert("提示","不满'"+ageS+"'岁必须填写经办人！");
 							return false;
@@ -3807,6 +3807,9 @@ SoOrder = (function() {
 			
 		//获取下拉框的值
 		var selectValue = $("#orderIdentidiesTypeCd").val();
+		if(selectValue != "1" && selectValue != "12" && selectValue != "41" && selectValue != "50" && selectValue != "51" && selectValue != "52"){
+			return true;
+		}
 		var cookieSP = query.common.queryPropertiesValue("CHECK_SOLDIER_POLICE");
 		if(cookieSP == "ON"){
 			//军人身份证件、武装警察身份证件不能作为实名登记有效证件，不允许新装号码
