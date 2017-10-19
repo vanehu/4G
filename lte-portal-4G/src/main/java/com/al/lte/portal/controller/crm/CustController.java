@@ -247,21 +247,7 @@ public class CustController extends BaseController {
 		}
 		List custInfos = new ArrayList();
 		try {
-			String regex = "^[A-Za-z0-9]+$";
-			String identityCd = (String) paramMap.get("identityCd");
-			// 军人身份证和组织机构代码正则验证与其它不一样
-			if ("2".equals(identityCd)) {
-				regex = "^[A-Za-z0-9\u4e00-\u9fa5]+$";
-			}
-			if ("15".equals(identityCd)) {
-				regex = "^[A-Za-z0-9-]+$";
-			}
-			String num = (String) (paramMap.get("acctNbr") == ""
-					? paramMap.get("identityNum") == "" ? paramMap.get("queryTypeValue") : paramMap.get("identityNum")
-					: paramMap.get("acctNbr"));
-			if (!num.matches(regex)) {
-				return "/cust/cust-list";
-			}
+			
 			resultMap = custBmo.queryCustInfo(paramMap,
 					flowNum, sessionStaff);
 			List<String> custInfosList = (List<String>) resultMap.get("custInfos");
@@ -353,6 +339,7 @@ public class CustController extends BaseController {
 						accNbrParamMap.put("custIds", custIds);
 						Map accNbrResultMap = new HashMap();
 						// 如果使用接入号定位客户，不需要去调用根据客户查询接入号接口
+						String identityCd = MapUtils.getString(paramMap, "identityCd", "");
 						if (!(custInfos.size() == 1 && StringUtils.isBlank(identityCd)
 								&& StringUtils.isNotBlank(qryAcctNbr))) {
 							accNbrResultMap = custBmo.queryAccNbrByCust(accNbrParamMap, flowNum, sessionStaff);
