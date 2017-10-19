@@ -577,6 +577,16 @@ query.offer = (function() {
 		
 		addParam(param);  //添加基本参数
 		var url = contextPath+"/app/offer/searchAttachOfferSpec";
+		if(param.prodId!=undefined && $("#specType_"+param.prodId).length>0){
+			var labelIds = new Array();
+			$("#specType_"+param.prodId+" option").each(function(){  //遍历所有option  
+		          var txt = $(this).val();   //获取option值   
+		          if(txt!=""){  
+		        	  labelIds.push(txt);  //添加到数组中  
+		          }  
+		     })
+			param.labelIds = labelIds;
+		}
 		if(typeof(callBackFunc)=="function"){
 			$.callServiceAsHtmlGet(url,{strParam:encodeURI(JSON.stringify(param),"utf-8")},{
 				"before":function(){
