@@ -259,6 +259,16 @@ order.calcharge = (function(){
 	
 	// 点击收费执行事件
 	var _updateChargeInfoForCheck=function(){
+		if(OrderInfo.actionFlag==112){
+			if($("#userName").val().length<1){
+				$.alert("提示","请填写联系人！");
+				return;
+			}
+			if($("#userPhone").val().length<1){
+				$.alert("提示","请填写联系电话！");
+				return;
+			}
+		}
 		if(submit_success){
 			$.alert("提示","订单已经建档成功,不能重复操作!");
 			return;
@@ -295,9 +305,9 @@ order.calcharge = (function(){
 							var AttrInfos=OrderInfo.orderData.orderList.orderListInfo.custOrderAttrs;
 							var uId="";//融合id
 							for(var i=0; i<AttrInfos.length; i++){
-					             var id=AttrInfos[i].AttrSpecId;
+					             var id=AttrInfos[i].itemSpecId;
 					             if(id=="40010037"){
-					            	 uId=AttrInfos[i].AttrValue; 
+					            	 uId=AttrInfos[i].value; 
 					             }
 					        }   
 							olId=uId;
@@ -335,9 +345,9 @@ order.calcharge = (function(){
 					var AttrInfos=OrderInfo.orderData.orderList.orderListInfo.custOrderAttrs;
 					var uId="";//融合id
 					for(var i=0; i<AttrInfos.length; i++){
-			             var id=AttrInfos[i].AttrSpecId;
+			             var id=AttrInfos[i].itemSpecId;
 			             if(id=="40010037"){
-			            	 uId=AttrInfos[i].AttrValue; 
+			            	 uId=AttrInfos[i].value; 
 			             }
 			        }   
 					olId=uId;
@@ -833,9 +843,9 @@ order.calcharge = (function(){
 		var AttrInfos=OrderInfo.orderData.orderList.orderListInfo.custOrderAttrs;
 		var uId="";//融合id
 		for(var i=0; i<AttrInfos.length; i++){
-             var id=AttrInfos[i].AttrSpecId;
+             var id=AttrInfos[i].itemSpecId;
              if(id=="40010037"){
-            	 uId=AttrInfos[i].AttrValue; 
+            	 uId=AttrInfos[i].value; 
              }
         }   
 		var charge=charge1+charge2;
@@ -878,7 +888,7 @@ order.calcharge = (function(){
 			return;//非成功状态不处理
 		}
 		if(order.calcharge.busiUpType==CONST.APP_ORDER_BUSI_UP_TYPE){
-			if(OrderInfo.actionFlag!=112){//非融合，先查订单收费状态，未收费继续流程，否则直接提示
+//			if(OrderInfo.actionFlag!=112){//非融合，先查订单收费状态，未收费继续流程，否则直接提示
 				//从session中获取olId，确保olId正确且唯一
 				var sessionOlId=OrderInfo.orderResult.olId;
 				$.callServiceAsJson(contextPath + "/app/pay/repair/queryOlId", {}, {
@@ -907,8 +917,14 @@ order.calcharge = (function(){
 									if (response.code == 0 && response.data!=null && response.data!="") {//已后台收费成功，直接提示，不走收费流程
 										var statusCd=response.data.statusCd;
 										if("201700"==statusCd || "201800"==statusCd || "201900"==statusCd ||"301200"==statusCd ||"201300"==statusCd){
-											_showFinDialog("1","收费成功！");
-											return;
+											if(OrderInfo.actionFlag!=112){
+												order.broadband.orderSubmit();
+											}else{
+												_showFinDialog("1","收费成功！");
+												return;
+											}
+											
+											
 										}				
 									}
 								}
@@ -954,7 +970,9 @@ order.calcharge = (function(){
 						});
 					}
 				});
-			}
+//			}else{
+//				order.broadband.orderSubmit();
+//			}
 		}else if(order.calcharge.busiUpType==CONST.APP_REPAIR_BUSI_UP_TYPE){//补收费
 			repair.main.queryPayOrdStatus1(soNbr, status,type);
 		}else if(order.calcharge.busiUpType == CONST.APP_CHARGE_BUSI_UP_TYPE) { // 话费充值

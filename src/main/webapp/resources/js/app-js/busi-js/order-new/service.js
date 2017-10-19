@@ -289,14 +289,18 @@ order.service = (function(){
 							$.alert("错误提示","无付费类型，无法新装！");
 							return false;
 						}
-						if(OrderInfo.actionFlag==2 && offerChange.OFFER_CHANGE_CHECK=="ON" && offerSpec.offerRoles[1]!=undefined && offerSpec.offerRoles[1].roleObjs!=undefined){
-							for(var p=0;p<offerSpec.offerRoles[1].roleObjs.length;p++){
-								if(offerSpec.offerRoles[1].roleObjs[p].objId == 235010000){
-									var fkRole = offerSpec.offerRoles[1].roleObjs[p];
-									var fkSize = offerChange.offerMemberSize-1;
-									if(fkRole.minQty > fkSize || fkRole.maxQty < fkSize){
-										$.alert("错误提示","当前产品的副卡数量为"+fkSize+"，不满足目标套餐的规则要求：副卡最大数量为"+fkRole.maxQty+"，最小数量为"+fkRole.minQty+"。");
-										return false;
+						if(OrderInfo.actionFlag==2 && offerChange.OFFER_CHANGE_CHECK=="ON" && offerSpec.offerRoles!=undefined){
+							for(var or=0;or<offerSpec.offerRoles.length;or++){
+								if(offerSpec.offerRoles[or].memberRoleCd == 401 && offerSpec.offerRoles[or].roleObjs!=undefined){
+									for(var p=0;p<offerSpec.offerRoles[or].roleObjs.length;p++){
+										if(offerSpec.offerRoles[or].roleObjs[p].objId == 235010000){
+											var fkRole = offerSpec.offerRoles[or].roleObjs[p];
+											var fkSize = offerChange.offerMemberSize-1;
+											if(fkRole.minQty > fkSize || fkRole.maxQty < fkSize){
+												$.alert("错误提示","当前产品的副卡数量为"+fkSize+"，不满足目标套餐的规则要求：副卡最大数量为"+fkRole.maxQty+"，最小数量为"+fkRole.minQty+"。");
+												return false;
+											}
+										}
 									}
 								}
 							}
@@ -531,6 +535,8 @@ order.service = (function(){
 			$("#uim_input_"+prodId).val(terInfo);
 			if(terInfo!=""){//改变图标
 				$("#uim_call_"+prodId).addClass("dis-none");
+				$("#uim_call_LY_"+prodId).addClass("dis-none");
+				$("#uim_call_OTG_"+prodId).addClass("dis-none");
 				$("#uim_check_"+prodId).removeClass("dis-none");
 			}	
 		}	

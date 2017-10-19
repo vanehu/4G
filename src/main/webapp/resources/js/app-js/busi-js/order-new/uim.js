@@ -366,6 +366,8 @@ product.uim = (function() {
 		}
 		$.alert("提示","成功释放UIM卡："+cardNo);
 		$("#uim_call_"+prodId).removeClass("dis-none");
+		$("#uim_call_LY_"+prodId).removeClass("dis-none");
+		$("#uim_call_OTG_"+prodId).removeClass("dis-none");
 		$("#uim_release_"+prodId).addClass("dis-none");
 		$("#uim_input_"+prodId).attr("disabled",false);
 		$("#uim_input_"+prodId).val("");
@@ -717,6 +719,20 @@ product.uim = (function() {
 		}
 	};
 	
+	//蓝牙、OTG读取UIM卡号(入参传“1”代表OTG读UIM  不传或者传其它值代表蓝牙读UIM)
+    var _gotoReadUIM = function(type,objId) {
+        var arr = new Array(1)
+        arr[0] = type;
+        MyPlugin.gotoReadUIM(arr, function(result) {
+        	$("#"+objId).val(result);
+        	var prodId = objId.substring(objId.length-2,objId.length);
+        	$("#uim_call_"+prodId).addClass("dis-none");
+    		$("#uim_call_LY_"+prodId).addClass("dis-none");
+    		$("#uim_call_OTG_"+prodId).addClass("dis-none");
+    		$("#uim_check_"+prodId).removeClass("dis-none");
+        });
+      }
+    
 	return {
 		getMktResCd:getMktResCd,
 		checkUim				: _checkUim,
@@ -730,6 +746,7 @@ product.uim = (function() {
 		smsFormIsValid			:_smsFormIsValid,
 		smsResend				:_smsResend,
 		smsFormIsValid			:_smsFormIsValid,
-		msgCheck				:_msgCheck
+		msgCheck				:_msgCheck,
+		gotoReadUIM				:_gotoReadUIM
 	};
 })();
