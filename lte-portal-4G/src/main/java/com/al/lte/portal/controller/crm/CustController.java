@@ -265,6 +265,7 @@ public class CustController extends BaseController {
 			resultMap = custBmo.queryCustInfo(paramMap,
 					flowNum, sessionStaff);
 			List<String> custInfosList = (List<String>) resultMap.get("custInfos");
+			String custAge = "";
 			if (custInfosList.size() != 0) {
 				String mEs = MapUtils.getString(((Map) ((List) resultMap.get("custInfos")).get(0)), "certNum", ""); 
 				String mIdentityCd = MapUtils.getString(((Map) ((List) resultMap.get("custInfos")).get(0)),
@@ -280,10 +281,10 @@ public class CustController extends BaseController {
 						strCard = nowIdCard.substring(7, 13);
 					}
 					//计算客户年龄
-					String custAge = String.valueOf(DateSubtraction.getAge(DateSubtraction.stringToDate(strCard)));
-				    model.addAttribute("custAgeLocation", custAge);
+					custAge = String.valueOf(DateSubtraction.getAge(DateSubtraction.stringToDate(strCard)));
 				}
 			}
+			model.addAttribute("custAgeLocation", custAge);
 			if (MapUtils.isNotEmpty(resultMap)) {
 				custInfos = (List<Map<String, Object>>) resultMap.get("custInfos");
 				if (!MapUtils.getString(paramMap, "queryTypeValue", "").equals("")
