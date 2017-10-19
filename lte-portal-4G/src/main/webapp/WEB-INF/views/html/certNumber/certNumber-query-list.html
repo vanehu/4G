@@ -2,6 +2,7 @@
     <thead>
     <tr>
         <td width="60">流水号</td>
+        <td width="60">查询类型</td>
         <td width="80">受理地区</td>
         <td width="80">受理渠道</td>
         <td width="60">受理人</td>
@@ -16,6 +17,7 @@
         <#list pageModel.list as item >
         <tr>
             <td>${item.orderNbr}</td>
+            <td>${item.provFlag}</td>
             <td>${item.areaName}</td>
             <td>${item.channelName}</td>
             <td>${item.staffName}</td>
@@ -30,7 +32,7 @@
         </#list>
     <#else>
     <tr>
-        <td colspan="8">没有查询到结果</td>
+        <td colspan="9">没有查询到结果</td>
     </tr>
     </#if>
     </tbody>
