@@ -85,7 +85,8 @@ OrderInfo = (function() {
 		partyName : "",
 		vipLevel : "",
 		vipLevelName : "",
-		custFlag :"1100"//1000：红客户，1100：白客户，1200：黑客户
+		custFlag :"1100",//1000：红客户，1100：白客户，1200：黑客户
+		getCustAgeByCheck : ""
 	}; 
 	
 	var _staff = { //员工登陆信息
@@ -1845,7 +1846,9 @@ OrderInfo = (function() {
 			OrderInfo.bojbrCustIdentities	  = $.extend(true, {}, _bojbrCustIdentities);	//经办人：客户证件节点
 			OrderInfo.bojbrPartyContactInfo   = $.extend(true, {}, _bojbrPartyContactInfo);	//经办人：客户证件节点
 			OrderInfo.boUserPartyContactInfo  = $.extend(true, {}, _boUserPartyContactInfo);//使用人：联系人节点
-
+			OrderInfo.handleCustCertReadInfos = {}
+			//OrderInfo.getCustAgeByCheck = {}
+			
 			cert.deleteCertReaderCustInfosByServCode(CONST.CERT_READER_HANDLE_CUST);
 		}
 	};
@@ -1912,6 +1915,10 @@ OrderInfo = (function() {
 			OrderInfo.certInfoKeys.push(certInfoKeys);
 		}
 	};
+	
+	//针对经办人读卡缓存证件信息，临时补丁方案
+	var _handleCustCertReadInfos = {};
+	var _getCustAgeByCheck = {};
 	
 	return {	
 		order					: _order,
@@ -2052,6 +2059,8 @@ OrderInfo = (function() {
         confidence 				: _confidence,
         certInfoKeys			:_certInfoKeys,
         pushCertInfoKeys		:_pushCertInfoKeys,
-        needCheckFlag           :_needCheckFlag
+        needCheckFlag           :_needCheckFlag,
+        handleCustCertReadInfos	:_handleCustCertReadInfos,
+        getCustAgeByCheck       :_getCustAgeByCheck
 	};
 })();

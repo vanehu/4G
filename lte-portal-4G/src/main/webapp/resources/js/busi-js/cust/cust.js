@@ -393,7 +393,7 @@ order.cust = (function(){
 
 	//创建客户证件类型选择事件
 	var _identidiesTypeCdChoose = function(scope,id) {
-		var cookieSP = CommonUtils.getCookieFromJava("switchSP");
+		var cookieSP = query.common.queryPropertiesValue("CHECK_SOLDIER_POLICE");
 		if(cookieSP == "ON"){
 			//军人身份证件、武装警察身份证件不能作为实名登记有效证件，不允许新装号码
 			if($("#identidiesTypeCd").val() == "2" || $("#identidiesTypeCd").val() == "14"){
@@ -407,7 +407,7 @@ order.cust = (function(){
 		var identidiesTypeCd=$(scope).val();
 		$("#"+id).attr("maxlength", "100");
 		//2017-09-11 新建客户时候，要求读卡
-		var cookieLessFOR = CommonUtils.getCookieFromJava("switchFOR");
+		var cookieLessFOR = query.common.queryPropertiesValue("FOREGIN_LIVE");
 		if(cookieLessFOR == "ON"){
 			if($("#identidiesTypeCd").val() == "50"){
 
@@ -835,14 +835,6 @@ order.cust = (function(){
 				if (response.code == -2) {
 					return;
 				}
-				//拦截先点击选购套餐在定位的非法请求，户口簿，军人和警察的请求
-				if(order.service.releaseFlag == 2){
-					var resultS = _checkAddNumberAndMeal(response);
-					if(resultS == false){
-						return;
-					}
-					
-				}
 				_queryCallBack(response);
 			},fail:function(response){
 				$.unecOverlay();
@@ -965,6 +957,15 @@ order.cust = (function(){
 		}
 		var content$ = $("#custList");
 		content$.html(response.data).show();
+		//拦截先点击选购套餐在定位的非法请求，户口簿，军人和警察的请求
+		if(order.service.releaseFlag == 2){
+			var resultS = _checkAddNumberAndMeal(response);
+			if(resultS == false){
+				content$.html(response.data).hide();
+				return;
+			}
+			
+		}
 		$(".userclose").off("click").on("click",function(event) {
 			authFlag="";
 			$(".usersearchcon").hide();
@@ -2453,6 +2454,7 @@ order.cust = (function(){
 		var response = $.callServiceAsJson(url, params, {"before":function(){
 			$.ecOverlay("<strong>正在查询中,请稍等...</strong>");
 		}});
+		OrderInfo.getCustAgeByCheck = $.extend(true, {}, response);
 		var msg="";
 		if (response.code == 0) {
 			$.unecOverlay();
@@ -5001,7 +5003,7 @@ order.cust = (function(){
 	 * 对于户口薄小于16岁，军人和警察不能新增客户（开关打开的前提）
 	 */
 	var _checkAddPoliceAndHr = function(){
-		var cookieSP = CommonUtils.getCookieFromJava("switchSP");
+		var cookieSP = query.common.queryPropertiesValue("CHECK_SOLDIER_POLICE");
 		if(cookieSP == "ON"){
 			//军人身份证件、武装警察身份证件不能作为实名登记有效证件，不允许新装号码
 			if($("#identidiesTypeCd").val() == "2" || $("#identidiesTypeCd").val() == "14"){
@@ -5009,9 +5011,8 @@ order.cust = (function(){
 				return;
 			}
 		}
-		//2017-09-06 新建客户时，判断人员年龄，如大于16周岁不允许使用户口簿
-		var cookieSIX = CommonUtils.getCookieFromJava("switchSIX");
-		//var nowCard = CommonUtils.getCookieFromJava("cookCard");
+		//大于16周岁不允许使用户口簿办理业务
+		var cookieSIX = query.common.queryPropertiesValue("LESS_THAN_SIX");
 		var nowCard = ($("#cCustIdCard").val()).substring(6,10);
 		if(cookieSIX == "ON"){
 			if($("#identidiesTypeCd").val() == "12"){
@@ -5036,13 +5037,12 @@ order.cust = (function(){
 	 * 只校验户口薄小于16岁
 	 */
 	var _checkAddHr = function(){
-		//2017-09-06 新建客户时，判断人员年龄，如大于16周岁不允许使用户口簿
-		var cookieSIX = CommonUtils.getCookieFromJava("switchSIX");
-		var nowCard = CommonUtils.getCookieFromJava("cookCard");
+		//新建客户时，判断人员年龄，如大于16周岁不允许使用户口簿
+		var cookieSIX = query.common.queryPropertiesValue("LESS_THAN_SIX");
+		var nowCard = OrderInfo.getCustAgeByCheck.data.custAge;//CommonUtils.getCookieFromJava("cookCard");
 		if(cookieSIX == "ON"){
 			if($("#identidiesTypeCd").val() == "12"){
-				var nowDate = new Date();
-				if(nowDate.getFullYear() - nowCard > 16){
+				if(nowCard > 16){
 					$.alert("提示", "大于16周岁不允许使用户口簿");
 					return false;
 				}
@@ -5055,9 +5055,7 @@ order.cust = (function(){
 	 */
 	var _checkAddNumberAndMeal = function(data){
 		if(data.data.indexOf('identityCd="2"') != -1 || data.data.indexOf('identityCd="14"') != -1){
-			var cookieSP = CommonUtils.getCookieFromJava("switchSP");
-			var identityName = $("#identityName").text();
-			var theName = identityName.split("/")[0];
+			var cookieSP = query.common.queryPropertiesValue("CHECK_SOLDIER_POLICE");
 			if(cookieSP == "ON"){
 				//军人身份证件、武装警察身份证件不能作为实名登记有效证件，不允许新装号码
 				$.alert("提示", "军人身份证件、武装警察身份证件不能作为实名登记有效证件，不允许办理业务！");
@@ -5068,12 +5066,17 @@ order.cust = (function(){
 		
 		//2017-09-06 新建客户时，判断人员年龄，如大于16周岁不允许使用户口簿
 		if(data.data.indexOf('identityCd="12"') != -1){
-			var cookieSIX = CommonUtils.getCookieFromJava("switchSIX");
-			var nowCard = CommonUtils.getCookieFromJava("cookCard");
-			//var nowCard = ($("#p_cust_identityNum").val()).substring(6,10);
+			var cookieSIX = query.common.queryPropertiesValue("LESS_THAN_SIX");
+			var nowCard = "";
+			//取到是新增过来的客户年龄还是定位过来的客户年龄
+			var custAgeLocation = $("#custAgeLocation").val();
+			if(ec.util.isObj(custAgeLocation) == true){
+				nowCard = custAgeLocation;
+			}else if(ec.util.isObj(OrderInfo.getCustAgeByCheck.data) == true){
+				nowCard = OrderInfo.getCustAgeByCheck.data.custAge;
+			}
 			if(cookieSIX == "ON"){
-				var nowDate = new Date();
-				if(nowDate.getFullYear() - nowCard > 16){
+				if(nowCard > 16){
 					$.alert("提示", "大于16周岁不允许使用户口簿办理业务!");
 					return false;
 				}
