@@ -1,4 +1,6 @@
+<#if custAgeLocation != "" && custAgeLocation != null && custAgeLocation != undefined>
 <input type="hidden" value="${custAgeLocation}" id="custAgeLocation" />
+</#if>
 <#if (cust.custInfos)?? &&((cust.custInfos)?size>0)>
 
 <#if query??>
