@@ -6,6 +6,7 @@ CommonUtils.regNamespace("home");
 home = (function($) { 
 	var _homeEnter = "";
 	var _appVersion="";
+	var _phoneType="";
 	var _menuData = {};
 	var _getHome = function()
 	{
@@ -54,11 +55,18 @@ home = (function($) {
 //		method = "/app/order/attachoffer/prepare";
 //		method = "/app/order/prodoffer/prepare";
 //		method = "/app/order/broadband/prepare";
+//		method = "/app/amalgamation/prepare";
 //		method = "/app/cust/create";
 //		method = "/app/prodModify/prepare";
 //		method = "/app/mktRes/phonenumber/preNumRelease";
 //		method = "/app/infocollect/realname/prepare";
 //		method = "/app/marketingRecommend/mktresRecommend";
+//		method = "/app/realName/photoCheck/faceVerify";
+//		method = "/app/order/prodoffer/memberchange/prepare";
+//		method = "/app/amalgamation/prepare";
+//		method = "/app/staffMgr/toBindQrCode";
+//		method = "/app/push/enter";
+		
 //		resourceName = "选号码";
 //		params.method = "/app/order/prodoffer/prepare";
 //		resourceName = "返档";
@@ -311,6 +319,7 @@ home = (function($) {
 		setEnter				: 	_setEnter,
 		menuData				:	_menuData,
 		appVersion              :   _appVersion,
-		goDownload             :   _goDownload
+		goDownload              :   _goDownload,
+		phoneType				:   _phoneType
 	};
 })(jQuery);
