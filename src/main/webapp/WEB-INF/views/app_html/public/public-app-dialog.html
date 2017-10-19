@@ -246,8 +246,10 @@
 		$("#otg5").hide();
 		$("#nfc6").hide();
 		$("#otg6").hide();
+		home.phoneType = "iphone";
 		    //alert("iphone");		
 	} else if (/android/.test(ua)) {
+		home.phoneType = "android";
 		    //alert("android");	
 	}
 </script>
