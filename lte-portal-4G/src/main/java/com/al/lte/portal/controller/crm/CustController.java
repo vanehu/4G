@@ -262,25 +262,26 @@ public class CustController extends BaseController {
 			if (!num.matches(regex)) {
 				return "/cust/cust-list";
 			}
-			resultMap = custBmo.queryCustInfo(paramMap, flowNum, sessionStaff);
+			resultMap = custBmo.queryCustInfo(paramMap,
+					flowNum, sessionStaff);
 			List<String> custInfosList = (List<String>) resultMap.get("custInfos");
-			if(custInfosList.size() != 0){
-				String mEs = (String) ((Map) ((List) resultMap.get("custInfos")).get(0)).get("certNum");
-				String mIdentityCd = (String) ((Map) ((List) resultMap.get("custInfos")).get(0)).get("identityCd");
+			if (custInfosList.size() != 0) {
+				String mEs = MapUtils.getString(((Map) ((List) resultMap.get("custInfos")).get(0)), "certNum", ""); 
+				String mIdentityCd = MapUtils.getString(((Map) ((List) resultMap.get("custInfos")).get(0)),
+						"identityCd", "");
 				String nowIdCard = AESDecUtil.aesDecrypt(mEs);
 				String strCard = "";
-				//判断需要截取的几种证件类型
-				if(mIdentityCd.equals("1") || mIdentityCd.equals("12") || mIdentityCd.equals("50") || mIdentityCd.equals("51") || mIdentityCd.equals("52") || mIdentityCd.equals("41")){
-					if (nowIdCard.length() == 18){
-						strCard = nowIdCard.substring(6, 10);
-					}else{
-						strCard = nowIdCard.substring(7, 9);
+				// 判断需要截取的几种证件类型
+				if ("1".equals(mIdentityCd) || "12".equals(mIdentityCd) || "50".equals(mIdentityCd)
+						|| "51".equals(mIdentityCd) || "52".equals(mIdentityCd) || "41".equals(mIdentityCd)) {
+					if (nowIdCard.length() == 18) {
+						strCard = nowIdCard.substring(6, 14);
+					} else {
+						strCard = nowIdCard.substring(7, 13);
 					}
-
-					Cookie cookCard = new Cookie("cookCard", strCard);
-					cookCard.setMaxAge(86400);
-					cookCard.setPath("/");
-					response.addCookie(cookCard);
+					//计算客户年龄
+					String custAge = String.valueOf(DateSubtraction.getAge(DateSubtraction.stringToDate(strCard)));
+				    model.addAttribute("custAgeLocation", custAge);
 				}
 			}
 			if (MapUtils.isNotEmpty(resultMap)) {
@@ -792,22 +793,22 @@ public class CustController extends BaseController {
 		paramMap.put("staffId", sessionStaff.getStaffId());
 		//设置新增的客户的cookie
 		String strCard = "";
-		String nowIdCard = (String)paramMap.get("identityNum");
-		String mIdentityCd = (String)paramMap.get("identityCd");
-		if(mIdentityCd.equals("1") || mIdentityCd.equals("12") || mIdentityCd.equals("50") || mIdentityCd.equals("51") || mIdentityCd.equals("52") || mIdentityCd.equals("41")){
+		String custAge = "";
+		String nowIdCard = MapUtils.getString(paramMap, "identityNum", "");//(String)paramMap.get("identityNum");
+		String mIdentityCd =MapUtils.getString(paramMap, "identityCd", ""); //(String)paramMap.get("identityCd");
+		if("1".equals(mIdentityCd) || "12".equals(mIdentityCd) || "50".equals(mIdentityCd) || "51".equals(mIdentityCd) || "52".equals(mIdentityCd) || "41".equals(mIdentityCd)){
 			if (nowIdCard.length() == 18){
-				strCard = nowIdCard.substring(6, 10);
+				strCard = nowIdCard.substring(6, 14);
 			}else{
-				strCard = nowIdCard.substring(7, 9);
-			}
-			Cookie cookCard = new Cookie("cookCard", strCard);
-			cookCard.setMaxAge(86400);
-			cookCard.setPath("/");
-			response.addCookie(cookCard);
+				strCard = nowIdCard.substring(7, 13);
+		}
+			//计算客户年龄
+			custAge = String.valueOf(DateSubtraction.getAge(DateSubtraction.stringToDate(strCard)));
 		}
 		List<Map<String, Object>> list = null;
 		try {
 			resultMap = custBmo.queryCustInfo(paramMap, flowNum, sessionStaff);
+			resultMap.put("custAge", custAge);
 			if (resultMap != null) {
 				list = (List<Map<String, Object>>) resultMap.get("custInfos");
 				if (list != null && list.size() > 0) {
