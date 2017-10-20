@@ -159,9 +159,11 @@ oneFive.certNumberQuery = (function () {
         } else {
         	//去除staffId的限制
             //param.staffId = OrderInfo.staff.staffId;
-        	var channelId = $("#onefivecard_channelId").val();
-        	if(ec.util.isObj(channelId) == true){
-        		param.channelId = channelId;
+        	if(!$("#if_p_olNbr").attr("checked")){
+        		var channelId = $("#onefivecard_channelId").val();
+            	if(ec.util.isObj(channelId) == true){
+            		param.channelId = channelId;
+            	}
         	}
         	
         }
