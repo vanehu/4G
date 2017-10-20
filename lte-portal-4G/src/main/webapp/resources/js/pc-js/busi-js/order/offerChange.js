@@ -391,6 +391,17 @@ offerChange = (function() {
 							param.offerSpecId=OrderInfo.offerSpec.offerSpecId;
 							//默认必须可选包
 							var data = query.offer.queryDefMustOfferSpec(param);
+							//根据查询默认必选返回可选包再遍历查询可选包规格构成，来支撑默认必选带出的可选包触发终端校验框加入 redmine 111364
+							if(data.result!=null&&data.result!=undefined){
+								if(data.result.offerSpec!=null&&data.result.offerSpec!=undefined){
+									$.each(data.result.offerSpec,function(){
+										var fullOfferSpec = query.offer.queryAttachOfferSpec(param.prodId,this.offerSpecId);
+										for(var attr in fullOfferSpec){ //把可选包规格构成查询到的属性添加到原默认必选返回的规格中
+											this[attr] = fullOfferSpec[attr];
+											}  						
+									});										
+								}
+							}
 							CacheData.parseOffer(data);
 							//默认必须功能产品
 							param.queryType = "1";//只查询必选，不查默认
@@ -745,6 +756,9 @@ offerChange = (function() {
 		if(OrderInfo.provinceInfo.salesCode!=""&&OrderInfo.reloadFlag=="Y"){
 			order.main.queryDealer();
 		}
+		
+		//初始化 付费类型 和 是否信控 变更规则
+		_initChangeProdAttrs();
 	};
 	
 	function cleckUim(uim,prodId){
@@ -794,10 +808,107 @@ offerChange = (function() {
 			$.alert("提示","UIM信息查询接口出错,稍后重试");
 		}
 	}
+	
+	//初始化 付费类型 和 是否信控
+	var _initChangeProdAttrs = function(){
+		if($('#offerChangeFeeTypeSelect').length > 0 && $('#offerChangeXinkongSelect').length > 0){
+			var oldFeeType = order.prodModify.choosedProdInfo.feeType;
+			var oldIsXinkongValue = $('#offerChangeXinkongSelect').attr('oldValue');
+			$('#offerChangeFeeTypeSelect option[value="'+oldFeeType+'"]').attr('selected', 'selected');
+			$('#offerChangeXinkongSelect option[value="'+oldIsXinkongValue+'"]').attr('selected', 'selected');
+			order.prodModify.choosedProdInfo.isXinkongValue = oldIsXinkongValue; 
+			
+			//修改后的付费类型为后付费时，“是否信控”才可以修改。修改后的付费类型为预付费时，“是否信控”是固定的值“是”
+			var changeFunction = function(){
+				var newOfferFeeType = $('#offerChangeFeeTypeSelect').val();
+				if(newOfferFeeType != CONST.PAY_TYPE.AFTER_PAY){
+					if($('#offerChangeXinkongSelect option[value=""]').length < 1){
+						$('#offerChangeXinkongSelect').append('<option value="">无</option>');
+					}
+					$('#offerChangeXinkongSelect').val("").attr('disabled', 'disabled');
+					
+					if(newOfferFeeType == CONST.PAY_TYPE.BEFORE_PAY){
+						$('#offerChangeXinkongSelect').val(CONST.PROD_ATTR_VALUE.IS_XINKONG_YES); //是否信控 “是”选项的value为20
+					}
+				} else {
+					$('#offerChangeXinkongSelect option[value=""]').remove();
+					$('#offerChangeXinkongSelect').removeAttr('disabled'); //是否信控 “是”选项的value为20
+				}
+				
+				OrderInfo.offerSpec.feeType = newOfferFeeType;
+				offerChange.isChangeFeeType=true;
+//				AttachOffer.showOfferSpecByFeeType();
+			};
+			$('#offerChangeFeeTypeSelect').off('change').on('change',changeFunction);
+			changeFunction();
+		}
+	};
+	
+	//创建变更付费类型节点
+	var _createChangeFeeType = function(busiOrders,offer){
+		if($('#offerChangeFeeTypeSelect').length > 0 && $('#offerChangeXinkongSelect').length > 0){
+			var oldOfferFeeType = order.prodModify.choosedProdInfo.feeType;
+			var newOfferFeeType = $('#offerChangeFeeTypeSelect').val();
+			var oldIsXinkongValue = order.prodModify.choosedProdInfo.isXinkongValue;
+			var newIsXinkongValue = $('#offerChangeXinkongSelect').val();
+			
+			if($.trim(newOfferFeeType) != '' && $.trim(newIsXinkongValue) != ''){
+				if(newOfferFeeType != oldOfferFeeType || newIsXinkongValue != oldIsXinkongValue){
+					$.each(offer.offerMemberInfos, function(i, offerMember){
+						if(offerMember.objType==2){//接入类产品作为需要更换付费方式的成员
+							var busiOrder = {
+									areaId : OrderInfo.getProdAreaId(offerMember.objInstId),
+									busiOrderInfo : {
+										seq : OrderInfo.SEQ.seq--
+									},
+									busiObj : { //业务对象节点
+										instId : offerMember.objInstId, //业务对象实例ID
+										objId : offerMember.objId,  //产品规格ID
+										accessNumber : offerMember.accessNumber  //接入号码
+									},
+									boActionType : {
+										actionClassCd : CONST.ACTION_CLASS_CD.PROD_ACTION,
+										boActionTypeCd : CONST.BO_ACTION_TYPE.CHANGE_FEE_TYPE
+									},
+									data:{}
+							};
+							if(newOfferFeeType != oldOfferFeeType){
+								busiOrder.data.boProdFeeTypes = [ {
+									feeType : oldOfferFeeType,
+									state : "DEL"
+								}, {
+									feeType : newOfferFeeType,
+									state : "ADD"
+								} ];
+							}
+							if(oldIsXinkongValue != newIsXinkongValue){
+								// 原先的是否信控 产品实例属性值为空的话，只需要一个ADD 不需要DEL
+								busiOrder.data.boProdItems = [ {
+									itemSpecId : CONST.PROD_ATTR.IS_XINKONG,
+									state : "ADD",
+									value : newIsXinkongValue
+								} ];
+								if($.trim(oldIsXinkongValue) != ''){
+									busiOrder.data.boProdItems.push({
+										itemSpecId : CONST.PROD_ATTR.IS_XINKONG,
+										state : "DEL",
+										value : oldIsXinkongValue
+									});
+								}
+							}
+							busiOrders.push(busiOrder);
+						}
+					});
+				}
+			}
+		}
+	};
+	
 	//套餐变更提交组织报文
 	var _changeOffer = function(busiOrders){
 		_createDelOffer(busiOrders,OrderInfo.offer); //退订主销售品
 		_createMainOffer(busiOrders,OrderInfo.offer); //订购主销售品	
+		_createChangeFeeType(busiOrders,OrderInfo.offer); //变更付费类型
 		AttachOffer.setAttachBusiOrder(busiOrders);  //订购退订附属销售品
 		if(CONST.getAppDesc()==0){ //4g系统需要,补换卡 
 			if(ec.util.isArray(OrderInfo.offer.offerMemberInfos)){ //遍历主销售品构成

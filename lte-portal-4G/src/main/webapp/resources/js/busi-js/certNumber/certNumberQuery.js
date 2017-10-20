@@ -37,12 +37,16 @@ oneFive.certNumberQuery = (function () {
                 $("#p_endDt").css("background-color", "#E8E8E8").attr("disabled", true);
                 $("#p_telNumber").css("background-color", "#E8E8E8").attr("disabled", true);
                 $("#p_certNumber").css("background-color", "#E8E8E8").attr("disabled", true);
+                $("#onefivecard_channelId").css("background-color", "#E8E8E8").attr("disabled", true);
+                $("#onefivecard_province").css("background-color", "#E8E8E8").attr("disabled", true);
             } else {
                 $("#p_olNbr").css("background-color", "#E8E8E8").attr("disabled", true);
                 $("#p_startDt").css("background-color", "white").attr("disabled", false);
                 $("#p_endDt").css("background-color", "white").attr("disabled", false);
                 $("#p_telNumber").css("background-color", "white").attr("disabled", false);
                 $("#p_certNumber").css("background-color", "white").attr("disabled", false);
+                $("#onefivecard_channelId").css("background-color", "white").attr("disabled", false);
+                $("#onefivecard_province").css("background-color", "white").attr("disabled", false);
             }
         });
 
@@ -134,7 +138,16 @@ oneFive.certNumberQuery = (function () {
                 "pageSize": 10
             };
         }
-        param.ifFilterAreaId = "Y";
+        //查询本省全部、处理、受理订单
+        var onefivecardProvince = $("#onefivecard_province").val();
+        if(onefivecardProvince == "province_all" || ec.util.isObj(onefivecardProvince) != true){
+        	param.ifFilterAreaId = "N";
+        }else if(onefivecardProvince == "province_accept"){
+        	param.ifFilterAreaId = "Y";
+        }else{
+        	param.ifQryHandle = "Y";
+        }
+        
         param.ifFilterItem = "N";
         if (ec.util.isObj(telNumber) || ec.util.isObj(certNumber)) {
             if (ec.util.isObj(telNumber)) {
@@ -144,7 +157,15 @@ oneFive.certNumberQuery = (function () {
                 param.certNumber = certNumber;
             }
         } else {
-            param.staffId = OrderInfo.staff.staffId;
+        	//去除staffId的限制
+            //param.staffId = OrderInfo.staff.staffId;
+        	if(!$("#if_p_olNbr").attr("checked")){
+        		var channelId = $("#onefivecard_channelId").val();
+            	if(ec.util.isObj(channelId) == true){
+            		param.channelId = channelId;
+            	}
+        	}
+        	
         }
         $.callServiceAsHtmlGet(contextPath + "/certNumber/queryOneFiveOrderList", param, {
             "before": function () {

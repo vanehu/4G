@@ -677,7 +677,8 @@ prod.telnum = (function(){
 		
 		//规则校验
 		var _initPage = function(){
-			var cookieSP = CommonUtils.getCookieFromJava("switchSP");
+			//var cookieSP = CommonUtils.getCookieFromJava("switchSP");
+			var cookieSP = query.common.queryPropertiesValue("CHECK_SOLDIER_POLICE");
 			var identityName = $("#identityName").text();
 			var theName = identityName.split("/")[0];
 			//军人身份证件、武装警察身份证件不能作为实名登记有效证件，不允许改号码

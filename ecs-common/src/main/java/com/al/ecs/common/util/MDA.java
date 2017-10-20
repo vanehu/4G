@@ -685,4 +685,9 @@ public class MDA {
 	
 	/**人证比对图片压缩参数*/
     public static final Map<String, List<String>> FACE_VERIFY_COMPRESS_CONFIG = new HashMap<String, List<String>>();
+    
+    /**
+	 * 浏览器指纹记录地址
+	 */
+	public static final String FINGER_PRINT_ADDRESS = new String("");
 }

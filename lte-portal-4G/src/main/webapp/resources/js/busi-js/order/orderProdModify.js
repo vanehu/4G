@@ -1034,6 +1034,7 @@ order.prodModify = (function(){
 				$("#cmCustIdCard").attr("placeHolder","请输入合法军官证");
 				$("#cmCustIdCard").attr("data-validate","validate(required:请准确填写军官证) on(blur)");
 			}else if(identidiesTypeCd==3){
+				$("#cmCustIdCard").attr("onkeyup", "value=value.replace(/[^A-Za-z0-9-]/ig,'')");
 				$("#cmCustIdCard").attr("placeHolder","请输入合法护照");
 				$("#cmCustIdCard").attr("data-validate","validate(required:请准确填写护照) on(blur)");
 			}else{

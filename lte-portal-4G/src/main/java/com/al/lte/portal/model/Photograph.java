@@ -44,10 +44,10 @@ public class Photograph {
 	/**水印内容*/
 	private String context;
 	
-	/**备用,记录其他信息*/
+	/**备用*/
 	private Object extrea;
 	
-	private static Photograph photograph;
+	private volatile static Photograph photograph;
 	
 	public Photograph(){
 		super();

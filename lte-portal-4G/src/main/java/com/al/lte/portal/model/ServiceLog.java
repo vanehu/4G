@@ -1,7 +1,5 @@
 package  com.al.lte.portal.model;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
@@ -92,11 +90,16 @@ public class ServiceLog{
 	
 	private final String DEFAULT_TIME_FORMAT = "yyyy/MM/dd HH:mm:ss";
 	
+	static {
+		serviceLog = new ServiceLog();
+	}
+	
+	public static ServiceLog getInstance(){
+		return serviceLog;
+	}
+	
 	public static ServiceLog getNewInstance(){
-		synchronized(ServiceLog.class){
-			serviceLog = new ServiceLog();
-			return serviceLog;
-		}
+		return new ServiceLog();
 	}
 	
 	public DataBus initDataBus(DataBus db, SessionStaff sessionStaff){

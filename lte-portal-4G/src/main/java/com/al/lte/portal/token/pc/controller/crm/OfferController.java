@@ -633,6 +633,7 @@ public class OfferController extends BaseController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/changePackageAndService", method = RequestMethod.GET)
     public String changePackageAndService(@RequestParam Map<String, Object> params, HttpServletRequest request,HttpSession httpSession,Model model,HttpSession session) throws AuthorityException {
+		session.removeAttribute("VALIDATERESULT");//去掉套餐变更场景鉴权结果记录
 		try{
 			SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
 			

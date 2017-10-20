@@ -44,6 +44,33 @@
                             	<label class="f_red">&nbsp;&nbsp;</label>
                                 <input type="text" class="numberTextBox width198" style="width:160px" id="p_certNumber" placeholder="在此输入18位身份证号码"/>
                             </dd>
+                            <!-- 新增渠道下拉框 -->
+                            <dt>渠道：</dt>
+                                  <dd>
+                                  	<select id="onefivecard_channelId" class="width202" >
+                                  	<option value="" >--选择渠道--</option>
+                                	<#if Session["_staff_channel"]?? && (Session["_staff_channel"]?size>0) >
+										<#list Session["_staff_channel"] as channel>
+		                                 	<option value="${channel.id}" >${channel.name}</option>
+		                                </#list>
+									</#if>	
+                                	</select>
+                                  	<label class="f_red">&nbsp;</label>
+                                  </dd>	
+                                  <br/>
+                        </dl>
+                        <dl>
+                        	 <!-- 新增本省全部、处理、受理下拉框 -->
+                            <dt>查询类型：</dt>
+                                  <dd>
+                                  	<select id="onefivecard_province" style="width: 160px;" >
+                                  		<option value="province_all" selected="selected">本省全部</option>
+                                		<option value="province_deal" >本省处理</option>
+                                		<option value="province_accept" >本省受理</option
+                                	</select>
+                                  	<label class="f_red">&nbsp;</label>
+                                  </dd>	      
+                            
                             <dt style="width:75px"><input type="checkbox" id="if_p_olNbr">流水号：</dt>
                             <dd>
                                 <input type="text" class="numberTextBox width198" style="width:145px" id="p_olNbr" value=""
@@ -54,6 +81,7 @@
                                 <input type="button" value="查询" class="numberSearch" id="bt_15handleQry"/>
                             </dd>
                         </dl>
+                        
                     </div>
                     <!--订单列表-->
                     <div class="phone_warp" id="cart_list">
@@ -61,6 +89,7 @@
                             <thead>
                             <tr>
                                 <td width="60">流水号</td>
+                                <td width="60">查询类型</td>
                                 <td width="80">受理地区</td>
                                 <td width="80">受理渠道</td>
                                 <td width="60">受理人</td>

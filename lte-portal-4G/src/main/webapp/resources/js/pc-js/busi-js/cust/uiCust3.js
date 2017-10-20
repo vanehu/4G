@@ -72,6 +72,7 @@ var _choosedCustInfo = {};
 		var identityNum="";
 		var queryType="";
 		var queryTypeValue="";
+        $("#p_cust_identityCd").val("-1");
 		identityCd=$("#p_cust_identityCd").val();
 		identityNum=$.trim($("#p_cust_identityNum").val());
 		//判断是否是号码或身份证输入
@@ -200,6 +201,9 @@ var _choosedCustInfo = {};
 			segmentName :$(scope).attr("segmentName"),
 			custFlag :$(scope).attr("custFlag"),
 			vipLevel :$(scope).attr("vipLevel"),
+            CN : $(scope).attr("CN"),
+            address: $(scope).attr("address"),
+            certNum: $(scope).attr("certNum"),
 			vipLevelName :$(scope).attr("vipLevelName")
 		};
 		if(order.uiCustes.queryForChooseUser && _choosedCustInfo.segmentId != 1100){
