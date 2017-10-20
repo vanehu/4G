@@ -1695,7 +1695,7 @@ order.writeCard = (function(){
 	var _essWriteReadCard=function(phoneNumber,extCustOrderId,orderNeedAction,commonRegionId,zoneNumber){
 		OrderInfo.actionFlag = 41 ;
 		_essWriteCard = {};
-		var orderItemGroupId = $("#"+extCustOrderId).val();
+		var orderItemGroupId = $("#"+phoneNumber).val();
 		var essOrder = {
 			phoneNumber : phoneNumber,
 			extCustOrderId : extCustOrderId,
@@ -2102,7 +2102,7 @@ order.writeCard = (function(){
 	};
 	
 	var _essMNWriteCard=function(phoneNumber,extCustOrderId,orderNeedAction,commonRegionId,zoneNumber){
-		var orderItemGroupId = $("#"+extCustOrderId).val();
+		var orderItemGroupId = $("#"+phoneNumber).val();
 		var essOrder = {
 				phoneNumber : phoneNumber,
 				extCustOrderId : extCustOrderId,

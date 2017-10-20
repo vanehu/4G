@@ -87,7 +87,7 @@
 		<const type="String" name="IS_QUESTION_MENU" value="OFF" />
 		
 		<!-- 2017-08-31经办人检验 开关 -->
-		<const type="String" name="LESS_THAN_SEVENTEEN" value="ON"/>
+		<const type="String" name="LESS_THAN_SEVENTEEN" value="OFF"/>
 		<!-- 2017-08-31经办人分省开关 -->
 		<const type="Map" name="LESS_THAN_EIGHT" description="经办人校验分省开关，默认关闭">
 			{
@@ -100,7 +100,7 @@
 			'LESS_THAN_EIGHT_861':'OFF',<!-- 陕西 -->
 			'LESS_THAN_EIGHT_842':'OFF',<!-- 湖北 -->
 			'LESS_THAN_EIGHT_835':'OFF',<!-- 福建 -->
-			'LESS_THAN_EIGHT_832':'ON',<!-- 江苏 -->
+			'LESS_THAN_EIGHT_832':'OFF',<!-- 江苏 -->
 			'LESS_THAN_EIGHT_846':'OFF',<!-- 海南 -->
 			'LESS_THAN_EIGHT_864':'OFF',<!-- 宁夏 -->
 			'LESS_THAN_EIGHT_814':'OFF',<!-- 山西 -->
@@ -126,11 +126,11 @@
 			}
 		</const>
 		<!-- 军人身份证件、武装警察身份证件不能作为实名登记有效证件，不允许在这两个类型下办理新装号码，新装副卡，不允许改号 -->
-		<const type="String" name="CHECK_SOLDIER_POLICE" value="ON"></const>
+		<const type="String" name="CHECK_SOLDIER_POLICE" value="OFF"></const>
 		<!-- 户口簿仅限于16周岁以下的人员使用 -->
-		<const type="String" name="LESS_THAN_SIX" value="ON"></const>
+		<const type="String" name="LESS_THAN_SIX" value="OFF"></const>
 		<!-- 外国人居住证，要求读卡,增加全国级开关，非分省 -->
-		<const type="String" name="FOREGIN_LIVE" value="ON"></const>
+		<const type="String" name="FOREGIN_LIVE" value="OFF"></const>
 
 		<const type="String" name="ASYNC_FLAG" value="OFF" />
 		<const type="String" name="DEF_HTTP_FLAG" value="ON" />
@@ -3615,5 +3615,6 @@
 			"FACE_VERIFY_COMPRESS_899": ["0.5", "0.95", "image/jpeg", "0", "0", "data:image/jpeg;base64,", "OFF", "1024", "768"]<!-- 虚拟省 -->
 		}
 		</const>
+		<const type="String" name="FINGER_PRINT_ADDRESS" value="http://10.128.21.66:8020/fingerprint/browser" description="浏览器指纹记录地址"></const>
 	</mda>
 </mdas>

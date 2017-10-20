@@ -436,9 +436,9 @@ oneFive.certNumberHandle = (function () {
         $.each(files, function () {
             if ($.inArray(this.picFlag, type.split(',')) != -1) {
                 if (this.picFlag == 'F') {
-                    $(attachmentHtml).append($("<div style='width: 800px; height:600px;'></div>").append("<embed style='width: 100%;height: auto;' src='" + "data:application/pdf;base64," + this.orderInfo + "'/>"));
+                    $(attachmentHtml).append($("<div></div>").append("<embed style='width: 800px; height:600px;' src='" + "data:application/pdf;base64," + this.orderInfo + "'/>"));
                 } else {
-                    $(attachmentHtml).append($("<div style='width: 800px; height:600px;'></div>").append("<img style='width: 100%;height: auto;'src='" + "data:application/jpeg;base64," + this.orderInfo + "'/>"));
+                    $(attachmentHtml).append($("<div style='width: 800px; height:600px;'></div>").append("<img style='max-width:100%;max-height:100%;'src='" + "data:application/jpeg;base64," + this.orderInfo + "'/>"));
                 }
             }
         });

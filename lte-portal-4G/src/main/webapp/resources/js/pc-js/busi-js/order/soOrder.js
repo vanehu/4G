@@ -3104,6 +3104,11 @@ SoOrder = (function() {
 		var ageS = CommonUtils.getCookieFromJava("nAgeS");
 		var ageE = CommonUtils.getCookieFromJava("nAgeE");
 		var cookieSP = CommonUtils.getCookieFromJava("switchSP");
+		var newMan = cert.readCert(CONST.CERT_READER_HANDLE_CUST)
+		//获取下拉框的值
+		var selectValue = $("#orderIdentidiesTypeCd").val();
+		var orderAttrName = $("#orderAttrName").val();
+		var orderAttrIdCard = $("#orderAttrIdCard").val();
 		if(cookieSP == "ON"){
 			//军人身份证件、武装警察身份证件不能作为实名登记有效证件，不允许新装号码
 			if(selectValue == "2" || selectValue == "14"){
@@ -3113,7 +3118,7 @@ SoOrder = (function() {
 		}
 		if(cookieE == "ON"){
 			//对于经办人的校验
-			if(orderAttrName != "" || orderAttrName != null || orderAttrName != undefined){
+			if(orderAttrName != "" && orderAttrName != null && orderAttrName != undefined){
 				if(selectValue != "50"){
 					if(cookieSP == "ON"){
 						//军人身份证件、武装警察身份证件不能作为实名登记有效证件，不允许新装号码

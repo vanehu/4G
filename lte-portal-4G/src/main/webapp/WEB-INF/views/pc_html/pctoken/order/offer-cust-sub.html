@@ -33,8 +33,7 @@
 		</thead>
 		<tbody>
 			<#list cust.custInfos as custInfo>
-			<tr id="custInfos" onclick="order.uiCustes.showCustAuth(this)" 
-				custFlag="${custInfo.custFlag}" norTaxPayer="${custInfo.norTaxPayer}" identityName="${custInfo.identityName}" idCardNumber="${idCardNumber}" areaId="${custInfo.areaId}" corCustId="${custInfo.corCustId}" identityCd="${custInfo.identityCd}" addressStr="${custInfo.addressStr}" areaName="${custInfo.areaName}" vipLevel="${custInfo.vipLevel}" vipLevelName="${custInfo.vipLevelName}" segmentId="${custInfo.segmentId}" segmentName="${custInfo.segmentName}" extCustId="${custInfo.extCustId}">
+			<tr id="custInfos" onclick="order.uiCustes.showCustAuth(this)"   CN="${custInfo.CN}"  address="${custInfo.address}" certNum="${custInfo.certNum}" custFlag="${custInfo.custFlag}" norTaxPayer="${custInfo.norTaxPayer}" identityName="${custInfo.identityName}" idCardNumber="${idCardNumber}" areaId="${custInfo.areaId}" corCustId="${custInfo.corCustId}" identityCd="${custInfo.identityCd}" addressStr="${custInfo.addressStr}" areaName="${custInfo.areaName}" vipLevel="${custInfo.vipLevel}" vipLevelName="${custInfo.vipLevelName}" segmentId="${custInfo.segmentId}" segmentName="${custInfo.segmentName}" extCustId="${custInfo.extCustId}">
 				<td id="custListTableParName">${custInfo.partyName}</td>
 				<td>${custInfo.identityName}/${idCardNumber}</td>
 				<td id="areaName">${custInfo.areaName}</td>
