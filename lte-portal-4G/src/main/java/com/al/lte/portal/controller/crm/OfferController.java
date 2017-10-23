@@ -31,6 +31,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
@@ -1020,5 +1022,33 @@ public class OfferController extends BaseController {
 			}
 		}
 		//#1766024  ---end
+	}
+	
+	
+	@RequestMapping(value = "/queryOfferOrderedTimes", method = {RequestMethod.POST})
+	@ResponseBody
+	public JsonResponse queryOfferOrderedTimes(@RequestBody Map<String, Object> paramMap, HttpServletRequest request, HttpServletResponse response) {
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(request, SysConstant.SESSION_KEY_LOGIN_STAFF);
+		JsonResponse jsonResponse = null;
+		
+    	try {
+        	Map<String, Object> result = offerBmo.queryOfferOrderedTimes(paramMap, sessionStaff);
+            if (ResultCode.R_SUCC.equals(MapUtils.getString(result, SysConstant.RESULT_CODE, "1"))) {
+            	
+            	jsonResponse = super.successed(MapUtils.getObject(result, SysConstant.RESULT_MSG), ResultConstant.SUCCESS.getCode());
+            } else {
+                jsonResponse = super.failed(MapUtils.getObject(result, SysConstant.RESULT_MSG, "接口未返回信息"), ResultConstant.FAILD.getCode());
+            }
+        } catch (BusinessException be) {
+        	jsonResponse = super.failed(be);
+        } catch (InterfaceException ie) {
+        	jsonResponse = super.failed(ie, paramMap, ErrorCode.QRY_OFFER_ORDERED_TIMES);
+		} catch (IOException ioe) {
+			jsonResponse = super.failed(ErrorCode.QRY_OFFER_ORDERED_TIMES, ioe, paramMap);
+		} catch (Exception e) {
+			jsonResponse = super.failed(ErrorCode.QRY_OFFER_ORDERED_TIMES, e, paramMap);
+		}
+        
+		return jsonResponse;
 	}
 }

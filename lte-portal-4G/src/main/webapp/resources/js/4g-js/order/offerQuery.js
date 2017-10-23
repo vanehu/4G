@@ -1033,6 +1033,32 @@ query.offer = (function() {
 		});
 	};
 	
+	//查询销售品已订购次数，入参offerSpecIdList为数组类型
+	var _queryOfferOrderedTimes = function(offerSpecIdList){
+		var params = {
+			"curPage":1,
+			"pageSize":20,//协议中要求分页参数必填，但其实没用
+			"accNbr":OrderInfo.cust.accNbr,
+			"areaId":OrderInfo.cust.areaId,
+			"offerList":offerSpecIdList,
+			"prodBigClass":"12"
+		};
+		
+		$.ecOverlay("<strong>正在查询, 请稍等...</strong>");
+		var response = $.callServiceAsJson(contextPath + "/offer/queryOfferOrderedTimes", params);
+		$.unecOverlay();
+		
+		if(response.code == 0 && response.data){
+			return response.data;
+		}else if(response.code == 1){
+			$.alert("错误", "销售品已订购次数查询异常，错误原因：" + response.data);
+		}else if(response.code == -2){
+			$.alertM(response.data);
+		}else{
+			$.alert("错误", "销售品已订购次数查询发生未知异常 " + response.data);
+		}
+	};
+	
 	return {
 		checkOperate			: _checkOperate,
 		loadInst				: _loadInst,
@@ -1063,6 +1089,7 @@ query.offer = (function() {
 		queryMyfavorite         : _queryMyfavorite,
 		addMyfavorite           : _addMyfavorite,
 		delMyfavorite           : _delMyfavorite,
-		queryMainCartAttachOffer: _queryMainCartAttachOffer
+		queryMainCartAttachOffer: _queryMainCartAttachOffer,
+		queryOfferOrderedTimes	:_queryOfferOrderedTimes
 	};
 })();
