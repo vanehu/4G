@@ -1052,10 +1052,13 @@ query.offer = (function() {
 			return response.data;
 		}else if(response.code == 1){
 			$.alert("错误", "销售品已订购次数查询异常，错误原因：" + response.data);
+			return null;
 		}else if(response.code == -2){
 			$.alertM(response.data);
+			return null;
 		}else{
 			$.alert("错误", "销售品已订购次数查询发生未知异常 " + response.data);
+			return null;
 		}
 	};
 	
