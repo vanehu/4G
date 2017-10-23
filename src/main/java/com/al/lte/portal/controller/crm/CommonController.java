@@ -136,10 +136,17 @@ public class CommonController extends BaseController {
 	@RequestMapping(value = "/queryPortalProperties", method ={ RequestMethod.POST, RequestMethod.GET})
     public @ResponseBody String queryPortalProperties(@RequestBody Map<String, Object> param,@LogOperatorAnn String flowNum,
   			HttpServletResponse response,HttpServletRequest request) {
-		String propertiesKey = param.get("propertiesKey").toString();
+		String propertiesKey = "";
+		if(param.get("propertiesKey")!=null){
+			propertiesKey = param.get("propertiesKey").toString();
+		}else{
+			String data = "error" + "," + AESUtils.getMD5Str(propertiesKey+"MDA"+"error"+"MDA");
+			return data;
+		}
+		propertiesKey = param.get("propertiesKey").toString();
 		//身份证类型开发
 		String data = propertiesUtils.getMessage(propertiesKey);
-		data = data + "," + AESUtils.getMD5Str("MDA"+data+"MDA");
+		data = data + "," + AESUtils.getMD5Str(propertiesKey+"MDA"+data+"MDA");
 		return data;
     }
 	

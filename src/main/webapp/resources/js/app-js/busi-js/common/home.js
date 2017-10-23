@@ -7,6 +7,7 @@ home = (function($) {
 	var _homeEnter = "";
 	var _appVersion="";
 	var _phoneType="";
+	var _READ_UIM="";
 	var _menuData = {};
 	var _getHome = function()
 	{
@@ -66,6 +67,7 @@ home = (function($) {
 //		method = "/app/amalgamation/prepare";
 //		method = "/app/staffMgr/toBindQrCode";
 //		method = "/app/push/enter";
+//		method = "/app/prodModify/toCheckUimUI";
 		
 //		resourceName = "选号码";
 //		params.method = "/app/order/prodoffer/prepare";
@@ -320,6 +322,7 @@ home = (function($) {
 		menuData				:	_menuData,
 		appVersion              :   _appVersion,
 		goDownload              :   _goDownload,
-		phoneType				:   _phoneType
+		phoneType				:   _phoneType,
+		READ_UIM				:	_READ_UIM
 	};
 })(jQuery);

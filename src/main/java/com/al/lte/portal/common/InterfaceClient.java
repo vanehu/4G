@@ -5,10 +5,12 @@ import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.net.SocketTimeoutException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -387,6 +389,65 @@ public class InterfaceClient {
 							}
 						}
 					}
+					Map<String, Object> proot = (Map<String, Object>) dataBusMap.get("proot");
+					Object params = proot.get("params");
+					if(params instanceof List){
+						List<Map> paramsList=new ArrayList<Map>();
+						paramsList = (List<Map>) params;
+						Map<String, Object> paramMap1 = new HashMap<String, Object>();//移动参数
+						Map<String, Object> paramMap2 = new HashMap<String, Object>();//甩单参数
+						paramMap1 = paramsList.get(0);
+						paramMap2 = paramsList.get(1);
+//						String reqPlatForm=dataBusMap.get("reqPlatForm").toString();
+//						Map<String, Object> paramMap2 = (Map<String, Object>) dataBusMap.get("params");
+						StringBuffer xml = new StringBuffer();
+						xml.append("<proot>");
+						xml.append("<reqPlatForm>"+proot.get("reqPlatForm").toString()+"</reqPlatForm>");
+						xml.append("<uId>"+proot.get("uId").toString()+"</uId>");
+						xml.append("<busiType>"+proot.get("busiType").toString()+"</busiType>");
+						xml.append("<sumAmount>"+proot.get("sumAmount").toString()+"</sumAmount>");
+						xml.append("<params>");
+						xml.append("<olId>"+paramMap1.get("olId").toString()+"</olId>");
+						xml.append("<provinceCode>"+paramMap1.get("provinceCode").toString()+"</provinceCode>");
+						xml.append("<cityCode>"+paramMap1.get("cityCode").toString()+"</cityCode>");
+						xml.append("<channelId>"+paramMap1.get("channelId").toString()+"</channelId>");
+						xml.append("<payAmount>"+paramMap1.get("payAmount").toString()+"</payAmount>");		
+						xml.append("<detail>"+paramMap1.get("detail").toString()+"</detail>");
+						xml.append("<busiUpType>"+paramMap1.get("busiUpType").toString()+"</busiUpType>");
+						xml.append("<olNbr>"+paramMap1.get("olNbr").toString()+"</olNbr>");
+						xml.append("<reqNo>"+paramMap1.get("reqNo").toString()+"</reqNo>");
+						xml.append("<olNumber>"+paramMap1.get("olNumber").toString()+"</olNumber>");
+						xml.append("<customerId>"+paramMap1.get("customerId").toString()+"</customerId>");
+						xml.append("<customerName>"+paramMap1.get("customerName").toString()+"</customerName>");
+						xml.append("<sign>"+paramMap1.get("sign").toString()+"</sign>");
+						xml.append("</params>");
+						xml.append("<params>");
+						xml.append("<olId>"+paramMap2.get("olId").toString()+"</olId>");
+						xml.append("<provinceCode>"+paramMap2.get("provinceCode").toString()+"</provinceCode>");
+						xml.append("<cityCode>"+paramMap2.get("cityCode").toString()+"</cityCode>");
+						xml.append("<channelId>"+paramMap2.get("channelId").toString()+"</channelId>");
+						xml.append("<payAmount>"+paramMap2.get("payAmount").toString()+"</payAmount>");		
+						xml.append("<detail>"+paramMap2.get("detail").toString()+"</detail>");
+						xml.append("<busiUpType>"+paramMap2.get("busiUpType").toString()+"</busiUpType>");
+						xml.append("<olNbr>"+paramMap2.get("olNbr").toString()+"</olNbr>");
+						xml.append("<reqNo>"+paramMap2.get("reqNo").toString()+"</reqNo>");
+						xml.append("<olNumber>"+paramMap2.get("olNumber").toString()+"</olNumber>");
+						xml.append("<customerId>"+paramMap2.get("customerId").toString()+"</customerId>");
+						xml.append("<customerName>"+paramMap2.get("customerName").toString()+"</customerName>");
+						xml.append("<sign>"+paramMap2.get("sign").toString()+"</sign>");
+						xml.append("</params>");
+						xml.append("</proot>");		
+						paramString=xml.toString();
+					}else{
+						String s2 = JsonUtil.toString(dataBusMap);
+						String xml2 = CommonUtils.jsontoXml(s2);
+						paramString = xml2.substring(xml2.indexOf("<proot"),
+								xml2.indexOf("<transactionId"));
+						if(paramString.indexOf("chargeItems")>-1){
+							String s=paramString.substring(0,paramString.indexOf("<chargeItems class=\"array\">")+27)+"<![CDATA["+paramString.substring(paramString.indexOf("<chargeItems class=\"array\">")+27,paramString.indexOf("</chargeItems>"))+"]]>"+paramString.substring(paramString.indexOf("</chargeItems>"),paramString.length());
+							paramString=s;
+						}	
+					}
 //					String reqPlatForm=dataBusMap.get("reqPlatForm").toString();
 //					Map<String, Object> paramMap2 = (Map<String, Object>) dataBusMap.get("params");
 //					StringBuffer xml = new StringBuffer();
@@ -408,14 +469,15 @@ public class InterfaceClient {
 //					xml.append("</proot>");		
 //					paramString=xml.toString();
 //					paramJson=paramString;
-					String s2 = JsonUtil.toString(dataBusMap);
-					String xml2 = CommonUtils.jsontoXml(s2);
-					paramString = xml2.substring(xml2.indexOf("<proot"),
-							xml2.indexOf("<transactionId"));
-					if(paramString.indexOf("chargeItems")>-1){
-						String s=paramString.substring(0,paramString.indexOf("<chargeItems class=\"array\">")+27)+"<![CDATA["+paramString.substring(paramString.indexOf("<chargeItems class=\"array\">")+27,paramString.indexOf("</chargeItems>"))+"]]>"+paramString.substring(paramString.indexOf("</chargeItems>"),paramString.length());
-						paramString=s;
-					}					
+					
+//					String s2 = JsonUtil.toString(dataBusMap);
+//					String xml2 = CommonUtils.jsontoXml(s2);
+//					paramString = xml2.substring(xml2.indexOf("<proot"),
+//							xml2.indexOf("<transactionId"));
+//					if(paramString.indexOf("chargeItems")>-1){
+//						String s=paramString.substring(0,paramString.indexOf("<chargeItems class=\"array\">")+27)+"<![CDATA["+paramString.substring(paramString.indexOf("<chargeItems class=\"array\">")+27,paramString.indexOf("</chargeItems>"))+"]]>"+paramString.substring(paramString.indexOf("</chargeItems>"),paramString.length());
+//						paramString=s;
+//					}					
 					paramJson = paramString;			
 				}else if (TER_PREFIX.equals(prefix)) {
 					serviceCode = serviceCode.substring(4);

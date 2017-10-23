@@ -155,6 +155,10 @@ prod.changeUim = (function() {
 	
 	//订单提交
 	var _submit = function(){
+		if($(".uim_release").length>0 && $(".uim_release").hasClass("dis-none")){
+			$.alert("提示","请填写并校验UIM卡!");
+			return;
+		}
 		var prod = order.prodModify.choosedProdInfo;
 		var param = {
 			prodId : prod.prodInstId,	
