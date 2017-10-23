@@ -1500,7 +1500,11 @@ public class MktResController extends BaseController {
             } else {
                 jsonResponse = super.failed(ErrorCode.STAND_ADDRESS, rMap, param);
             }
-        } catch (Exception e) {
+        } catch (BusinessException be) {
+			return super.failed(be);
+		} catch (InterfaceException ie) {
+			return super.failed(ie, rMap, ErrorCode.STAND_ADDRESS);
+		} catch (Exception e) {
             jsonResponse = super.failed(ErrorCode.STAND_ADDRESS, e, param);
         }
         return jsonResponse;

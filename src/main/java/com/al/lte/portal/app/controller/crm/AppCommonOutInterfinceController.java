@@ -391,12 +391,14 @@ public class AppCommonOutInterfinceController extends BaseController{
 		rMap.put(RESULT_MSG, "");
 		Map<String, Object> staffList = new HashMap<String, Object>();
 		String randomCode = DateFormatUtils.format(new Date(), "yyyyMMddHHmmssSSS")+RandomStringUtils.randomNumeric(4);
-
+				
 				staffList.put(STAFF_ID, sessionStaff.getStaffId());//sessionStaff.getStaffId()
 				staffList.put("stafflCode", sessionStaff.getStaffCode());//sessionStaff.getStaffCode()
 				staffList.put("channelId", sessionStaff.getCurrentChannelId());
 				staffList.put(AREA_ID, sessionStaff.getAreaId());
 				staffList.put("chnNbr", chnNbr);
+				staffList.put("channel_type", sessionStaff.getCurrentChannelType());
+				staffList.put("currentAreaId", sessionStaff.getCurrentAreaId().substring(0, 5)+"00");
 				String encodeRandom = Des33.encode(randomCode,(String) menu_cfg.get(SECRET_KEY));//加密随机数
 				System.out.println(encodeRandom);
 				encodeRandom = encodeRandom.replaceAll("\\+", "plus");

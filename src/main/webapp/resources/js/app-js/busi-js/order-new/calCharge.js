@@ -111,6 +111,7 @@ order.calcharge = (function(){
 					if(OrderInfo.actionFlag==112){
 						order.amalgamation.getPrtInfo(voucherInfo);
 					}else{
+						voucherInfo.chargeItems = "";
 						if(!_submitParam()){
 							return ;
 						 }
@@ -828,6 +829,11 @@ order.calcharge = (function(){
 	 * 融合甩单获取支付平台支付页面
 	 */
 	var _getPayTockenRh = function(){
+		var dis=$("#printVoucherA").attr("disabled");//回执按钮置灰收费不可点击
+		if("disabled"!=dis){
+			$.alert("提示","请先保存回执");
+			return;
+		}
 		order.calcharge.busiUpType="1";//移动和融合设为1,作为支付成功后调取查询方法判断
 		//移动类参数
 		var charge1=_getCharge();//移动金额

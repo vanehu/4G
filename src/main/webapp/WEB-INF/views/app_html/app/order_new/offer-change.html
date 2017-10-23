@@ -52,7 +52,7 @@
 												<i id="uim_call_${prodId}" class="iconfont right-btn pull-right p-r-10 m-r-45"
 													onclick="common.callScanning('order.service.scaningCallBack',${prodId})">&#xe641;</i>
 												<!--扫描UIM卡按钮-->
-												<i id="uim_call_LY_${prodId}" class="iconfont right-btn pull-right p-r-10 m-r-45" style="margin-right: 85px!important;"
+												<i id="uim_call_LY_${prodId}" class="iconfont right-btn pull-right p-r-10 m-r-45 uim_call_LY" style="margin-right: 85px!important;"
 													onclick="product.uim.gotoReadUIM(0,'uim_input_${prodId}');">&#xe653;</i>
 												<!--蓝牙读UIM卡按钮-->
 												<i id="uim_call_OTG_${prodId}" class="iconfont right-btn pull-right p-r-10 m-r-45 uim_call_OTG" style="margin-right: 45px!important;"
@@ -131,6 +131,10 @@ $(function() {
 		});
 	if(home.phoneType == "iphone"){
 		  $(".uim_call_OTG").remove();
+	  }
+	if(home.READ_UIM == "OFF"){
+		$(".uim_call_LY").remove();
+		$(".uim_call_OTG").remove();
 	  }
 });
 function showCheckUim(prodId) {
