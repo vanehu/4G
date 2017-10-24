@@ -971,6 +971,43 @@
 			'OLDMEMBER_899':'OFF'<!-- 虚拟省 -->
 			}
 		</const>
+		<!-- 套餐变更查询是否判断付费类型  0-判断，1-不判断 -->
+        <const type="Map" name="QUERY_FEE_TYPE" description="套餐变更查询是否判断付费类型  0-判断，1-不判断">
+           	{
+            'QUERYFEETYPE_854':'0',<!-- 西藏 -->
+			'QUERYFEETYPE_863':'0',<!-- 青海 -->
+			'QUERYFEETYPE_815':'0',<!-- 内蒙古 -->
+			'QUERYFEETYPE_823':'0',<!-- 黑龙江 -->
+			'QUERYFEETYPE_845':'0',<!-- 广西 -->
+			'QUERYFEETYPE_850':'0',<!-- 重庆 -->
+			'QUERYFEETYPE_861':'0',<!-- 陕西 -->
+			'QUERYFEETYPE_842':'0',<!-- 湖北 -->
+			'QUERYFEETYPE_835':'0',<!-- 福建 -->
+			'QUERYFEETYPE_832':'0',<!-- 江苏 -->
+			'QUERYFEETYPE_846':'0',<!-- 海南 -->
+			'QUERYFEETYPE_864':'0',<!-- 宁夏 -->
+			'QUERYFEETYPE_814':'0',<!-- 山西 -->
+			'QUERYFEETYPE_853':'0',<!-- 云南 -->
+			'QUERYFEETYPE_836':'0',<!-- 江西 -->
+			'QUERYFEETYPE_837':'0',<!-- 山东 -->
+			'QUERYFEETYPE_811':'0',<!-- 北京 -->
+			'QUERYFEETYPE_843':'0',<!-- 湖南 -->
+			'QUERYFEETYPE_851':'0',<!-- 四川 -->
+			'QUERYFEETYPE_844':'0',<!-- 广东 -->
+			'QUERYFEETYPE_831':'0',<!-- 上海 -->
+			'QUERYFEETYPE_812':'0',<!-- 天津 -->
+			'QUERYFEETYPE_813':'0',<!-- 河北 -->
+			'QUERYFEETYPE_841':'0',<!-- 河南 -->
+			'QUERYFEETYPE_821':'0',<!-- 辽宁 -->
+			'QUERYFEETYPE_822':'0',<!-- 吉林 -->
+			'QUERYFEETYPE_834':'0',<!-- 安徽 -->
+			'QUERYFEETYPE_833':'0',<!-- 浙江 -->
+			'QUERYFEETYPE_852':'0',<!-- 贵州 -->
+			'QUERYFEETYPE_862':'0',<!-- 甘肃 -->
+			'QUERYFEETYPE_865':'0',<!-- 新疆 -->
+			'QUERYFEETYPE_899':'0'<!-- 虚拟省 -->
+           	}
+        </const>
 		<!-- 集团CRM-4G套餐变更是否修改付费类型及信控属性开关 ON OFF 默认关闭 -->
 		<const type="Map" name="SHOW_CHANGE_FEE_TYPE"
 			description="集团CRM-4G套餐变更是否修改付费类型及信控属性开关  ON OFF 默认关闭">
