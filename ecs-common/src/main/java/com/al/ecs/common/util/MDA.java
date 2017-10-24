@@ -420,6 +420,10 @@ public class MDA {
      */
     public static final Map<String,String> OLDMEMBER_JOIN = new HashMap<String,String>();
     /**
+     * 套餐变更查询是否判断付费类型
+     */
+    public static final Map<String,String> QUERY_FEE_TYPE = new HashMap<String,String>();
+    /**
      * 套餐变更是否修改付费类型及信控属性分省开关
      */
     public static final Map<String,String> SHOW_CHANGE_FEE_TYPE  = new HashMap<String,String>();
