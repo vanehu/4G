@@ -228,7 +228,7 @@ oneFive.certNumberHandle = (function () {
             "areaId": $("#p_areaId").val(),
             "ifFilterAreaId": "Y",
             "staffId": OrderInfo.staff.staffId,
-            "ifFilterOwnAccNbr": $("#onlyMe").val()     
+            //"ifFilterOwnAccNbr": $("#onlyMe").val()     
         };
         $.callServiceAsJsonGet(contextPath + "/certNumber/queryOneFiveOrderItemAllDetail", param, {
             "before": function () {
