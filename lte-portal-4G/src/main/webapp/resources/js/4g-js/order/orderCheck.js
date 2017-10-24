@@ -1,9 +1,9 @@
 /**
  * 订单相关校验
  */
-CommonUtils.regNamespace("order","check");
+CommonUtils.regNamespace("check","order");
 
-order.check = (function() {
+check.order = (function() {
 	
 	var _func = function(){
 		

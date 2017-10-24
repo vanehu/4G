@@ -1037,7 +1037,7 @@ AttachOffer = (function() {
 			return;
 		}
 		
-		var checkOrderTimesResult = offerCheck.orderTimes(newSpec);
+		var checkOrderTimesResult = check.offer.orderTimes(newSpec);
 		if(!checkOrderTimesResult){
 			return;
 		}

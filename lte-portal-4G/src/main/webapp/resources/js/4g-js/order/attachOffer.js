@@ -1979,12 +1979,12 @@ AttachOffer = (function() {
 			return;
 		}
 		
-		var checkFeeTypeResult = offerCheck.feeType(newSpec);
+		var checkFeeTypeResult = check.offer.feeType(newSpec);
 		if(!checkFeeTypeResult){
 			return;
 		}
 		
-		var checkOrderTimesResult = offerCheck.orderTimes(newSpec);
+		var checkOrderTimesResult = check.offer.orderTimes(newSpec);
 		if(!checkOrderTimesResult){
 			return;
 		}
