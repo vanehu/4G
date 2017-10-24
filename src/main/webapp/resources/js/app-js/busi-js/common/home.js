@@ -4,6 +4,7 @@
  */
 CommonUtils.regNamespace("home");
 home = (function($) { 
+	var _sp_flag = "";
 	var _homeEnter = "";
 	var _appVersion="";
 	var _phoneType="";
@@ -323,6 +324,7 @@ home = (function($) {
 		appVersion              :   _appVersion,
 		goDownload              :   _goDownload,
 		phoneType				:   _phoneType,
-		READ_UIM				:	_READ_UIM
+		READ_UIM				:	_READ_UIM,
+		sp_flag					:	_sp_flag
 	};
 })(jQuery);

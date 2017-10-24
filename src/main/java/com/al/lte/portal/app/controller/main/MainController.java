@@ -370,6 +370,9 @@ public class MainController extends BaseController {
 				model.addAttribute("prov_menulist", cfg_menuList);
         	}
     	}
+    	Map<String, Object> sp_cfg = MDA.PROV_AUTH_SWITH.get((sessionStaff.getAreaId() + "").substring(0, 3));
+		String sp_flag = String.valueOf(sp_cfg.get("QRCODE_LOGIN_SWITCH"));//双屏互动开关
+		model.addAttribute("sp_flag", sp_flag);
     	model.addAttribute("staff", sessionStaff);
     	model.addAttribute("urlstr", urlstr);
     	model.addAttribute("READ_UIM", MDA.READ_UIM);

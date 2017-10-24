@@ -35,7 +35,13 @@ $(document).ready(function() {
 		$("#host").val(host);
 		$("#port").val(port);
 		//alert(host+"----"+port);
-		common.callScanning('common.scaningCallBack','-999');//扫描UIM卡、终端串号
+		//common.callScanning('common.scaningCallBack','-999');//扫描UIM卡、终端串号
+		if(home.sp_flag !="ON" ){
+			$.alert("提示","请先打开双屏互动开关.");
+		}else{
+			$("#channelId").val(OrderInfo.staff.staffId+""+OrderInfo.staff.channelId);
+			$("#goRoom").click();
+		}
 	}
 });
 </script>
