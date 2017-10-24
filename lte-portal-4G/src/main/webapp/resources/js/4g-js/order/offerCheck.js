@@ -54,7 +54,6 @@ offerCheck = (function() {
 	};
 	
 	var _compareOrderTimesByRelativeTime = function(newSpec, orderedTimes, canOrderTimes){
-		var resultFlag = true;
 		var timeUnit = newSpec.timeUnit;
 		var limitTime = newSpec.limitTime;
 		var effDate = new Date(newSpec.effDate);
@@ -71,26 +70,23 @@ offerCheck = (function() {
 			default: ;
 		}
 		
-		resultFlag = _compareOrderTimes(curDate, effDate, expDate, orderedTimes, canOrderTimes);
+		var resultFlag = _compareOrderTimes(curDate, effDate, expDate, orderedTimes, canOrderTimes);
 		
 		return resultFlag;
 	};
 	
 	var _compareOrderTimesByAbsoluteTime = function(newSpec, orderedTimes, canOrderTimes){
-		var resultFlag = true;
 		var effDate = new Date(newSpec.effDate);
 		var expDate = new Date(newSpec.expDate);
 		var curDate = new Date();
 		
-		resultFlag = _compareOrderTimes(curDate, effDate, expDate, orderedTimes, canOrderTimes);
+		var resultFlag = _compareOrderTimes(curDate, effDate, expDate, orderedTimes, canOrderTimes);
 		
 		return resultFlag;
 	};
 	
-	var _compareOrderTimesByDefault = function(orderedTimes){
-		var resultFlag = true;
-		
-		resultFlag = orderedTimes >= 1 ? false : true;
+	var _compareOrderTimesByDefault = function(orderedTimes){		
+		var resultFlag = orderedTimes >= 1 ? false : true;
 		
 		if(!resultFlag){
 			var alertErrorMsg = "您选择的销售品仅可订购一次，您已订购" + orderedTimes + "次。";
@@ -108,8 +104,8 @@ offerCheck = (function() {
 	 */
 	var _getOrderedTimes = function(newSpec){
 		var orderedTimes = 0;
-		var queryData = query.offer.queryOfferOrderedTimes([{"offerSpecId":newSpec.offerSpecId}]);
 		
+		var queryData = query.offer.queryOfferOrderedTimes([{'offerSpecId':newSpec.offerSpecId}]);
 		if(ec.util.isObj(queryData) && ec.util.isArray(queryData.prodInfos)){
 			$.each(queryData.prodInfos, function(indexProd, prodInfo){
 				if(prodInfo.accNbr == OrderInfo.cust.accNbr){
@@ -126,7 +122,7 @@ offerCheck = (function() {
 		} else if(!ec.util.isObj(queryData)){
 			orderedTimes = -1;
 		}
-		
+
 		return orderedTimes;
 	};
 	
@@ -151,3 +147,4 @@ offerCheck = (function() {
 		orderTimes	:_orderTimes
 	};
 })();
+$(function() {});
