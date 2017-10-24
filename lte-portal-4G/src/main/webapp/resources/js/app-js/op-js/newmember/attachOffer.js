@@ -1036,6 +1036,12 @@ AttachOffer = (function() {
 		if(newSpec==undefined){ //没有在已开通附属销售列表中
 			return;
 		}
+		
+		var checkOrderTimesResult = offerCheck.orderTimes(newSpec);
+		if(!checkOrderTimesResult){
+			return;
+		}
+		
 		var content = CacheData.getOfferProdStr(prodId,newSpec,0);
 		$.confirm("信息确认",content,{ 
 			yes:function(){

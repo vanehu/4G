@@ -1580,6 +1580,12 @@ AttachOffer = (function() {
 		if(newSpec==undefined){ //没有在已开通附属销售列表中
 			return;
 		}
+		
+		var checkOrderTimesResult = offerCheck.orderTimes(newSpec);
+		if(!checkOrderTimesResult){
+			return;
+		}
+		
 		if(ec.util.isObj(newSpec) && ec.util.isObj(newSpec.agreementInfos) && newSpec.agreementInfos.length>0 && newSpec.agreementInfos[0].activtyType!=null && newSpec.agreementInfos[0].activtyType =="3"){//征信合约
 			if(OrderInfo.actionFlag == "6"){
 				$.alert("提示","主副卡成员变更场景下不能订购征信合约。");
