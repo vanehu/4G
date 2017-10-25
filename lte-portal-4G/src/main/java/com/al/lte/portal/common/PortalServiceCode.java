@@ -1249,6 +1249,9 @@ public final class PortalServiceCode {
      * 跨省一证五号订单报表统计接口
      */
     public static final String CERT_NUMBER_REPORT = "biz-service/intf.detailService/queryCollectionOrderItemCount";
+    
+    /**销售品订购次数查询接口*/
+    public static final String QRY_OFFER_ORDERED_TIMES = "biz-service/intf.prodOfferInstSerivce/queryProdOfferOrderTimes";
 
 }
 

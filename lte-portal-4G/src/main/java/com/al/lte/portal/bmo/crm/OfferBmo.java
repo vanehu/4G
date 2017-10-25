@@ -1,8 +1,11 @@
 package com.al.lte.portal.bmo.crm;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.Map;
 
+import com.al.ecs.exception.BusinessException;
+import com.al.ecs.exception.InterfaceException;
 import com.al.lte.portal.model.SessionStaff;
 
 /**
@@ -209,5 +212,10 @@ public interface OfferBmo {
 	 * @throws ParseException 
 	 */
 	public Map<String, Object> removeAttachOfferExpired(Map<String, Object> paramMap, Map<String, Object> offerMap) throws ParseException;
-
+	
+	/**
+	 * 销售品已订购次数查询
+	 */
+	public Map<String, Object> queryOfferOrderedTimes(Map<String, Object> params, SessionStaff sessionStaff) throws InterfaceException, IOException, BusinessException, Exception;
+	
 }
