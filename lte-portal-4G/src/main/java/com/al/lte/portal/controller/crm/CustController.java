@@ -800,7 +800,7 @@ public class CustController extends BaseController {
 			if (resultMap != null) {
 				list = (List<Map<String, Object>>) resultMap.get("custInfos");
 				if (list != null && list.size() > 0) {
-					jsonResponse = super.successed("系统已存在此客户", ResultConstant.SUCCESS.getCode());
+					jsonResponse = super.successed(resultMap, ResultConstant.SUCCESS.getCode());
 				} else {
 					jsonResponse = super.failed(resultMap, ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
 				}
