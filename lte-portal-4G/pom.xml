@@ -436,9 +436,11 @@
 	</dependencies>
 	<properties>
         <pro.outerDirectory>src/main/webapp</pro.outerDirectory> 
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
 	<build>
-		<finalName>ltePortal</finalName>
+		<finalName>provPortal</finalName>
 		<!-- 单元测试插件 -->
 		<plugins>
 			<plugin>

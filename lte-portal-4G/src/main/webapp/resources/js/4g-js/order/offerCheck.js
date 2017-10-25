@@ -3,9 +3,9 @@
  * @author zhangyu15
  * @since 2017-10-19
  */
-CommonUtils.regNamespace("offerCheck");
+CommonUtils.regNamespace("check", "offer");
 
-offerCheck = (function() {
+check.offer = (function() {
 	
 	var _feeType = function(newSpec){
 		var resultFlag = true;
