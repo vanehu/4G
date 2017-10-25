@@ -1978,15 +1978,17 @@ AttachOffer = (function() {
 		if(newSpec==undefined){ //没有在已开通附属销售列表中
 			return;
 		}
-		var feeType = $("select[name='pay_type_-1']").val();
-		if(feeType==undefined) feeType = order.prodModify.choosedProdInfo.feeType;
-		if(feeType == CONST.PAY_TYPE.BEFORE_PAY && (newSpec.feeType == CONST.PAY_TYPE.AFTER_PAY || newSpec.feeType==CONST.PAY_TYPE.QUASIREALTIME_AFTER_PAY || newSpec.feeType == CONST.PAY_TYPE.QUASIREALTIME_PAY)){
-			$.alert("提示信息","用户付费类型为预付费，不能订购该销售品！");
-			return;
-		}else if(feeType == CONST.PAY_TYPE.AFTER_PAY && (newSpec.feeType == CONST.PAY_TYPE.BEFORE_PAY || newSpec.feeType==CONST.PAY_TYPE.QUASIREALTIME_BEFORE_PAY || newSpec.feeType == CONST.PAY_TYPE.QUASIREALTIME_PAY)){
-			$.alert("提示信息","用户付费类型为后付费，不能订购该销售品！");
+		
+		var checkFeeTypeResult = offerCheck.feeType(newSpec);
+		if(!checkFeeTypeResult){
 			return;
 		}
+		
+		var checkOrderTimesResult = offerCheck.orderTimes(newSpec);
+		if(!checkOrderTimesResult){
+			return;
+		}
+		
 		var offer = CacheData.getOfferBySpecId(prodId,offerSpecId); //从已订购数据中找
 		if(offer != undefined && offer.ifDueOrderAgain != "Y"){//如果是合约，则跳过，执行下面代码
 			var tipsContent = "您已订购 '"+newSpec.offerSpecName+"' 销售品 "+offer.counts+" 次，请确认是否继续订购";
