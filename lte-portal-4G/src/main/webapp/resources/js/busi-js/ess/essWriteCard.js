@@ -62,7 +62,7 @@ ess.writeCard = (function() {
 				var startDate_temp = new Date(startDate);
 				var endDate_temp = new Date(endDate);
 				if((endDate_temp.getTime() - startDate_temp.getTime())/1000/60/60/24 > 31){
-					$.alert("提示","请将查询时间段缩小至一个月以内 !");
+					$.alert("提示","请将查询时间段缩小至一个月以内！");
 					return;
 				}
 			} catch (e) {
