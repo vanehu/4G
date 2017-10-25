@@ -3470,6 +3470,7 @@ order.cust = (function(){
 			return;
 		}
 		_setValueForAgentOrderSpan(man.resultContent);
+		OrderInfo.handleCustCertReadInfos = $.extend(true, {}, man);
 		if (CONST.realNamePhotoFlag == "ON") {
 		    if (undefined != man.resultContent.identityPic && null != man.resultContent.identityPic && "" != man.resultContent.identityPic) {
 	      		$("#img_Cert").attr("src", "data:image/jpeg;base64," + man.resultContent.identityPic);
