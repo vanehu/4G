@@ -3795,7 +3795,7 @@ SoOrder = (function() {
 						return false;
 					}
 				}else{
-					if(OrderInfo.cust.identityCd == "1" || OrderInfo.cust.identityCd == "12" || OrderInfo.cust.identityCd == "41" || OrderInfo.cust.identityCd == "51" || OrderInfo.cust.identityCd == "52"){
+					if(OrderInfo.cust.identityCd == "1" || OrderInfo.cust.identityCd == "12" || OrderInfo.cust.identityCd == "41" || OrderInfo.cust.identityCd == "51" || OrderInfo.cust.identityCd == "52" || theName == "居民身份证" || theName == "户口簿" || theName == "临时居民身份证" || theName == "现役军人居民身份证" || theName == "人民武装警察居民身份证"){
 						if(nowCard < ageS){
 							$.alert("提示","不满'"+ageS+"'岁必须填写经办人！");
 							return false;
