@@ -105,11 +105,15 @@ public class SubmitUimCardInfo extends Service {
 			Map personalDataMap = (Map)MapUtil.path(retMap, "SvcCont");
 			String resultCode = (String)MapUtil.path(retMap,"TcpCont/Response/RspCode");
 			String transactionID = (String)MapUtil.path(retMap,"TcpCont/TransactionID");
-			String message = MapUtils.getString(resMap, "resultMsg");
+			String message = (String)MapUtil.path(retMap,"TcpCont/Response/RspDesc");
+			String messageStr = MapUtils.getString(resMap, "resultMsg");
 			String code = ResultCode.R_FAIL;
 			if ("0000".equals(resultCode)){
 				code = ResultCode.R_SUCCESS;
 				returnMap.putAll(personalDataMap);
+			}
+			if(message==null){
+				message = messageStr;
 			}
 			returnMap.put("code", code);
 			returnMap.put("message", message);
