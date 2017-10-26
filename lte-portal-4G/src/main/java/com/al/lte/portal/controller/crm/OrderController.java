@@ -5,14 +5,7 @@ import com.al.common.utils.StringUtil;
 import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ecs.common.entity.JsonResponse;
 import com.al.ecs.common.entity.PageModel;
-import com.al.ecs.common.util.BrowserUtil;
-import com.al.ecs.common.util.EncodeUtils;
-import com.al.ecs.common.util.FtpUtils;
-import com.al.ecs.common.util.JsonUtil;
-import com.al.ecs.common.util.MDA;
-import com.al.ecs.common.util.PageUtil;
-import com.al.ecs.common.util.PropertiesUtils;
-import com.al.ecs.common.util.UIDGenerator;
+import com.al.ecs.common.util.*;
 import com.al.ecs.common.web.ServletUtils;
 import com.al.ecs.common.web.SpringContextUtil;
 import com.al.ecs.exception.AuthorityException;
@@ -32,16 +25,8 @@ import com.al.lte.portal.bmo.crm.OrderBmo;
 import com.al.lte.portal.bmo.crm.ProdBmo;
 import com.al.lte.portal.bmo.print.PrintBmo;
 import com.al.lte.portal.bmo.staff.StaffBmo;
-import com.al.lte.portal.common.AESUtils;
-import com.al.lte.portal.common.CommonMethods;
-import com.al.lte.portal.common.CommonUtils;
-import com.al.lte.portal.common.Const;
-import com.al.lte.portal.common.Des33;
-import com.al.lte.portal.common.EhcacheUtil;
-import com.al.lte.portal.common.InterfaceClient;
-import com.al.lte.portal.common.MySimulateData;
-import com.al.lte.portal.common.PortalServiceCode;
-import com.al.lte.portal.common.SysConstant;
+import com.al.lte.portal.common.*;
+import com.al.lte.portal.common.Base64;
 import com.al.lte.portal.core.DataRepository;
 import com.al.lte.portal.model.SessionStaff;
 
@@ -49,6 +34,7 @@ import net.sf.json.JSON;
 import net.sf.json.JSONObject;
 import net.sf.json.xml.XMLSerializer;
 
+import org.apache.commons.codec.binary.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections.map.HashedMap;
@@ -3221,10 +3207,25 @@ public class OrderController extends BaseController {
     @ResponseBody
     public JsonResponse orderSubmit(@RequestBody Map<String, Object> param, HttpServletResponse response, HttpServletRequest request) throws Exception {
         SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
-    	JsonResponse jsonResponse = null;
+        //validate is jump
+        JsonResponse jsonResponse = null;
+        if("N".equals(request.getSession().getAttribute("JUMPRESULT"))){
+            return  super.failed("非法鉴权", ResultConstant.FAILD.getCode());
+        }
         Object realNameFlag =  MDA.REAL_NAME_PHOTO_FLAG.get("REAL_NAME_PHOTO_"+sessionStaff.getCurrentAreaId().substring(0, 3));
     	boolean isRealNameFlagOn  = realNameFlag == null ? false : "ON".equals(realNameFlag.toString()) ? true : false;//实名制拍照开关是否打开
-    	
+    	//check sign
+       /* String tokenAttr = (String)request.getSession().getAttribute(SysConstant.ORDER_SUBMIT_TOKEN);
+        String sign =  MapUtils.getString(param,"sign","");
+        param.put("sign","");
+        Map<String, Object> orderList1 = (Map<String, Object>) param.get("orderList");
+        Map<String, Object> orderListInfo2 = (Map<String, Object>) orderList1.get("orderListInfo");
+        String checkedSign = MD5Utils.encode(JsonUtil.toString(orderListInfo2));
+        if(!sign.equals(checkedSign.toLowerCase())){
+            return  super.failed("非法鉴权", ResultConstant.FAILD.getCode());
+        }*/
+        param.remove("sign");
+
     	if (commonBmo.checkToken(request, SysConstant.ORDER_SUBMIT_TOKEN)) {
             try {
                 if(orderBmo.verifyCustCertificate(param, request ,sessionStaff)){
