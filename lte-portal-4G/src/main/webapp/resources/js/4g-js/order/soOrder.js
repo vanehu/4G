@@ -3790,13 +3790,13 @@ SoOrder = (function() {
 			if(orderAttrName == "" || orderAttrName == null || orderAttrName == undefined){
 				//判断外国人永久居留证
 				if($("#p_cust_identityCd").val() == "50" || theName.trim() == "外国人永久居留身份证"){
-					if(nowCard < ageS){
+					if(nowCard - ageS < 0){
 						$.alert("提示","不满'"+ageS+"'岁必须填写经办人！");
 						return false;
 					}
 				}else{
-					if(OrderInfo.cust.identityCd == "1" || OrderInfo.cust.identityCd == "12" || OrderInfo.cust.identityCd == "41" || OrderInfo.cust.identityCd == "51" || OrderInfo.cust.identityCd == "52"){
-						if(nowCard < ageS){
+					if(OrderInfo.cust.identityCd == "1" || OrderInfo.cust.identityCd == "12" || OrderInfo.cust.identityCd == "41" || OrderInfo.cust.identityCd == "51" || OrderInfo.cust.identityCd == "52" || theName == "居民身份证" || theName == "户口簿" || theName == "临时居民身份证" || theName == "现役军人居民身份证" || theName == "人民武装警察居民身份证"){
+						if(nowCard - ageS < 0){
 							$.alert("提示","不满'"+ageS+"'岁必须填写经办人！");
 							return false;
 						}
@@ -3831,7 +3831,7 @@ SoOrder = (function() {
 						}
 					}
 					else if(selectValue != "1" && selectValue != "51" && selectValue != "52"){
-						var isNeedHander = _getAgeByHandle(orderAttrIdCard) < ageE;//new Date().getFullYear() - orderAttrIdCard.toString().substring(6,10) < ageE;
+						var isNeedHander = _getAgeByHandle(orderAttrIdCard) - ageE < 0;//new Date().getFullYear() - orderAttrIdCard.toString().substring(6,10) < ageE;
 						if( isNeedHander == true && selectValue != "50" && selectValue != "4" && selectValue != "3"){
 							$.alert("提示","经办人必须'"+ageE+"'岁以上！");
 							return false;
@@ -3839,7 +3839,7 @@ SoOrder = (function() {
 					}else{
 						var newMan = OrderInfo.handleCustCertReadInfos;
 						var cardNumber = newMan.resultContent.certNumber;
-						var isNeedHander = _getAgeByHandle(cardNumber) < ageE;
+						var isNeedHander = _getAgeByHandle(cardNumber) - ageE < 0;
 						if(isNeedHander == true && selectValue != "50" && selectValue != "4" && selectValue != "3"){
 							$.alert("提示","经办人必须'"+ageE+"'岁以上！");
 							return false;
@@ -3852,13 +3852,13 @@ SoOrder = (function() {
 						var nowYear = (new Date().getFullYear()).toString();
 						var twoNumber = inCard.substring(7,9);
 						if(nowYear.substring(2,4) < twoNumber){
-							var isNeedHander = _getAgeByHandle(inCard) < ageE;//new Date().getYear() - orderAttrIdCard.substring(7,9) < ageE;
+							var isNeedHander = _getAgeByHandle(inCard) - ageE < 0;//new Date().getYear() - orderAttrIdCard.substring(7,9) < ageE;
 							if(isNeedHander == true){
 								$.alert("提示","经办人必须'"+ageE+"'岁以上！");
 								return false;
 							}
 						}else{
-							var isNeedHander = _getAgeByHandle(inCard) < ageE;
+							var isNeedHander = _getAgeByHandle(inCard) - ageE < 0;
 							if(isNeedHander == true){
 								$.alert("提示","经办人必须'"+ageE+"'岁以上！");
 								return false;
