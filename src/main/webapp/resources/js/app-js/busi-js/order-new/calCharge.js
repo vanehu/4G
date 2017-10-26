@@ -915,7 +915,7 @@ order.calcharge = (function(){
 						if(OrderInfo.actionFlag==112){
 							checkParams.olId = $("#TransactionID").val()+"";
 						}
-						OrderInfo.orderResult.olId=sessionOlId;
+						OrderInfo.orderResult.olId=sessionOlId;					
 						$.callServiceAsJson(contextPath + "/app/pay/repair/queryOrdStatus", checkParams, {
 							"before": function() {
 								$.ecOverlay("正在处理中，请稍等...");
@@ -1000,6 +1000,9 @@ order.calcharge = (function(){
 //		if(order.calcharge.haveCharge==true){//已下过计费接口
 //			return;
 //		}
+		if(OrderInfo.actionFlag==112){//融合直接取甩单id
+			soNbr = $("#TransactionID").val()+"";
+		}
 		if ("1" == status) { // 原生返回成功，调用支付平台查询订单状态接口，再次确定是否成功，如果成功则调用收费接口
 			var params = {
 				"olId" : soNbr
