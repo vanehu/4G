@@ -912,6 +912,9 @@ order.calcharge = (function(){
 								"olId" : sessionOlId,
 								"areaId":OrderInfo.staff.areaId+""					
 						};
+						if(OrderInfo.actionFlag==112){
+							checkParams.olId = $("#TransactionID").val()+"";
+						}
 						OrderInfo.orderResult.olId=sessionOlId;
 						$.callServiceAsJson(contextPath + "/app/pay/repair/queryOrdStatus", checkParams, {
 							"before": function() {
@@ -923,7 +926,7 @@ order.calcharge = (function(){
 									if (response.code == 0 && response.data!=null && response.data!="") {//已后台收费成功，直接提示，不走收费流程
 										var statusCd=response.data.statusCd;
 										if("201700"==statusCd || "201800"==statusCd || "201900"==statusCd ||"301200"==statusCd ||"201300"==statusCd){
-											if(OrderInfo.actionFlag!=112){
+											if(OrderInfo.actionFlag==112){
 												order.broadband.orderSubmit();
 											}else{
 												_showFinDialog("1","收费成功！");
