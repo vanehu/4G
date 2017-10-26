@@ -59,6 +59,7 @@ public class CustController extends BaseController {
 	@RequestMapping(value = "/queryCust", method = { RequestMethod.POST })
 	public String queryCust(@RequestBody Map<String, Object> paramMap, Model model, @LogOperatorAnn String flowNum,
 			HttpServletResponse response, HttpSession httpSession, HttpServletRequest request) {
+		httpSession.removeAttribute("JUMPRESULT");
 		request.getSession().removeAttribute("checkNumber");
 		request.getSession().removeAttribute("accNbrInfos");
 		String checkNumber = (String) (paramMap.get("acctNbr") == ""
@@ -960,6 +961,7 @@ public class CustController extends BaseController {
 					if (datamap != null) {
 						String code = (String) datamap.get("code");
 						if (ResultCode.R_SUCC.equals(code)) {
+							httpSession.setAttribute("JUMPRESULT","Y");
 							map.put("isValidate", "true");
 							// 在session中保存当前客户信息
 							Map sessionCustInfo = MapUtils.getMap(listCustInfos, custId);
@@ -967,6 +969,8 @@ public class CustController extends BaseController {
 								httpSession.setAttribute(SysConstant.SESSION_CURRENT_CUST_INFO, sessionCustInfo);
 								listCustInfos.clear();
 							}
+						}else{
+							httpSession.setAttribute("JUMPRESULT","N");
 						}
 					}
 				} catch (BusinessException be) {
@@ -982,8 +986,11 @@ public class CustController extends BaseController {
 					String resultCode = MapUtils.getString(map, "resultCode");
 					String isValidateStr = MapUtils.getString(map, "isValidate");
 					if ("true".equals(isValidateStr)) {
+						httpSession.setAttribute("JUMPRESULT","Y");
 						httpSession.setAttribute("ValidateAccNbr", paramMap.get("accessNumber"));
 						httpSession.setAttribute("ValidateProdPwd", paramMap.get("prodPwd"));
+					}else{
+						httpSession.setAttribute("JUMPRESULT","N");
 					}
 				} catch (BusinessException be) {
 					return super.failedStr(model, be);
@@ -1011,8 +1018,10 @@ public class CustController extends BaseController {
 			String menuName = MapUtils.getString(param, "menuName", "");// 当前所在菜单
 			if (SysConstant.FD.equals(menuName) || SysConstant.GHFD.equals(menuName)
 					|| SysConstant.GKHZLFD.equals(menuName)) {
+				httpSession.setAttribute("JUMPRESULT","Y");
 				map.put("isValidate", "true");
 			} else if (canJump == null || StringUtils.isBlank(custId) || isSms || "0".equals(canJump)) {
+				httpSession.setAttribute("JUMPRESULT","Y");
 				map.put("isValidate", "true");
 			} else {
 				map.put("isValidate", "false");
