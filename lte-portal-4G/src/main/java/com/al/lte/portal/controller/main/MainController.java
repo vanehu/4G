@@ -157,78 +157,33 @@ public class MainController extends BaseController {
 			model.addAttribute("hintCode", sessionStaff.getHintCode());
 		}
 		
-		//2017-08-31设置开关cookies值
-		//X周岁以下办理任何电信业务，必须填写经办人,增加全国级开关，非分省
-				String nowAreaId = sessionStaff.getAreaId();
-				Cookie cookieLessS = new Cookie("switchC",com.al.ecs.common.util.MDA.LESS_THAN_SEVENTEEN);
-				cookieLessS.setMaxAge(60*60*24);
-				cookieLessS.setPath("/");
-				resp.addCookie(cookieLessS);
-				//经办人必须是Y周岁以上的成年人,增加分省开关
-				for (Map.Entry<String, String> entry : com.al.ecs.common.util.MDA.LESS_THAN_EIGHT.entrySet()) {  
-					String less= "LESS_THAN_EIGHT_"+nowAreaId.substring(0, 3);
-					if((entry.getKey()).toString().equals(less)){
-						String value1 = entry.getValue();
-						Cookie cookieLessE = new Cookie("switchE",value1);
-						cookieLessE.setMaxAge(60*60*24);
-						cookieLessE.setPath("/");
-						resp.addCookie(cookieLessE);
-						break;
-					}
-				 } 
-				//现有的军人身份证件、武装警察身份证件不能作为实名登记有效证件，不允许新增客户,增加全国级开关，非分省
-				Cookie cookieLessSP = new Cookie("switchSP",com.al.ecs.common.util.MDA.CHECK_SOLDIER_POLICE);
-				cookieLessS.setMaxAge(60*60*24);
-				cookieLessS.setPath("/");
-				resp.addCookie(cookieLessSP);
-				
-				//户口簿仅限于16周岁以下的人员使用,增加全国级开关，非分省。
-				Cookie cookieLessSIX = new Cookie("switchSIX",com.al.ecs.common.util.MDA.LESS_THAN_SIX);
-				cookieLessSIX.setMaxAge(60*60*24);
-				cookieLessSIX.setPath("/");
-				resp.addCookie(cookieLessSIX);
-				
-				//外国人居住证，要求读卡
-				Cookie cookieLessFOR = new Cookie("switchFOR",com.al.ecs.common.util.MDA.FOREGIN_LIVE);
-				cookieLessSIX.setMaxAge(60*60*24);
-				cookieLessSIX.setPath("/");
-				resp.addCookie(cookieLessFOR);
-				
-				Map<String,Object> newMap = new HashMap();
-				newMap.put("areaId", sessionStaff.getAreaId());
-				newMap.put("queryType", "3");
-				newMap.put("typeClass", "18");
-				DataBus db;
-				try {
-					db = InterfaceClient.callService(newMap, PortalServiceCode.REAL_NAME_SERVICE, "", sessionStaff);
-					Map<String, Object> mapOne = db.getReturnlmap();
-					if(((List)((Map)mapOne.get("result")).get("soConstConfigs")).size()!= 0){
-						String valueE = (String)((Map)((List)((Map)mapOne.get("result")).get("soConstConfigs")).get(0)).get("value");
-						Cookie ageE = new Cookie("ageE",valueE);
-						cookieLessSIX.setMaxAge(60*60*24);
-						cookieLessSIX.setPath("/");
-						resp.addCookie(ageE);
-						request.getSession().setAttribute("valueAgeE", valueE);
-						//17岁
-						newMap.put("typeClass", "17");
-						db = InterfaceClient.callService(newMap, PortalServiceCode.REAL_NAME_SERVICE, "", sessionStaff);
-						Map<String, Object> mapTwo = db.getReturnlmap();
-						String valueS = (String)((Map)((List)((Map)mapTwo.get("result")).get("soConstConfigs")).get(0)).get("value");
-						Cookie ageS = new Cookie("ageS",valueS);
-						cookieLessSIX.setMaxAge(60*60*24);
-						cookieLessSIX.setPath("/");
-						resp.addCookie(ageS);
-						request.getSession().setAttribute("valueAgeS", valueS);
-					}
-				} catch (InterfaceException e2) {
-					e2.printStackTrace();
-				} catch (IOException e2) {
-					e2.printStackTrace();
-				} catch (Exception e2) {
-					e2.printStackTrace();
-				}
-				
+		//获取后台返回的年龄标准		
+		Map<String,Object> newMap = new HashMap();
+		newMap.put("areaId", sessionStaff.getAreaId());
+		newMap.put("queryType", "3");
+		newMap.put("typeClass", "18");
+		DataBus db;
+		String valueE = "";
+		String valueS = "";
+		try {
+			db = InterfaceClient.callService(newMap, PortalServiceCode.REAL_NAME_SERVICE, "", sessionStaff);
+			Map<String, Object> mapOne = db.getReturnlmap();
+			if(((List)((Map)mapOne.get("result")).get("soConstConfigs")).size()!= 0){
+				valueE = MapUtils.getString((Map)((List)((Map)mapOne.get("result")).get("soConstConfigs")).get(0), "value", "");
+				newMap.put("typeClass", "17");
+				db = InterfaceClient.callService(newMap, PortalServiceCode.REAL_NAME_SERVICE, "", sessionStaff);
+				Map<String, Object> mapTwo = db.getReturnlmap();
+				valueS = MapUtils.getString((Map)((List)((Map)mapTwo.get("result")).get("soConstConfigs")).get(0), "value", "");
 
+			}
+		} catch (InterfaceException e2) {
+			e2.printStackTrace();
+		} catch (IOException e2) {
+			e2.printStackTrace();
+		} catch (Exception e2) {
+			e2.printStackTrace();
+		}
+				
 		// 查询是否有问卷调查这个菜单
 		try {
 			String question_menu = staffBmo.checkOperatBySpecCd(SysConstant.QUESTION_MUNE, sessionStaff);
@@ -303,6 +258,8 @@ public class MainController extends BaseController {
 
 		model.addAttribute("specialtestauth", specialtestauth);
 		model.addAttribute("dzjbakqx", dzjbakqx);
+		model.addAttribute("ageCust", valueS);
+		model.addAttribute("ageHandle", valueE);
 		return "/main/main";
 	}
 

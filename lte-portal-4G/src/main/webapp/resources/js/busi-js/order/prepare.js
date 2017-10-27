@@ -22,11 +22,17 @@ order.prepare = (function(){
 						$.alert("提示", "在选号码之前请先进行客户定位或者新建客户！");
 						return;
 					}
-					var cookieSP = CommonUtils.getCookieFromJava("switchSP");
+					var cookieSP = query.common.queryPropertiesValue("CHECK_SOLDIER_POLICE");
 					var identityName = $("#identityName").text();
 					var theName = identityName.split("/")[0];
-					var nowCard = CommonUtils.getCookieFromJava("cookCard");
-					var newDate = new Date();
+					var nowCard = "";
+					//取到是新增过来的客户年龄还是定位过来的客户年龄
+					var custAgeLocation = $("#custAgeLocation").val();
+					if(ec.util.isObj(custAgeLocation) == true){
+						nowCard = custAgeLocation;
+					}else if(ec.util.isObj(OrderInfo.getCustAgeByCheck.data) == true){
+						nowCard = OrderInfo.getCustAgeByCheck.data.custAge;
+					}
 					if(cookieSP == "ON"){
 						//军人身份证件、武装警察身份证件不能作为实名登记有效证件，不允许新装号码
 						if($("#p_cust_identityCd").val() == "2" || $("#p_cust_identityCd").val() == "14" || theName.trim() == "军人身份证件" || theName.trim() == "武装警察身份证件"){
@@ -34,17 +40,16 @@ order.prepare = (function(){
 							return;
 						}
 					}
-					var cookieSIX = CommonUtils.getCookieFromJava("switchSIX");
+					var cookieSIX = query.common.queryPropertiesValue("LESS_THAN_SIX");
 					//对于判断是否已超16周岁，如果超过16周岁或者户口簿不是合规证件号码，不允许新装
 					if(cookieSIX == "ON"){
 						if($("#p_cust_identityCd").val() == "12"){
 							var p_cust_identityNum = $("#p_cust_identityNum").val();
-							var nowDate = new Date();
-							if(nowDate.getFullYear() - p_cust_identityNum.substring(6,10) > 16){
+							if(SoOrder.getAgeByHandle(p_cust_identityNum) > 16){
 								$.alert("提示", "户口簿上超过16周岁，不允许新装号码！");
 								return;
 							}
-						}if(theName == "户口簿" && newDate.getFullYear() - nowCard > 16){
+						}if(theName == "户口簿" && nowCard > 16){
 							$.alert("提示", "户口簿上超过16周岁，不允许新装号码！");
 							return;
 						}
@@ -111,11 +116,17 @@ order.prepare = (function(){
 						$.alert("提示", "在选号码之前请先进行客户定位或者新建客户！");
 						return;
 					}
-					var cookieSP = CommonUtils.getCookieFromJava("switchSP");
+					var cookieSP = query.common.queryPropertiesValue("CHECK_SOLDIER_POLICE");
 					var identityName = $("#identityName").text();
 					var theName = identityName.split("/")[0];
-					var nowCard = CommonUtils.getCookieFromJava("cookCard");
-					var newDate = new Date();
+					var nowCard = "";
+					//取到是新增过来的客户年龄还是定位过来的客户年龄
+					var custAgeLocation = $("#custAgeLocation").val();
+					if(ec.util.isObj(custAgeLocation) == true){
+						nowCard = custAgeLocation;
+					}else if(ec.util.isObj(OrderInfo.getCustAgeByCheck.data) == true){
+						nowCard = OrderInfo.getCustAgeByCheck.data.custAge;
+					}
 					if(cookieSP == "ON"){
 						//军人身份证件、武装警察身份证件不能作为实名登记有效证件，不允许新装号码
 						if($("#p_cust_identityCd").val() == "2" || $("#p_cust_identityCd").val() == "14" || theName.trim() == "军人身份证件" || theName.trim() == "武装警察身份证件"){
@@ -123,18 +134,16 @@ order.prepare = (function(){
 							return;
 						}
 					}
-					var cookieSIX = CommonUtils.getCookieFromJava("switchSIX");
-					
+					var cookieSIX = query.common.queryPropertiesValue("LESS_THAN_SIX");
 					//对于判断是否已超16周岁，如果超过16周岁或者户口簿不是合规证件号码，不允许新装
 					if(cookieSIX == "ON"){
 						if($("#p_cust_identityCd").val() == "12"){
 							var p_cust_identityNum = $("#p_cust_identityNum").val();
-							var nowDate = new Date();
-							if(nowDate.getFullYear() - p_cust_identityNum.substring(6,10) > 16){
+							if(SoOrder.getAgeByHandle(p_cust_identityNum) > 16){
 								$.alert("提示", "户口簿上超过16周岁，不允许新装号码！");
 								return;
 							}
-						}if(theName == "户口簿" && newDate.getFullYear() - nowCard > 16){
+						}if(theName == "户口簿" && nowCard > 16){
 							$.alert("提示", "户口簿上超过16周岁，不允许新装号码！");
 							return;
 						}
@@ -299,12 +308,18 @@ order.prepare = (function(){
 					order.phoneNumber.initPhonenumber();
 				}else if(forTab == "order_tab_panel_offer"){
 					//对于判断是否已超16周岁，如果超过16周岁或者户口簿不是合规证件号码，不允许新装
-					var cookieSP = CommonUtils.getCookieFromJava("switchSP");
+					var cookieSP = query.common.queryPropertiesValue("CHECK_SOLDIER_POLICE");
 					var identityName = $("#identityName").text();
 					var theName = identityName.split("/")[0];
-					var nowCard = CommonUtils.getCookieFromJava("cookCard");
-					var newDate = new Date();
-					var cookieSIX = CommonUtils.getCookieFromJava("switchSIX");
+					var nowCard = "";
+					//取到是新增过来的客户年龄还是定位过来的客户年龄
+					var custAgeLocation = $("#custAgeLocation").val();
+					if(ec.util.isObj(custAgeLocation) == true){
+						nowCard = custAgeLocation;
+					}else if(ec.util.isObj(OrderInfo.getCustAgeByCheck.data) == true){
+						nowCard = OrderInfo.getCustAgeByCheck.data.custAge;
+					}
+					var cookieSIX = query.common.queryPropertiesValue("LESS_THAN_SIX");
 					if(cookieSP == "ON"){
 						//军人身份证件、武装警察身份证件不能作为实名登记有效证件，不允许新装号码
 						if($("#p_cust_identityCd").val() == "2" || $("#p_cust_identityCd").val() == "14" || theName.trim() == "军人身份证件" || theName.trim() == "武装警察身份证件"){
@@ -315,12 +330,11 @@ order.prepare = (function(){
 					if(cookieSIX == "ON"){
 						if($("#p_cust_identityCd").val() == "12"){
 							var p_cust_identityNum = $("#p_cust_identityNum").val();
-							var nowDate = new Date();
-							if(nowDate.getFullYear() - p_cust_identityNum.substring(6,10) > 16 && p_cust_identityNum.substring(6,10) != ""){
+							if(SoOrder.getAgeByHandle(p_cust_identityNum) > 16 && p_cust_identityNum.substring(6,10) != ""){
 								$.alert("提示", "户口簿上超过16周岁，不允许办理业务！");
 								return;
 							}
-						}else if(theName == "户口簿" && newDate.getFullYear() - nowCard > 16 && p_cust_identityNum.substring(6,10) != ""){
+						}else if(theName == "户口簿" && nowCard > 16 && p_cust_identityNum.substring(6,10) != ""){
 							$.alert("提示", "户口簿上超过16周岁，不允许办理业务！");
 							return;
 						}

@@ -542,6 +542,12 @@ AttachOffer = (function() {
 	
 	//查询附属销售品规格
 	var _searchAttachOfferSpec = function(prodId,offerSpecId,prodSpecId) {
+		var labelIds = [];
+		$.each(AttachOffer.labelList,function(){
+			$.each(this.labels,function(){
+				labelIds.push(this.label);//遍历所有附属销售品规格标签，找出无父标签的id
+			})
+		})
 		var offerSepcName = $.trim($("#search_text_"+prodId).val());
 		var instCode = $.trim($("#search_instCode_"+prodId).val());
 		if(offerSepcName.replace(/\ /g,"")=="" && instCode.replace(/\ /g,"")==""){
@@ -554,7 +560,8 @@ AttachOffer = (function() {
 					offerSpecId : offerSpecId,
 					instCode : instCode,
 					areaId : OrderInfo.getProdAreaId(prodId),
-					prodId : prodId
+					prodId : prodId,
+					labelIds : labelIds
 			};
 			if(OrderInfo.menuName == "ZXHYBL"){//征信页面
 				param.agreementTypeList = [3];
@@ -597,7 +604,8 @@ AttachOffer = (function() {
 					prodId : prodId,
 				    prodSpecId : prodSpecId,
 				    offerSpecIds : [offerSpecId],
-				    ifCommonUse : "" 
+				    ifCommonUse : "",
+					labelIds : labelIds 
 			};
 //				if(OrderInfo.actionFlag == 2){ //套餐变更		
 //					param.offerSpecIds=[OrderInfo.offerSpec.offerSpecId];

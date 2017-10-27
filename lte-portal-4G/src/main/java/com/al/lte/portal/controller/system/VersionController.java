@@ -4,9 +4,8 @@ import java.io.File;
 import java.util.Date;
 
 import com.al.ecs.common.util.DateUtil;
+import com.al.ecs.common.web.HttpUtils;
 import com.al.ecs.spring.controller.BaseController;
-import com.al.lte.portal.common.CommonUtils;
-
 import net.sf.json.JSONObject;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,7 +38,7 @@ public class VersionController extends BaseController {
             json = new JSONObject();
             json.put("resultCode", "0");
             json.put("resultMsg", DateUtil.formatDate(new Date(file.lastModified()), DateUtil.DATE_FORMATE_STRING_B));
-            json.put("IP", CommonUtils.getSerAddrPart());
+            json.put("IP", HttpUtils.getSimplifyHostIpAddress());
         } catch (Exception e) {
             json = new JSONObject();
             json.put("resultCode", "-1");

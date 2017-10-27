@@ -35,7 +35,7 @@ public class CommonMethods {
 	
 	private static AuthenticBmo authenticBmo;
 	
-	private static CommonMethods commonMethodsInstance;
+	private volatile static CommonMethods commonMethodsInstance;
 	
 	public static CommonMethods getInstance(){
 		if(commonMethodsInstance == null){

@@ -22,6 +22,7 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ecs.common.util.JsonUtil;
 import com.al.ecs.common.util.PropertiesUtils;
+import com.al.ecs.common.web.HttpUtils;
 import com.al.ecs.common.web.ServletUtils;
 import com.al.ecs.exception.InterfaceException;
 import com.al.ecs.log.Log;
@@ -307,7 +308,7 @@ public class AuthorityInterceptor extends HandlerInterceptorAdapter {
 			RedisUtil.set((String) session.getAttribute(SysConstant.SESSION_DATASOURCE_KEY),sessionStaff.getStaffId(),session.getId());
 			session.setAttribute(SysConstant.SESSION_KEY_STAFF_CHANNEL,(List<Map<String,Object>>) chanelMap.get("channelList"));
 			session.setAttribute(SysConstant.SESSION_KEY_PORTAL_TYPE, propertiesUtils.getMessage(SysConstant.APPDESC));
-			session.setAttribute(SysConstant.SERVER_IP,CommonUtils.getSerAddrPart());
+			session.setAttribute(SysConstant.SERVER_IP,HttpUtils.getSimplifyHostIpAddress());
 
 			Map<String, Object> dataBusMap = new HashMap<String, Object>();
 			dataBusMap.put("staffId", sessionStaff.getStaffId());

@@ -420,6 +420,10 @@ public class MDA {
      */
     public static final Map<String,String> OLDMEMBER_JOIN = new HashMap<String,String>();
     /**
+     * 套餐变更查询是否判断付费类型
+     */
+    public static final Map<String,String> QUERY_FEE_TYPE = new HashMap<String,String>();
+    /**
      * 套餐变更是否修改付费类型及信控属性分省开关
      */
     public static final Map<String,String> SHOW_CHANGE_FEE_TYPE  = new HashMap<String,String>();
@@ -685,4 +689,9 @@ public class MDA {
 	
 	/**人证比对图片压缩参数*/
     public static final Map<String, List<String>> FACE_VERIFY_COMPRESS_CONFIG = new HashMap<String, List<String>>();
+    
+    /**
+	 * 浏览器指纹记录地址
+	 */
+	public static final String FINGER_PRINT_ADDRESS = new String("");
 }

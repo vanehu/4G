@@ -625,6 +625,7 @@ prod.transferModify = (function(){
 				$("#transfercCustIdCard").attr("placeHolder","请输入合法军官证");
 				$("#transfercCustIdCard").attr("data-validate","validate(required:请准确填写军官证) on(blur)");
 			}else if(identidiesTypeCd==3){
+				$("#transfercCustIdCard").attr("onkeyup", "value=value.replace(/[^A-Za-z0-9-]/ig,'')");
 				$("#transfercCustIdCard").attr("placeHolder","请输入合法护照");
 				$("#transfercCustIdCard").attr("data-validate","validate(required:请准确填写护照) on(blur)");
 			}else{

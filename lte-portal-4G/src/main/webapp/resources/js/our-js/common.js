@@ -194,16 +194,15 @@ CommonUtils = {
 	*获取cookie列表
 	*/
 	getCookies: function(){
-	 	var cookies = [];
-	 	var cookisList = [];
+		 var cookies = [];
 
 	 	if(document.cookie.length > 0){
-	 		cookisList = document.cookie.split(";");
-	 		for(var i = 0, length = cookisList.length; i < length; i++){
-	 			var smallCookie = cookisList[i].split("=");
+	 		var cookieList = document.cookie.split(";");
+	 		for(var i = 0, length = cookieList.length; i < length; i++){
+	 			var smallCookie = cookieList[i].split("=");
 				cookies.push({
 					"key"	:smallCookie[0],
-					"value"	:smallCookie[1]
+					"value"	:unescape(smallCookie[1])
 				});
 			}
 	 	}
@@ -338,16 +337,9 @@ CommonUtils = {
 	},
 
 	getCookieFromJava : function(param) {
-		if (document.cookie.length > 0) {
-			var start = document.cookie.indexOf(param + "=");
-			if (start != -1) {
-				start = start + param.length + 1
-				var end = document.cookie.indexOf(";", start);
-				if (end == -1)
-					end = document.cookie.length
-				return unescape(document.cookie.substring(start, end))
-			}
-		}
-		return ""
+		var result = $.getCookie(param, true);
+		result = result == null ? "" : result;
+
+		return result;
 	}
 };

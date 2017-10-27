@@ -1,7 +1,5 @@
 package  com.al.lte.portal.model;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
@@ -10,6 +8,7 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 
 import com.al.ec.serviceplatform.client.DataBus;
+import com.al.ecs.common.web.HttpUtils;
 import com.al.ecs.common.web.ServletUtils;
 import com.al.ecs.log.Log;
 import com.al.lte.portal.common.InterfaceClient;
@@ -91,11 +90,16 @@ public class ServiceLog{
 	
 	private final String DEFAULT_TIME_FORMAT = "yyyy/MM/dd HH:mm:ss";
 	
+	static {
+		serviceLog = new ServiceLog();
+	}
+	
+	public static ServiceLog getInstance(){
+		return serviceLog;
+	}
+	
 	public static ServiceLog getNewInstance(){
-		synchronized(ServiceLog.class){
-			serviceLog = new ServiceLog();
-			return serviceLog;
-		}
+		return new ServiceLog();
 	}
 	
 	public DataBus initDataBus(DataBus db, SessionStaff sessionStaff){
@@ -354,13 +358,8 @@ public class ServiceLog{
 
 	public String getLocalAddr() {
 		if(this.localAddr == null){
-			try {
-				this.localAddr = InetAddress.getLocalHost().getHostAddress();
-			} catch (UnknownHostException e) {
-				this.localAddr = "UnknownHostException:" + e.getMessage();
-			}
+			this.localAddr = HttpUtils.getHostIpAddress();
 		}
-		
 		return this.localAddr;
 	}
 
