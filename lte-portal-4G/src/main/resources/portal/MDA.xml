@@ -131,6 +131,8 @@
 		<const type="String" name="LESS_THAN_SIX" value="OFF"></const>
 		<!-- 外国人居住证，要求读卡,增加全国级开关，非分省 -->
 		<const type="String" name="FOREGIN_LIVE" value="OFF"></const>
+		<!-- 人民武装警察居民身份证（52）、现役军人居民身份证（51）、居民身份证（1） 经办人信息填写显示读卡按钮配置（用逗号隔开） -->
+		<const type="String" name="HANDLE_READ_BUTTON" value="52,51,1"></const>
 
 		<const type="String" name="ASYNC_FLAG" value="OFF" />
 		<const type="String" name="DEF_HTTP_FLAG" value="ON" />
