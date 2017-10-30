@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.al.common.utils.DateUtil;
 import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ecs.common.entity.JsonResponse;
 import com.al.ecs.common.entity.Switch;
@@ -220,6 +222,8 @@ public class MainController extends BaseController {
 		model.addAttribute("haveMenu", "Y");
 		String app_version=(String) ServletUtils.getSessionAttribute(request,SysConstant.SESSION_KEY_APP_VERSION);
 		model.addAttribute("app_version",app_version);//客户端版本号
+		String nowDateStr=DateUtil.getFormatTimeString(new Date(), "YYYY/MM/dd");//获取系统当前时间
+		model.addAttribute("nowDateStr", nowDateStr);
 		//移除已加载过js标志
 		session.removeAttribute("firstLoad");
 		//爱运维菜单需要给原生传秘钥
