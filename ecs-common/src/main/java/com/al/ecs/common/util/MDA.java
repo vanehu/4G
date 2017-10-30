@@ -59,6 +59,11 @@ public class MDA {
 	 * 2017-09-11 外国人居住证，要求读卡
 	 */
 	public static final String FOREGIN_LIVE = new String("");
+	
+	/**
+	 * 2017-10-26 人民武装警察居民身份证（52）、现役军人居民身份证（51）、居民身份证（1） 经办人信息填写显示读卡按钮配置
+	 */
+	public static final String HANDLE_READ_BUTTON = new String("");
 
 //	/**
 //	 * 问卷调查 题目查询

@@ -390,7 +390,23 @@ order.cust = (function(){
 			$("#"+id).attr("data-validate","validate(terminalCodeCheck:请准确填写终端串码) on(keyup)");
 		}
 	};
-
+	//判断经办人证件类型是否需要显示读卡按钮
+    var _ifHandleReadButton = function(identidiesTypeCd){
+    	//读取经办人填写时需要显示读卡按钮的配置
+		var identidiesTypeCdAll = query.common.queryPropertiesValue("HANDLE_READ_BUTTON");
+		var identidiesTypeCds = identidiesTypeCdAll.split(",");
+		var ifReadButton = false;
+		//判断页面选择经办人证件类型是否存在于配置中
+		for(var i = 0; i < identidiesTypeCds.length; i++){
+			if(identidiesTypeCd == identidiesTypeCds[i]){
+				ifReadButton = true;
+				break;
+			}else{
+				ifReadButton = false;
+			}
+		}
+		return ifReadButton;
+    }
 	//创建客户证件类型选择事件
 	var _identidiesTypeCdChoose = function(scope,id) {
 		var cookieSP = query.common.queryPropertiesValue("CHECK_SOLDIER_POLICE");
@@ -496,8 +512,9 @@ order.cust = (function(){
 			
 			}
 		}
-		//新增的现役军人居民身份证、人民武装警察居民身份证,和居民身份证一样，要求必须读卡
-		if (identidiesTypeCd == 1 || identidiesTypeCd == 51 || identidiesTypeCd == 52 || (identidiesTypeCd== 50 && cookieLessFOR == "ON")) {
+		//判断经办人证件类型是否在显示读卡按钮的配置中
+		var ifHandleReadButton = _ifHandleReadButton(identidiesTypeCd);
+		if (ifHandleReadButton || (identidiesTypeCd == 50 && cookieLessFOR == "ON")) {
 			/*$("#"+id).attr("placeHolder","请输入合法身份证号码");
 			$("#"+id).attr("data-validate","validate(idCardCheck18:请输入合法身份证号码) on(blur)");*/
 			// 新建客户身份证读卡，隐藏表单
@@ -4381,7 +4398,9 @@ order.cust = (function(){
     var _removeDisabled = function(){
     	var backgroundColorWhite = "white;";
     	var orderIdentidiesTypeCd = $("#orderIdentidiesTypeCd").val();
-    	if(orderIdentidiesTypeCd == 1||orderIdentidiesTypeCd ==51||orderIdentidiesTypeCd ==52){
+    	//判断经办人证件类型是否在显示读卡按钮的配置中
+    	var ifHandleReadButton = _ifHandleReadButton(orderIdentidiesTypeCd);    	
+    	if(ifHandleReadButton){
     		$("#orderAttrResetBtn").hide();
         	$("#orderAttrReadCertBtn").show();
         	$("#orderAttrQueryCertBtn").hide();
