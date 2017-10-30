@@ -10,6 +10,7 @@ home = (function($) {
 	var _phoneType="";
 	var _READ_UIM="";
 	var _menuData = {};
+	var _nowDateStr="";
 	var _getHome = function()
 	{
 		var method=urlParams.method;// /app/prodModify/custAuth
@@ -325,6 +326,7 @@ home = (function($) {
 		goDownload              :   _goDownload,
 		phoneType				:   _phoneType,
 		READ_UIM				:	_READ_UIM,
-		sp_flag					:	_sp_flag
+		sp_flag					:	_sp_flag,
+		nowDateStr              :   _nowDateStr
 	};
 })(jQuery);

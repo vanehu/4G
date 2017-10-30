@@ -157,7 +157,7 @@ cust = (function(){
 		}else{
 			OrderInfo.cust.identityNum = $('#cmCustIdCardOther').val();//证件号码
 		}
-		OrderInfo.cust.age=cust.getAge(OrderInfo.cust.identityNum);
+		OrderInfo.cust.age=cust.getAge(OrderInfo.cust.identityNum,home.nowDateStr);
 		var flag=$("#flag").val();
 		if(ec.util.isObj(flag)){//有值代表是实名制创建客户页面
 			var data = {
@@ -1125,7 +1125,7 @@ cust = (function(){
 		OrderInfo.jbr.identityPic = identityPic;//证件照片
 		OrderInfo.virOlId = "";
 		order.main.queryJbr();
-		cust.jbrAge=cust.getAge(idcard);
+		cust.jbrAge=cust.getAge(idcard,home.nowDateStr);
 	};
 	//校验表单提交
 	var _jbrvalidatorForm=function(){
@@ -2149,7 +2149,7 @@ cust = (function(){
 		_custFlag = type;
 		var a=$(scope).attr("custId");
 		var idCardNum=$("#sfzorderAttrIdCard").val();
-		var jbrAge=cust.getAge(idCardNum);
+		var jbrAge=cust.getAge(idCardNum,home.nowDateStr);
 		_choosedCustInfo = {
 			custId : $(scope).attr("custId"), //$(scope).find("td:eq(3)").text(),
 			partyName : $(scope).attr("partyName"), //$(scope).find("td:eq(0)").text(),
@@ -3036,7 +3036,7 @@ cust = (function(){
 						};
 					}
 					//填充经办人信息
-					    custAge=cust.getAge(identityNum);
+					    custAge=cust.getAge(identityNum,home.nowDateStr);
 						OrderInfo.jbr.custId = cust.readIdCardUser.custId;
 						OrderInfo.jbr.partyName = cust.readIdCardUser.partyName;//经办人名称
 						OrderInfo.jbr.areaId = OrderInfo.staff.areaId;//经办人地区
@@ -3142,7 +3142,7 @@ cust = (function(){
 	};
 
 //根据身份证号获取年龄
-  var _getAge=function (identityCard) {
+  var _getAge=function (identityCard,nowDateStr) {
 	    var len = (identityCard + "").length;
 	    if (len == 0) {
 	        return 999;
@@ -3162,7 +3162,12 @@ cust = (function(){
 	    }
 	    //时间字符串里，必须是“/”
 	    var birthDate = new Date(strBirthday);
-	    var nowDateTime = new Date();
+	    var nowDateTime;
+	    if(nowDateStr!=undefined && nowDateStr!=""){
+	    	nowDateTime = new Date(nowDateStr);
+	    }else{
+	    	nowDateTime = new Date();
+	    }
 	    var age = nowDateTime.getFullYear() - birthDate.getFullYear();
 	    //再考虑月、天的因素;.getMonth()获取的是从0开始的，这里进行比较，不需要加1
 	    if (nowDateTime.getMonth() < birthDate.getMonth() || (nowDateTime.getMonth() == birthDate.getMonth() && nowDateTime.getDate() < birthDate.getDate())) {

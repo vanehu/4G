@@ -280,7 +280,7 @@ custQuery = (function(){
 		if($("#identidiesType").val() == "-1" && $("#isAppointNum").val() == "1"){
 			
 		}else{
-			userAge=cust.getAge(idCardNum);//身份证号定位
+			userAge=cust.getAge(idCardNum,home.nowDateStr);//身份证号定位
 		}
 		_choosedCustInfo = {
 			extCustId : $(scope).attr("extCustId"),

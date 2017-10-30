@@ -2795,7 +2795,7 @@ cust = (function(){
     };
     
   //根据身份证号获取年龄
-    var _getAge=function (identityCard) {
+    var _getAge=function (identityCard,nowDateStr) {
   	    var len = (identityCard + "").length;
   	    if (len == 0) {
   	        return 0;
@@ -2815,7 +2815,7 @@ cust = (function(){
   	    }
   	    //时间字符串里，必须是“/”
   	    var birthDate = new Date(strBirthday);
-  	    var nowDateTime = new Date();
+  	    var nowDateTime = new Date(nowDateStr);
   	    var age = nowDateTime.getFullYear() - birthDate.getFullYear();
   	    //再考虑月、天的因素;.getMonth()获取的是从0开始的，这里进行比较，不需要加1
   	    if (nowDateTime.getMonth() < birthDate.getMonth() || (nowDateTime.getMonth() == birthDate.getMonth() && nowDateTime.getDate() < birthDate.getDate())) {
