@@ -17,6 +17,7 @@ import com.al.lte.portal.common.InterfaceClient;
 import com.al.lte.portal.common.PortalServiceCode;
 import com.al.lte.portal.common.ServiceClient;
 import com.al.lte.portal.model.SessionStaff;
+import com.esotericsoftware.minlog.Log;
 
 /**
  * 数据权限 .
@@ -108,8 +109,7 @@ public class AuthenticBmoImpl implements AuthenticBmo{
 													leve = Integer.parseInt(areaLeve);
 													leve = leve + 1 ;
 												}catch(Exception e){
-													System.out.println("区划层级数有问题");
-													//e.printStackTrace();
+													Log.error("区划层级数有问题", e);
 												}
 												row.put("regionCode",row.get("zoneNumber"));
 												row.put("areaLevel", leve);

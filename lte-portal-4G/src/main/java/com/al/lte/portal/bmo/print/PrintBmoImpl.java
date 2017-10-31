@@ -254,7 +254,6 @@ public class PrintBmoImpl implements PrintBmo {
 	    		List<Map> channelList = (List<Map>)session.getAttribute(SysConstant.SESSION_KEY_STAFF_CHANNEL);
 	    		for(int i=0;i<channelList.size();i++){
 	    			Map cl = channelList.get(i);
-	    			System.out.println(cl.get("id"));
 	    			if(sessionStaff.getCurrentChannelId().equals(cl.get("id").toString())){
 	    				login_area_id = cl.get("areaId").toString();
 	    			}
@@ -8515,7 +8514,6 @@ public class PrintBmoImpl implements PrintBmo {
 
 		//如果printData为空，则返回失败
 		if (MapUtils.isEmpty(printData)) {
-			System.out.println("++++++如果printData为空，则返回失败");
 			return printData;
 		}
 		if(signFlag.equals(SysConstant.PREVIEW_SIGN)){

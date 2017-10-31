@@ -315,7 +315,6 @@ public class OrderController extends BaseController {
     public String yslPack(@RequestBody Map<String, Object> params, Model model, @LogOperatorAnn String optFlowNum,
             HttpServletResponse response, HttpSession httpSession) throws BusinessException {
 
-		System.out.println(0);
 		return "/app/order/order-ysl-pack";
     }
 	
@@ -1135,7 +1134,6 @@ public class OrderController extends BaseController {
     	if("2".equals(String.valueOf(param.get("actionFlag")))){  //套餐变更
     		if (MapUtils.isNotEmpty(param)) {
         		model.addAttribute("main", param);
-        		System.out.println("++++++++++++reqMap="+JsonUtil.toString(param));
         	}
     		forward = "/app/offer/offer-change";
     	}else if("21".equals(String.valueOf(param.get("actionFlag")))){  //套餐变更
@@ -2329,18 +2327,15 @@ public class OrderController extends BaseController {
 		Map<String, Object> custInfoMap = new HashMap<String, Object>();
 		try {
 		String str=JacksonUtil.getInstance().objectTojson(param);
-		System.out.println(str);
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
                 SysConstant.SESSION_KEY_LOGIN_STAFF);
 		Map orderList = (Map)param.get("orderList");
-		System.out.println("++++++++++++orderList="+orderList.toString());
 		Map orderListInfo = (Map)orderList.get("orderListInfo");
 		List custOrderAttrs = (List) orderListInfo.get("custOrderAttrs");
 		Map attr = new HashMap();
 		attr.put("itemSpecId", "800000048");
 		attr.put("value", session.getAttribute("appRecordId"));
 		if(custOrderAttrs!=null) custOrderAttrs.add(attr);
-		System.out.println("++++++++++++orderListInfo="+orderListInfo.toString());
 		if(commonBmo.checkToken(request, SysConstant.ORDER_SUBMIT_TOKEN)){
 			Map<String, Object> resMap = orderBmo.orderSubmit(param,null,sessionStaff);
 			if(ResultCode.R_SUCC.equals(resMap.get("resultCode"))){
@@ -2652,7 +2647,6 @@ public class OrderController extends BaseController {
 						Object boActionTypeObj = busiOrderObj.get("boActionType");
 						if (boActionTypeObj != null) {
 							JSONObject boActionType = JSONObject.fromObject(boActionTypeObj);
-							System.out.println(boActionType.toString());
 							if (boActionType != null) {
 								int actionClassCd = (Integer) boActionType.get("actionClassCd");
 								String boActionTypeCd = (String) boActionType.get("boActionTypeCd");
@@ -3259,7 +3253,6 @@ public class OrderController extends BaseController {
 //		if(commonBmo.checkToken(request, SysConstant.ORDER_SUBMIT_TOKEN)){
 			try {
 				CustOrderInfo.put("CustOrderId", reqMap.get("TransactionID"));
-				System.out.println("++++++++++++reqMap="+JsonUtil.toString(reqMap));
 				rMap = orderBmo.saleOrderCommit(reqMap, optFlowNum, sessionStaff);
 //	 			log.debug("return={}", JsonUtil.toString(rMap));
 	 			if (rMap != null&& ResultCode.R_SUCCESS.equals(rMap.get("code").toString())) {

@@ -29,7 +29,6 @@ public class RunTask {
 					String ip = propertiesUtils.getMessage("ips_ports");
 					buffer.put("http://10.128.90.2:10101/ltePortal/staff/resetAllCommonParam?code=DV82KN");
 					// 速度较快。休息10毫秒
-					System.out.println("sc:"+buffer);
 					Thread.sleep(10);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
@@ -44,7 +43,6 @@ public class RunTask {
 			while (true) {
 				try {
 					httpPost((String)buffer.take());
-					System.out.println("xf:"+buffer.take());
 					//InsertLog((ServiceRunLog) buffer.take());
 					Thread.sleep(500);
 				} catch (Exception e) {
@@ -147,7 +145,6 @@ public class RunTask {
 		}
 		reader.close();
 		connection.disconnect();
-		System.out.println(url+":"+sb.toString());
 		return sb.toString();
 	}
 	public static void main(String args[]) {

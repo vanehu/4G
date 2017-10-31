@@ -2362,7 +2362,7 @@ public class LoginController extends BaseController {
 	                ipList.put("allNum",allIpNum);
 	                ipList.put("all", alliplist);
 	            } else {
-		            System.out.println("iplist.xml文件不存在！ ");
+	            	log.error("iplist.xml文件不存在！ ");
 	            }
 	        } catch (Exception e) {
 	            e.printStackTrace();
@@ -2588,7 +2588,6 @@ public class LoginController extends BaseController {
 			staffSession.setCurrentAreaId(staffProvCode);
 			dataBusMap.put(InterfaceClient.DATABUS_DBKEYWORD,(String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY));
 			map = staffBmo.qrLoginCheck(dataBusMap, flowNum, staffSession);
-			System.out.println(JsonUtil.toString(map));
 			// 调用返回服务调用结果code
 			String resultCode = MapUtils.getString(map, "resultCode");
 			if (ResultCode.R_SUCC.equals(resultCode)) {
