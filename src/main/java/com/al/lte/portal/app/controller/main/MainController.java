@@ -222,7 +222,7 @@ public class MainController extends BaseController {
 		model.addAttribute("haveMenu", "Y");
 		String app_version=(String) ServletUtils.getSessionAttribute(request,SysConstant.SESSION_KEY_APP_VERSION);
 		model.addAttribute("app_version",app_version);//客户端版本号
-		String nowDateStr=DateUtil.getFormatTimeString(new Date(), "YYYY/MM/dd");//获取系统当前时间
+		String nowDateStr=DateUtil.getFormatTimeString(new Date(), "yyyy/MM/dd");//获取系统当前时间
 		model.addAttribute("nowDateStr", nowDateStr);
 		//移除已加载过js标志
 		session.removeAttribute("firstLoad");
