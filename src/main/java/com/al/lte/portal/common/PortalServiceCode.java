@@ -667,6 +667,8 @@ public final class PortalServiceCode {
     public static final String QUERY_ATTACH_SPEC = "biz-service/intf.prodOfferService/queryCanBuyAttachOfferSpec";
     //查询已订购附属
     public static final String QUERY_ATTACH_OFFER = "biz-service/intf.prodOfferInstSerivce/queryAttachOfferByProdId";
+    //查询销售品已订购次数   下省查询接口
+    public static final String QUERY_PROD_OFFER_TIMES = "biz-service/intf.prodOfferInstSerivce/queryProdOfferOrderTimes";
     //查询已订购附属参数
     public static final String QUERY_OFFER_PARAM = "biz-service/intf.prodInstService/queryOfferParam";
     //加载实例信息

@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
@@ -1023,5 +1024,38 @@ public class OfferController extends BaseController {
 			return super.failedStr(model, ErrorCode.QUERY_MUST_OFFER, e, paramMap);
 		}
 	 	return "/app/order_new/gift-server-new";
+	}
+	
+	/* 已订购销售品次数下省查询接口
+	 * @param param
+	 * @param model
+	 * @return
+	 * @throws BusinessException
+	 */
+	@RequestMapping(value = "/queryProdOfferOrderTimes", method = {RequestMethod.POST})
+	@ResponseBody
+	public JsonResponse queryProdOfferOrderTimes(@RequestBody Map<String, Object> param,HttpServletResponse response,HttpServletRequest request) {
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+				SysConstant.SESSION_KEY_LOGIN_STAFF);
+		HttpSession session = request.getSession();
+		List<Map> channelList = (List<Map>)session.getAttribute(SysConstant.SESSION_KEY_STAFF_CHANNEL);
+		for(int i=0;i<channelList.size();i++){
+			Map cl = channelList.get(i);
+			if(sessionStaff.getCurrentChannelId().equals(cl.get("id").toString())){
+				param.put("areaId", cl.get("areaId").toString());
+			}
+		}
+		JsonResponse jsonResponse = null;
+        try {
+        	Map<String, Object> resMap = offerBmo.queryProdOfferOrderTimes(param,null,sessionStaff);
+        	jsonResponse = super.successed(resMap,ResultConstant.SUCCESS.getCode());
+        } catch (BusinessException be) {
+        	return super.failed(be);
+        } catch (InterfaceException ie) {
+        	return super.failed(ie, param, ErrorCode.QUERY_PROD_OFFER_TIMES);
+		} catch (Exception e) {
+			return super.failed(ErrorCode.QUERY_PROD_OFFER_TIMES, e, param);
+		}
+		return jsonResponse;
 	}
 }
