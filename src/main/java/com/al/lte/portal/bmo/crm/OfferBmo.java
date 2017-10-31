@@ -209,5 +209,14 @@ public interface OfferBmo {
 	 * @throws ParseException 
 	 */
 	public Map<String, Object> removeAttachOfferExpired(Map<String, Object> paramMap, Map<String, Object> offerMap) throws ParseException;
+	/**
+	 * 已订购销售品次数下省查询接口
+	 * @param paramMap
+	 * @param object
+	 * @param sessionStaff
+	 * @return
+	 */
+    public Map<String, Object> queryProdOfferOrderTimes(Map<String, Object> paramMap,String optFlowNum, SessionStaff sessionStaff)throws Exception;
+
 
 }
