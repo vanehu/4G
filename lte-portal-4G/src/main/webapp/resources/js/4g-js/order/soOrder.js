@@ -136,14 +136,10 @@ SoOrder = (function() {
 				var url = contextPath+"/order/orderSubmit";
 				if(OrderInfo.order.token!=""){
 					url = contextPath+"/order/orderSubmit?token="+OrderInfo.order.token;
-				}else{//if token is "" reset new token
-					_getToken();
 				}
 				if (OrderInfo.custCreateToken !== undefined || OrderInfo.custCreateToken !== "") {
 					OrderInfo.orderData.token = OrderInfo.custCreateToken;
 				}
-                OrderInfo.orderData.sign = "";//reset sign
-                OrderInfo.orderData.sign =MD5(JSON.stringify(OrderInfo.orderData.orderList.custOrderList));
 				//读卡记录失败继续受理，不影响业务
 				cert.fillupOrderInfoCertReaderCustInfos();
 				async = true;
