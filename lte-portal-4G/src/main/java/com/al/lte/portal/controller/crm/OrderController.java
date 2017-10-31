@@ -3213,18 +3213,7 @@ public class OrderController extends BaseController {
             return  super.failed("非法鉴权", ResultConstant.FAILD.getCode());
         }
         Object realNameFlag =  MDA.REAL_NAME_PHOTO_FLAG.get("REAL_NAME_PHOTO_"+sessionStaff.getCurrentAreaId().substring(0, 3));
-    	boolean isRealNameFlagOn  = realNameFlag == null ? false : "ON".equals(realNameFlag.toString()) ? true : false;//实名制拍照开关是否打开
-    	//check sign
-       /* String tokenAttr = (String)request.getSession().getAttribute(SysConstant.ORDER_SUBMIT_TOKEN);
-        String sign =  MapUtils.getString(param,"sign","");
-        param.put("sign","");
-        Map<String, Object> orderList1 = (Map<String, Object>) param.get("orderList");
-        Map<String, Object> orderListInfo2 = (Map<String, Object>) orderList1.get("orderListInfo");
-        String checkedSign = MD5Utils.encode(JsonUtil.toString(orderListInfo2));
-        if(!sign.equals(checkedSign.toLowerCase())){
-            return  super.failed("非法鉴权", ResultConstant.FAILD.getCode());
-        }*/
-        param.remove("sign");
+    	boolean isRealNameFlagOn  = realNameFlag == null ? false : "ON".equals(realNameFlag.toString()) ? true : false;//实名制拍照开关是否打
 
     	if (commonBmo.checkToken(request, SysConstant.ORDER_SUBMIT_TOKEN)) {
             try {
