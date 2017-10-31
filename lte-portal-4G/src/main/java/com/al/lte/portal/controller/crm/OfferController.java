@@ -317,14 +317,20 @@ public class OfferController extends BaseController {
 			paramMap.put("staffId",sessionStaff.getStaffId());
 	        paramMap.put("channelId", sessionStaff.getCurrentChannelId());
 			Map<String, Object> openServMap = offerBmo.queryServSpec(paramMap,null,sessionStaff);
-			model.addAttribute("openServMap",openServMap);
-			model.addAttribute("openServMapJson", JsonUtil.buildNormal().objectToJson(openServMap));
-			
 			//默认必开附属销售品
 			paramMap.remove("queryType");
 			paramMap.put("operatorsId", sessionStaff.getOperatorsId()!=""?sessionStaff.getOperatorsId():"99999");
 			Map<String, Object> openMap = offerBmo.queryMustAttOffer(paramMap,null,sessionStaff);
 			queryMainMust(paramMap,openMap,sessionStaff);
+			
+			List<Map<String, Object>> offerRolesList =  (List<Map<String, Object>>) openMap.get("offerRolesList");
+			if(offerRolesList!=null && offerRolesList.size()>0){
+				Map<String, Object> servSpecResult = (Map<String, Object>) openServMap.get("result");
+				List<Map<String, Object>> servSpecs = (List<Map<String, Object>>) servSpecResult.get("servSpec");
+				servSpecs.addAll(offerRolesList);
+			}
+			model.addAttribute("openServMap",openServMap);
+			model.addAttribute("openServMapJson", JsonUtil.buildNormal().objectToJson(openServMap));
 			model.addAttribute("openMap",openMap);
 			model.addAttribute("openMapJson", JsonUtil.buildNormal().objectToJson(openMap));
 			
@@ -1018,6 +1024,38 @@ public class OfferController extends BaseController {
 						openMapsOfferSpecsList.add(openMapsOfferSpec);
 					}
 				}
+				//#1931859 带出功能产品
+				List<Map<String, Object>> offerRolesList = new ArrayList<Map<String, Object>>();
+				for(int x = 0; x < openMapsOfferSpecsList.size(); x++){
+					List<Map<String, Object>> offerRoles = (List<Map<String, Object>>) openMapsOfferSpecs.get(x).get("offerRoles");
+					for(int y = 0; y < offerRoles.size(); y++){
+						Map<String, Object> offerRole = (Map<String, Object>)offerRoles.get(y);
+						int memberRoleCd = (Integer) offerRole.get("memberRoleCd");
+						if(memberRoleCd == 401){
+							List<Map<String, Object>> roleObjs = (List<Map<String, Object>>)offerRole.get("roleObjs");
+							for(int z = 0; z < roleObjs.size(); z++){
+								Map<String, Object> roleObj = (Map<String, Object>)roleObjs.get(z);
+								int objType = (Integer) roleObj.get("objType");
+								int minQty = (Integer) roleObj.get("minQty");
+								if(objType == 4 && minQty == 1){
+									offerRolesList.add(roleObj);
+								}
+
+							}
+						}
+					}
+				}
+				for(int i = 0; i < offerRolesList.size(); i++){
+					Map<String, Object> offerRole = (Map<String, Object>)offerRolesList.get(i);
+					offerRole.put("servSpecId", offerRole.get("objId"));
+					offerRole.put("servSpecName", offerRole.get("objName"));
+					List<Map<String, Object>>  prodSpecParams = (List<Map<String, Object>>) offerRole.get("prodSpecParams");
+					if(prodSpecParams.size()>0){
+						offerRole.put("ifParams", "Y");
+					}
+				}
+				openMap.put("offerRolesList", offerRolesList);
+				//#1931859
 				offerSpecs.addAll(openMapsOfferSpecsList);
 			}
 		}
