@@ -533,9 +533,7 @@ AttachOffer = (function() {
 		var labelIds = [];
 		$.each(AttachOffer.labelList,function(){
 			$.each(this.labels,function(){
-				if(this.parentLabel==""||this.parentLabel==null){
-					labelIds.push(this.label);//遍历所有附属销售品规格标签，找出无父标签的id
-				}
+				labelIds.push(this.label);//遍历所有附属销售品规格标签，找出无父标签的id
 			})
 		})
 		var offerSepcName = $.trim($("#search_text_"+prodId).val());
