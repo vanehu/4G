@@ -1341,13 +1341,14 @@ public class OrderController extends BaseController {
 		String  userFlag = propertiesUtils.getMessage(propertiesKey);
 		if(userFlag!=null && userFlag.equals("OFF")){
 			model.addAttribute("orderAttrFlag","C");//C非必填
+			orderAttrFlag = "C";
 		}
 
 		//如果是新装，判断mda里该场景是否配置了经办人拍照
-		if("1".equals(String.valueOf(param.get("actionFlag"))) && "ON".equals(userFlag)) {  //新装
+		if("1".equals(String.valueOf(param.get("actionFlag"))) && "ON".equals(userFlag) && "Y".equals(orderAttrFlag)) {  //新装
 			String jbrpz = propertiesUtils.getMessage("JBRPZ_PZ_"+sessionStaff.getCurrentAreaId().substring(0,3)+"0000");
-			if(jbrpz.indexOf("1,")>=0){
-				model.addAttribute("orderAttrFlag","Y");//必填
+			if(jbrpz.indexOf("1,")<0){
+				model.addAttribute("orderAttrFlag","C");//非必填
 			}
 		}
 
