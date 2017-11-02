@@ -564,7 +564,7 @@ order.service = (function(){
 		var custAgeLocation = $("#custAgeLocation").val();
 		if(ec.util.isObj(custAgeLocation) == true){
 			nowCard = custAgeLocation;
-		}else{
+		}else if(ec.util.isObj(OrderInfo.getCustAgeByCheck.data) == true){
 			nowCard = OrderInfo.getCustAgeByCheck.data.custAge;
 		}
 		//军人身份证件、武装警察身份证件不能作为实名登记有效证件，不允许添加副卡
