@@ -389,8 +389,6 @@ public class OneCertFiveNumberController extends BaseController {
                     param.put("channelId", sessionStaff.getCurrentChannelId());
 	                param.put("staffId", sessionStaff.getStaffId());
 	                param.put("statusCd", "201300");
-	                param.put("accNbr", param.get("telNumber"));
-	                param.put("areaId", param.get("lanId"));
 	                 
 	                Map<String, Object> resuMap = orderBmo.cltOrderCommit(param, null, sessionStaff);
 	                System.out.println(resuMap.toString());
