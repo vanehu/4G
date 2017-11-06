@@ -999,6 +999,8 @@ public class LoginController extends BaseController {
 			request.getSession().setAttribute("JUMPRESULT", "Y");
 			return super.successed(resData);
 		}else {
+			request.getSession().removeAttribute(SysConstant.SESSION_KEY_CHANGEUIM_SMS);
+			request.getSession().removeAttribute(SESSION_CUSTAUTH_SMS_MUNBER);
 			request.getSession().setAttribute("dxState", "N");
 			request.getSession().setAttribute("JUMPRESULT", "N");
 			return super.failed("短信验证码错误!", ResultConstant.FAILD.getCode());

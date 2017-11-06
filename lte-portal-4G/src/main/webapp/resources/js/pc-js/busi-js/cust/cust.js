@@ -2383,11 +2383,16 @@ order.cust = (function(){
 	};
 	//短信验证
 	var _smsvalid=function(id){
-		var params="smspwd="+$("#smspwd"+id).val();
+		//var params="smspwd="+$("#smspwd"+id).val();
 		if(!ec.util.isObj($("#smspwd"+id).val())){
 			$.alert("提示","验证码不能为空！");
 			return;
 		}
+		var number = OrderInfo.acctNbr;
+        if(id==5){
+            number=_choosedCustInfo.accNbr;
+        }
+        var params = "smspwd=" + $("#smspwd"+id).val()+"&number="+number;
 		var param = _choosedCustInfo;
 		var recordParam={};
 		recordParam.validateType="2";
@@ -2398,7 +2403,7 @@ order.cust = (function(){
 		recordParam.certNumber=OrderInfo.cust.idCardNumber;
 
 
-		$.callServiceAsJson(contextPath+"/passwordMgr/smsValid", params, {
+		$.callServiceAsJson(contextPath+"/staff/login/changeUimSmsValid", params, {
 			"before":function(){
 				$.ecOverlay("<strong>验证短信随机码中,请稍等会儿....</strong>");
 			},
