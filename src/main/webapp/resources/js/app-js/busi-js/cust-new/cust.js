@@ -3133,8 +3133,9 @@ cust = (function(){
 	};
 	//用户检测 Redmine#1476474营业厅翼支付开户IT流程优化
 	//订购【翼支付】功能产品时增加实名校验环节：仅允许居民身份证、临时居民身份证或户口簿登记的客户或使用人订购该功能产品
+	//20171106 Redmine#1975930新增现役军人居民身份证、人民武装警察居民身份证
 	var _checkRealCust = function(identityCd){
-		if(identityCd == 1 || identityCd == 41 || identityCd == 12){
+		if(identityCd == 1 || identityCd == 41 || identityCd == 12 || identityCd == 2 ||identityCd == 14){
 			cust.isRealCust = true;
 		} else {
 			cust.isRealCust =  false;
