@@ -364,7 +364,7 @@ OrderInfo = (function() {
 			state : "ADD", //状态
 			telNumber : custInfo.accNbr,  //联系电话
 			addressStr:custInfo.addressStr,//使用人地址
-			mailAddressStr:custInfo.addressStr//通信地址
+			mailAddressStr:custInfo.mailAddressStr//通信地址
 		};
 		
 		//使用人证件节点
@@ -480,6 +480,8 @@ OrderInfo = (function() {
 			if (nameCN!=undefined&&nameCN!="") {
 				busiOrder.data.boAccountInfos[0].CN = nameCN;
 			}
+		}else if(OrderInfo.cust.custId != "-1" && OrderInfo.cust.CN != undefined){
+			busiOrder.data.boAccountInfos[0].CN = OrderInfo.cust.CN.replace(/&#61/g,"=");
 		}
 		var accNbr = _getAccessNumber(-1);
 		if(ec.util.isObj(accNbr)){ //接入号
