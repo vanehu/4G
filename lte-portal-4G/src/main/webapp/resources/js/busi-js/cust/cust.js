@@ -920,7 +920,11 @@ order.cust = (function(){
 			if(response.code==0){
 				OrderInfo.custorderlonger = response.data;
 			}
-			_checkAddPoliceAndHr();
+			var result = _checkAddPoliceAndHr();
+			if(result != true){
+				return;
+			}
+			_checkIdentity();
 	     }).ketchup({bindElement:"createcustsussbtn"});
     };
 
@@ -5009,7 +5013,7 @@ order.cust = (function(){
 			//军人身份证件、武装警察身份证件不能作为实名登记有效证件，不允许新装号码
 			if($("#identidiesTypeCd").val() == "2" || $("#identidiesTypeCd").val() == "14"){
 				$.alert("提示", "军人身份证件、武装警察身份证件不能作为实名登记有效证件，不允许办理业务！");
-				return;
+				return false;
 			}
 		}
 		//大于16周岁不允许使用户口簿办理业务
@@ -5020,16 +5024,16 @@ order.cust = (function(){
 				var nowDate = new Date();
 				if(nowDate.getFullYear() - nowCard > 16){
 					$.alert("提示", "大于16周岁不允许使用户口簿");
-					return;
+					return false;
 				}else{
-					_checkIdentity();
+					return true;//_checkIdentity();
 				}
 			}else{
-				_checkIdentity();
+				return true;//_checkIdentity();
 			}
 
 		}else{
-			_checkIdentity();
+			return true;//_checkIdentity();
 		}
 		
 	}
