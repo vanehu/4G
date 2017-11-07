@@ -947,7 +947,7 @@ order.phoneNumber = (function(){
 				if(response.data[i].PHONE_NUMBER_SEGMENT){
 				  	PHONE_NUMBER_SEGMENT=response.data[i].PHONE_NUMBER_SEGMENT;
 				  	var $sel = $('<select id="pnHead" class="selectpicker show-tick form-control"></select>');  
-					var $defaultopt = $('<option value="" selected="selected">请选择号段</option>');
+					var $defaultopt = $('<option value="" selected="selected">号码段</option>');
 					$sel.append($defaultopt);
 				  	for(var m=0;m<PHONE_NUMBER_SEGMENT.length;m++){
 				  		var  numberStart=PHONE_NUMBER_SEGMENT[m].COLUMN_VALUE_NAME;
@@ -972,7 +972,7 @@ order.phoneNumber = (function(){
 				  		featureLength=9;
 				  	}
 					var $sel = $('<select id="pnCharacterId_basic" class="selectpicker show-tick form-control"></select>');  
-					var $defaultopt = $('<option value="" selected="selected">请选择号码类型</option>');
+					var $defaultopt = $('<option value="" selected="selected">号类型</option>');
 					$sel.append($defaultopt);
 				  	for(var m=0;m<featureLength;m++){
 				  		var numberFeature=(PHONE_NUMBER_FEATURE[m].COLUMN_VALUE_NAME).replace(/\"/g, "");
