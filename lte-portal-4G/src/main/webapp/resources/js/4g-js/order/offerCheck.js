@@ -22,32 +22,39 @@ check.offer = (function() {
 		
 		return resultFlag;
 	};
-
+	
 	/**
-	 * 校验订购销售品次数，校验通过返回true，否则返回false
+	 * 校验销售品已订购次数、可订购次数，校验通过返回true，否则返回false
+	 * 兼容：在已订购销售品中，通过点击“参”字进行重复订购，此时入参chooseOrderTimes必传，其他情况非必传
+	 * 入参：orderedOffer已订购销售品；chooseOrderTimes设置的订购次数
 	 */
-	var _orderTimes = function(newSpec){
+	var _orderTimes = function(orderedOffer, chooseOrderTimes){
 		var resultFlag = true;
+		var offerLimitTimes = orderedOffer.offerLimitTimes;
 		
-		if(newSpec.ifLimitTimes != "Y"){
+		if(offerLimitTimes.ifLimitTimes != "Y"){
 			return resultFlag;
 		}
+		
+		if(ec.util.isDigit(chooseOrderTimes)){
+			chooseOrderTimes = parseInt(chooseOrderTimes);
+		} else{
+			chooseOrderTimes = 0;
+		}
 
-		var orderedTimes = _getOrderedTimes(newSpec);
+		var orderedTimes = _getOrderedTimes(orderedOffer);
 		if(ec.util.isDigit(orderedTimes) && orderedTimes > 0){
-			var canOrderTimes = newSpec.orderTimes;
-			var timeType = newSpec.timeType;
+			var canOrderTimes = offerLimitTimes.orderTimes;
+			var timeType = offerLimitTimes.timeType;
 			switch (timeType) {
 				case 1000://相对时间
-					resultFlag = _compareOrderTimesByRelativeTime(newSpec, orderedTimes, canOrderTimes); break;
+					resultFlag = _compareOrderTimesByRelativeTime(offerLimitTimes, orderedTimes + chooseOrderTimes, canOrderTimes); break;
 				case 1100://绝对时间
-					resultFlag = _compareOrderTimesByAbsoluteTime(newSpec, orderedTimes, canOrderTimes); break;
+					resultFlag = _compareOrderTimesByAbsoluteTime(offerLimitTimes, orderedTimes + chooseOrderTimes, canOrderTimes); break;
 				case 1200://无限制，表示用户一生只能订购1次
 					resultFlag = _compareOrderTimesByDefault(orderedTimes); break;
 				default: ;
 			}
-		} else if(orderedTimes < 0){
-			resultFlag = false;
 		}
 
 		return resultFlag;
@@ -89,7 +96,7 @@ check.offer = (function() {
 		var resultFlag = orderedTimes >= 1 ? false : true;
 		
 		if(!resultFlag){
-			var alertErrorMsg = "您选择的销售品仅可订购一次，您已订购" + orderedTimes + "次。";
+			var alertErrorMsg = "您选择的销售品仅可订购一次，您已订购（或选择）" + orderedTimes + "次。";
 			$.alert("提示", alertErrorMsg);
 		}
 		
@@ -135,7 +142,7 @@ check.offer = (function() {
 		}
 		
 		if(!resultFlag){
-			var alertErrorMsg = "您选择的销售品仅可订购" + canOrderTimes +"次，您已订购" + orderedTimes + "次。";
+			var alertErrorMsg = "您选择的销售品仅可订购" + canOrderTimes +"次，您已订购（或已选择）" + orderedTimes + "次。";
 			$.alert("提示", alertErrorMsg);
 		}
 		
@@ -143,8 +150,8 @@ check.offer = (function() {
 	};
 	
 	return {
-		feeType		:_feeType,
-		orderTimes	:_orderTimes
+		feeType				:_feeType,
+		orderTimes			:_orderTimes
 	};
 })();
 $(function() {});
