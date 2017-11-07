@@ -697,6 +697,7 @@ public void toPraise(HttpServletRequest request,  HttpServletResponse response) 
 				SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
 						SysConstant.SESSION_KEY_LOGIN_STAFF);
 				String phone=(String)param.get("phone");
+			   super.getRequest().getSession().removeAttribute("VALIDATERESULT");
 				try{
 					jsonResponse.setCode(0);
 		        	jsonResponse.setSuccessed(true);
