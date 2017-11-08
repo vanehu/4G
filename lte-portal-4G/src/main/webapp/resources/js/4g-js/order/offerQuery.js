@@ -382,6 +382,9 @@ query.offer = (function() {
 					offerSpecId : param.mainOfferSpecId,
 					agreementName : ""
 			};
+			if(param.memberRoleCd == "401"){
+				inparam.memberRoleCd = param.memberRoleCd;
+			}
 			if(OrderInfo.menuName == "ZXHYBL"){
 				inparam.agreementTypeList = [3];
 				inparam.subsidyAmount = OrderInfo.preliminaryInfo.money*100;

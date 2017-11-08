@@ -548,6 +548,8 @@ AttachOffer = (function() {
 				labelIds.push(this.label);//遍历所有附属销售品规格标签，找出无父标签的id
 			})
 		})
+		var MemberRoleCdId = CacheData.getMemberRoleCd(prodId);
+		
 		var offerSepcName = $.trim($("#search_text_"+prodId).val());
 		var instCode = $.trim($("#search_instCode_"+prodId).val());
 		if(offerSepcName.replace(/\ /g,"")=="" && instCode.replace(/\ /g,"")==""){
@@ -563,6 +565,9 @@ AttachOffer = (function() {
 					prodId : prodId,
 					labelIds : labelIds
 			};
+			if(MemberRoleCdId == "401"){
+				param.memberRoleCd = MemberRoleCdId;
+			}
 			if(OrderInfo.menuName == "ZXHYBL"){//征信页面
 				param.agreementTypeList = [3];
 				param.subsidyAmount = OrderInfo.preliminaryInfo.money*100;
@@ -4381,15 +4386,31 @@ AttachOffer = (function() {
 				if(labelId == "10020"){
 					isAgree = "Y";
 				}
-				var param = {
-					prodSpecId : prodSpecId,
-					offerSpecIds : [],
-					queryType : queryType,
-					prodId : prodId,
-					partyId : OrderInfo.cust.custId,
-					ifCommonUse : "",
-					isAgree : isAgree
-				};
+				var memberRoleCdId = CacheData.getMemberRoleCd(prodId);
+				//判断是不是加装副卡促销下的合约标签
+				if(memberRoleCdId == "401" && labelId == "10020"){
+					var param = {
+							prodSpecId : prodSpecId,
+							offerSpecIds : [],
+							queryType : queryType,
+							prodId : prodId,
+							partyId : OrderInfo.cust.custId,
+							ifCommonUse : "",
+							isAgree : isAgree,
+							memberRoleCd : memberRoleCdId 
+						};
+				}else{
+					var param = {
+							prodSpecId : prodSpecId,
+							offerSpecIds : [],
+							queryType : queryType,
+							prodId : prodId,
+							partyId : OrderInfo.cust.custId,
+							ifCommonUse : "",
+							isAgree : isAgree
+						};
+				}
+				
 				if(OrderInfo.actionFlag != 22 && OrderInfo.actionFlag != 23){
 					param.labelId = labelId;
 				}
