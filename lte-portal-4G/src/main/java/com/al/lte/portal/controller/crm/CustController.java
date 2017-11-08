@@ -102,48 +102,6 @@ public class CustController extends BaseController {
 			// 异常在之前就捕获了，这里不做处理
 		}
 
-		try {
-			// 访问次数限制 update by huangjj3 20160411 通过过滤器对过频操作进行限制
-			/*
-			 * model.addAttribute("showVerificationcode", "N"); long endTime =
-			 * System.currentTimeMillis(); long beginTime = 0;
-			 * if(httpSession.getAttribute(sessionStaff.getStaffCode()+
-			 * "custtime")!=null){ beginTime = (Long)
-			 * httpSession.getAttribute(sessionStaff.getStaffCode()+"custtime");
-			 * } if(beginTime!=0){ Date beginDate = new Date(beginTime); Date
-			 * endDate = new Date(endTime); long useTime =
-			 * endDate.getTime()-beginDate.getTime(); long limit_time =
-			 * Long.parseLong(MySimulateData.getInstance().getParam((String)
-			 * ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.
-			 * SESSION_DATASOURCE_KEY),"LIMIT_TIME")); int limit_count =
-			 * Integer.parseInt(MySimulateData.getInstance().getParam((String)
-			 * ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.
-			 * SESSION_DATASOURCE_KEY),"LIMIT_COUNT")); if
-			 * (useTime<=limit_time){ int count = (Integer)
-			 * httpSession.getAttribute(sessionStaff.getStaffCode()+"custcount")
-			 * +1; if(count<limit_count){
-			 * httpSession.setAttribute(sessionStaff.getStaffCode()+"custcount",
-			 * count); }else if(count==limit_count){
-			 * httpSession.setAttribute(sessionStaff.getStaffCode()+"custcount",
-			 * count); model.addAttribute("showVerificationcode", "Y"); }else
-			 * if(count>limit_count){
-			 * httpSession.setAttribute(sessionStaff.getStaffCode()+"custcount",
-			 * count); if(httpSession.getAttribute(sessionStaff.getStaffCode()+
-			 * "custcount")!=null){ model.addAttribute("showVerificationcode",
-			 * "Y"); return "/cust/cust-list"; } } }else{
-			 * httpSession.setAttribute(sessionStaff.getStaffCode()+"custtime",
-			 * endTime);
-			 * httpSession.setAttribute(sessionStaff.getStaffCode()+"custcount",
-			 * 1); } }else{
-			 * httpSession.setAttribute(sessionStaff.getStaffCode()+"custtime",
-			 * endTime);
-			 * httpSession.setAttribute(sessionStaff.getStaffCode()+"custcount",
-			 * 1); }
-			 */
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
-
 		Map resultMap = new HashMap();
 		httpSession.setAttribute("ValidateAccNbr", null);
 		httpSession.setAttribute("ValidateProdPwd", null);
@@ -475,6 +433,7 @@ public class CustController extends BaseController {
 		String identityCd = MapUtils.getString(paramMap, "identityCd", "");
 		String accNbr = MapUtils.getString(paramMap, "accNbr", "");
 		String soNbr = MapUtils.getString(paramMap, "soNbr", "");
+		super.getRequest().getSession().setAttribute("checkNumber", accNbr);//切换客户定位时选择的号码进行短信发送号码校验
 		try {
 			Map<String, Object> retMap = addAccountAndCustInfo(flowNum, sessionStaff, areaId, custId, accNbr, soNbr,
 					identityCd);
@@ -1617,7 +1576,7 @@ public class CustController extends BaseController {
 	 * @param flowNum
 	 * @param response
 	 * @return
-	 * @throws com.al.ecs.exception.BusinessException
+	 * @throws BusinessException
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/queryCustAlone", method = RequestMethod.GET)
@@ -1660,7 +1619,7 @@ public class CustController extends BaseController {
 	 * @param flowNum
 	 * @param response
 	 * @return
-	 * @throws com.al.ecs.exception.BusinessException
+	 * @throws BusinessException
 	 */
 	@RequestMapping(value = "/custInfo", method = { RequestMethod.POST })
 	public String custInfo(@RequestBody Map<String, Object> param, Model model, @LogOperatorAnn String optFlowNum,
