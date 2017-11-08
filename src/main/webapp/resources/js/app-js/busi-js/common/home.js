@@ -32,24 +32,24 @@ home = (function($) {
 	
 	var _initData = function(method,actionFlag,resourceName,resourceId,needCust)
 	{
-		if(home.appVersion.length<=0){//无客户端版本号
-			 var ua = navigator.userAgent.toLowerCase();
-			    var title="信息提示";
-				$("#btn-dialog-ok").removeAttr("data-dismiss");
-				$('#alert-modal').modal({backdrop: 'static', keyboard: false});
-				$("#btn-dialog-ok").off("click").on("click",function(){
-					$("#alert-modal").modal("hide");
-					if (/iphone|ipad|ipod/.test(ua)) {//跳转下载苹果apk
-						window.location= "itms-services://?action=download-manifest&url=https://ct.crm.189.cn:86/phoneimg/app/ios_wan/lteIosApp.plist";		
-					} else{	
-						home.goDownload();
-					}
-				});
-				$("#modal-title").html(title);
-				$("#modal-content").html("您当前的版本已经发生了重大变化，请到http://ct.crm.189.cn/ltePad/上下载翼销售最新版本");
-				$("#alert-modal").modal();
-				return;
-		}
+//		if(home.appVersion.length<=0){//无客户端版本号
+//			 var ua = navigator.userAgent.toLowerCase();
+//			    var title="信息提示";
+//				$("#btn-dialog-ok").removeAttr("data-dismiss");
+//				$('#alert-modal').modal({backdrop: 'static', keyboard: false});
+//				$("#btn-dialog-ok").off("click").on("click",function(){
+//					$("#alert-modal").modal("hide");
+//					if (/iphone|ipad|ipod/.test(ua)) {//跳转下载苹果apk
+//						window.location= "itms-services://?action=download-manifest&url=https://ct.crm.189.cn:86/phoneimg/app/ios_wan/lteIosApp.plist";		
+//					} else{	
+//						home.goDownload();
+//					}
+//				});
+//				$("#modal-title").html(title);
+//				$("#modal-content").html("您当前的版本已经发生了重大变化，请到http://ct.crm.189.cn/ltePad/上下载翼销售最新版本");
+//				$("#alert-modal").modal();
+//				return;
+//		}
 		var params={};
 //		alert(method);
 //		params.method = method; 
