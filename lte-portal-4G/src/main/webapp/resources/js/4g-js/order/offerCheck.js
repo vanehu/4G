@@ -43,7 +43,7 @@ check.offer = (function() {
 		}
 
 		var orderedTimes = _getOrderedTimes(orderedOffer);
-		if(ec.util.isDigit(orderedTimes) && orderedTimes > 0){
+		if(orderedTimes > 0){
 			var canOrderTimes = offerLimitTimes.orderTimes;
 			var timeType = offerLimitTimes.timeType;
 			switch (timeType) {
@@ -55,6 +55,8 @@ check.offer = (function() {
 					resultFlag = _compareOrderTimesByDefault(orderedTimes); break;
 				default: ;
 			}
+		} else if(orderedTimes < 0){
+			resultFlag = false;
 		}
 
 		return resultFlag;
@@ -119,7 +121,7 @@ check.offer = (function() {
 					if(ec.util.isArray(prodInfo.offerListInfo)){
 						$.each(prodInfo.offerListInfo, function(indexOffer, offerInfo){
 							if(offerInfo.prodOfferId == newSpec.offerSpecId){
-								orderedTimes = offerInfo.orderTimes;
+								orderedTimes = parseInt(offerInfo.orderTimes);
 								return false;
 							}
 						});
