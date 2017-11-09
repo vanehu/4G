@@ -49,6 +49,7 @@ import com.al.lte.portal.bmo.crm.CommonBmo;
 import com.al.lte.portal.bmo.crm.CustBmo;
 import com.al.lte.portal.bmo.crm.MktResBmo;
 import com.al.lte.portal.bmo.staff.StaffBmo;
+import com.al.lte.portal.common.AESUtils;
 import com.al.lte.portal.common.Base64;
 import com.al.lte.portal.common.CommonMethods;
 import com.al.lte.portal.common.CommonUtils;
@@ -1422,6 +1423,9 @@ public class CustController extends BaseController {
 	            	//脱敏
 					for(int i = 0; i < custInfos.size(); i++){
 						Map tmpCustInfo =(Map)custInfos.get(i);
+						if(tmpCustInfo.get("canRealName")!=null){
+							tmpCustInfo.put("MD5_isReal", AESUtils.getMD5Str("isReal"+tmpCustInfo.get("canRealName")+"isReal"));
+						}
 //						listCustInfos.put(MapUtils.getString(tmpCustInfo,"custId",""), tmpCustInfo);
 						
 						String tmpIdCardNumber = (String) tmpCustInfo.get("idCardNumber");

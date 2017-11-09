@@ -394,6 +394,10 @@ custQuery = (function(){
 			$.alert("提示","客户证件类型为！【"+_choosedCustInfo.identityName+"】，"+"证件号码为："+_choosedCustInfo.idCardNumber+"，当前不能办理此业务！");
 			return;
 		}
+		if(MD5("isReal"+_choosedCustInfo.canRealName+"isReal")!=$(scope).attr("MD5_isReal").toUpperCase()){
+			$.alert("提示","请勿篡改实名制信息！");
+			return;
+		}
 		if("9" != OrderInfo.actionFlag) {
 			if ( ec.util.isObj(_choosedCustInfo.canRealName) && 1 == _choosedCustInfo.canRealName) {
 				$('#auth3').modal('show');
@@ -581,14 +585,20 @@ custQuery = (function(){
 //				alert(JSON.stringify(response));
 				$.unecOverlay();
 				if(response.code==0){
-					var rule1 = response.data.rule1;
-					var rule2 = response.data.rule2;
-					var rule3 = response.data.rule3;
-					var rule4 = response.data.rule4;
-					var rule5 = response.data.rule5;
-					var rule6 = response.data.rule6;
-					var rule7 = response.data.rule7;
-					var rule8 = response.data.rule8;
+					var rule1 = (response.data.rule1!=undefined)?response.data.rule1:"";
+					var rule2 = (response.data.rule2!=undefined)?response.data.rule2:"";
+					var rule3 = (response.data.rule3!=undefined)?response.data.rule3:"";
+					var rule4 = (response.data.rule4!=undefined)?response.data.rule4:"";
+					var rule5 = (response.data.rule5!=undefined)?response.data.rule5:"";
+					var rule6 = (response.data.rule6!=undefined)?response.data.rule6:"";
+					var rule7 = (response.data.rule7!=undefined)?response.data.rule7:"";
+					var rule8 = (response.data.rule8!=undefined)?response.data.rule8:"";
+					var rulesStr = rule1 + rule2 + rule3 + rule4 + rule5 + rule6 + rule7 + rule8;
+					if(MD5("rules"+rulesStr+"rules")!=response.data.MD5_rules.toUpperCase()){
+						$('#auth3').modal('hide');
+						$.alert("提示","请勿篡改鉴权信息！");
+						return;
+					}
 					if (rule2=="Y") {
 						showSmsType = "Y";
 						first_show = 3;

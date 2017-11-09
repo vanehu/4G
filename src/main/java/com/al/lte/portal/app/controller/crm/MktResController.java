@@ -51,6 +51,7 @@ import com.al.ecs.spring.controller.BaseController;
 import com.al.lte.portal.bmo.crm.MktResBmo;
 import com.al.lte.portal.bmo.crm.OrderBmo;
 import com.al.lte.portal.bmo.staff.StaffBmo;
+import com.al.lte.portal.common.AESUtils;
 import com.al.lte.portal.common.Const;
 import com.al.lte.portal.common.EhcacheUtil;
 import com.al.lte.portal.common.MySimulateData;
@@ -1690,12 +1691,31 @@ public class MktResController extends BaseController {
     	Map<String, Object> rMap = null;
     	JsonResponse jsonResponse=null;
     	try {
-            rMap = mktResBmo.upLoadPicturesFileToFtp(param, flowNum, sessionStaff);
-            if (rMap != null && ResultCode.R_SUCCESS.equals(MapUtils.getString(rMap, "code"))) {
-                jsonResponse = super.successed(rMap, ResultConstant.SUCCESS.getCode());
-            } else {
-                jsonResponse = super.failed(ErrorCode.FTP_UPLOAD_ERROR, rMap, param);
-            }
+    		String imgStr = "";
+    		if(param.get("MD5_waterImg")!=null){
+    			List picList = (List) param.get("picturesInfo");
+    			for(int k=0;k<picList.size();k++){
+    				Map<String, Object> img0 = (Map<String, Object>) picList.get(k);
+    				if("D".equals(String.valueOf(img0.get("picFlag")))){
+    					imgStr = String.valueOf(img0.get("orderInfo"));
+    					break;
+    				}
+    			}
+    			imgStr = AESUtils.getMD5Str("waterImg"+imgStr+"waterImg");
+    		}
+    		//MD5校验照片 防篡改
+    		if(imgStr.length()>0 && !imgStr.equals(String.valueOf(param.get("MD5_waterImg")))){
+    			rMap.put("code", ResultCode.R_FAIL);
+    			rMap.put("msg", "请勿篡改经办人照片！");
+    			jsonResponse = super.failed(ErrorCode.FTP_UPLOAD_ERROR, rMap, param);
+    		}else{
+    			rMap = mktResBmo.upLoadPicturesFileToFtp(param, flowNum, sessionStaff);
+                if (rMap != null && ResultCode.R_SUCCESS.equals(MapUtils.getString(rMap, "code"))) {
+                    jsonResponse = super.successed(rMap, ResultConstant.SUCCESS.getCode());
+                } else {
+                    jsonResponse = super.failed(ErrorCode.FTP_UPLOAD_ERROR, rMap, param);
+                }
+    		}
         } catch (BusinessException be) {
             return super.failed(be);
         } catch (InterfaceException ie) {

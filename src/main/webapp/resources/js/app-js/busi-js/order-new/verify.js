@@ -9,6 +9,7 @@ verify = (function(){
 	var _isNeedCheck;//是否有人像审核权限
 	var _fz;//照片比对阈值
 	var _confidence;//照片相似度
+	var _MD5_checkType = "";//人证比对审核类型  MD5加密防篡改
 	
 	//跳转到人证比对拍照页面
 	var _openVerify=function(isNeedCheck){
@@ -39,6 +40,7 @@ verify = (function(){
         arr[0] = '';
         var image_best = "";
         var image_water = "";
+        verify.MD5_checkType = "";
         MyPlugin.goPhotograph(arr, function(result) {
         	$("#img_artwork").attr("src","");
         	$("#img_watermark").attr("src","");
@@ -161,6 +163,7 @@ verify = (function(){
                     	verify.checkType = response.data.checkType;
                     	verify.confidence=response.data.confidence;
                     	verify.fz=response.data.fz;
+                    	verify.MD5_checkType = response.data.MD5_checkType;
                     }else if (response.code == 1002) {
                     	$("#verify_msg").text(response.data.msg);
                     	verify.checkType = "";//审核不通过
@@ -179,6 +182,10 @@ verify = (function(){
     }
     
     var _verifyPass = function(){
+    	if(verify.MD5_checkType!="" && MD5("checkType"+verify.checkType+"checkType")!=verify.MD5_checkType.toUpperCase()){
+			$.alert("提示","请勿篡改审核信息！");
+			return;
+		}
     	if(verify.checkType=="4"){//有强制审核权限
 			$.confirm("确认","本次经办人拍照人证相符率为 "+verify.confidence+"%，低于设定的阀值 "+verify.fz+"%，请确实是否强制审核通过？",{ 
 				yes:function(){
@@ -225,6 +232,7 @@ verify = (function(){
 	    		}
     			if(verify.upLoad_param.picturesInfo[i].picFlag == "D"){
     				verify.upLoad_param.picturesInfo[i].orderInfo = dataUrl.split('data:image/jpeg;base64,')[1];
+    				verify.upLoad_param.MD5_waterImg = MD5("waterImg"+verify.upLoad_param.picturesInfo[i].orderInfo+"waterImg").toLowerCase();
     			}
     		}
     		if(OrderInfo.actionFlag=="111"){
@@ -387,7 +395,8 @@ var _checkSure=function(){
 		isNeedCheck     :   _isNeedCheck,
 		fz              :   _fz,
 		confidence      :   _confidence,
-		checkSure       :   _checkSure
+		checkSure       :   _checkSure,
+		MD5_checkType	:	_MD5_checkType
 	};
 	
 })();
