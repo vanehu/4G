@@ -249,6 +249,7 @@
 			
 			OrderInfo.order.soNbr='${soNbr}';
 			$("#phonenumber").val(order.prodModify.choosedProdInfo.accNbr);
+			cust.initMyData();//初始化返档数据，主要确定套餐是否为天翼云盘
 			order.dealer.initDealer();
 			cust.validatorForm();
 			cust.jbrvalidatorForm();
