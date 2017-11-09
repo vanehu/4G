@@ -58,6 +58,30 @@ cust = (function(){
 	var _tmpChooseUserInfo = {};
 	var _tmpJbrInfo = "";
 	var _OneCertNumFlag="false";
+	
+	
+	//初始化返档数据，主要判断是否为天翼云盘
+	var _initMyData=function(){
+		//查询销售品规格并且保存
+		var param = {
+			offerSpecId : order.prodModify.choosedProdInfo.prodOfferId, 
+			offerTypeCd : 1,
+			partyId : OrderInfo.cust.custId
+		};
+		var offerSpec = query.offer.queryMainOfferSpec(param); //查询主销售品构成
+		if(!offerSpec){
+			return;
+		}
+		order.service.isCloudOffer=false;
+		//天翼云盘套餐不做一五校验
+		$.each(offerSpec.offerRoles, function () {
+			$.each(this.roleObjs, function () {
+				if (this.objType == CONST.OBJ_TYPE.PROD && this.objId == CONST.PROD_SPEC.PROD_CLOUD_OFFER) {
+					order.service.isCloudOffer=true;
+				}
+			});
+		 });
+	}
 	//判断是否是自营渠道
 	var _isSelfChannel=function(){
 		var is=false;
@@ -463,6 +487,23 @@ cust = (function(){
 		$("#account_mod").parent().parent().hide();
 		//修改客户下一步确认按钮
 		$('#custInfoModifyBtn').off("click").on("click",function(event) {
+			//客户返档一证五号校验过直接提示
+			if (!order.service.isCloudOffer && cust.usedNum >= 5) {
+				var title = '信息提示';
+				$("#btn-dialog-ok").removeAttr("data-dismiss");
+				$('#alert-modal').modal({
+					backdrop : 'static',
+					keyboard : false
+				});
+				$("#btn-dialog-ok").off("click").on("click", function() {
+					$("#alert-modal").modal("hide");
+				});
+				$("#modal-title").html(title);
+				var phoneNumber=$("#phonenumber").val();
+				$("#modal-content").html("证件「"+cust.readIdCardUser.idCardNumber+"」全国范围已有"+parseInt(result.usedNum)+"张移动号卡，您当前业务在本证件下新增1张号卡「"+phoneNumber+"」，合计超过5卡，请对于新号卡登记其他使用人");
+				$("#alert-modal").modal();
+				return;
+			}
 			var obj=$('#custInfoModifyBtn');
 			common.setBtnTimer(obj);
 			var validate=$("#custFormdata").Validform();
@@ -472,10 +513,6 @@ cust = (function(){
 				if(order.prodModify.accountInfo!=undefined&&$.trim($("#accountName").val())==""){
 					$.alert("提示","账户名称不能为空!"); 
 					return ;
-				}
-				//客户返档一证五号校验
-				if((cust.checkCertNumberForReturn()) >= 5){
-						return;
 				}
 				var data = {};
 				if(false){
@@ -2963,9 +3000,7 @@ cust = (function(){
 			"before":function(){
 				$.ecOverlay("<strong>客户信息查询中,请稍等...</strong>");
 			},"done" : function(response){
-				$.unecOverlay();
 				if (response.code==0) {
-					cust.accountQuery();
 					var custInfoSize = $(response.data).find('#custInfoSize').val();
 					var custAge;
 					if (parseInt(custInfoSize) >= 1) {//老客户
@@ -3035,6 +3070,12 @@ cust = (function(){
 							
 						};
 					}
+					//客户返档一证五号校验
+					if(!order.service.isCloudOffer && (cust.checkCertNumberForReturn()) >= 5){
+							return;
+					}
+					$.unecOverlay();
+					cust.accountQuery();
 					//填充经办人信息
 					    custAge=cust.getAge(identityNum,home.nowDateStr);
 						OrderInfo.jbr.custId = cust.readIdCardUser.custId;
@@ -3051,6 +3092,7 @@ cust = (function(){
 						}
 						order.dealer.initJbrTab();
 				}else {
+					$.unecOverlay();
 					$.alert("提示","查询客户信息失败,稍后重试");
 					return;
 				}
@@ -3058,7 +3100,7 @@ cust = (function(){
 				$.unecOverlay();
 				$.alert("提示","查询失败，请稍后再试！");
 			},"always":function(){
-				$.unecOverlay();
+				//$.unecOverlay();
 			}
 		});
 };
@@ -3072,7 +3114,7 @@ cust = (function(){
 		var isON = offerChange.queryPortalProperties(propertiesKey);
 		cust.OneCertNumFlag=isON;
 		if (isON=="OFF") {
-			return true;
+			return 0;
 		}
 		
 //		if (_isCovCust(OrderInfo.cust.identityCd)) {// 政企客户不校验
@@ -3109,7 +3151,8 @@ cust = (function(){
 				+ "/app/cust/preCheckCertNumberRel", inParam);
 		if (response.code == 0) {
 			var result = response.data;
-			if ((parseInt(result.usedNum)) >= 5) {
+			cust.usedNum = parseInt(result.usedNum)
+			if (cust.usedNum >= 5) {
 				var title = '信息提示';
 				$("#btn-dialog-ok").removeAttr("data-dismiss");
 				$('#alert-modal').modal({
@@ -3129,13 +3172,14 @@ cust = (function(){
 		} else {
 			$.alertM(response.data);
 		}
-		return parseInt(result.usedNum);
+		return cust.usedNum;
 	};
 	//用户检测 Redmine#1476474营业厅翼支付开户IT流程优化
 	//订购【翼支付】功能产品时增加实名校验环节：仅允许居民身份证、临时居民身份证或户口簿登记的客户或使用人订购该功能产品
 	//20171106 Redmine#1975930新增现役军人居民身份证、人民武装警察居民身份证
 	var _checkRealCust = function(identityCd){
-		if(identityCd == 1 || identityCd == 41 || identityCd == 12 || identityCd == 2 ||identityCd == 14){
+		if(identityCd == 1 || identityCd == 41 || identityCd == 12 
+				|| identityCd == 51 ||identityCd == 52){
 			cust.isRealCust = true;
 		} else {
 			cust.isRealCust =  false;
@@ -3259,6 +3303,7 @@ cust = (function(){
 		userFlag					:		_userFlag,
 		getAge                      :       _getAge,
 		jbrAge                      :       _jbrAge,
-		iskhjq						:		_iskhjq
+		iskhjq						:		_iskhjq,
+		initMyData                  :       _initMyData
 	};	
 })();
