@@ -1578,12 +1578,7 @@ AttachOffer = (function() {
 		if(newSpec==undefined){ //没有在已开通附属销售列表中
 			return;
 		}
-		
-		var checkOrderTimesResult = check.offer.orderTimes(newSpec);
-		if(!checkOrderTimesResult){
-			return;
-		}
-		
+
 		if(ec.util.isObj(newSpec) && ec.util.isObj(newSpec.agreementInfos) && newSpec.agreementInfos.length>0 && newSpec.agreementInfos[0].activtyType!=null && newSpec.agreementInfos[0].activtyType =="3"){//征信合约
 			if(OrderInfo.actionFlag == "6"){
 				$.alert("提示","主副卡成员变更场景下不能订购征信合约。");
@@ -1647,17 +1642,23 @@ AttachOffer = (function() {
 				yes:function(){
 				},
 				yesdo:function(){
-				    _addOfferSpecFunction(prodId,newSpec);
+				    _addOfferSpecFunction(prodId, newSpec, offer);
 			    },
 				no:function(){
 				}
 			});
 		}else{
-			_addOfferSpecFunction(prodId,newSpec);
+			_addOfferSpecFunction(prodId, newSpec, offer);
 		}
 	};
 	
-	var _addOfferSpecFunction = function(prodId,newSpec){
+	var _addOfferSpecFunction = function(prodId, newSpec, orderedOffer){
+		if(ec.util.isObj(orderedOffer)){
+			var checkOrderTimesResult = check.offer.orderTimes(orderedOffer, null);
+			if(!checkOrderTimesResult){
+				return;
+			}
+		}
 		var content = CacheData.getOfferProdStr(prodId,newSpec,0);
 		$.confirm("信息确认",content,{ 
 			yes:function(){
@@ -4910,6 +4911,11 @@ AttachOffer = (function() {
 				return;
 			}
 			if(flag==1 && offer!=undefined){
+				//校验销售品已订购、可订购次数
+				var checkResult = check.offer.orderTimes(offer, nums);
+				if(!checkResult){
+					return;
+				}
 				if(offer.orderCount>nums){//退订附属销售品
 					if(!ec.util.isArray(offer.offerMemberInfos)){//销售品实例查询	
 						var param = {
