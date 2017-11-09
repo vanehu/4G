@@ -32,7 +32,7 @@ check.offer = (function() {
 		var resultFlag = true;
 		var offerLimitTimes = orderedOffer.offerLimitTimes;
 		
-		if(offerLimitTimes.ifLimitTimes != "Y"){
+		if(offerLimitTimes && offerLimitTimes.ifLimitTimes != "Y"){
 			return resultFlag;
 		}
 		
