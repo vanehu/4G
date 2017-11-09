@@ -91,11 +91,11 @@ public class ForbiddenKeywordFilter extends OncePerRequestFilter {
 
         //根据数据路由获取对应的配置数据：功能开关及要屏蔽的关键字
         String dbKey = (String) request.getSession().getAttribute(SysConstant.SESSION_DATASOURCE_KEY);
-        boolean isFilterForbidden = FilterBaseData.getInstance().isFilterForbiddenKeyWord(dbKey);
+        /*boolean isFilterForbidden = FilterBaseData.getInstance().isFilterForbiddenKeyWord(dbKey);
         request.setAttribute(ATTR_IS_FILTER_FORBIDDEN, isFilterForbidden);
         if (!isFilterForbidden) {
             return true;
-        }
+        }*/
         Set<String> forbiddenKeyWords = FilterBaseData.getInstance().getForbiddenKeyWords(dbKey);
         if (forbiddenKeyWords == null || forbiddenKeyWords.size() == 0) {
             //使用默认过虑策略 ,如果发现系统没有取到过虑内容
