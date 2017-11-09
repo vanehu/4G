@@ -1029,8 +1029,8 @@ query.offer = (function() {
 		var params = {
 			"curPage":1,
 			"pageSize":20,//协议中要求分页参数必填，但其实没用
-			"accNbr":OrderInfo.cust.accNbr,
-			"areaId":OrderInfo.cust.areaId,
+			"accNbr":order.prodModify.choosedProdInfo.accNbr,
+			"areaId":order.prodModify.choosedProdInfo.areaId,
 			"offerList":offerSpecIdList,
 			"prodBigClass":"12"
 		};
