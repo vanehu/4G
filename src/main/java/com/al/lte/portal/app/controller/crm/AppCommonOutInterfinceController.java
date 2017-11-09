@@ -218,6 +218,7 @@ public class AppCommonOutInterfinceController extends BaseController{
 						//相似度不足，且没有权限，返回失败
 						if("0".equals(QZSHQX)){
 							rMap.put("checkType", "4");
+							rMap.put("MD5_checkType", AESUtils.getMD5Str("checkType"+String.valueOf(rMap.get("checkType"))+"checkType"));
 							jsonResponse = super.successed(rMap,ResultConstant.SUCCESS.getCode());
 						}else{
 							rMap.remove("result");
@@ -227,6 +228,7 @@ public class AppCommonOutInterfinceController extends BaseController{
 						}
 					}else{
 						rMap.put("checkType", "3");
+						rMap.put("MD5_checkType", AESUtils.getMD5Str("checkType"+String.valueOf(rMap.get("checkType"))+"checkType"));
 						jsonResponse = super.successed(rMap,ResultConstant.SUCCESS.getCode());
 					}
 	 			} else {

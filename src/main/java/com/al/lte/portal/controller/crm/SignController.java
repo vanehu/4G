@@ -115,8 +115,11 @@ public class SignController extends BaseController {
      */
     @RequestMapping(value = "/previewHtmlForSign", method = RequestMethod.POST)
 	public String previewHtmlForSign(@RequestBody Map<String, Object> paramMap,Model model,
-			@LogOperatorAnn String flowNum, HttpServletResponse response) {
+			@LogOperatorAnn String flowNum, HttpServletResponse response, HttpServletRequest request) {
     	paramMap.put("signFlag", SysConstant.PREVIEW_SIGN_PDF);
+    	if (request.getSession().getAttribute("APP_OL_ID") != null) {
+    		paramMap.put("olId", request.getSession().getAttribute("APP_OL_ID").toString());
+		}
 		try {
 			Map<String, Object> resultMap = printBmo.printVoucher(paramMap, flowNum,
 					super.getRequest(), response);
@@ -259,6 +262,9 @@ public class SignController extends BaseController {
     	JsonResponse jsonResponse=null;
     	Map<String, Object> errorMap = new HashMap<String, Object>();
     	try {
+    		if (request.getSession().getAttribute("APP_OL_ID") != null) {
+        		paramMap.put("olId", request.getSession().getAttribute("APP_OL_ID").toString());
+    		}
     		Object obj=RedisUtil.get("mgrPdf_"+ paramMap.get("olId").toString());
 			Map<String,Object> orderInfo=null;
 			if(obj!=null){

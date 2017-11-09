@@ -3,6 +3,7 @@ package com.al.lte.portal.controller.crm;
 import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ecs.common.entity.JsonResponse;
 import com.al.ecs.common.util.DateUtil;
+import com.al.ecs.common.util.JsonUtil;
 import com.al.ecs.common.web.ServletUtils;
 import com.al.ecs.exception.BusinessException;
 import com.al.ecs.exception.ErrorCode;
@@ -12,8 +13,10 @@ import com.al.ecs.spring.annotation.log.LogOperatorAnn;
 import com.al.ecs.spring.controller.BaseController;
 import com.al.lte.portal.bmo.crm.SecondBusiness;
 import com.al.lte.portal.bmo.staff.StaffBmo;
+import com.al.lte.portal.common.AESUtils;
 import com.al.lte.portal.common.SysConstant;
 import com.al.lte.portal.model.SessionStaff;
+
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -154,6 +157,8 @@ public class SecondBusinessController extends BaseController {
                     List<Map<String, Object>> scenes = (List<Map<String, Object>>) MapUtils.getObject(resultMap, "scenes");
                     if (scenes != null && scenes.size() > 0) {
                         rules = authCompute(scenes,sessionStaff);
+                        String rulesStr = String.valueOf(rules.get("rule1"))+String.valueOf(rules.get("rule2"))+String.valueOf(rules.get("rule3"))+String.valueOf(rules.get("rule4"))+String.valueOf(rules.get("rule5"))+String.valueOf(rules.get("rule6"))+String.valueOf(rules.get("rule7"))+String.valueOf(rules.get("rule8"));
+                        rules.put("MD5_rules", AESUtils.getMD5Str("rules"+rulesStr+"rules"));
                     }
                 }
                 jsonResponse = super.successed(rules, ResultConstant.SUCCESS.getCode());
