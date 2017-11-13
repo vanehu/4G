@@ -90,9 +90,27 @@ staff.login = (function($) {
 		    		var password = $("#password").val();
 		    		password = MD5(password);
 		    		var staffProvCode = $("#store-selector-text").attr("area-id");
-		    		var url = httpconfig+"://"+provDomain+":"+version+"/provPortal/staff/login/page?areaId="+staffProvCode+"&areaName="+areaName
-		    	    +"&provinceName="+provinceName+"&staffCode="+staffCode+"&password="+password+"&prov="+province;
-		    		window.location = url;
+		    		var param = {
+		    				"areaId":staffProvCode,
+		    				"areaName":areaName,
+		    				"provinceName":provinceName,
+		    				"staffCode":staffCode,
+		    				"password":password
+		    		};
+		    		var paramStr = "";
+		    		$.ajax({
+		    		    type: "post",
+		    		    dataType: "json",
+		    		    url: "aes",
+		    		    data: {"param":JSON.stringify(param)},
+		    		    success: function (response) {
+		    		    	paramStr = response.param;
+		    		    	var url = httpconfig+"://"+provDomain+":"+version+"/provPortal/staff/login/page?param="+paramStr+"&aesFlag=Y&prov="+province;
+				    		window.location = url;
+		    		    }});
+		    		
+		    		/*var url = httpconfig+"://"+provDomain+":"+version+"/provPortal/staff/login/page?areaId="+staffProvCode+"&areaName="+areaName
+		    	    +"&provinceName="+provinceName+"&staffCode="+staffCode+"&password="+password+"&prov="+province;*/    		
 		    	}
 		    }
 		});
