@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.al.ecs.common.util.MapUtil;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -156,6 +157,7 @@ public class PCModelController extends BaseController {
 				model.addAttribute("errorMsg", "参数解析异常");
 				return "/common/error";
 			}
+			String mainPhoneNum = MapUtils.getString(paramsMap,"mainPhoneNum","");
 			log.error("解析后的参数集："+paramsMap.toString());
 			String mainProdOfferId = String.valueOf(paramsMap.get("mainProdOfferId"));//主套餐内部ID 对应Ext_Prod_Offer_Id
 			if(!StringUtil.isEmptyStr(mainProdOfferId)){	
@@ -204,6 +206,7 @@ public class PCModelController extends BaseController {
 			session.removeAttribute(SysConstant.SESSION_HANDLECUSTNUMBER+"_PC");
 			session.removeAttribute(SysConstant.SESSION_HANDLEPROVCUSTAREAID+"_PC");
 
+			session.setAttribute("mainPhoneNum_PC", mainPhoneNum);
 			session.setAttribute(SysConstant.SESSION_ISPHOTOGRAPH+"_PC", null);//清空session中该节点
 			session.setAttribute(SysConstant.SESSION_HANDLECUSTNUMBER+"_PC", null);//清空session中该节点
 			session.setAttribute(SysConstant.SESSION_HANDLEPROVCUSTAREAID+"_PC", null);//清空session中该节点
