@@ -3,11 +3,13 @@ package  com.al.lte.portal.model;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.al.ecs.common.util.PropertiesUtils;
@@ -162,6 +164,9 @@ public class SessionStaff implements Serializable {
 	
 	/**该工号具有的所有权限*/
 	private ArrayList<String> privileges;
+	
+	/**该工号可以查询和选择到的所有审核人员列表*/
+	private Map<String, Object> photographReviewStaffMap = new HashMap<String, Object>();
 	
 	public String getCustType() {
 		return custType;
@@ -918,5 +923,64 @@ public class SessionStaff implements Serializable {
 			}
 		}
 		return result;
+	}
+
+
+	public Map<String, Object> getPhotographReviewStaffMap() {
+		return photographReviewStaffMap;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Map<String, Object>> getPhotographReviewStaffList(String sessionKey){
+		Map<String, Object> subPhotographReviewStaffMap = MapUtils.getMap(this.photographReviewStaffMap, sessionKey);
+		
+		if(MapUtils.isNotEmpty(subPhotographReviewStaffMap)){
+			return (List<Map<String, Object>>) MapUtils.getObject(this.photographReviewStaffMap, "staffList");
+		} else{
+			return null;
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public Set<String> getPhotographReviewStaffPhoneNumberSet(String sessionKey){
+		Map<String, Object> subPhotographReviewStaffMap = MapUtils.getMap(this.photographReviewStaffMap, sessionKey);
+		
+		if(MapUtils.isNotEmpty(subPhotographReviewStaffMap)){
+			Set<String> phoneNumberSet = (Set<String>) MapUtils.getObject(subPhotographReviewStaffMap, "phoneNumberSet");
+			return phoneNumberSet;
+		} else{
+			return null;
+		}
+	}
+	
+	public void setPhotographReviewStaff(Map<String, Object> photographReviewStaffMap) {
+		this.photographReviewStaffMap = photographReviewStaffMap;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void setPhotographReviewStaffList(List<Map<String, Object>> staffList, String sessionKey) {
+		Map<String, Object> subPhotographReviewStaffMap = (Map<String, Object>) this.photographReviewStaffMap.get(sessionKey);
+		
+		if(MapUtils.isNotEmpty(subPhotographReviewStaffMap)){
+			subPhotographReviewStaffMap.put("staffList", staffList);
+			subPhotographReviewStaffMap.put("phoneNumberSet", this.getphoneNumberSetFromStaffList(staffList));
+		} else{
+			subPhotographReviewStaffMap = new HashMap<String, Object>();
+			subPhotographReviewStaffMap.put("staffList", staffList);
+			subPhotographReviewStaffMap.put("phoneNumberSet", this.getphoneNumberSetFromStaffList(staffList));
+		}
+	}
+	
+	private Set<String> getphoneNumberSetFromStaffList(List<Map<String, Object>> staffList){
+		Set<String> phoneNumberSet = new HashSet<String>(staffList.size());
+		
+		for(Map<String, Object> staff : staffList){
+			String phoneNumber = MapUtils.getString(staff, "phone", "根据字段phone未获取到有效手机号码");
+        	if(!phoneNumberSet.add(phoneNumber)){
+//        		log.error("系管operatSpecCd服务返回的员工集合存在重复节点【phoneNumber】", staffList);
+        	}
+        }
+		
+		return phoneNumberSet;
 	}
 }

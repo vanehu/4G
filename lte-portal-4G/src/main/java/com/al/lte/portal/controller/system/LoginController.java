@@ -2650,9 +2650,14 @@ public class LoginController extends BaseController {
 	@LogOperatorAnn(desc = "经办人拍照人证相符短信校验码验证", code = "CHANGEUIM", level = LevelLog.DB)
 	@ResponseBody
 	public JsonResponse confirmAgreeCheck(@RequestParam Map<String, Object> paramMap,HttpServletRequest request, @LogOperatorAnn String flowNum) {
-		try {
-			SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
-			String number = (String) paramMap.get("number");
+		String number = MapUtils.getString(paramMap, "number");
+
+    	Map<String, Object> checkResult = EhcacheUtil.photographReviewTamperInterceptor(number, request);
+    	if(ResultCode.SUCCESS != MapUtils.getIntValue(checkResult, SysConstant.RESULT_CODE, 1)){
+    		return super.failed(MapUtils.getString(checkResult, SysConstant.RESULT_MSG), 3);
+    	}
+    	
+    	try {
 			String areaId = (String) paramMap.get("areaId");
 			String virOlId = (String) paramMap.get("virOlId");
 			String checkType = (String) paramMap.get("checkType");
@@ -2730,6 +2735,12 @@ public class LoginController extends BaseController {
 				retnMap.put("resultMsg","短信验证号码为空，系统异常！请刷新重试!");
 				return retnMap;
 			}
+			Map<String, Object> checkResult = EhcacheUtil.photographReviewTamperInterceptor(number, request);
+	    	if(ResultCode.SUCCESS != MapUtils.getIntValue(checkResult, SysConstant.RESULT_CODE, 1)){
+	    		retnMap.put("resultCode",ResultCode.R_FAILURE );
+				retnMap.put("resultMsg",MapUtils.getString(checkResult, SysConstant.RESULT_MSG));
+				return retnMap;
+	    	}
 			
 			String smsPwd = null;
 			String randomCode =null;
