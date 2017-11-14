@@ -45,7 +45,7 @@
 	<div><input id="jumpAuthflag" type="hidden" value="${jumpAuthflag}"/></div>
 	<ul class="single-list-box meal-choice-box">
 	<#list cust.custInfos as custInfo>
-		<li class="done p-10 p-t-15 p-b-15" id="custInfos" class="custInfo_${custInfo_index}" onclick="custQuery.showCustAuth(this)"  canRealName="${custInfo.canRealName}"
+		<li class="done p-10 p-t-15 p-b-15" id="custInfos" class="custInfo_${custInfo_index}" onclick="custQuery.showCustAuth(this)"  canRealName="${custInfo.canRealName}" MD5_isReal="${custInfo.MD5_isReal}"
 				userIdentityCd="${custInfo.userIdentityCd}" userIdentityName="${custInfo.userIdentityName}" userIdentityNum="${custInfo.userIdentityNum}" accountName="${custInfo.accountName}" userName="${custInfo.userName}" userCustId="${custInfo.userCustId}" isSame="${custInfo.isSame}"
 				custFlag="${custInfo.custFlag}" norTaxPayer="${custInfo.norTaxPayer}" identityName="${custInfo.identityName}" custId="${custInfo.custId}" partyName="${custInfo.partyName}" idCardNumber="${custInfo.filterIdCardNumber}" areaId="${custInfo.areaId}" corCustId="${custInfo.corCustId}" identityCd="${custInfo.identityCd}" addressStr="${custInfo.addressStr}" areaName="${custInfo.areaName}" vipLevel="${custInfo.vipLevel}" vipLevelName="${custInfo.vipLevelName}" segmentId="${custInfo.segmentId}" segmentName="${custInfo.segmentName}" extCustId="${custInfo.extCustId}" accNbr="${custInfo.accNbr}" CN="${custInfo.CN}" address="${custInfo.address}" certNum="${custInfo.certNum}" isGov="${custInfo.isGov}" userCustId="${custInfo.userCustId}" isSame="${custInfo.isSame}" age="${custInfo.age}">
 			<div>
