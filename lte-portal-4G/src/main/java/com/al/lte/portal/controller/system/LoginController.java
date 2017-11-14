@@ -2651,11 +2651,6 @@ public class LoginController extends BaseController {
 	@ResponseBody
 	public JsonResponse confirmAgreeCheck(@RequestParam Map<String, Object> paramMap,HttpServletRequest request, @LogOperatorAnn String flowNum) {
 		String number = MapUtils.getString(paramMap, "number");
-
-    	Map<String, Object> checkResult = EhcacheUtil.photographReviewTamperInterceptor(number, request);
-    	if(ResultCode.SUCCESS != MapUtils.getIntValue(checkResult, SysConstant.RESULT_CODE, 1)){
-    		return super.failed(MapUtils.getString(checkResult, SysConstant.RESULT_MSG), 3);
-    	}
     	
     	try {
 			String areaId = (String) paramMap.get("areaId");

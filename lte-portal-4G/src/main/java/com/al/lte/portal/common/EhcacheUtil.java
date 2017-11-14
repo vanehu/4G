@@ -462,7 +462,7 @@ public class EhcacheUtil {
 	 * @return
 	 */
 	public static Map<String, Object> photographReviewTamperInterceptor(String phoneNumber, HttpServletRequest request){
-		Map<String, Object> result = new HashMap<String, Object>();
+		Map<String, Object> result = new HashMap<String, Object>(16);
 		boolean isSuccess = false;
 		
 		if(StringUtils.isNotBlank(phoneNumber)){

@@ -14,6 +14,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.al.ecs.common.util.PropertiesUtils;
 import com.al.ecs.common.web.SpringContextUtil;
+import com.al.ecs.log.Log;
 import com.al.lte.portal.common.CommonMethods;
 import com.al.lte.portal.common.SysConstant;
 
@@ -28,6 +29,9 @@ import com.al.lte.portal.common.SysConstant;
  */
 public class SessionStaff implements Serializable {
 	private static final long serialVersionUID = 6280564674602051144L;
+	
+	private Log log = Log.getLog(SessionStaff.class);
+
 	/** 工号编码 */
 	private String staffId;
 	/** 工号或者是登录账号 */
@@ -935,7 +939,7 @@ public class SessionStaff implements Serializable {
 		Map<String, Object> subPhotographReviewStaffMap = MapUtils.getMap(this.photographReviewStaffMap, sessionKey);
 		
 		if(MapUtils.isNotEmpty(subPhotographReviewStaffMap)){
-			return (List<Map<String, Object>>) MapUtils.getObject(this.photographReviewStaffMap, "staffList");
+			return (List<Map<String, Object>>) MapUtils.getObject(subPhotographReviewStaffMap, "staffList");
 		} else{
 			return null;
 		}
@@ -965,9 +969,10 @@ public class SessionStaff implements Serializable {
 			subPhotographReviewStaffMap.put("staffList", staffList);
 			subPhotographReviewStaffMap.put("phoneNumberSet", this.getphoneNumberSetFromStaffList(staffList));
 		} else{
-			subPhotographReviewStaffMap = new HashMap<String, Object>();
+			subPhotographReviewStaffMap = new HashMap<String, Object>(16);
 			subPhotographReviewStaffMap.put("staffList", staffList);
 			subPhotographReviewStaffMap.put("phoneNumberSet", this.getphoneNumberSetFromStaffList(staffList));
+			this.photographReviewStaffMap.put(sessionKey, subPhotographReviewStaffMap);
 		}
 	}
 	
@@ -977,7 +982,7 @@ public class SessionStaff implements Serializable {
 		for(Map<String, Object> staff : staffList){
 			String phoneNumber = MapUtils.getString(staff, "phone", "根据字段phone未获取到有效手机号码");
         	if(!phoneNumberSet.add(phoneNumber)){
-//        		log.error("系管operatSpecCd服务返回的员工集合存在重复节点【phoneNumber】", staffList);
+        		log.error("系管operatSpecCd服务返回的员工集合存在重复节点【phoneNumber】", staffList);
         	}
         }
 		
