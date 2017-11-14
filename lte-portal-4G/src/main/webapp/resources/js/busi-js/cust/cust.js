@@ -978,6 +978,14 @@ order.cust = (function(){
 		}
 		var content$ = $("#custList");
 		content$.html(response.data).show();
+		//双屏互动redis缓存数据和客户端数据比较
+		var isCustTally = $("#isCustTally").val();
+		if(isCustTally == "1"){
+			content$.html(response.data).hide();
+			easyDialog.close();
+			$.alert("提示","双屏互动pc端身份证信息被修改！");
+			return;
+		}
 		//拦截先点击选购套餐在定位的非法请求，户口簿，军人和警察的请求
 		if(order.service.releaseFlag == 2){
 			var resultS = _checkAddNumberAndMeal(response);
