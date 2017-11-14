@@ -54,6 +54,8 @@ AttachOffer = (function() {
 	var _hasYzfTd=false;//二次业务是否已提示翼支付退订
 	
 	var hasShowTip = false;//由于记录退订翼支付以及相关产品提示信息是否已弹出
+	var nowTimes = "";//已订购次数
+	var maxTimes = "";//最大订购次数
 	
 	//初始化附属销售页面
 	var _init = function(){
@@ -291,7 +293,7 @@ AttachOffer = (function() {
 							html='<li id="_li_'+ prodId + '_'+ this.offerSpecId  +'" ><i class="iconfont pull-left active" onclick="AttachOffer.delMyfavoriteSpec('+prodId+',\''+'\','+this.offerSpecId+',\''+this.offerSpecName+'\',$(this)'+','+1+');">&#xe62b;</i>';
 							html+='<span class="list-title">'+ this.offerSpecName +'</span>';
 							html+='<div class="list-checkbox absolute-right"><div class="checkbox-box">';
-							html+='<input type="checkbox" value="1" name="" id="input_'+ prodId + '_'+ this.offerSpecId  +'" onclick="javascript:{common.setBtnTimer(this);AttachOffer.isLimit('+this.ifLimitTimes+','+prodId+','+this.offerSpecId+','+"'OfferSpec'"+');}"><label for="input_'+ prodId + '_'+ this.offerSpecId  +'" checked="checked" ></label></input></div></div>';
+							html+='<input type="checkbox" value="1" name="" id="input_'+ prodId + '_'+ this.offerSpecId  +'" onclick="javascript:{common.setBtnTimer(this);AttachOffer.isLimit('+this.orderTimes+',\''+this.ifLimitTimes+'\','+prodId+','+this.offerSpecId+','+"'OfferSpec'"+');}"><label for="input_'+ prodId + '_'+ this.offerSpecId  +'" checked="checked" ></label></input></div></div>';
 							//html+='<h5 class="list-group-item-heading" style="padding-left: 40px;" onclick="AttachOffer.addOfferSpec('+prodId+','+this.offerSpecId+')">'+ this.offerSpecName +'</h5>';
 							html+='</li>';
 							i++;
@@ -1247,7 +1249,7 @@ AttachOffer = (function() {
 							html='<div class="panel-heading m-b-5" id="_li_'+prodId +'_'+this.servSpecId +'"><i class="iconfont pull-left p-l-10">&#xe635;</i>';
 							html+='<h3 class="panel-title"><a id="li_'+ prodId +'_'+ this.servSpecId + '" class="accordion-toggle accordion-toggle-styled border-none"  data-toggle="collapse" data-parent="#accordion" href="#collapse01">'+this.servSpecName+'</a>';
 							html+='</h3><div class="list-checkbox absolute-right"><div class="checkbox-box">';
-							html+='<input type="checkbox" value="1" name="" id="input_'+ prodId + '_'+ this.servSpecId  +'" onclick="javascript:{common.setBtnTimer(this);AttachOffer.isLimit('+this.ifLimitTimes+','+prodId+','+this.servSpecId+','+"'ServSpec'"+',\''+this.servSpecName+'\',\''+this.ifParams+'\');}"/><label for="input_'+prodId+'_'+this.servSpecId+'" ></label></div></div></div>';
+							html+='<input type="checkbox" value="1" name="" id="input_'+ prodId + '_'+ this.servSpecId  +'" onclick="javascript:{common.setBtnTimer(this);AttachOffer.isLimit('+this.orderTimes+','+this.ifLimitTimes+','+prodId+','+this.servSpecId+','+"'ServSpec'"+',\''+this.servSpecName+'\',\''+this.ifParams+'\');}"/><label for="input_'+prodId+'_'+this.servSpecId+'" ></label></div></div></div>';
 							$ul.append(html);
 							i++;
 						} else {
@@ -1259,7 +1261,7 @@ AttachOffer = (function() {
 							}
 							html+='<span class="list-title">'+ this.servSpecName +'</span>';
 							html+='<div class="list-checkbox absolute-right"><div class="checkbox-box">';
-							html+='<input type="checkbox" value="1"" name="" id="input_'+prodId+'_'+this.servSpecId+'" onclick="javascript:{common.setBtnTimer(this);AttachOffer.isLimit('+this.ifLimitTimes+','+prodId+','+this.servSpecId+','+"'ServSpec'"+',\''+this.servSpecName+'\',\''+this.ifParams+'\');}"/><label for="input_'+prodId+'_'+this.servSpecId+'" ></label></div></div>';						
+							html+='<input type="checkbox" value="1"" name="" id="input_'+prodId+'_'+this.servSpecId+'" onclick="javascript:{common.setBtnTimer(this);AttachOffer.isLimit('+this.orderTimes+','+this.ifLimitTimes+','+prodId+','+this.servSpecId+','+"'ServSpec'"+',\''+this.servSpecName+'\',\''+this.ifParams+'\');}"/><label for="input_'+prodId+'_'+this.servSpecId+'" ></label></div></div>';						
 							html+='</li>';
 							$ul.append(html);
 							i++;
@@ -1334,7 +1336,7 @@ AttachOffer = (function() {
 								}
 								html+='<span class="list-title">'+ this.offerSpecName +'</span>';
 								html+='<div class="list-checkbox absolute-right"><div class="checkbox-box">';
-								html+='<input type="checkbox" value="1" name="" id="input_'+ prodId + '_'+ this.offerSpecId  +'" onclick="javascript:{common.setBtnTimer(this);AttachOffer.isLimit('+this.ifLimitTimes+','+prodId+','+this.offerSpecId+','+"'OfferSpec'"+');}"/><label for="input_'+prodId+'_'+this.offerSpecId+'" ></label></div></div>';
+								html+='<input type="checkbox" value="1" name="" id="input_'+ prodId + '_'+ this.offerSpecId  +'" onclick="javascript:{common.setBtnTimer(this);AttachOffer.isLimit('+this.orderTimes+',\''+this.ifLimitTimes+'\','+prodId+','+this.offerSpecId+','+"'OfferSpec'"+');}"/><label for="input_'+prodId+'_'+this.offerSpecId+'" ></label></div></div>';
 								html+='</li>';
 								$ul.append(html);
 								i++;
@@ -1343,7 +1345,7 @@ AttachOffer = (function() {
 								html='<div class="panel-heading m-b-5" id="_li_'+prodId +'_'+this.offerSpecId +'"><i class="iconfont pull-left p-l-10">&#xe635;</i>';
 								html+='<h3 class="panel-title"><a id="li_'+ prodId +'_'+ this.offerSpecId + '" class="accordion-toggle accordion-toggle-styled border-none"  data-toggle="collapse" data-parent="#accordion" href="#collapse01">'+this.offerSpecName+'</a>';
 								html+='</h3><div class="list-checkbox absolute-right"><div class="checkbox-box">';
-								html+='<input type="checkbox" value="1" name="" id="input_'+ prodId + '_'+ this.offerSpecId  +'" onclick="javascript:{common.setBtnTimer(this);AttachOffer.isLimit('+this.ifLimitTimes+','+prodId+','+this.offerSpecId+','+"'OfferSpec'"+');}"/><label for="input_'+prodId+'_'+this.offerSpecId+'" ></label></div></div></div>';
+								html+='<input type="checkbox" value="1" name="" id="input_'+ prodId + '_'+ this.offerSpecId  +'" onclick="javascript:{common.setBtnTimer(this);AttachOffer.isLimit('+this.orderTimes+','+this.ifLimitTimes+','+prodId+','+this.offerSpecId+','+"'OfferSpec'"+');}"/><label for="input_'+prodId+'_'+this.offerSpecId+'" ></label></div></div></div>';
 								$ul.append(html);
 								i++;
 							}
@@ -2210,22 +2212,25 @@ AttachOffer = (function() {
 		content +='</form>' ;
 		$.confirm("参数设置： ",content,{ 
 			yes:function(){
+				var nums=$("#text_"+prodId+"_"+offerSpecId).val();
 				if(flag==1){
-					var nums=$("#text_"+prodId+"_"+offerSpecId).val();
 					var reg = /^\+?[0-9][0-9]*$/;//正整数
 					if(!reg.test(nums)){
 						$.alert("信息提示","次数输入有误。");
 						return;
 					}
 				}else{
-					var nums=$("#text_"+prodId+"_"+offerSpecId).val();
 					var reg = /^\+?[1-9][0-9]*$/;//正整数
 					if(!reg.test(nums)){
 						$.alert("信息提示","次数只能是正整数。");
 						return;
 					}
 				}
-				if(parseInt(newSpec.orderCount)<nums){
+				if(offer.offerLimitTimes!=undefined && offer.offerLimitTimes.ifLimitTimes=="Y" && Number($("#text_"+prodId+"_"+offerSpecId).val())>Number(offer.offerLimitTimes.orderTimes)){
+					$.alert("信息提示","当前订购次数【"+$("#text_"+prodId+"_"+offerSpecId).val()+"】，超过最大订购次数【"+offer.offerLimitTimes.orderTimes+"】。");
+					return;
+				}
+				if(newSpec.orderCount!=undefined && parseInt(newSpec.orderCount)<nums){
 					$.alert("信息提示","可选包【"+newSpec.offerSpecName+"】至多只能订购"+newSpec.orderCount+"次");
 					return;
 				}
@@ -3528,39 +3533,61 @@ AttachOffer = (function() {
 			}
 	 }
 	 
-	 var _isLimit = function(isLimit,prodId,sp_id,addType,servSpecName,ifParams){
+	 var _isLimit = function(times,isLimit,prodId,sp_id,addType,servSpecName,ifParams){
 //		 alert(isLimit+"--"+sp_id+"--"+prodId+"--"+addType+"--"+servSpecName+"--"+ifParams);
 //		 isLimit = "Y";
-//		 if(isLimit!=undefined && isLimit == "Y" ){
-//			 var param ={
-//					 "acctNbr":OrderInfo.getAccessNumber(prodId),
-//					 "offerList":[{"offerSpecId":sp_id+""}],
-//					 "curPage":"1",
-//					 "prodBigClass":"12",
-//					 "pageSize":"5"
-//			 };
-//			 $.callServiceAsJson(contextPath + "/app/offer/queryProdOfferOrderTimes", param, {
-//	                "before": function () {
-//	                    $.ecOverlay("<strong>正在 查询中,请稍等...</strong>");
-//	                }, "done": function (response) {
-//	                	$.unecOverlay();
-//	                    if (response.code == 0) {
-//	                    	
-//	                    }else {
-//	                        $.alertM(response.data);
-//	                    }
-//	                },fail:function(response){
-//	    				$.unecOverlay();
-//	    				$.alert("提示","查询失败，请稍后再试！");
-//	    			}
-//	            });
-//		 }else{
+		 nowTimes = "";
+		 maxTimes = "";
+		 if(isLimit!=undefined && isLimit == "Y" ){
+			 if(times!=undefined){
+				 maxTimes = times+"";
+			 }
+			 var acc_nbr = OrderInfo.getAccessNumber(prodId);
+			 var param ={
+					 "accNbr":acc_nbr,
+					 "offerList":[{"offerSpecId":sp_id+""}],
+					 "curPage":"1",
+					 "prodBigClass":"12",
+					 "pageSize":"5"
+			 };
+			 $.callServiceAsJson(contextPath + "/app/offer/queryProdOfferOrderTimes", param, {
+	                "before": function () {
+	                    $.ecOverlay("<strong>正在 查询中,请稍等...</strong>");
+	                }, "done": function (response) {
+	                	$.unecOverlay();
+	                    if (response.code == 0) {
+	                    	if(response.data.result!=undefined && response.data.result.prodInfos!=undefined){
+	                    		for(var i=0;i<response.data.result.prodInfos.length;i++){
+	                    			if(response.data.result.prodInfos[i].accNbr == acc_nbr && response.data.result.prodInfos[i].offerListInfo.length>0){
+	                    				nowTimes = response.data.result.prodInfos[i].offerListInfo[0].orderTimes;
+	                    			}
+	                    		}
+	                    	}
+	                    	if(nowTimes!="" && maxTimes!="" && nowTimes>=maxTimes){
+	                    		$.alert("提示","该销售品可订购次数："+maxTimes+",已订购次数："+nowTimes+",无法继续订购！");
+	                    		$("#input_"+prodId+"_"+sp_id).removeAttr("checked");
+	                    	}else{
+	                    		if(addType=="OfferSpec"){
+	               				 	AttachOffer.addOfferSpec(prodId,sp_id);
+	               			 	}else if(addType=="ServSpec"){
+	               			 		openServSpec(prodId,sp_id,servSpecName,ifParams);
+	               			 	}
+	                    	}
+	                    }else {
+	                        $.alertM(response.data);
+	                    }
+	                },fail:function(response){
+	    				$.unecOverlay();
+	    				$.alert("提示","查询失败，请稍后再试！");
+	    			}
+	            });
+		 }else{
 			 if(addType=="OfferSpec"){
 				 AttachOffer.addOfferSpec(prodId,sp_id);
 			 }else if(addType=="ServSpec"){
 		 		 openServSpec(prodId,sp_id,servSpecName,ifParams);
 			 }
-//		 }
+		 }
 	 }
 		
 	return {
