@@ -136,11 +136,7 @@ public class PCModelController extends BaseController {
 				model.addAttribute("errorMsg", "获取员工信息异常");
 				return "/common/error";
 			}	
-			staffInfo.put("accessToken", accessToken);
-			staffInfo.put("staffProvCode", provinceCode);
-			staffInfo.put("channelCode", channelCode);
-			sessionStaff = SessionStaff.setStaffInfoFromMap(staffInfo);		
-			initSessionStaff(sessionStaff, request.getSession());
+
 			String privateKey = MySimulateData.getInstance().getParam("token."+provinceCode+".key",(String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),"token."+provinceCode+".key");
 			log.error("省份私钥："+privateKey);
 			if(StringUtil.isEmptyStr(privateKey)){		
@@ -153,6 +149,19 @@ public class PCModelController extends BaseController {
 				return "/common/error";
 			}
 			Map<String,Object> paramsMap = JsonUtil.toObject(jmParams, HashMap.class);
+			//redmine2074987
+			String lanId = MapUtils.getString(paramsMap,"lanId","");
+			if(!StringUtils.isEmpty(lanId)){
+				areaId = lanId;
+				paramsMap.put("provCustAreaId",lanId);
+			}
+
+			staffInfo.put("accessToken", accessToken);
+			staffInfo.put("staffProvCode", provinceCode);
+			staffInfo.put("channelCode", channelCode);
+			sessionStaff = SessionStaff.setStaffInfoFromMap(staffInfo);
+			initSessionStaff(sessionStaff, request.getSession());
+
 			if(paramsMap == null || paramsMap.size() <= 0){		
 				model.addAttribute("errorMsg", "参数解析异常");
 				return "/common/error";
