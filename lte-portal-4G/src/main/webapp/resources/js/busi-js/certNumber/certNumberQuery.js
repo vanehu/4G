@@ -76,6 +76,7 @@ oneFive.certNumberQuery = (function () {
             curPage = pageIndex;
         }
         var param = {};
+        var noDateParam = {};
 
         if(DateUtil.differDays(new Date(Date.parse($("#p_startDt").val())),new Date(Date.parse($("#p_endDt").val())))>31){
             $.alert("提示","日期跨度太长，超过一个月，请重新选择");
@@ -103,6 +104,7 @@ oneFive.certNumberQuery = (function () {
                 "nowPage": curPage,
                 "pageSize": 10
             };
+            
         } else {
             var areaId = $("#p_areaId").val();
             var telNumber = $("#p_telNumber").val();
@@ -137,19 +139,15 @@ oneFive.certNumberQuery = (function () {
                 "nowPage": curPage,
                 "pageSize": 10
             };
+            noDateParam = {
+            	"collectType": "2",
+                "areaId": areaId,
+                "nowPage": curPage,
+                "pageSize": 10
+            };
         }
-        //查询本省全部、处理、受理订单
-        var onefivecardProvince = $("#onefivecard_province").val();
-        if(onefivecardProvince == "province_all" || ec.util.isObj(onefivecardProvince) != true){
-        	param.ifFilterAreaId = "N";
-        }else if(onefivecardProvince == "province_accept"){
-        	param.ifFilterAreaId = "Y";
-        }else{
-        	param.ifQryHandle = "Y";
-        }
-        
-        param.ifFilterItem = "N";
         if (ec.util.isObj(telNumber) || ec.util.isObj(certNumber)) {
+        	param = noDateParam;
             if (ec.util.isObj(telNumber)) {
                 param.telNumber = telNumber;
             }
@@ -167,6 +165,17 @@ oneFive.certNumberQuery = (function () {
         	}
         	
         }
+        //查询本省全部、处理、受理订单
+        var onefivecardProvince = $("#onefivecard_province").val();
+        if(onefivecardProvince == "province_all" || ec.util.isObj(onefivecardProvince) != true){
+        	param.ifFilterAreaId = "N";
+        }else if(onefivecardProvince == "province_accept"){
+        	param.ifFilterAreaId = "Y";
+        }else{
+        	param.ifQryHandle = "Y";
+        }
+        
+        param.ifFilterItem = "N";
         $.callServiceAsHtmlGet(contextPath + "/certNumber/queryOneFiveOrderList", param, {
             "before": function () {
                 $.ecOverlay("一证五卡订单查询中，请稍等...");

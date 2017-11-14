@@ -59,6 +59,11 @@ public class MDA {
 	 * 2017-09-11 外国人居住证，要求读卡
 	 */
 	public static final String FOREGIN_LIVE = new String("");
+	
+	/**
+	 * 2017-10-26 人民武装警察居民身份证（52）、现役军人居民身份证（51）、居民身份证（1） 经办人信息填写显示读卡按钮配置
+	 */
+	public static final String HANDLE_READ_BUTTON = new String("");
 
 //	/**
 //	 * 问卷调查 题目查询
@@ -420,6 +425,10 @@ public class MDA {
      */
     public static final Map<String,String> OLDMEMBER_JOIN = new HashMap<String,String>();
     /**
+     * 套餐变更查询是否判断付费类型
+     */
+    public static final Map<String,String> QUERY_FEE_TYPE = new HashMap<String,String>();
+    /**
      * 套餐变更是否修改付费类型及信控属性分省开关
      */
     public static final Map<String,String> SHOW_CHANGE_FEE_TYPE  = new HashMap<String,String>();
@@ -499,6 +508,9 @@ public class MDA {
 	
 	/**双屏互动服务端请求地址端口*/
 	public static final String PUSH_HOST_PORT = new String("");
+	
+	/**双屏互动把客户的身份证信息存入redis中**/
+	public static final String SAVE_CUST_ID = new String("");
 	
 	/**调用支付平台接口地址*/
 	public static final String PAY_TOKEN_URL=new String("");

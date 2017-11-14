@@ -100,6 +100,14 @@
 <#else>
 false
 </#if>
+<#if Session["QRCODE_SWITH"]?? && Session["QRCODE_SWITH"] == "ON">
+	<#if isCustTally != null && isCustTally != undefined>
+		<input type="hidden" value="${isCustTally}" id="isCustTally" />
+	</#if>
+</#if>
+<#if Session["QRCODE_SWITH"] != "ON">
+	<input type="hidden" value="" id="isCustTally" />
+</#if>
 <#if showVerificationcode=="Y">
 <div style="display:none;">showVerificationcode</div>
 </#if>

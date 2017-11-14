@@ -1015,14 +1015,15 @@ public class InterfaceClient {
 			}else{
 			   post.addHeader("Content-Type", contentType);
 			}
-			post.addHeader("channelNbr", sessionStaff.getCurrentChannelCode());	//渠道编码
-			post.addHeader("commonRegionId", sessionStaff.getCurrentAreaId());	//地区编码(当前渠道)
-			post.addHeader("salesCode", sessionStaff.getSalesCode());			//受理员工编码
-			post.addHeader("IP", HttpUtils.getHostIpAddress());					//当前应用服务器Ip
+			if(sessionStaff != null){
+				post.addHeader("channelNbr", sessionStaff.getCurrentChannelCode());	//渠道编码
+				post.addHeader("commonRegionId", sessionStaff.getCurrentAreaId());	//地区编码(当前渠道)
+				post.addHeader("salesCode", sessionStaff.getSalesCode());			//受理员工编码
+				post.addHeader("IP", HttpUtils.getHostIpAddress());					//当前应用服务器Ip
+			}
 			entity = new StringEntity(paramString, ENCODING);
 			post.setEntity(entity);
-			HttpResponse httpresponse = MyHttpclient.getInstance()
-					.getHttpclient().execute(post);
+			HttpResponse httpresponse = MyHttpclient.getInstance().getHttpclient().execute(post);
 			entity = httpresponse.getEntity();
 			retnJson = EntityUtils.toString(entity, ENCODING);
 			String csbFlag = propertiesUtils.getMessage(SysConstant.CSB_FLAG);

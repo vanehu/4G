@@ -988,6 +988,7 @@ public class LoginController extends BaseController {
 		//如果不需要发送短信，验证码就为空，不提示短信过期失效
 		if(StringUtil.isEmpty(smsPwdSession)){
 			request.getSession().setAttribute("dxState", "N");
+			request.getSession().setAttribute("JUMPRESULT", "N");
 			return super.failed("短信过期失效，请重新发送!", ResultConstant.FAILD.getCode());
 		}
 		if (smsPwdSession.equals(smsPwd)&&numberSession.equals(number)) {
@@ -995,9 +996,15 @@ public class LoginController extends BaseController {
 			resData.put("msg", "短信验证成功.");
 			//设置session返回是否成功的状态
 			request.getSession().setAttribute("dxState", "Y");
+			request.getSession().setAttribute("JUMPRESULT", "Y");
+			request.getSession().removeAttribute("VALIDATERESULT");
 			return super.successed(resData);
 		}else {
+			request.getSession().setAttribute("VALIDATERESULT","N");
+			request.getSession().removeAttribute(SysConstant.SESSION_KEY_CHANGEUIM_SMS);
+			request.getSession().removeAttribute(SESSION_CUSTAUTH_SMS_MUNBER);
 			request.getSession().setAttribute("dxState", "N");
+			request.getSession().setAttribute("JUMPRESULT", "N");
 			return super.failed("短信验证码错误!", ResultConstant.FAILD.getCode());
 		}
 		

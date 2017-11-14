@@ -390,7 +390,23 @@ order.cust = (function(){
 			$("#"+id).attr("data-validate","validate(terminalCodeCheck:请准确填写终端串码) on(keyup)");
 		}
 	};
-
+	//判断经办人证件类型是否需要显示读卡按钮
+    var _ifHandleReadButton = function(identidiesTypeCd){
+    	//读取经办人填写时需要显示读卡按钮的配置
+		var identidiesTypeCdAll = query.common.queryPropertiesValue("HANDLE_READ_BUTTON");
+		var identidiesTypeCds = identidiesTypeCdAll.split(",");
+		var ifReadButton = false;
+		//判断页面选择经办人证件类型是否存在于配置中
+		for(var i = 0; i < identidiesTypeCds.length; i++){
+			if(identidiesTypeCd == identidiesTypeCds[i]){
+				ifReadButton = true;
+				break;
+			}else{
+				ifReadButton = false;
+			}
+		}
+		return ifReadButton;
+    }
 	//创建客户证件类型选择事件
 	var _identidiesTypeCdChoose = function(scope,id) {
 		var cookieSP = query.common.queryPropertiesValue("CHECK_SOLDIER_POLICE");
@@ -496,8 +512,9 @@ order.cust = (function(){
 			
 			}
 		}
-		//新增的现役军人居民身份证、人民武装警察居民身份证,和居民身份证一样，要求必须读卡
-		if (identidiesTypeCd == 1 || identidiesTypeCd == 51 || identidiesTypeCd == 52 || (identidiesTypeCd== 50 && cookieLessFOR == "ON")) {
+		//判断经办人证件类型是否在显示读卡按钮的配置中
+		var ifHandleReadButton = _ifHandleReadButton(identidiesTypeCd);
+		if (ifHandleReadButton || (identidiesTypeCd == 50 && cookieLessFOR == "ON")) {
 			/*$("#"+id).attr("placeHolder","请输入合法身份证号码");
 			$("#"+id).attr("data-validate","validate(idCardCheck18:请输入合法身份证号码) on(blur)");*/
 			// 新建客户身份证读卡，隐藏表单
@@ -920,7 +937,11 @@ order.cust = (function(){
 			if(response.code==0){
 				OrderInfo.custorderlonger = response.data;
 			}
-			_checkAddPoliceAndHr();
+			var result = _checkAddPoliceAndHr();
+			if(result != true){
+				return;
+			}
+			_checkIdentity();
 	     }).ketchup({bindElement:"createcustsussbtn"});
     };
 
@@ -957,6 +978,14 @@ order.cust = (function(){
 		}
 		var content$ = $("#custList");
 		content$.html(response.data).show();
+		//双屏互动redis缓存数据和客户端数据比较
+		var isCustTally = $("#isCustTally").val();
+		if(isCustTally == "1"){
+			content$.html(response.data).hide();
+			easyDialog.close();
+			$.alert("提示","双屏互动pc端身份证信息被修改！");
+			return;
+		}
 		//拦截先点击选购套餐在定位的非法请求，户口簿，军人和警察的请求
 		if(order.service.releaseFlag == 2){
 			var resultS = _checkAddNumberAndMeal(response);
@@ -3470,6 +3499,7 @@ order.cust = (function(){
 			return;
 		}
 		_setValueForAgentOrderSpan(man.resultContent);
+		OrderInfo.handleCustCertReadInfos = $.extend(true, {}, man);
 		if (CONST.realNamePhotoFlag == "ON") {
 		    if (undefined != man.resultContent.identityPic && null != man.resultContent.identityPic && "" != man.resultContent.identityPic) {
 	      		$("#img_Cert").attr("src", "data:image/jpeg;base64," + man.resultContent.identityPic);
@@ -4380,7 +4410,9 @@ order.cust = (function(){
     var _removeDisabled = function(){
     	var backgroundColorWhite = "white;";
     	var orderIdentidiesTypeCd = $("#orderIdentidiesTypeCd").val();
-    	if(orderIdentidiesTypeCd == 1||orderIdentidiesTypeCd ==51||orderIdentidiesTypeCd ==52){
+    	//判断经办人证件类型是否在显示读卡按钮的配置中
+    	var ifHandleReadButton = _ifHandleReadButton(orderIdentidiesTypeCd);    	
+    	if(ifHandleReadButton){
     		$("#orderAttrResetBtn").hide();
         	$("#orderAttrReadCertBtn").show();
         	$("#orderAttrQueryCertBtn").hide();
@@ -5008,7 +5040,7 @@ order.cust = (function(){
 			//军人身份证件、武装警察身份证件不能作为实名登记有效证件，不允许新装号码
 			if($("#identidiesTypeCd").val() == "2" || $("#identidiesTypeCd").val() == "14"){
 				$.alert("提示", "军人身份证件、武装警察身份证件不能作为实名登记有效证件，不允许办理业务！");
-				return;
+				return false;
 			}
 		}
 		//大于16周岁不允许使用户口簿办理业务
@@ -5019,16 +5051,16 @@ order.cust = (function(){
 				var nowDate = new Date();
 				if(nowDate.getFullYear() - nowCard > 16){
 					$.alert("提示", "大于16周岁不允许使用户口簿");
-					return;
+					return false;
 				}else{
-					_checkIdentity();
+					return true;//_checkIdentity();
 				}
 			}else{
-				_checkIdentity();
+				return true;//_checkIdentity();
 			}
 
 		}else{
-			_checkIdentity();
+			return true;//_checkIdentity();
 		}
 		
 	}

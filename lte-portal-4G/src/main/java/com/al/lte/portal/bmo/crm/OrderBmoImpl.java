@@ -1,6 +1,7 @@
 package com.al.lte.portal.bmo.crm;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
@@ -2903,6 +2904,16 @@ public class OrderBmoImpl implements OrderBmo {
             		}
             	}
             }
+        	for (Map<String, Object> custOrderAttr : custOrderAttrs) {
+	        	if("40010049".equals(MapUtils.getString(custOrderAttr, "itemSpecId", ""))){
+	        		try{
+	        			if (new  BigDecimal((Double)custOrderAttr.get("value")).compareTo(new  BigDecimal((Double)ServletUtils.getSessionAttribute(request, Const.SESSION_CONFIDENCES))) !=0) {
+							   return false;
+		        		}
+	        		}catch(Exception e){}
+	        		
+	        	}
+        	}
         }
       
         /*if(isRealNameFlagOn && isHandleCustNeeded && isCheckCertificateComprehensive){
