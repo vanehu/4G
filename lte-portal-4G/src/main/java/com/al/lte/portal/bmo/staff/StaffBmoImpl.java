@@ -901,7 +901,7 @@ public class StaffBmoImpl implements StaffBmo {
 	 * @throws InterfaceException 
 	 */
 	public String checkOperatBySpecCd(String operatSpecCd, SessionStaff sessionStaff) throws InterfaceException, IOException, Exception {
-		Map<String, Object> dataBusMap = new HashMap<String, Object>();
+		Map<String, Object> dataBusMap = new HashMap<String, Object>(16);
 		dataBusMap.put("opsManageCode", operatSpecCd);
 		dataBusMap.put("staffId", sessionStaff.getStaffId());
 		dataBusMap.put("areaId", sessionStaff.getAreaId());
@@ -996,8 +996,8 @@ public class StaffBmoImpl implements StaffBmo {
 	 */
 	@SuppressWarnings("unchecked")
 	public Map<String, Object> qryOperateSpecStaffList(String operatSpecCd, SessionStaff sessionStaff) throws InterfaceException, IOException, BusinessException, Exception {
-		Map<String, Object> params = new HashMap<String, Object>();
-		Map<String, Object> returnMap = new HashMap<String, Object>();
+		Map<String, Object> params = new HashMap<String, Object>(16);
+		Map<String, Object> returnMap = new HashMap<String, Object>(16);
 		
 		if(StringUtils.isBlank(operatSpecCd)){
 			returnMap.put(SysConstant.RESULT_CODE, ResultCode.R_FAILURE);
@@ -1091,8 +1091,8 @@ public class StaffBmoImpl implements StaffBmo {
 	 */
 	@SuppressWarnings("unchecked")
 	public Map<String, Object> qryStaffAllPrivileges(SessionStaff sessionStaff) throws InterfaceException, IOException, BusinessException, Exception {
-		Map<String, Object> params = new HashMap<String, Object>();
-		Map<String, Object> returnMap = new HashMap<String, Object>();
+		Map<String, Object> params = new HashMap<String, Object>(16);
+		Map<String, Object> returnMap = new HashMap<String, Object>(16);
 		ArrayList<String> privileges = new ArrayList<String>();
 		
 		params.put(SysConstant.STAFF_ID, sessionStaff.getStaffId());
