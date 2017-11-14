@@ -1,4 +1,5 @@
 package com.al.lte.portal.bmo.crm;
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -16,9 +17,11 @@ import com.al.ec.serviceplatform.client.DataBus;
 import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ecs.exception.BusinessException;
 import com.al.ecs.exception.ErrorCode;
+import com.al.ecs.exception.InterfaceException;
 import com.al.ecs.log.Log;
 import com.al.lte.portal.common.InterfaceClient;
 import com.al.lte.portal.common.PortalServiceCode;
+import com.al.lte.portal.common.SysConstant;
 import com.al.lte.portal.model.SessionStaff;
 
 
@@ -577,6 +580,50 @@ public class OfferBmoImpl implements OfferBmo {
 			throw new BusinessException(ErrorCode.QUERY_SERVDEPEND_FORCANCEL, paramMap, resultMap, e);
 		}
 		return resultMap;
+	}
+	
+	/**
+	 * 销售品已订购次数查询
+	 */
+	public Map<String, Object> queryOfferOrderedTimes(Map<String, Object> params, SessionStaff sessionStaff) throws InterfaceException, IOException, BusinessException, Exception {
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		
+		String accNbr = MapUtils.getString(params, "accNbr", "");
+		String areaId = MapUtils.getString(params, "areaId", "");
+		
+		if(StringUtils.isBlank(accNbr) || StringUtils.isBlank(areaId)){
+			returnMap.put(SysConstant.RESULT_CODE, ResultCode.R_FAILURE);
+			returnMap.put(SysConstant.RESULT_MSG, "无效的入参accNbr、areaId。");
+			throw new BusinessException(ErrorCode.PORTAL_INPARAM_ERROR, params, returnMap, null);
+		}
+		
+//		params.put(SysConstant.STAFF_ID, MapUtils.getString(params, SysConstant.STAFF_ID, sessionStaff.getStaffId()));
+//		params.put(SysConstant.AREA_ID, MapUtils.getString(params, SysConstant.AREA_ID, sessionStaff.getCurrentAreaId()));
+		
+		DataBus db = InterfaceClient.callService(params, PortalServiceCode.QRY_OFFER_ORDERED_TIMES, null, sessionStaff);
+		try {
+			boolean isRequestSuccess = ResultCode.R_SUCC.equals(StringUtils.defaultString(db.getResultCode(), "1"));
+			if (isRequestSuccess) {
+				boolean isQuerySuccess = ResultCode.R_SUCC.equals(MapUtils.getString(db.getReturnlmap(), SysConstant.RESULT_CODE, ""));
+				if(isQuerySuccess){
+					returnMap.put(SysConstant.RESULT_CODE, ResultCode.R_SUCC);
+					returnMap.put(SysConstant.RESULT_MSG, MapUtils.getMap(db.getReturnlmap(), "result"));
+				} else{
+					returnMap.put(SysConstant.RESULT_CODE, ResultCode.R_FAILURE);
+					returnMap.put(SysConstant.RESULT_MSG, MapUtils.getString(db.getReturnlmap(), SysConstant.RESULT_MSG));
+					returnMap.put("transactionID", MapUtils.getString(db.getReturnlmap(), "transactionID"));
+				}
+			} else {
+				returnMap.put(SysConstant.RESULT_CODE, ResultCode.R_FAILURE);
+				returnMap.put(SysConstant.RESULT_MSG, db.getResultMsg());
+				returnMap.put("transactionID", MapUtils.getString(db.getReturnlmap(), "transactionID"));
+			}
+		} catch (Exception e) {
+			log.error("门户处理后台的的service/intf.prodOfferInstSerivce/queryProdOfferOrderTimes服务返回的数据异常", e);
+			throw new BusinessException(ErrorCode.QRY_OFFER_ORDERED_TIMES, params, db.getReturnlmap(), e);
+		}
+		
+		return returnMap;
 	}
 	
 }

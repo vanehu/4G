@@ -542,6 +542,14 @@ AttachOffer = (function() {
 	
 	//查询附属销售品规格
 	var _searchAttachOfferSpec = function(prodId,offerSpecId,prodSpecId) {
+		var labelIds = [];
+		$.each(AttachOffer.labelList,function(){
+			$.each(this.labels,function(){
+				labelIds.push(this.label);//遍历所有附属销售品规格标签，找出无父标签的id
+			})
+		})
+		var MemberRoleCdId = CacheData.getMemberRoleCd(prodId);
+		
 		var offerSepcName = $.trim($("#search_text_"+prodId).val());
 		var instCode = $.trim($("#search_instCode_"+prodId).val());
 		if(offerSepcName.replace(/\ /g,"")=="" && instCode.replace(/\ /g,"")==""){
@@ -554,8 +562,12 @@ AttachOffer = (function() {
 					offerSpecId : offerSpecId,
 					instCode : instCode,
 					areaId : OrderInfo.getProdAreaId(prodId),
-					prodId : prodId
+					prodId : prodId,
+					labelIds : labelIds
 			};
+			if(MemberRoleCdId == "401"){
+				param.memberRoleCd = MemberRoleCdId;
+			}
 			if(OrderInfo.menuName == "ZXHYBL"){//征信页面
 				param.agreementTypeList = [3];
 				param.subsidyAmount = OrderInfo.preliminaryInfo.money*100;
@@ -597,7 +609,8 @@ AttachOffer = (function() {
 					prodId : prodId,
 				    prodSpecId : prodSpecId,
 				    offerSpecIds : [offerSpecId],
-				    ifCommonUse : "" 
+				    ifCommonUse : "",
+					labelIds : labelIds 
 			};
 //				if(OrderInfo.actionFlag == 2){ //套餐变更		
 //					param.offerSpecIds=[OrderInfo.offerSpec.offerSpecId];
@@ -1968,15 +1981,17 @@ AttachOffer = (function() {
 		if(newSpec==undefined){ //没有在已开通附属销售列表中
 			return;
 		}
-		var feeType = $("select[name='pay_type_-1']").val();
-		if(feeType==undefined) feeType = order.prodModify.choosedProdInfo.feeType;
-		if(feeType == CONST.PAY_TYPE.BEFORE_PAY && (newSpec.feeType == CONST.PAY_TYPE.AFTER_PAY || newSpec.feeType==CONST.PAY_TYPE.QUASIREALTIME_AFTER_PAY || newSpec.feeType == CONST.PAY_TYPE.QUASIREALTIME_PAY)){
-			$.alert("提示信息","用户付费类型为预付费，不能订购该销售品！");
-			return;
-		}else if(feeType == CONST.PAY_TYPE.AFTER_PAY && (newSpec.feeType == CONST.PAY_TYPE.BEFORE_PAY || newSpec.feeType==CONST.PAY_TYPE.QUASIREALTIME_BEFORE_PAY || newSpec.feeType == CONST.PAY_TYPE.QUASIREALTIME_PAY)){
-			$.alert("提示信息","用户付费类型为后付费，不能订购该销售品！");
+		
+		var checkFeeTypeResult = check.offer.feeType(newSpec);
+		if(!checkFeeTypeResult){
 			return;
 		}
+		
+		var checkOrderTimesResult = check.offer.orderTimes(newSpec);
+		if(!checkOrderTimesResult){
+			return;
+		}
+		
 		var offer = CacheData.getOfferBySpecId(prodId,offerSpecId); //从已订购数据中找
 		if(offer != undefined && offer.ifDueOrderAgain != "Y"){//如果是合约，则跳过，执行下面代码
 			var tipsContent = "您已订购 '"+newSpec.offerSpecName+"' 销售品 "+offer.counts+" 次，请确认是否继续订购";
@@ -4371,15 +4386,31 @@ AttachOffer = (function() {
 				if(labelId == "10020"){
 					isAgree = "Y";
 				}
-				var param = {
-					prodSpecId : prodSpecId,
-					offerSpecIds : [],
-					queryType : queryType,
-					prodId : prodId,
-					partyId : OrderInfo.cust.custId,
-					ifCommonUse : "",
-					isAgree : isAgree
-				};
+				var memberRoleCdId = CacheData.getMemberRoleCd(prodId);
+				//判断是不是加装副卡促销下的合约标签
+				if(memberRoleCdId == "401" && labelId == "10020"){
+					var param = {
+							prodSpecId : prodSpecId,
+							offerSpecIds : [],
+							queryType : queryType,
+							prodId : prodId,
+							partyId : OrderInfo.cust.custId,
+							ifCommonUse : "",
+							isAgree : isAgree,
+							memberRoleCd : memberRoleCdId 
+						};
+				}else{
+					var param = {
+							prodSpecId : prodSpecId,
+							offerSpecIds : [],
+							queryType : queryType,
+							prodId : prodId,
+							partyId : OrderInfo.cust.custId,
+							ifCommonUse : "",
+							isAgree : isAgree
+						};
+				}
+				
 				if(OrderInfo.actionFlag != 22 && OrderInfo.actionFlag != 23){
 					param.labelId = labelId;
 				}

@@ -34,7 +34,7 @@
 			<#if mktResInsts.mktResType == '103006000'>
 			<td>UIM卡</td>
 			<td>${mktResInsts.mktResCd}</td>
-			<td> ${mktResInsts.mktResCdName}</td> 
+			<td>${mktResInsts.mktResCdName}</td> 
 			<td>${mktResInsts.mktResInstCode}</td>
 			<td>${mktResInsts.statusCdName}
 			     <input type="hidden" id="${orderLists.extCustOrderId}"  value=${mktResInsts.orderItemGroupId}>
@@ -57,13 +57,15 @@
 				href="javascript:ess.writeCard.realNameAuth('${orderLists.extCustOrderId}')"
 				type="main">实名制认证</a>
 				</form>
-			    <a class="purchase"
-				href="javascript:order.writeCard.essWriteReadCard('${orderLists.accNbr}','${orderLists.extCustOrderId}','${orderLists.orderNeedAction}','${orderLists.commonRegionId}','${orderLists.zoneNumber}')"
-				type="main">写卡</a>
-				<#if writeCard_test =="0">
-				<a class="purchase"
-				href="javascript:order.writeCard.essMNWriteCard('${orderLists.accNbr}','${orderLists.extCustOrderId}','${orderLists.orderNeedAction}','${orderLists.commonRegionId}','${orderLists.zoneNumber}')"
-				type="main">模拟写卡</a>
+				<#if orderLists.orderNeedAction != 'nothingToDo'>
+				    <a class="purchase"
+					href="javascript:order.writeCard.essWriteReadCard('${orderLists.accNbr}','${orderLists.extCustOrderId}','${orderLists.orderNeedAction}','${orderLists.commonRegionId}','${orderLists.zoneNumber}')"
+					type="main">写卡</a>
+					<#if writeCard_test =="0">
+						<a class="purchase"
+						href="javascript:order.writeCard.essMNWriteCard('${orderLists.accNbr}','${orderLists.extCustOrderId}','${orderLists.orderNeedAction}','${orderLists.commonRegionId}','${orderLists.zoneNumber}')"
+						type="main">模拟写卡</a>
+					</#if>
 				</#if>
 			</td>
 		</tr>

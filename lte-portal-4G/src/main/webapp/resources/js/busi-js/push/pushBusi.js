@@ -110,6 +110,60 @@ push.busi = (function($) {
 		});
 	};
 	
+	//查询连接聊天室的人数
+	var _queryChatNumber = function(servUrl){
+		var rid1 = $("#_session_staff_info").attr("staffId")+$("#_session_staff_info").attr("channelId");
+		var username1 = "getChatNumber"+"_web";
+		if(null == servUrl || "" == servUrl){
+			$.alert("提示","服务端地址查询失败,请检查配置是否正确.");
+			return;
+		}
+
+		a.href = servUrl;
+		if(null != a.protocol && "" != a.protocol){
+			protocolType = a.protocol.replace(':','');
+		}
+		host = a.hostname;
+		if('http' == protocolType){
+			port = 80;
+		}else if('https' == protocolType){
+			port = 443;
+		}
+		if("" != a.port){
+			port = a.port;
+		}
+
+		pomelo.init({
+			host : host,
+			port : port,
+			log : true
+		}, function() {
+			var route = "connector.entryHandler.enter";
+			pomelo.request(route, {
+				username : username1,
+				rid : rid1
+			}, function(data) {
+				if (data.error) {
+					$.alert("提示",DUPLICATE_ERROR);
+					return;
+				}
+				connStatus = true;
+				var userArray = data.users;
+				for (var i = 0; i < userArray.length; i++) {
+					if(userArray[i] == rid1+"_app"){
+						//表示app已经加入聊天室
+						push.busi.bindedStyle();
+						if($('#qrCodeDialog').css("display") != 'none') {
+							easyDialog.close();
+						}
+						break;
+					}
+				}
+			});
+		});
+		
+	}
+	
 	var _init = function(){
 		
 		rid = $("#_session_staff_info").attr("staffId")+$("#_session_staff_info").attr("channelId");
@@ -154,16 +208,29 @@ push.busi = (function($) {
 				rid : rid
 			}, function(data) {
 				if (data.error) {
-					$.alert("提示","工号已连接,请点击【解绑】取消连接!");
 					return;
 				}
 				document.cookie = "STICKYID="+rid+";path=/; domain=.189.cn";
 				connStatus = true;
-				push.busi.jumpQrCode();
-				$('#bindClick span').text("待绑定");
-				$('#bindClick').off("click").on('click',function(){
-					push.busi.jumpQrCode();
-				});
+				var userArray = data.users;
+				for (var i = 0; i < userArray.length; i++) {
+					if(userArray[i] == rid+"_app"){
+						//表示app已经加入聊天室
+						push.busi.bindedStyle();
+						if($('#qrCodeDialog').css("display") != 'none') {
+							easyDialog.close();
+						}
+						break;
+					}
+				}
+//				if("true" != cookieQrLogin){
+//					push.busi.jumpQrCode();
+//					$('#bindClick span').text("待绑定");
+//					$('#bindClick').off("click").on('click',function(){
+//						push.busi.jumpQrCode();
+//					});
+//				}
+
 			});
 		});
 	};
@@ -284,7 +351,7 @@ push.busi = (function($) {
 	};
 	
 	var _sendMsg = function(msg){
-		
+		//var msgString = JSON.stringify(msg);
 		if(!/^[a-zA-Z0-9]+_app$/.test(target)){
 			$.alert("提示","Sorry,Send Object is error!");
 			return;
@@ -318,6 +385,27 @@ push.busi = (function($) {
 		if(inParam.prodId && inParam.prodId != ""){
 			prodId = inParam.prodId;
 		}
+		//把客户的身份证信息存入到redis的请求中去
+		var switchRedis = query.common.queryPropertiesValue("SAVE_CUST_ID");
+		if(switchRedis == "ON"){
+			var url = contextPath + "/cust/saveDataToRedis";
+			var param={"pushType":pushType,"data":data.result,"uId":data.uId};
+			$.callServiceAsJson(url, param, {				
+				"done" : function(response){
+					$.unecOverlay();
+					if (response.code==0) {
+						//成功不做任何操作
+					}else{
+						$.alert("提示","redis缓存存入失败");
+					}
+				},
+				fail:function(response){
+					$.unecOverlay();
+					$.alert("提示","请求可能发生异常，请稍后再试！");
+				}
+			});
+		}
+	
 		if(pushType == CONST.PUSH_TYPE.TYPE_IDCARD){
 			_dealIDCardPush(busiType,data.result);
 		}else if(pushType == CONST.PUSH_TYPE.TYPE_UIM){
@@ -585,7 +673,8 @@ push.busi = (function($) {
 		showOrHide:showOrHide,
 		conQuit:_conQuit,
 		quit:_quit,
-		testBind:_testBind
+		testBind:_testBind,
+		queryChatNumber:_queryChatNumber
 	};
 })(jQuery);
 //初始化
@@ -615,6 +704,7 @@ $(function(){
 			$.unecOverlay();
 			//var param =  JSON.parse(data.msg);
 			var param =  data.msg;
+			param.uId = data.uId;
 			if(param.code == '0'){
 				push.busi.receMsg(param);
 			}else{
@@ -646,4 +736,8 @@ $(function(){
 	pomelo.on('disconnect', function(reason) {
 		//push.busi.quit();
 	});
+		
+	//push.busi.queryChatNumber(servUrl);
+	push.busi.bindApp();
+	
 });

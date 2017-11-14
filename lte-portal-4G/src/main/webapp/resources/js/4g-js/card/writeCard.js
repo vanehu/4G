@@ -1704,57 +1704,56 @@ order.writeCard = (function(){
 			orderItemGroupId : orderItemGroupId
 		};
 		OrderInfo.essOrderInfo.essOrder = essOrder;
-		if(orderNeedAction!="onlyWriteCard"){
-			var param = {
-					extCustOrderId : extCustOrderId,
-					consignee : "",
-					accNbr : "",
-					orderStatus : "",
-					startDate : "",
-					endDate : "",
-					pageFlag : "",
-					nowPage:1,
-					pageSize:10
-				};
-				$.callServiceAsJson(contextPath + "/ess/order/orderQry", param, {
-					"before" : function() {
-					},
-					"always" : function() {
-						$.unecOverlay();
-					},
-					"done" : function(response) {
-						if (response.code == 0) {
-							var orderNeedActionFlag ="";
-							if(response.data.orderList[0]!=null){
-								orderNeedActionFlag =response.data.orderList[0].orderNeedAction;
-							}
-							if(orderNeedActionFlag!="onlyWriteCard"){
-								$.alert("提示","请先实名制认证后再写卡！");
-								return;
-							}else{
-								_essShowReadWirteCard(phoneNumber,extCustOrderId);
-							}
-						} else if (response.code == -2) {
-							$.alertM(response.data);
-							return;
-						} else if (response.code == 1002) {
-							$.alert("错误",response.data);
-							return;
-						} else {
-							$.alert("异常", "ESS订单查询接口查询异常");
-							return;
-						}
-					
-						
-					},
-					fail : function(response) {
-						$.unecOverlay();
-						$.alert("提示", "请求可能发生异常，请稍后再试！");
+		var param = {
+			extCustOrderId : extCustOrderId,
+			consignee : "",
+			accNbr : "",
+			orderStatus : "",
+			startDate : "",
+			endDate : "",
+			pageFlag : "",
+			nowPage:1,
+			pageSize:10
+		};
+		$.callServiceAsJson(contextPath + "/ess/order/orderQry", param, {
+			"before" : function() {
+			},
+			"always" : function() {
+				$.unecOverlay();
+			},
+			"done" : function(response) {
+				if (response.code == 0) {
+					var orderNeedActionFlag ="";
+					if(response.data.orderList[0]!=null){
+						orderNeedActionFlag =response.data.orderList[0].orderNeedAction;
 					}
-				});
-		}else{
-			_essShowReadWirteCard(phoneNumber,extCustOrderId);
-		}
+					if(orderNeedActionFlag == "realNameAndWriteCard"){
+						$.alert("提示","请先实名制认证后再写卡！");
+						return;
+					}else if(orderNeedActionFlag == "nothingToDo"){
+						$.alert("提示","已写卡，请勿二次写卡！");
+						return;
+					}else{
+						_essShowReadWirteCard(phoneNumber,extCustOrderId);
+					}
+				} else if (response.code == -2) {
+					$.alertM(response.data);
+					return;
+				} else if (response.code == 1002) {
+					$.alert("错误",response.data);
+					return;
+				} else {
+					$.alert("异常", "ESS订单查询接口查询异常");
+					return;
+				}
+			
+				
+			},
+			fail : function(response) {
+				$.unecOverlay();
+				$.alert("提示", "请求可能发生异常，请稍后再试！");
+			}
+		});
 	};
 	var _essShowReadWirteCard=function(phoneNumber,extCustOrderId){
 		$("#d_writeCard").html("");
@@ -2111,57 +2110,56 @@ order.writeCard = (function(){
 				orderItemGroupId : orderItemGroupId
 			};
 		OrderInfo.essOrderInfo.essOrder = essOrder;
-		if(orderNeedAction!="onlyWriteCard"){
-			var param = {
-					extCustOrderId : extCustOrderId,
-					consignee : "",
-					accNbr : "",
-					orderStatus : "",
-					startDate : "",
-					endDate : "",
-					pageFlag : "",
-					nowPage:1,
-					pageSize:10
-				};
-				$.callServiceAsJson(contextPath + "/ess/order/orderQry", param, {
-					"before" : function() {
-					},
-					"always" : function() {
-						$.unecOverlay();
-					},
-					"done" : function(response) {
-						if (response.code == 0) {
-							var orderNeedActionFlag ="";
-							if(response.data.orderList[0]!=null){
-								orderNeedActionFlag =response.data.orderList[0].orderNeedAction;
-							}
-							if(orderNeedActionFlag!="onlyWriteCard"){
-								$.alert("提示","请先实名制认证后再写卡！");
-								return;
-							}else{
-								_mnWriteCard(extCustOrderId,phoneNumber);
-							}
-						} else if (response.code == -2) {
-							$.alertM(response.data);
-							return;
-						} else if (response.code == 1002) {
-							$.alert("错误",response.data);
-							return;
-						} else {
-							$.alert("异常", "ESS订单查询接口查询异常");
-							return;
-						}
-					
-						
-					},
-					fail : function(response) {
-						$.unecOverlay();
-						$.alert("提示", "请求可能发生异常，请稍后再试！");
+		var param = {
+			extCustOrderId : extCustOrderId,
+			consignee : "",
+			accNbr : "",
+			orderStatus : "",
+			startDate : "",
+			endDate : "",
+			pageFlag : "",
+			nowPage:1,
+			pageSize:10
+		};
+		$.callServiceAsJson(contextPath + "/ess/order/orderQry", param, {
+			"before" : function() {
+			},
+			"always" : function() {
+				$.unecOverlay();
+			},
+			"done" : function(response) {
+				if (response.code == 0) {
+					var orderNeedActionFlag ="";
+					if(response.data.orderList[0]!=null){
+						orderNeedActionFlag =response.data.orderList[0].orderNeedAction;
 					}
-				});
-		}else{
-			_mnWriteCard(extCustOrderId,phoneNumber);
-		}
+					if(orderNeedActionFlag == "realNameAndWriteCard"){
+						$.alert("提示","请先实名制认证后再写卡！");
+						return;
+					}else if(orderNeedActionFlag == "nothingToDo"){
+						$.alert("提示","已写卡，请勿二次写卡！");
+						return;
+					}else{
+						_mnWriteCard(extCustOrderId,phoneNumber);
+					}
+				} else if (response.code == -2) {
+					$.alertM(response.data);
+					return;
+				} else if (response.code == 1002) {
+					$.alert("错误",response.data);
+					return;
+				} else {
+					$.alert("异常", "ESS订单查询接口查询异常");
+					return;
+				}
+			
+				
+			},
+			fail : function(response) {
+				$.unecOverlay();
+				$.alert("提示", "请求可能发生异常，请稍后再试！");
+			}
+		});
 	};
 	var _essMNRepeatWritCard=function(phoneNumber,extCustOrderId,orderNeedAction,commonRegionId,zoneNumber){
 		OrderInfo.actionFlag = 42 ;
