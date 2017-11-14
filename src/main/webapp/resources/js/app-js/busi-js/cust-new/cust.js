@@ -25,6 +25,7 @@ cust = (function(){
 	var _isRealCust=true;//定位客户是否实名
 	var _custCernum = [];//客户证件使用数缓存
 	var _jbrAge;//客户证件使用数缓存
+	var _OneFiveResult=false;//一证五号校验结果,false拦截，true不拦截
 	var _clearCustForm = function(){
 		$('#cmCustName').val("");
 		$('#cmAddressStr').val("");
@@ -183,6 +184,7 @@ cust = (function(){
 		}
 		OrderInfo.cust.age=cust.getAge(OrderInfo.cust.identityNum,home.nowDateStr);
 		var flag=$("#flag").val();
+		alert(flag);
 		if(ec.util.isObj(flag)){//有值代表是实名制创建客户页面
 			var data = {
 				boCustInfos : [],
@@ -1462,7 +1464,9 @@ cust = (function(){
 			cust.custCatsh.idcard = idcard;
 			cust.custCatsh.address = address;
 			cust.custCatsh.identityPic = identityPic;
-			
+			if(home.menuData.actionFlag==1){//新装读完卡，一五校验只提示
+				_preCheckCertNumberRelNew(idcard,address,name);
+			}
 			if(OrderInfo.actionFlag==9){//返档需查客户
 				OrderInfo.jbr.identityPic = identityPic;
 				cust.searchUser("1",idcard,name,address);
@@ -2853,6 +2857,114 @@ cust = (function(){
 	}
 	
 
+	   /**
+		 * 新装证号关系提前预校验（只提示，不拦）
+		 */
+	var _preCheckCertNumberRel2 = function() {
+		var propertiesKey = "ONE_CERT_5_NUMBER_"
+				+ (OrderInfo.staff.soAreaId + "").substring(0, 3);
+		var isON = offerChange.queryPortalProperties(propertiesKey);
+		cust.OneCertNumFlag = isON;
+		if (isON != "ON") {
+			cust.OneFiveResult = true;
+			return true;
+		}
+		if (_isCovCust(OrderInfo.cust.identityCd)) {// 政企客户不校验
+			cust.OneFiveResult = true;
+			return true;
+		}
+		if (OrderInfo.cust.custId == "-1") {// 新客户
+			var inParam = {
+				"certType" : OrderInfo.cust.identityCd,
+				"certNum" : OrderInfo.cust.identityNum,
+				"certAddress" : OrderInfo.cust.addressStr,
+				"custName" : OrderInfo.cust.partyName
+
+			};
+			if (OrderInfo.cust.identityCd != "1") {// 非身份证类型
+				inParam.certNum = OrderInfo.cust.identityNum;
+			}
+		} else {
+			var inParam = {
+				"certType" : OrderInfo.cust.identityCd,
+				"certNum" : OrderInfo.cust.idCardNumber,
+				"certAddress" : OrderInfo.cust.addressStr,
+				"custName" : OrderInfo.cust.partyName,
+				"custNameEnc" : OrderInfo.cust.CN,
+				"certNumEnc" : OrderInfo.cust.certNum,
+				"certAddressEnc" : OrderInfo.cust.address
+
+			};
+			inParam.certNumEnc = inParam.certNumEnc.replace(/=/g, "&#61");
+			inParam.custNameEnc = inParam.custNameEnc.replace(/=/g, "&#61");
+			inParam.certAddressEnc = inParam.certAddressEnc.replace(/=/g,
+					"&#61");
+		}
+		var checkResult = false;
+		cust.OneFiveResult = false;
+		var response = $.callServiceAsJson(contextPath
+				+ "/app/cust/preCheckCertNumberRel", inParam);
+		if (response.code == 0) {
+			cust.OneFiveResult = true;
+			var result = response.data;
+			if ((parseInt(result.usedNum)) >= 5) {
+				cust.usedNum = parseInt(result.usedNum);
+			} else {
+				cust.usedNum = parseInt(result.usedNum) + 1;
+				if (OrderInfo.actionFlag == 6) {// 主副卡新增成员，无需加1
+					cust.usedNum = parseInt(result.usedNum);
+				}
+				checkResult = true;
+			}
+		} else {
+			cust.checkResult = false;
+			$.alertM(response.data);
+		}
+		return checkResult;
+	};
+
+	/**
+	 * 新客户读卡（只提示，不拦）
+	 */
+	var _preCheckCertNumberRelNew = function(identityNum,addressStr,partyName) {
+		var propertiesKey = "ONE_CERT_5_NUMBER_"
+				+ (OrderInfo.staff.soAreaId + "").substring(0, 3);
+		var isON = offerChange.queryPortalProperties(propertiesKey);
+		cust.OneCertNumFlag = isON;
+		if (isON != "ON") {
+			cust.OneFiveResult = true;
+			return true;
+		}
+		var inParam = {
+			"certType" : "1",
+			"certNum" : identityNum,
+			"certAddress" : addressStr,
+			"custName" : partyName
+
+		};
+		var checkResult = false;
+		cust.OneFiveResult = false;
+		var response = $.callServiceAsJson(contextPath
+				+ "/app/cust/preCheckCertNumberRel", inParam);
+		if (response.code == 0) {
+			var result = response.data;
+			if ((parseInt(result.usedNum)) >= 5) {
+				cust.OneFiveResult = false;
+				$.alert("提示","客户证件号下已有五张及以上移动号卡");
+			} else {
+				cust.usedNum = parseInt(result.usedNum) + 1;
+				if (OrderInfo.actionFlag == 6) {// 主副卡新增成员，无需加1
+					cust.usedNum = parseInt(result.usedNum);
+				}
+				checkResult = true;
+				cust.OneFiveResult = true;
+			}
+		} else {
+			cust.checkResult = false;
+			$.alertM(response.data);
+		}
+		return checkResult;
+	};
 	
 
 	    /**
@@ -3286,6 +3398,7 @@ cust = (function(){
 		newUIFalg					:		_newUIFalg,
 		showAccountModify			:		_showAccountModify,
 		preCheckCertNumberRel       :       _preCheckCertNumberRel,
+		preCheckCertNumberRel2      :       _preCheckCertNumberRel2,
 		usedNum                     :       _usedNum,
 		checkCustLog				:		_checkCustLog,
 		searchUser                  :       _searchUser,
