@@ -30,7 +30,7 @@ import com.al.lte.portal.common.SysConstant;
 public class SessionStaff implements Serializable {
 	private static final long serialVersionUID = 6280564674602051144L;
 	
-	private Log log = Log.getLog(SessionStaff.class);
+	private transient Log log = Log.getLog(SessionStaff.class);
 
 	/** 工号编码 */
 	private String staffId;
