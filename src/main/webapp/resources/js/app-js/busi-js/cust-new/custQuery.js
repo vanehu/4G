@@ -318,6 +318,31 @@ custQuery = (function(){
 		if(OrderInfo.cust.identityPic!=undefined){
 			custQuery.custPic=OrderInfo.cust.identityPic;//证件照片
 		}
+		if(OrderInfo.actionFlag == "1"){//新装一五校验提前，只提示不拦截
+			OrderInfo.cust = _choosedCustInfo;
+			var flag=cust.preCheckCertNumberRel2();
+			if(!flag && cust.OneFiveResult){
+				$.confirm("确认","客户证件号下已有五张及以上移动号卡，是否继续",{ 
+					yes:function(){
+						_showCustAuthNext(scope);
+					},
+					no:function(){	
+						return;
+					}
+				});
+			}else{
+				_showCustAuthNext(scope);	
+			}
+			
+		}else{
+			_showCustAuthNext(scope);
+		}
+		
+	};
+	
+	//提示一五点确定后继续
+	var _showCustAuthNext=function(scope){
+		
 		if(OrderInfo.actionFlag != "111" && home.menuData.isProvenceMenu == "Y"){
 			$("#custQuerycontent").hide();
 			$("#cust-query-list").hide();
@@ -518,7 +543,7 @@ custQuery = (function(){
 		} else{
 			_jumpAuth();
 		}
-	};
+	}
 	
 	//二次业务菜单鉴权方式查询
 	var _querySecondBusinessAuth = function(){
