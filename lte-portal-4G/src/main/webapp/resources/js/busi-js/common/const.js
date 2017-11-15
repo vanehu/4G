@@ -632,7 +632,9 @@ CONST = (function(){
 	var _YIPAY_IDENTITYCD = [
 		{NAME:"户口簿", 			CD:"12"},
 		{NAME:"居民身份证", 		CD:"1"},
-		{NAME:"临时居民身份证", 	CD:"41"}
+		{NAME:"临时居民身份证", 	CD:"41"},
+		{NAME:"现役军人居民身份证", 	CD:"51"},
+		{NAME:"人民武装警察居民身份证", 	CD:"52"}
 	];
 
 	//二代证读卡servCode
