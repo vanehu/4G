@@ -58,7 +58,7 @@ cust = (function(){
 	var _jumpAuthflag="";
 	var _tmpChooseUserInfo = {};
 	var _tmpJbrInfo = "";
-	var _OneCertNumFlag="false";
+	var _OneCertNumFlag="OFF";
 	
 	
 	//初始化返档数据，主要判断是否为天翼云盘
@@ -2861,11 +2861,7 @@ cust = (function(){
 		 * 新装证号关系提前预校验（只提示，不拦）
 		 */
 	var _preCheckCertNumberRel2 = function() {
-		var propertiesKey = "ONE_CERT_5_NUMBER_"
-				+ (OrderInfo.staff.soAreaId + "").substring(0, 3);
-		var isON = offerChange.queryPortalProperties(propertiesKey);
-		cust.OneCertNumFlag = isON;
-		if (isON != "ON") {
+		if (cust.OneCertNumFlag != "ON") {
 			cust.OneFiveResult = true;
 			return true;
 		}
@@ -2927,11 +2923,7 @@ cust = (function(){
 	 * 新客户读卡（只提示，不拦）
 	 */
 	var _preCheckCertNumberRelNew = function(identityNum,addressStr,partyName) {
-		var propertiesKey = "ONE_CERT_5_NUMBER_"
-				+ (OrderInfo.staff.soAreaId + "").substring(0, 3);
-		var isON = offerChange.queryPortalProperties(propertiesKey);
-		cust.OneCertNumFlag = isON;
-		if (isON != "ON") {
+		if (cust.OneCertNumFlag != "ON") {
 			cust.OneFiveResult = true;
 			return true;
 		}
@@ -2971,10 +2963,7 @@ cust = (function(){
 		 * 新装证号关系预校验接口
 		 */
 	var _preCheckCertNumberRel = function() {
-		var propertiesKey = "ONE_CERT_5_NUMBER_"+ (OrderInfo.staff.soAreaId + "").substring(0, 3);
-		var isON = offerChange.queryPortalProperties(propertiesKey);
-		cust.OneCertNumFlag=isON;
-		if (isON!="ON") {
+		if (cust.OneCertNumFlag!="ON") {
 			return true;
 		}
 		if(_isCovCust(OrderInfo.cust.identityCd)){//政企客户不校验
@@ -3221,11 +3210,7 @@ cust = (function(){
 	 * 使用人与客户返档证号关系预校验接口
 	 */
 	var _checkCertNumberForReturn = function() {
-		var propertiesKey = "ONE_CERT_5_NUMBER_"
-				+ (OrderInfo.staff.soAreaId + "").substring(0, 3);
-		var isON = offerChange.queryPortalProperties(propertiesKey);
-		cust.OneCertNumFlag=isON;
-		if (isON=="OFF") {
+		if (cust.OneCertNumFlag!="ON") {
 			return 0;
 		}
 		
