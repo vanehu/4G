@@ -17,8 +17,12 @@ import org.apache.http.util.EntityUtils;
 
 import com.al.ec.serviceplatform.client.httpclient.MyHttpclient;
 import com.al.ecs.common.util.JsonUtil;
+import com.al.ecs.log.Log;
 
 public class ReleaseNum {
+	
+	private static Log log = Log.getLog(ReleaseNum.class);
+	
 	private static final String ENCODING = "UTF-8";
 	public static void main (String[] args)throws Exception {
 		releaseUim();
@@ -66,9 +70,9 @@ public class ReleaseNum {
 			String retnJson = EntityUtils.toString(entity, ENCODING);
 			//返回成功
 			if(httpresponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-				System.out.println("success:" + retnJson);
+				log.debug("success:{}", retnJson);
 			} else {
-				System.out.println("error:" + retnJson);
+				log.debug("error:{}", retnJson);
 			}
 			
 			post.abort();//连接停止，释放资源
@@ -133,7 +137,7 @@ public class ReleaseNum {
 			paramMap.put("provinceId", "609801");
 			paramMap.put("staffId", "326005914190");
 			String paramString = JsonUtil.toString(paramMap);
-			System.out.println("paramString : "+ paramString);
+			log.debug("paramString : {}", paramString);
 			//调用http服务
 			String url = "http://192.168.111.98:9084/SRHttpServiceWeb/service/";
 			String method = "UIMInfoUpdService/uimCardRelease";
@@ -150,9 +154,9 @@ public class ReleaseNum {
 			String retnJson = EntityUtils.toString(entity, ENCODING);
 			//返回成功
 			if(httpresponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-				System.out.println("success:" + retnJson);
+				log.debug("success:{}", retnJson);
 			} else {
-				System.out.println("error:" + retnJson);
+				log.debug("error:{}", retnJson);
 			}
 			
 			post.abort();//连接停止，释放资源

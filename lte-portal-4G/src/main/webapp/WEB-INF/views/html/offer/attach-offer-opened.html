@@ -20,6 +20,9 @@
 	        <#if item.counts?? && (item.counts>1) >
 	        	<dd class="canshu" id="can_${prodId}_${item.offerId}"  onclick="AttachOffer.setParam(${prodId},${item.offerSpecId},1);" isset="N" ></dd>
 	        </#if>
+	        <#if item.offerLimitTimes?? && (item.offerLimitTimes.ifLimitTimes == "Y") >
+	        	<dd class="canshu" id="can_${prodId}_${item.offerId}"  onclick="AttachOffer.setParam(${prodId},${item.offerSpecId},1);" isset="N" ></dd>
+	        </#if>
 	        <#if item.ifReset=="N">
 	            <dd class="time2"><img src="${contextPath}/image/common/no.png"/></dd>
 	        </#if>

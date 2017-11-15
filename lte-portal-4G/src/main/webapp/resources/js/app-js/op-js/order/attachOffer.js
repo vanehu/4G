@@ -1290,11 +1290,14 @@ AttachOffer = (function() {
 			return;
 		}
 		
-		var checkOrderTimesResult = check.offer.orderTimes(newSpec);
-		if(!checkOrderTimesResult){
-			return;
+		var offer = CacheData.getOfferBySpecId(prodId,offerSpecId); //从已订购数据中找
+		if(ec.util.isObj(offer)){
+			var checkOrderTimesResult = check.offer.orderTimes(offer, null);
+			if(!checkOrderTimesResult){
+				return;
+			}
 		}
-		
+
 		var content = CacheData.getOfferProdStr(prodId,newSpec,0);
 		//判断是否是新装二次加载业务
 		if(OrderInfo.provinceInfo.reloadFlag=="N"){
@@ -4223,6 +4226,11 @@ AttachOffer = (function() {
 				return;
 			}
 			if(flag==1 && offer!=undefined){
+				//校验销售品已订购、可订购次数
+				var checkResult = check.offer.orderTimes(offer, nums);
+				if(!checkResult){
+					return;
+				}
 				if(offer.orderCount>nums){//退订附属销售品
 					if(!ec.util.isArray(offer.offerMemberInfos)){//销售品实例查询	
 						var param = {

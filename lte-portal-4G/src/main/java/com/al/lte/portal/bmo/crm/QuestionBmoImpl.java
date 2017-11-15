@@ -41,7 +41,6 @@ public class QuestionBmoImpl implements QuestionBmo {
 		String URL = MDA.CSB_HTTP_QUESTION_EMP + PortalServiceCode.QUESTION_EMP_INFO;
 
 		String sr = HttpRequest.sendPost("http://10.140.28.122:8070/ses_intf/queryStaff.do", "param=" + paramString);
-		System.out.println(sr);
 
 		Map<String, Object> returnMap = new HashMap<String, Object>();
 

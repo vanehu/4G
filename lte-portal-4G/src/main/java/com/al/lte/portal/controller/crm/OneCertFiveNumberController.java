@@ -393,7 +393,6 @@ public class OneCertFiveNumberController extends BaseController {
 	                param.put("areaId", param.get("lanId"));
 	                 
 	                Map<String, Object> resuMap = orderBmo.cltOrderCommit(param, null, sessionStaff);
-	                System.out.println(resuMap.toString());
 	                if (ResultCode.R_SUCC.equals(resuMap.get("resultCode"))) {
 	                    jsonResponse = super.successed(ResultConstant.SUCCESS);
 	                } else {

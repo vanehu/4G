@@ -25,6 +25,9 @@
 	        <#if item.counts?? && (item.counts>1) >
 	        	<button type="button" class="btn btn-info" style="right:40px;width:48px;" data-toggle="modal" data-target="#setting" onclick="AttachOffer.setParam(${prodId},${item.offerSpecId},1);">参</button>
 	        </#if>
+	        <#if item.offerLimitTimes?? && (item.offerLimitTimes.ifLimitTimes == "Y") >
+	        	<button type="button" class="btn btn-info" style="right:40px;width:48px;" data-toggle="modal" data-target="#setting" onclick="AttachOffer.setParam(${prodId},${item.offerSpecId},1);">参</button>
+	        </#if>
 			<span id="span_remove_${prodId}_${item.offerId}"
 				class="glyphicon glyphicon-remove pull-right" aria-hidden="true"></span>
 		</a>

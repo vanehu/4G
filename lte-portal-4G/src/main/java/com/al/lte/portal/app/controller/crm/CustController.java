@@ -1230,7 +1230,6 @@ public class CustController extends BaseController {
         	}else{
         		jsonResponse=super.failed(MapUtils.getString(resultMap, "msg", "客户资料查询业务出错，接入号为空或证件类型和证件号码为空！"), ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
         	}
-        	System.out.println("+++++++++++++++++++++"+JsonUtil.toString(jsonResponse));
             return jsonResponse;
         } catch (BusinessException be) {
             return super.failed(be);

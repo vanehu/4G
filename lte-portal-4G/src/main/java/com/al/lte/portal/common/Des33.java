@@ -50,7 +50,6 @@ public class Des33 {
 	private static byte[] hexStr2Bytes(String src) {
 		int m = 0, n = 0;
 		int l = src.length() / 2;
-		System.out.println(l);
 		byte[] ret = new byte[l];
 		for (int i = 0; i < l; i++) {
 			m = i * 2 + 1;
@@ -96,16 +95,12 @@ public class Des33 {
 		
 			byte[] data = str.getBytes(encoding);
 			int size = 8- data.length%8;
-			System.out.println("data.length~~"+data.length);
-			System.out.println("需要补~~"+size);
 			byte[] arr = new byte[data.length + size];
-			System.out.println("arr个~~"+arr.length);
 			int i = 0;
 			for (; i < data.length; i++) {
 				arr[i] = data[i];
 			}
 			for (int j = 0; j < size; j++, i++) {
-				System.out.println("i==="+i);
 				arr[i] = new byte[] { 0 }[0];
 			}
 			return arr;
@@ -127,7 +122,6 @@ public class Des33 {
 		Cipher cipher = Cipher.getInstance("desede" + "/CBC/NoPadding");
 		IvParameterSpec ips = new IvParameterSpec(keyiv);
 		cipher.init(Cipher.DECRYPT_MODE, deskey, ips);
-		System.out.println("encryptText~~~"+encryptText);
 		byte[] decryptData = cipher.doFinal(Base64.decode(encryptText));
 		 String bOut = byte2Ucs2(decryptData, 0, decryptData.length);
 		return bOut;
@@ -186,7 +180,7 @@ public class Des33 {
 		}
 		catch (UnsupportedEncodingException e)
 		{
-			System.out.println("转换UTF8失败");
+			
 		}
 		return "";
 	}
