@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
+import com.al.lte.portal.common.*;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -72,18 +73,6 @@ import com.al.lte.portal.bmo.crm.SignBmo;
 import com.al.lte.portal.bmo.staff.StaffBmo;
 import com.al.lte.portal.bmo.staff.StaffChannelBmo;
 import com.al.lte.portal.bmo.system.MenuBmo;
-import com.al.lte.portal.common.CommonMethods;
-import com.al.lte.portal.common.CommonUtils;
-import com.al.lte.portal.common.Const;
-import com.al.lte.portal.common.EhcacheUtil;
-import com.al.lte.portal.common.InterfaceClient;
-import com.al.lte.portal.common.MySessionInterceptor;
-import com.al.lte.portal.common.MySimulateData;
-import com.al.lte.portal.common.PortalServiceCode;
-import com.al.lte.portal.common.PortalUtils;
-import com.al.lte.portal.common.RedisUtil;
-import com.al.lte.portal.common.ServiceClient;
-import com.al.lte.portal.common.SysConstant;
 import com.al.lte.portal.common.print.PrintHelperMgnt;
 import com.al.lte.portal.core.DataEngine;
 import com.al.lte.portal.core.DataRepository;
@@ -180,6 +169,13 @@ public class LoginController extends BaseController {
 						SysConstant.SESSION_KEY_LOGIN_STAFF);	
 		session.setAttribute(SysConstant.SERVER_NAME,getSerName());
 		session.setAttribute(SysConstant.SERVER_IP,HttpUtils.getSimplifyHostIpAddress());
+
+		String aesFlag = MapUtils.getString(userMap,"aesFlag","");
+		if("Y".equals(aesFlag)){
+			String param = MapUtils.getString(userMap,"param","");
+			String encryptStr = AESUtils.decryptToString(param, SysConstant.TOKEN_PROVINCE_KEY);
+			userMap = JsonUtil.toObject(encryptStr, HashMap.class);
+		}
 		// 已经登录
 		if (sessionStaff != null && !("tokenLogin".equals(sessionStaff.getLogintype()))) {
 			String lastUrl = ServletUtils.getCookieValue(request, "_last_url");

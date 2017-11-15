@@ -93,6 +93,7 @@ public class TestController extends BaseController {
 			String unifyLoginUri=String.valueOf(paramMap.get("unifyLoginUri"));
 			String handlecustNumber=String.valueOf(paramMap.get("handlecustNumber"));
 			String handleprovCustAreaId=String.valueOf(paramMap.get("handleprovCustAreaId"));
+			String lanId=String.valueOf(paramMap.get("lanId"));
 			
 			Map<String,Object> map = new HashMap<String,Object>();
 			map.put("staffCode", staffCode);
@@ -112,6 +113,7 @@ public class TestController extends BaseController {
 			map.put("verifyLevel",verifyLevel);
 			map.put("handlecustNumber",handlecustNumber);
 			map.put("handleprovCustAreaId",handleprovCustAreaId);
+			map.put("lanId",lanId);
 			log.error("生成令牌参数:"+JacksonUtil.objectToJson(map));
 			log.error("省份私钥:"+privateKey);
 			
@@ -228,6 +230,7 @@ public class TestController extends BaseController {
 				map.put("attrInfos", paramMap.get("attrInfos"));
 				map.put("handlecustNumber",handlecustNumber);
 				map.put("handleprovCustAreaId",handleprovCustAreaId);
+				map.put("lanId",lanId);
 				
 				log.error("模拟单点页面参数:"+JacksonUtil.objectToJson(map));
 				

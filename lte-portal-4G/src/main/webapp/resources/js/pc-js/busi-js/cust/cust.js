@@ -2374,10 +2374,11 @@ order.cust = (function(){
 			"done": function (response) {
 				if (response.code == 0) {
 					$.alert("提示", "验证码发送成功，请及时输入验证.");
-				} else {
+				}else if (response.code==-2){
+                    $.alertM(response.data);
+                } else {
 					$.alert("提示", "验证码发送失败，请重新发送.");
 				}
-				;
 			}
 		});
 	};
