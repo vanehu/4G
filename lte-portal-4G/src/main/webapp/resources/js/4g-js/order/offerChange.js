@@ -144,6 +144,16 @@ offerChange = (function() {
 									membernum++;
 								}
 							})
+							if(this.minQty !=0){
+                                this.minQty = this.minQty-membernum;
+                                this.dfQty = this.dfQty-membernum;
+                                if(this.minQty<0){
+                                     this.minQty = 0;
+                                }
+                                if(this.dfQty<0){
+                                     this.dfQty = 0;
+                                }
+                          }
 							max = this.maxQty<0?"不限制":this.maxQty-membernum;
 							if(max<0){
 								max = 0;
