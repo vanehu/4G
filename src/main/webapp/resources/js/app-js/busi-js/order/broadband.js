@@ -357,7 +357,9 @@ order.broadband = (function(){
 		}else{
 			prodType = "";
 		}
-		$("#prodName"+prodType).val("");
+		if(OrderInfo.actionFlag != 112){
+			$("#prodName"+prodType).val("");
+		}
 		var List = order.broadband.ResInfoList;
 		for(var i=0;i<List.length;i++){
 			if(List[i].AccessModeId == $(obj).val()){
@@ -1171,6 +1173,10 @@ var _saveHtml2Pdf=function(){
 			$.alert("提示","请填写联系电话！");
 			return;
 		}
+		if(MD5("tgjbr"+OrderInfo.staff.isHandleCustNeeded+"tgjbr")!=OrderInfo.staff.MD5_tgjbr.toUpperCase()){
+			$.alert("提示","请勿篡改跳过经办人权限！");
+			return;
+		}
 //		if($("#printVoucherA").attr("disabled") == undefined || "disabled" != $("#printVoucherA").attr("disabled")){
 //			$.alert("提示","请先打印回执！");
 //			return;
@@ -1178,7 +1184,7 @@ var _saveHtml2Pdf=function(){
 		if(!_submitParam()){
 			return ;
 		}
-		if(order.broadband.isNeedJbr){//经办人是否必须
+		if(OrderInfo.staff.isHandleCustNeeded == "true" && order.broadband.isNeedJbr){//经办人是否必须
 			var jbrName=$("#jbrName").val();
 			if(jbrName==""){
 				$.alert("提示","请填写经办人信息！");
@@ -1232,7 +1238,7 @@ var _saveHtml2Pdf=function(){
 		cust.Address=address.replace(/=/g,"&#61");//加密客户地址
 		cust.IsEncrypt=ifEncoded;//是否加密标志
 		CustInfo.push(cust);
-		if(order.broadband.isNeedJbr && order.broadband.isSameOne==false && order.broadband.isOldCust==false){//经办人必须且不为本人，且为新客户则custInfo添加经办人节点
+		if(OrderInfo.staff.isHandleCustNeeded == "true" && order.broadband.isNeedJbr && order.broadband.isSameOne==false && order.broadband.isOldCust==false){//经办人必须且不为本人，且为新客户则custInfo添加经办人节点
 			var cust2={};
 			cust2.CertInfo = {
 				    "CertAddress": OrderInfo.jbr.addressStr,
@@ -1280,7 +1286,7 @@ var _saveHtml2Pdf=function(){
 		}
 		CustOrderInfo.SendChannelNbr = $('#MDId').val();
 		CustOrderInfo.SendChannelAddress = $('#MDadd').val();//甩单地址
-        if(order.broadband.isNeedJbr){//需要经办人
+        if(OrderInfo.staff.isHandleCustNeeded == "true" && order.broadband.isNeedJbr){//需要经办人
         	if(OrderInfo.cust.custId == -1){
         		CustOrderInfo.CustId=OrderInfo.cust.custId+"";
 			}else{
@@ -1530,7 +1536,7 @@ var _saveHtml2Pdf=function(){
 			_orderSubmit();
 			return;
 		}
-		if(order.broadband.isNeedJbr){//经办人是否必须
+		if(OrderInfo.staff.isHandleCustNeeded == "true" && order.broadband.isNeedJbr){//经办人是否必须
 			var jbrName=$("#jbrName").val();
 			if(jbrName==""){
 				$.alert("提示","请填写经办人信息！");

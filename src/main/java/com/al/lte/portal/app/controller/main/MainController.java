@@ -217,6 +217,8 @@ public class MainController extends BaseController {
 		List pageFunctionMenuArray = new ArrayList();
 		boolean isCanOrder = false; 
 		List pageSecondaryBusinessMenuArra = new ArrayList();
+		model.addAttribute("isHandleCustNeeded", String.valueOf(sessionStaff.isHandleCustNeeded()));
+		model.addAttribute("MD5_tgjbr", AESUtils.getMD5Str("tgjbr"+String.valueOf(sessionStaff.isHandleCustNeeded())+"tgjbr"));
 		Map<String, Object> resultMsg = new HashMap<String, Object>();
 		if(menu!=null){
 		model.addAttribute("haveMenu", "Y");
