@@ -2270,6 +2270,7 @@ SoOrder = (function() {
 	
 	//创建产品节点
 	var _createProd = function(prodId,prodSpecId) {	
+		var preInstallState = $("#isPreNumber_" + prodId).attr("checked") == "checked";
 		var busiOrder = {
 			areaId : OrderInfo.getProdAreaId(prodId),  //受理地区ID
 			busiOrderInfo : {
@@ -2473,7 +2474,7 @@ SoOrder = (function() {
 		};
 		
 		busiOrder.data.boAccountRelas.push(boAccountRela);	
-		if (ec.util.isObj(OrderInfo.boProdAns) && OrderInfo.boProdAns.length > 0 && prodSpecId != CONST.PROD_SPEC.PROD_CLOUD_OFFER) {
+		if (ec.util.isObj(OrderInfo.boProdAns) && OrderInfo.boProdAns.length > 0 && prodSpecId != CONST.PROD_SPEC.PROD_CLOUD_OFFER && !preInstallState) {
             $.each(OrderInfo.boProdAns, function () {
                 if (busiOrder.busiObj.accessNumber != this.accessNumber) {//封装当前号码下的证号关系节点
                     return true;

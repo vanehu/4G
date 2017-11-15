@@ -380,7 +380,9 @@ query.offer = (function() {
 					mktResCd : "",
 					agreementType : "",
 					offerSpecId : param.mainOfferSpecId,
-					agreementName : ""
+					agreementName : "",
+					channelId : OrderInfo.staff.channelId,
+					staffId : OrderInfo.staff.staffId
 			};
 			if(param.memberRoleCd == "401"){
 				inparam.memberRoleCd = param.memberRoleCd;
