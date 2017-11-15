@@ -113,6 +113,16 @@
   </servlet-mapping>
   <servlet>
     <description></description>
+    <display-name>AesServlet</display-name>
+    <servlet-name>AesServlet</servlet-name>
+    <servlet-class>com.al.lte.portal.servlet.AesServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>AesServlet</servlet-name>
+    <url-pattern>/aes</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
     <display-name>ModePADServlet</display-name>
     <servlet-name>ModePADServlet</servlet-name>
     <servlet-class>com.al.lte.portal.servlet.ModePADServlet</servlet-class>
