@@ -376,6 +376,9 @@ public class MainController extends BaseController {
     	}
     	Map<String, Object> sp_cfg = MDA.PROV_AUTH_SWITH.get((sessionStaff.getAreaId() + "").substring(0, 3));
 		String sp_flag = String.valueOf(sp_cfg.get("QRCODE_LOGIN_SWITCH"));//双屏互动开关
+		String propertiesKey = "ONE_CERT_5_NUMBER_"+ (sessionStaff.getCurrentAreaId() + "").substring(0, 3);//一证五卡开关
+		String OneFiveFlag = propertiesUtils.getMessage(propertiesKey);
+		model.addAttribute("OneCertNumFlag", OneFiveFlag);
 		model.addAttribute("sp_flag", sp_flag);
     	model.addAttribute("staff", sessionStaff);
     	model.addAttribute("urlstr", urlstr);
