@@ -37,6 +37,10 @@ SoOrder = (function() {
 	
 	//提交订单节点
 	var _submitOrder = function(data) {
+		if(MD5("tgjbr"+OrderInfo.staff.isHandleCustNeeded+"tgjbr")!=OrderInfo.staff.MD5_tgjbr.toUpperCase()){
+			$.alert("提示","请勿篡改跳过经办人权限！");
+			return;
+		}
 		var propertiesKey = "REAL_NAME_PHOTO_"+(OrderInfo.staff.soAreaId+"").substring(0,3);
 		var isFlag = offerChange.queryPortalProperties(propertiesKey);
 		if(isFlag == "error"){
@@ -61,7 +65,7 @@ SoOrder = (function() {
 			OrderInfo.busitypeflag = 14;
 			OrderInfo.order.step=3;
 		}else if(OrderInfo.actionFlag==6 ||OrderInfo.actionFlag==21){//主副卡成员变更
-			if((OrderInfo.preBefore.idPicFlag != "OFF" || ageJbrMustFlag == "ON" ) && !OrderInfo.virOlId){
+			if(OrderInfo.staff.isHandleCustNeeded == "true" && (OrderInfo.preBefore.idPicFlag != "OFF" || ageJbrMustFlag == "ON" ) && !OrderInfo.virOlId){
 				$.alert("提示","经办人信息必填，请前往经办人页面进行实名拍照！");
 				return;
 			}
@@ -69,27 +73,27 @@ SoOrder = (function() {
 		}else if(OrderInfo.actionFlag==2){//套餐变更
 			OrderInfo.busitypeflag = 2;
 		}else if(OrderInfo.actionFlag==9){//客户返档
-			if((OrderInfo.preBefore.idPicFlag != "OFF" || ageJbrMustFlag == "ON" ) && !OrderInfo.virOlId){
+			if(OrderInfo.staff.isHandleCustNeeded == "true" && (OrderInfo.preBefore.idPicFlag != "OFF" || ageJbrMustFlag == "ON" ) && !OrderInfo.virOlId){
 				$.alert("提示","经办人信息必填，请前往经办人页面进行实名拍照！");
 				return;
 			}
 			OrderInfo.busitypeflag = 12;
 		}else if(OrderInfo.actionFlag==22){//补换卡
 			//补卡经办人必填  换卡经办人非必填
-			if((OrderInfo.preBefore.idPicFlag != "OFF" || ageJbrMustFlag == "ON" ) && !OrderInfo.virOlId && OrderInfo.uimtypeflag == "22"){
+			if(OrderInfo.staff.isHandleCustNeeded == "true" && (OrderInfo.preBefore.idPicFlag != "OFF" || ageJbrMustFlag == "ON" ) && !OrderInfo.virOlId && OrderInfo.uimtypeflag == "22"){
 				$.alert("提示","经办人信息必填，请前往经办人页面进行实名拍照！");
 				return;
 			}
 			OrderInfo.busitypeflag = OrderInfo.uimtypeflag;
 		}else if(OrderInfo.actionFlag==23){//异地补换卡
 			//补卡经办人必填  换卡经办人非必填
-			if((OrderInfo.preBefore.idPicFlag != "OFF"|| ageJbrMustFlag == "ON" ) && !OrderInfo.virOlId && OrderInfo.uimtypeflag == "22"){
+			if(OrderInfo.staff.isHandleCustNeeded == "true" && (OrderInfo.preBefore.idPicFlag != "OFF"|| ageJbrMustFlag == "ON" ) && !OrderInfo.virOlId && OrderInfo.uimtypeflag == "22"){
 				$.alert("提示","经办人信息必填，请前往经办人页面进行实名拍照！");
 				return;
 			}
 			OrderInfo.busitypeflag = 19;
 		}else if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==14 || OrderInfo.actionFlag==112){//新装
-			if((OrderInfo.preBefore.idPicFlag != "OFF" || ageJbrMustFlag == "ON" ) && !OrderInfo.virOlId){
+			if(OrderInfo.staff.isHandleCustNeeded == "true" && (OrderInfo.preBefore.idPicFlag != "OFF" || ageJbrMustFlag == "ON" ) && !OrderInfo.virOlId){
 				$.alert("提示","经办人信息必填，请前往经办人页面进行实名拍照！");
 				return;
 			}

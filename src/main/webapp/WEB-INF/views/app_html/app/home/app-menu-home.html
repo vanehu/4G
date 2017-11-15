@@ -204,6 +204,8 @@
 		<div id="verifyPrepare" style="margin-top: 60px;display:none;"></div>
 		<script>
 			$(document).ready(function() {
+				OrderInfo.staff.isHandleCustNeeded = '${isHandleCustNeeded}';
+				OrderInfo.staff.MD5_tgjbr = '${MD5_tgjbr}';
 				home.sp_flag = '${sp_flag}';
 				home.READ_UIM='${READ_UIM}';
 				cust.OneCertNumFlag='${OneCertNumFlag}';
