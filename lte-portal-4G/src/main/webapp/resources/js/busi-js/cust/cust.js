@@ -980,7 +980,7 @@ order.cust = (function(){
 		content$.html(response.data).show();
 		//双屏互动redis缓存数据和客户端数据比较
 		var isCustTally = $("#isCustTally").val();
-		if(isCustTally == "1"){
+		if(isCustTally == "1" && appOnChatNumber == 1){
 			content$.html(response.data).hide();
 			easyDialog.close();
 			$.alert("提示","双屏互动pc端身份证信息被修改！");

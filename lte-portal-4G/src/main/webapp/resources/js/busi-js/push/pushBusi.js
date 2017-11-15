@@ -17,6 +17,8 @@ var connStatus = false;
 var bindStatus = false;
 //服务端请求地址
 var servUrl = null;
+//实时监测app在线人数
+var appOnChatNumber = 0;
 
 push.busi = (function($) {
 	
@@ -111,7 +113,7 @@ push.busi = (function($) {
 	};
 	
 	//查询连接聊天室的人数
-	var _queryChatNumber = function(servUrl){
+	var _queryChatNumber = function(){
 		var rid1 = $("#_session_staff_info").attr("staffId")+$("#_session_staff_info").attr("channelId");
 		var username1 = "getChatNumber"+"_web";
 		if(null == servUrl || "" == servUrl){
@@ -161,7 +163,6 @@ push.busi = (function($) {
 				}
 			});
 		});
-		
 	}
 	
 	var _init = function(){
@@ -233,6 +234,7 @@ push.busi = (function($) {
 
 			});
 		});
+		
 	};
 
 	/**
@@ -717,6 +719,7 @@ $(function(){
 	pomelo.on('onAdd', function(data) {
 		//alert("onadd");
 		if(null != target && data.user == target){
+			appOnChatNumber = 1;
 			push.busi.bindedStyle();
 			if($('#qrCodeDialog').css("display") != 'none') {
 				easyDialog.close();
@@ -727,6 +730,7 @@ $(function(){
 	// update user list
 	pomelo.on('onLeave', function(data) {
 		if(null != target && data.user == target){
+			appOnChatNumber = 0;
 			push.busi.waitStyle();
 		}
 	});
