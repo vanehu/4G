@@ -150,8 +150,7 @@ public class APPModelController extends BaseController {
 			sessionStaff = SessionStaff.setStaffInfoFromMap(staffInfo);
 			initSessionStaff(sessionStaff, request.getSession());
 			if(!StringUtils.isEmpty(lanId)){
-				areaId = lanId;
-				paramsMap.put("provCustAreaId",lanId);
+				request.getSession().setAttribute(SysConstant.TOKEN_LANID,lanId);
 			}
 			if(paramsMap == null || paramsMap.size() <= 0){		
 				model.addAttribute("errorMsg", "参数解析异常");
