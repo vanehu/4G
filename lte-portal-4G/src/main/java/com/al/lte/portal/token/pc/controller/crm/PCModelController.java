@@ -152,8 +152,7 @@ public class PCModelController extends BaseController {
 			//redmine2074987
 			String lanId = MapUtils.getString(paramsMap,"lanId","");
 			if(!StringUtils.isEmpty(lanId)){
-				areaId = lanId;
-				paramsMap.put("provCustAreaId",lanId);
+				request.getSession().setAttribute(SysConstant.TOKEN_LANID,lanId);
 			}
 
 			staffInfo.put("accessToken", accessToken);
