@@ -21,7 +21,7 @@
 	        	<dd class="canshu" id="can_${prodId}_${item.offerId}"  onclick="AttachOffer.setParam(${prodId},${item.offerSpecId},1);" isset="N" ></dd>
 	        </#if>
 	        <#if item.offerLimitTimes?? && (item.offerLimitTimes.ifLimitTimes == "Y") >
-	        	<dd class="canshu" id="can_${prodId}_${item.offerId}"  onclick="AttachOffer.setParam(${prodId},${item.offerSpecId},1);" isset="N" ></dd>
+	        	<dd class="canshu" id="can_${prodId}_${item.offerId}"  onclick="AttachOffer.setParam4RepeatOrder(${prodId},${item.offerSpecId});" isset="N" ></dd>
 	        </#if>
 	     </li>
     	</#list>
