@@ -332,7 +332,6 @@ public class OrderController extends BaseController {
 			result = orderBmo.orderSpecParam(dataBusMap, null, sessionStaff);
 			if ("0".equals(result.get("code").toString())) {
 				list = (List<Map<String, Object>>) result.get("prodSpecParams");
-				System.out.println("pad里的list:"+list.toString());
 				model.addAttribute("prodSpecParams", list);
 				model.addAttribute("ul_id", ul_id);
 				model.addAttribute("prodId", prodId);

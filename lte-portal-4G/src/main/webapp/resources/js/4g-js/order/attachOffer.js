@@ -1986,12 +1986,7 @@ AttachOffer = (function() {
 		if(!checkFeeTypeResult){
 			return;
 		}
-		
-		var checkOrderTimesResult = check.offer.orderTimes(newSpec);
-		if(!checkOrderTimesResult){
-			return;
-		}
-		
+
 		var offer = CacheData.getOfferBySpecId(prodId,offerSpecId); //从已订购数据中找
 		if(offer != undefined && offer.ifDueOrderAgain != "Y"){//如果是合约，则跳过，执行下面代码
 			var tipsContent = "您已订购 '"+newSpec.offerSpecName+"' 销售品 "+offer.counts+" 次，请确认是否继续订购";
@@ -1999,17 +1994,24 @@ AttachOffer = (function() {
 				yes:function(){
 				},
 				yesdo:function(){
-				    _addOfferSpecFunction(prodId,newSpec);
+				    _addOfferSpecFunction(prodId, newSpec, offer);
 			    },
 				no:function(){
 				}
 			});
 		}else{
-			_addOfferSpecFunction(prodId,newSpec);
+			_addOfferSpecFunction(prodId, newSpec, offer);
 		}
 	};
 	
-	var _addOfferSpecFunction = function(prodId,newSpec){
+	var _addOfferSpecFunction = function(prodId, newSpec, orderedOffer){
+		if(ec.util.isObj(orderedOffer)){
+			var checkOrderTimesResult = check.offer.orderTimes(orderedOffer, null);
+			if(!checkOrderTimesResult){
+				return;
+			}
+		}
+		
 		var content = CacheData.getOfferProdStr(prodId,newSpec,0);
 		$.confirm("信息确认",content,{ 
 			yes:function(){
@@ -5357,8 +5359,8 @@ AttachOffer = (function() {
 			}
 		});
 		$('#paramForm').bind('formIsValid', function(event, form) {
+			var nums=$("#text_"+prodId+"_"+offerSpecId).val();
 			if(flag==1){
-				var nums=$("#text_"+prodId+"_"+offerSpecId).val();
 				if(newSpec.labelId == null || newSpec.labelId == ""){
 					nums=newSpec.counts; 
 				}
@@ -5368,7 +5370,6 @@ AttachOffer = (function() {
 					return;
 				}
 			}else{
-				var nums=$("#text_"+prodId+"_"+offerSpecId).val();
 				if(newSpec.labelId == null || newSpec.labelId == ""){
 					nums=newSpec.counts; 
 				}
@@ -5387,6 +5388,11 @@ AttachOffer = (function() {
 				return;
 			}
 			if(flag==1 && offer!=undefined){
+				//校验销售品已订购、可订购次数
+				var checkResult = check.offer.orderTimes(offer, nums);
+				if(!checkResult){
+					return;
+				}
 				if(offer.orderCount>nums){//退订附属销售品
 					if(!ec.util.isArray(offer.offerMemberInfos)){//销售品实例查询	
 						var param = {

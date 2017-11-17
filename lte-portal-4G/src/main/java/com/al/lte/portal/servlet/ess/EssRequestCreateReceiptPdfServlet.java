@@ -205,9 +205,11 @@ public class EssRequestCreateReceiptPdfServlet extends HttpServlet implements
 			if (orderType.equals("preInstall")
 					|| orderType.equals("offerChange")
 					|| orderType.equals("newInstall")
-					|| orderType.equals("addCard")) {
+					|| orderType.equals("addCard")
+					|| orderType.equals("changeRoleMember")) {
 				// 预装和主套餐变更需要上传协议单
 				// 20170912 新增 新装、补换卡 订单需要上传协议单
+				// 20171115 因接入类订单类型拆分出了changeRoleMember，导致未上传pdf文件至服务器，现增加changeRoleMember订单类型上传
 				String extCustOrderId = (String) printDataMap.get("extCustOrderId");
 				if(StringUtils.isBlank(extCustOrderId)){
 					extCustOrderId = MapUtils.getString(paramMap, "extCustOrderId");

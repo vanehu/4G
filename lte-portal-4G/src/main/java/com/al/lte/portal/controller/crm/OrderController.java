@@ -5462,34 +5462,24 @@ public class OrderController extends BaseController {
 
         if(StringUtils.isBlank(MapUtils.getString(param, "operateSpec", ""))){
         	operateSpec = SysConstant.RXSH;
-        } else{
-        	operateSpec = MapUtils.getString(param, "operateSpec");
         }
         
-        String sessionKey = sessionStaff.getStaffId() + operateSpec;
-        
-        List<Map<String, Object>> staffList = (List<Map<String, Object>>) ServletUtils.getSessionAttribute(super.getRequest(), sessionKey);
-        if(staffList != null){
-        	jsonResponse = super.successed(staffList, ResultConstant.SUCCESS.getCode());
-        } else{
-        	try {
-            	result = staffBmo.qryOperateSpecStaffList(operateSpec, sessionStaff);
-                if (ResultCode.R_SUCC.equals(MapUtils.getString(result, SysConstant.RESULT_CODE, "1"))) {
-                	jsonResponse = super.successed(result.get(SysConstant.RESULT), ResultConstant.SUCCESS.getCode());
-                	ServletUtils.setSessionAttribute(super.getRequest(), sessionKey, result.get(SysConstant.RESULT));
-                } else {
-                    jsonResponse = super.failed(MapUtils.getString(result, SysConstant.RESULT_MSG, ""), ResultConstant.FAILD.getCode());
-                }
-            } catch (BusinessException be) {
-            	jsonResponse = super.failed(be);	
-            } catch (InterfaceException ie) {
-            	jsonResponse = super.failed(ie, param, ErrorCode.QUERY_STAFF_INFO);
-    		} catch (IOException ioe) {
-    			jsonResponse = super.failed(ErrorCode.QUERY_STAFF_INFO, ioe, param);
-    		} catch (Exception e) {
-    			jsonResponse = super.failed(ErrorCode.QUERY_STAFF_INFO, e, param);
-    		}
-        }
+    	try {
+        	result = staffBmo.qryOperateSpecStaffList(operateSpec, sessionStaff);
+            if (ResultCode.R_SUCC.equals(MapUtils.getString(result, SysConstant.RESULT_CODE, "1"))) {
+            	jsonResponse = super.successed(result.get(SysConstant.RESULT), ResultConstant.SUCCESS.getCode());
+            } else {
+                jsonResponse = super.failed(MapUtils.getString(result, SysConstant.RESULT_MSG, ""), ResultConstant.FAILD.getCode());
+            }
+        } catch (BusinessException be) {
+        	jsonResponse = super.failed(be);	
+        } catch (InterfaceException ie) {
+        	jsonResponse = super.failed(ie, param, ErrorCode.QUERY_STAFF_INFO);
+		} catch (IOException ioe) {
+			jsonResponse = super.failed(ErrorCode.QUERY_STAFF_INFO, ioe, param);
+		} catch (Exception e) {
+			jsonResponse = super.failed(ErrorCode.QUERY_STAFF_INFO, e, param);
+		}
         
         return jsonResponse;
     }

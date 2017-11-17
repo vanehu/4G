@@ -61,14 +61,6 @@ public class CustController extends BaseController {
 		httpSession.removeAttribute("JUMPRESULT");
 		request.getSession().removeAttribute("checkNumber");
 		request.getSession().removeAttribute("accNbrInfos");
-		//by huangyn 双屏互动鉴定redis的数据和页面提交的数据是否一致
-		String cardType = (String)paramMap.get("identityCd");
-		String cardNumber = (String)paramMap.get("identityNum");
-		String isCustTally = "";
-		if(cardType.length() > 0 && cardNumber.length() > 0){
-			isCustTally = CustCardRedisUtil.compareRedisCard(cardType, cardNumber, request);
-			//request.getSession().setAttribute("isCustTally", isCustTally);
-		}
 		String checkNumber = (String) (paramMap.get("acctNbr") == ""
 				? paramMap.get("identityNum") == "" ? paramMap.get("queryTypeValue") : paramMap.get("identityNum")
 				: paramMap.get("acctNbr"));
@@ -78,7 +70,6 @@ public class CustController extends BaseController {
 		if (sessionStaff == null) {
 			return "/cust/cust-list";
 		}
-		model.addAttribute("isCustTally", isCustTally);
 		String areaId = (String) paramMap.get("areaId");
 		try {
 			// 记录表SP_BUSI_RUN_LOG
@@ -2564,21 +2555,6 @@ public class CustController extends BaseController {
 		}
 		jsonResponse = super.successed(resMap, ResultConstant.SUCCESS.getCode());
 		// request.getSession().removeAttribute("dxState");
-		return jsonResponse;
-	}
-	
-	@RequestMapping(value = "/saveDataToRedis", method = RequestMethod.POST)
-	@ResponseBody
-	public JsonResponse saveDataToRedis(@RequestBody Map<String, Object> paramMap, HttpServletResponse response, HttpServletRequest request) {
-		JsonResponse jsonResponse = null;
-		String pushType = paramMap.get("pushType") + "";
-		if("1".equals(pushType)){
-			//身份证的信息读取
-			RedisUtil.set((String)paramMap.get("uId"), paramMap.get("data"));
-			request.getSession().setAttribute("uId", (String)paramMap.get("uId"));
-		}
-		Map<String, Object> resMap = new HashMap<String, Object>();
-		jsonResponse = super.successed(resMap, ResultConstant.SUCCESS.getCode());
 		return jsonResponse;
 	}
 }

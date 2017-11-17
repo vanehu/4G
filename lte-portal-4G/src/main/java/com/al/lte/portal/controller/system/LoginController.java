@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
+import com.al.lte.portal.common.*;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -72,18 +73,6 @@ import com.al.lte.portal.bmo.crm.SignBmo;
 import com.al.lte.portal.bmo.staff.StaffBmo;
 import com.al.lte.portal.bmo.staff.StaffChannelBmo;
 import com.al.lte.portal.bmo.system.MenuBmo;
-import com.al.lte.portal.common.CommonMethods;
-import com.al.lte.portal.common.CommonUtils;
-import com.al.lte.portal.common.Const;
-import com.al.lte.portal.common.EhcacheUtil;
-import com.al.lte.portal.common.InterfaceClient;
-import com.al.lte.portal.common.MySessionInterceptor;
-import com.al.lte.portal.common.MySimulateData;
-import com.al.lte.portal.common.PortalServiceCode;
-import com.al.lte.portal.common.PortalUtils;
-import com.al.lte.portal.common.RedisUtil;
-import com.al.lte.portal.common.ServiceClient;
-import com.al.lte.portal.common.SysConstant;
 import com.al.lte.portal.common.print.PrintHelperMgnt;
 import com.al.lte.portal.core.DataEngine;
 import com.al.lte.portal.core.DataRepository;
@@ -180,6 +169,13 @@ public class LoginController extends BaseController {
 						SysConstant.SESSION_KEY_LOGIN_STAFF);	
 		session.setAttribute(SysConstant.SERVER_NAME,getSerName());
 		session.setAttribute(SysConstant.SERVER_IP,HttpUtils.getSimplifyHostIpAddress());
+
+		String aesFlag = MapUtils.getString(userMap,"aesFlag","");
+		if("Y".equals(aesFlag)){
+			String param = MapUtils.getString(userMap,"param","");
+			String encryptStr = AESUtils.decryptToString(param, SysConstant.TOKEN_PROVINCE_KEY);
+			userMap = JsonUtil.toObject(encryptStr, HashMap.class);
+		}
 		// 已经登录
 		if (sessionStaff != null && !("tokenLogin".equals(sessionStaff.getLogintype()))) {
 			String lastUrl = ServletUtils.getCookieValue(request, "_last_url");
@@ -2362,7 +2358,7 @@ public class LoginController extends BaseController {
 	                ipList.put("allNum",allIpNum);
 	                ipList.put("all", alliplist);
 	            } else {
-		            System.out.println("iplist.xml文件不存在！ ");
+	            	log.error("iplist.xml文件不存在！ ");
 	            }
 	        } catch (Exception e) {
 	            e.printStackTrace();
@@ -2588,7 +2584,6 @@ public class LoginController extends BaseController {
 			staffSession.setCurrentAreaId(staffProvCode);
 			dataBusMap.put(InterfaceClient.DATABUS_DBKEYWORD,(String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY));
 			map = staffBmo.qrLoginCheck(dataBusMap, flowNum, staffSession);
-			System.out.println(JsonUtil.toString(map));
 			// 调用返回服务调用结果code
 			String resultCode = MapUtils.getString(map, "resultCode");
 			if (ResultCode.R_SUCC.equals(resultCode)) {
@@ -2651,9 +2646,9 @@ public class LoginController extends BaseController {
 	@LogOperatorAnn(desc = "经办人拍照人证相符短信校验码验证", code = "CHANGEUIM", level = LevelLog.DB)
 	@ResponseBody
 	public JsonResponse confirmAgreeCheck(@RequestParam Map<String, Object> paramMap,HttpServletRequest request, @LogOperatorAnn String flowNum) {
-		try {
-			SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
-			String number = (String) paramMap.get("number");
+		String number = MapUtils.getString(paramMap, "number");
+    	
+    	try {
 			String areaId = (String) paramMap.get("areaId");
 			String virOlId = (String) paramMap.get("virOlId");
 			String checkType = (String) paramMap.get("checkType");
@@ -2731,6 +2726,12 @@ public class LoginController extends BaseController {
 				retnMap.put("resultMsg","短信验证号码为空，系统异常！请刷新重试!");
 				return retnMap;
 			}
+			Map<String, Object> checkResult = EhcacheUtil.photographReviewTamperInterceptor(number, request);
+	    	if(ResultCode.SUCCESS != MapUtils.getIntValue(checkResult, SysConstant.RESULT_CODE, 1)){
+	    		retnMap.put("resultCode",ResultCode.R_FAILURE );
+				retnMap.put("resultMsg",MapUtils.getString(checkResult, SysConstant.RESULT_MSG));
+				return retnMap;
+	    	}
 			
 			String smsPwd = null;
 			String randomCode =null;

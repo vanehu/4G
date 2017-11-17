@@ -593,7 +593,7 @@ public class OfferBmoImpl implements OfferBmo {
 		
 		if(StringUtils.isBlank(accNbr) || StringUtils.isBlank(areaId)){
 			returnMap.put(SysConstant.RESULT_CODE, ResultCode.R_FAILURE);
-			returnMap.put(SysConstant.RESULT_MSG, "无效的入参accNbr、areaId。");
+			returnMap.put(SysConstant.RESULT_MSG, "销售品已订购次数查询，无效的入参accNbr、areaId。");
 			throw new BusinessException(ErrorCode.PORTAL_INPARAM_ERROR, params, returnMap, null);
 		}
 		

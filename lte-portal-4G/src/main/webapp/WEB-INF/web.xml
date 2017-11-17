@@ -168,7 +168,7 @@
     </filter>
     <filter-mapping>
        <filter-name>ForbiddenKeywordFilter</filter-name>
-       <url-pattern>/*</url-pattern>
+       <url-pattern>/staff/login/page</url-pattern>
     </filter-mapping>
     
     <filter>

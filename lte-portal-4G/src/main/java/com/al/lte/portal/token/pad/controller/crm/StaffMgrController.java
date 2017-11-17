@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.al.ecs.common.util.*;
 import org.apache.commons.collections.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -27,11 +28,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ecs.common.entity.JsonResponse;
 import com.al.ecs.common.entity.PageModel;
-import com.al.ecs.common.util.JsonUtil;
-import com.al.ecs.common.util.MapUtil;
-import com.al.ecs.common.util.PageUtil;
-import com.al.ecs.common.util.PropertiesUtils;
-import com.al.ecs.common.util.UIDGenerator;
 import com.al.ecs.common.web.ServletUtils;
 import com.al.ecs.exception.AuthorityException;
 import com.al.ecs.exception.BusinessException;
@@ -696,8 +692,12 @@ public void toPraise(HttpServletRequest request,  HttpServletResponse response) 
 				JsonResponse jsonResponse = new JsonResponse();
 				SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
 						SysConstant.SESSION_KEY_LOGIN_STAFF);
-				String phone=(String)param.get("phone");
-			   super.getRequest().getSession().removeAttribute("VALIDATERESULT");
+		     	String phone=(String)param.get("phone");
+			    super.getRequest().getSession().removeAttribute("VALIDATERESULT");
+			    String mainPhone = (String) session.getAttribute("mainPhoneNum_PC");
+			    if(!StringUtil.isEmptyStr(mainPhone) && !mainPhone.equals(phone)) {
+					return super.failed(ErrorCode.PORTAL_INPARAM_ERROR, "参数异常,存在修改手机号行为。", param);
+				}
 				try{
 					jsonResponse.setCode(0);
 		        	jsonResponse.setSuccessed(true);

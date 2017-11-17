@@ -171,4 +171,14 @@
 		//	}
 		//});
 	}
+	var labelMap=${labelMapJson};
+	var prodId= ${prodId};
+	var label = {
+		prodId : prodId,
+		labels : []
+	};
+	if(labelMap!=undefined && labelMap.result!=undefined){
+		label.labels = labelMap.result;
+		AttachOffer.labelList.push(label);
+	}
 </script>

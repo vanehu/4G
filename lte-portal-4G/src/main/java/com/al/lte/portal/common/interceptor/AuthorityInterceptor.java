@@ -127,7 +127,7 @@ public class AuthorityInterceptor extends HandlerInterceptorAdapter {
 				staffInfo.put("accessToken", accessTokenSub);
 				staffInfo.put("staffProvCode", provinceCode);
 				staffInfo.put("channelCode", channelCode);
-				sessionStaff = SessionStaff.setStaffInfoFromMap(staffInfo);		
+				sessionStaff = SessionStaff.setStaffInfoFromMap(staffInfo);
 				initSessionStaff(sessionStaff, request.getSession());
 				accessToken = accessTokenSub;
 			}else{
@@ -304,6 +304,10 @@ public class AuthorityInterceptor extends HandlerInterceptorAdapter {
 			sessionStaff.setCurrentChannelCode(MapUtils.getString(chanelMap, "chnNbr", ""));
 			sessionStaff.setLogintype("tokenLogin");
 			// 存到session中
+			String lanId = (String) session.getAttribute(SysConstant.TOKEN_LANID);
+			if(!StringUtils.isEmpty(lanId)){
+				sessionStaff.setCurrentAreaId(lanId);
+			}
 			session.setAttribute(SysConstant.SESSION_KEY_LOGIN_STAFF, sessionStaff);
 			RedisUtil.set((String) session.getAttribute(SysConstant.SESSION_DATASOURCE_KEY),sessionStaff.getStaffId(),session.getId());
 			session.setAttribute(SysConstant.SESSION_KEY_STAFF_CHANNEL,(List<Map<String,Object>>) chanelMap.get("channelList"));

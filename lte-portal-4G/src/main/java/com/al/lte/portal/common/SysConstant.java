@@ -943,4 +943,8 @@ public final class SysConstant {
 	
 	// 副卡预装 VICE_CARD_PREASSEMBLE
 	public static final String VICE_CARD_PREASSEMBLE = "VICE_CARD_PREASSEMBLE";
+	//省份公共秘钥key   正式：#public@2015$KEY      测试：PUBLIC_TOKEN_KEY
+	public static final String TOKEN_PROVINCE_KEY="#public@2015$KEY";//和统一登录对应
+	//能力开放省级工号的lanId，表示受理地区
+	public static final String TOKEN_LANID = "TOKEN_LANID";
 }

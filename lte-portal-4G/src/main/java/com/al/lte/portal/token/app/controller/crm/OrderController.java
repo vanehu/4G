@@ -1128,8 +1128,6 @@ public class OrderController extends BaseController {
 				@LogOperatorAnn String flowNum, HttpServletResponse response,HttpSession session) {
 	    	
 		// String str=JacksonUtil.objectToJson(param);
-		// System.out.print(str);
-		// System.out.println("");
 		 String forward = "" ;
 	    	if("2".equals(String.valueOf(param.get("actionFlag")))){  //套餐变更
 	    		if (MapUtils.isNotEmpty(param)) {

@@ -45,4 +45,9 @@ public class SysConstant {
 	public static String CON_PROPERTIES_KEY = "WRITE_LOG_FLAG,WRITE_LOG_DETAIL,url.csbWS,url.CN2csbWS,DEFAULT_DATASOURCE";
 	/**刷新缓存动作参数分组分隔符*/
 	public static String  CON_REF_PARAM_ACTION_GROUP = ",";
+	
+	/**开始日期的后缀*/
+	public static String  START_DATE_SUFFIX = " 00:00:00";
+	/**结束日期的后缀*/
+	public static String  END_DATE_SUFFIX = " 23:59:59";
 }

@@ -486,11 +486,18 @@ AttachOffer = (function() {
 	
 	//查询附属销售品规格
 	var _searchAttachOfferSpec = function(prodId,offerSpecId,prodSpecId) {
+		var labelIds = [];
+		$.each(AttachOffer.labelList,function(){
+			$.each(this.labels,function(){
+				labelIds.push(this.label);//遍历所有附属销售品规格标签，找出标签的id
+			})
+		})
 		var param = {   
 			prodId : prodId,
 		    prodSpecId : prodSpecId,
 		    offerSpecIds : [offerSpecId],
-		    ifCommonUse : "" 
+		    ifCommonUse : "",
+			labelIds : labelIds 
 		};
 //		if(OrderInfo.actionFlag == 2){ //套餐变更		
 //			param.offerSpecIds=[OrderInfo.offerSpec.offerSpecId];
@@ -1290,11 +1297,14 @@ AttachOffer = (function() {
 			return;
 		}
 		
-		var checkOrderTimesResult = check.offer.orderTimes(newSpec);
-		if(!checkOrderTimesResult){
-			return;
+		var offer = CacheData.getOfferBySpecId(prodId,offerSpecId); //从已订购数据中找
+		if(ec.util.isObj(offer)){
+			var checkOrderTimesResult = check.offer.orderTimes(offer, null);
+			if(!checkOrderTimesResult){
+				return;
+			}
 		}
-		
+
 		var content = CacheData.getOfferProdStr(prodId,newSpec,0);
 		//判断是否是新装二次加载业务
 		if(OrderInfo.provinceInfo.reloadFlag=="N"){
@@ -4223,6 +4233,11 @@ AttachOffer = (function() {
 				return;
 			}
 			if(flag==1 && offer!=undefined){
+				//校验销售品已订购、可订购次数
+				var checkResult = check.offer.orderTimes(offer, nums);
+				if(!checkResult){
+					return;
+				}
 				if(offer.orderCount>nums){//退订附属销售品
 					if(!ec.util.isArray(offer.offerMemberInfos)){//销售品实例查询	
 						var param = {
