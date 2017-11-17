@@ -2904,16 +2904,49 @@ public class OrderBmoImpl implements OrderBmo {
             		}
             	}
             }
+        	String faceVerifyFlag= "";
+        	Map<String, Object> fzConfig = (HashMap<String, Object>) MDA.FACE_VERIFY_FLAG
+    				.get("FACE_VERIFY_" + sessionStaff.getCurrentAreaId().substring(0, 3));
+        	String fz = MapUtils.getString(fzConfig, "FZ", "0");
         	for (Map<String, Object> custOrderAttr : custOrderAttrs) {
 	        	if("40010049".equals(MapUtils.getString(custOrderAttr, "itemSpecId", ""))){
 	        		try{
-	        			if (new  BigDecimal((Double)custOrderAttr.get("value")).compareTo(new  BigDecimal((Double)ServletUtils.getSessionAttribute(request, Const.SESSION_CONFIDENCES))) !=0) {
+	        			if (!custOrderAttr.get("value").equals(ServletUtils.getSessionAttribute(request, Const.SESSION_CONFIDENCES))) {
 							   return false;
 		        		}
+	        			String temp = (String)custOrderAttr.get("value");
+		        		if (temp.compareTo(fz) > 0) {
+			        		faceVerifyFlag ="Y";
+						} else {
+							faceVerifyFlag = "N";
+						}
+		        		if(!faceVerifyFlag.equals(ServletUtils.getSessionAttribute(request,Const.SESSION_FACEVERIFYFLAG))){
+	        				return false;
+	        			}	
+                    }catch(Exception e){}
+	        	}
+	        	
+	        	if("40010050".equals(MapUtils.getString(custOrderAttr, "itemSpecId", ""))){
+	        		try{
+		        		if(!custOrderAttr.get("value").equals(ServletUtils.getSessionAttribute(request,Const.SESSION_FACEVERIFYFLAG))){
+	        				return false;
+	        			}
 	        		}catch(Exception e){}
-	        		
 	        	}
         	}
+        	ServletUtils.removeSessionAttribute(request, Const.SESSION_CONFIDENCES);
+        	ServletUtils.removeSessionAttribute(request, Const.SESSION_FACEVERIFYFLAG);
+
+//        	for (Map<String, Object> custOrderAttr : custOrderAttrs) {
+//	        	if("40010049".equals(MapUtils.getString(custOrderAttr, "itemSpecId", ""))){
+//	        		try{
+//	        			if (new  BigDecimal((Double)custOrderAttr.get("value")).compareTo(new  BigDecimal((Double)ServletUtils.getSessionAttribute(request, Const.SESSION_CONFIDENCES))) !=0) {
+//							   return false;
+//		        		}
+//	        		}catch(Exception e){}
+//	        		
+//	        	}
+//        	}
         }
       
         /*if(isRealNameFlagOn && isHandleCustNeeded && isCheckCertificateComprehensive){
