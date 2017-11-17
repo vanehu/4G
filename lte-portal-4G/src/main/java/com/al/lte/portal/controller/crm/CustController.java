@@ -2390,6 +2390,7 @@ public class CustController extends BaseController {
 						rMap.put("faceVerifyFlag", "N");
 					}
 					ServletUtils.setSessionAttribute(request, Const.SESSION_CONFIDENCES,confidences);
+					ServletUtils.setSessionAttribute(request, Const.SESSION_FACEVERIFYFLAG,rMap.get("faceVerifyFlag"));
 					jsonResponse = super.successed(rMap, ResultConstant.SUCCESS.getCode());
 				} else {
 					jsonResponse = super.failed(rMap, ResultConstant.FAILD.getCode());
