@@ -3102,6 +3102,7 @@ cust = (function(){
 				$.ecOverlay("<strong>客户信息查询中,请稍等...</strong>");
 			},"done" : function(response){
 				if (response.code==0) {
+					$.unecOverlay();
 					var custInfoSize = $(response.data).find('#custInfoSize').val();
 					var custAge;
 					if (parseInt(custInfoSize) >= 1) {//老客户
@@ -3175,7 +3176,6 @@ cust = (function(){
 					if(!order.service.isCloudOffer && (cust.checkCertNumberForReturn()) >= 5){
 							return;
 					}
-					$.unecOverlay();
 					cust.accountQuery();
 					//填充经办人信息
 					    custAge=cust.getAge(identityNum,home.nowDateStr);
