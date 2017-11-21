@@ -48,6 +48,7 @@ import com.al.ecs.spring.controller.BaseController;
 import com.al.lte.portal.bmo.crm.CommonBmo;
 import com.al.lte.portal.bmo.crm.OrderBmo;
 import com.al.lte.portal.bmo.portal.NoticeBmo;
+import com.al.lte.portal.bmo.staff.StaffBmo;
 import com.al.lte.portal.common.AESUtils;
 import com.al.lte.portal.common.CommonMethods;
 import com.al.lte.portal.common.Const;
@@ -76,6 +77,10 @@ public class MainController extends BaseController {
 	@Autowired
 	@Qualifier("com.al.lte.portal.bmo.crm.CommonBmo")
 	private CommonBmo commonBmo;
+	
+	@Autowired
+    @Qualifier("com.al.lte.portal.bmo.staff.StaffBmo")
+    private StaffBmo staffBmo;
 	
 	@LogOperatorAnn(switchs = Switch.OFF)
 	@RequestMapping(value = "/common", method = RequestMethod.GET)
@@ -217,7 +222,25 @@ public class MainController extends BaseController {
 		List pageFunctionMenuArray = new ArrayList();
 		boolean isCanOrder = false; 
 		List pageSecondaryBusinessMenuArra = new ArrayList();
-		model.addAttribute("isHandleCustNeeded", String.valueOf(sessionStaff.isHandleCustNeeded()));
+		System.out.println(sessionStaff.isHandleCustNeeded());
+		boolean isHandleCustNeeded = true;
+		try {
+			isHandleCustNeeded = !"0".equals(staffBmo.checkOperatBySpecCd(SysConstant.TGJBRBTQX , sessionStaff));
+			sessionStaff.setHandleCustNeeded(isHandleCustNeeded);
+		} catch (BusinessException be) {
+			log.error("系管权限查询接口sys-checkOperatSpec异常：", be);
+			return super.failedStr(model, be);
+		} catch (InterfaceException ie) {
+			log.error("系管权限查询接口sys-checkOperatSpec异常：", ie);
+			return super.failedStr(model, ie, null, ErrorCode.CHECKOPERATSPEC);
+		} catch (IOException ioe) {
+			log.error("系管权限查询接口sys-checkOperatSpec异常：", ioe);
+			return super.failedStr(model, ErrorCode.CHECKOPERATSPEC, ioe, null);
+		} catch (Exception e) {
+			log.error("系管权限查询接口sys-checkOperatSpec异常：", e);
+			return super.failedStr(model, ErrorCode.CHECKOPERATSPEC, e, null);
+		}
+		model.addAttribute("isHandleCustNeeded", String.valueOf(isHandleCustNeeded));
 		model.addAttribute("MD5_tgjbr", AESUtils.getMD5Str("tgjbr"+String.valueOf(sessionStaff.isHandleCustNeeded())+"tgjbr"));
 		Map<String, Object> resultMsg = new HashMap<String, Object>();
 		if(menu!=null){

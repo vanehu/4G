@@ -1727,6 +1727,7 @@ public class CustController extends BaseController {
 						map.put("custAuthInfo", "非正常读卡数据，信息可能被窜改，此操作将被记录！");
 						jsonResponse=super.failed(MapUtils.getString(map, "msg", "非正常读卡数据，信息可能被窜改，此操作将被记录！"), ResultConstant.SERVICE_RESULT_FAILTURE
 		                        .getCode());
+						jsonResponse.setToken(AESUtils.getMD5Str("code"+jsonResponse.getCode()+String.valueOf(jsonResponse.isSuccessed())+"code"));
 						return jsonResponse;
 					}
 				}
@@ -1741,6 +1742,7 @@ public class CustController extends BaseController {
         	}else{
         		jsonResponse=super.failed(MapUtils.getString(resultMap, "msg", "客户证件鉴权失败！"), ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
         	}
+        	jsonResponse.setToken(AESUtils.getMD5Str("code"+jsonResponse.getCode()+String.valueOf(jsonResponse.isSuccessed())+"code"));
             return jsonResponse;
         } catch (BusinessException be) {
             return super.failed(be);

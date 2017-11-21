@@ -859,6 +859,10 @@ custQuery = (function(){
 				}else{
 					try {
 						var errorData = $.parseJSON(response.data);
+						if(MD5("code"+String(errorData.code)+String(errorData.successed)+"code")!=errorData.token.toUpperCase()){
+							$.alert("提示","请勿篡改鉴权结果！");
+							return;
+						}
 						if (ec.util.isObj(errorData) && errorData.successed == false) {
 							$.alert("提示", errorData.data);
 							recordParam.resultCode = "1";
@@ -1063,6 +1067,10 @@ custQuery = (function(){
 				if(response.code==0){
 					try {
 						var errorData = $.parseJSON(response.data);
+						if(MD5("code"+String(errorData.code)+String(errorData.successed)+"code")!=errorData.token.toUpperCase()){
+							$.alert("提示","请勿篡改鉴权结果！");
+							return;
+						}
 						if (ec.util.isObj(errorData) && errorData.successed == false) {
 							$.unecOverlay();
 							$.alert("提示", errorData.data);
@@ -1084,6 +1092,10 @@ custQuery = (function(){
 					if(response.code==0){
 						try {
 							var errorData = $.parseJSON(response.data);
+							if(MD5("code"+String(errorData.code)+String(errorData.successed)+"code")!=errorData.token.toUpperCase()){
+								$.alert("提示","请勿篡改鉴权结果！");
+								return;
+							}
 							if (ec.util.isObj(errorData) && errorData.successed == false) {
 								$.unecOverlay();
 								$.alert("提示", errorData.data);
