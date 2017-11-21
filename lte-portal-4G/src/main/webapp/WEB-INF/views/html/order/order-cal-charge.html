@@ -281,7 +281,7 @@
 				<tr>
 				<#if refundType??&&(refundType>0)>
 					<td colspan="8" class="bill" style="text-align:right;">
-					实收金额：<input type="text" readonly="readonly" value="${amount?string('0.00')}" id="feeAmount" name="textfield">元<span class="billk"></span>退费总额：<input type="text" id="realmoney" readonly="readonly" value="${amount2?string('0.00')}" id="textfield" name="textfield">元</td>
+					原实收金额：<input type="text" readonly="readonly" value="${amount?string('0.00')}" id="feeAmount" name="textfield">元<span class="billk"></span>退费总额：<input type="text" id="realmoney" readonly="readonly" value="${amount2?string('0.00')}" id="textfield" name="textfield">元</td>
 				<#else>
 					<td colspan="7" class="bill" style="text-align:right;">
 					应收金额：<input type="text" readonly="readonly" value="${amount?string('0.00')}" id="feeAmount" name="textfield">元<span class="billk"></span>实收金额：<input type="text" id="realmoney" readonly="readonly" value="${amount?string('0.00')}" id="textfield" name="textfield">元</td>

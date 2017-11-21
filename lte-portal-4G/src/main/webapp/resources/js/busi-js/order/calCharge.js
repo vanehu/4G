@@ -158,7 +158,11 @@ order.calcharge = (function(){
 		}
 		//alert(JSON.stringify(_prints));
 		$('#realmoney').val(Number(realAmount).toFixed(2));
-		$('#feeAmount').val(Number(feeAmount).toFixed(2));
+		if(OrderInfo.actionFlag==19){//返销
+			$('#feeAmount').val(Number(realAmount*-1).toFixed(2));
+		}else{
+			$('#feeAmount').val(Number(feeAmount).toFixed(2));
+		}
 		if(OrderInfo.actionFlag==15){
 			order.refund.conBtns();
 		}else{
