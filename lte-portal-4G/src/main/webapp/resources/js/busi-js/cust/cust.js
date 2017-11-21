@@ -941,6 +941,18 @@ order.cust = (function(){
 			if(result != true){
 				return;
 			}
+			
+			//把客户的身份证信息存入到redis的请求中去
+			var switchRedis = query.common.queryPropertiesValue("SAVE_CUST_ID");
+			var identidiesTypeCd = $("#identidiesTypeCd").val();
+			if(switchRedis == "ON" && identidiesTypeCd == "1"){
+				var redisData = $.cookie('redisData');
+				var cCustIdCard = $('#cCustIdCard').val();
+				if(ec.util.isObj(redisData) && cCustIdCard != redisData.certNumber){
+					$alert("提示","双屏互动身份证信息被篡改！");
+					return;
+				}
+			}
 			_checkIdentity();
 	     }).ketchup({bindElement:"createcustsussbtn"});
     };

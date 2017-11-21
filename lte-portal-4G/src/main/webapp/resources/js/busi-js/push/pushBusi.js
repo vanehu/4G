@@ -392,6 +392,7 @@ push.busi = (function($) {
 		if(switchRedis == "ON"){
 			var url = contextPath + "/cust/saveDataToRedis";
 			var param={"pushType":pushType,"data":data.result,"uId":data.uId};
+			$.cookie("redisData", data.result, { path: '/' });
 			$.callServiceAsJson(url, param, {				
 				"done" : function(response){
 					$.unecOverlay();
