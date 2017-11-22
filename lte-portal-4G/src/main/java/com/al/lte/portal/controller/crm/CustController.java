@@ -16,7 +16,6 @@ import com.al.lte.portal.bmo.crm.MktResBmo;
 import com.al.lte.portal.bmo.crm.OrderBmo;
 import com.al.lte.portal.bmo.staff.StaffBmo;
 import com.al.lte.portal.common.*;
-import com.al.lte.portal.common.Base64;
 import com.al.lte.portal.model.SessionStaff;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -59,6 +58,7 @@ public class CustController extends BaseController {
 	@RequestMapping(value = "/queryCust", method = { RequestMethod.POST })
 	public String queryCust(@RequestBody Map<String, Object> paramMap, Model model, @LogOperatorAnn String flowNum,
 			HttpServletResponse response, HttpSession httpSession, HttpServletRequest request) {
+		httpSession.removeAttribute("JUMPRESULT");
 		request.getSession().removeAttribute("checkNumber");
 		request.getSession().removeAttribute("accNbrInfos");
 		String checkNumber = (String) (paramMap.get("acctNbr") == ""
@@ -100,48 +100,6 @@ public class CustController extends BaseController {
 			}
 		} catch (Exception e) {
 			// 异常在之前就捕获了，这里不做处理
-		}
-
-		try {
-			// 访问次数限制 update by huangjj3 20160411 通过过滤器对过频操作进行限制
-			/*
-			 * model.addAttribute("showVerificationcode", "N"); long endTime =
-			 * System.currentTimeMillis(); long beginTime = 0;
-			 * if(httpSession.getAttribute(sessionStaff.getStaffCode()+
-			 * "custtime")!=null){ beginTime = (Long)
-			 * httpSession.getAttribute(sessionStaff.getStaffCode()+"custtime");
-			 * } if(beginTime!=0){ Date beginDate = new Date(beginTime); Date
-			 * endDate = new Date(endTime); long useTime =
-			 * endDate.getTime()-beginDate.getTime(); long limit_time =
-			 * Long.parseLong(MySimulateData.getInstance().getParam((String)
-			 * ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.
-			 * SESSION_DATASOURCE_KEY),"LIMIT_TIME")); int limit_count =
-			 * Integer.parseInt(MySimulateData.getInstance().getParam((String)
-			 * ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.
-			 * SESSION_DATASOURCE_KEY),"LIMIT_COUNT")); if
-			 * (useTime<=limit_time){ int count = (Integer)
-			 * httpSession.getAttribute(sessionStaff.getStaffCode()+"custcount")
-			 * +1; if(count<limit_count){
-			 * httpSession.setAttribute(sessionStaff.getStaffCode()+"custcount",
-			 * count); }else if(count==limit_count){
-			 * httpSession.setAttribute(sessionStaff.getStaffCode()+"custcount",
-			 * count); model.addAttribute("showVerificationcode", "Y"); }else
-			 * if(count>limit_count){
-			 * httpSession.setAttribute(sessionStaff.getStaffCode()+"custcount",
-			 * count); if(httpSession.getAttribute(sessionStaff.getStaffCode()+
-			 * "custcount")!=null){ model.addAttribute("showVerificationcode",
-			 * "Y"); return "/cust/cust-list"; } } }else{
-			 * httpSession.setAttribute(sessionStaff.getStaffCode()+"custtime",
-			 * endTime);
-			 * httpSession.setAttribute(sessionStaff.getStaffCode()+"custcount",
-			 * 1); } }else{
-			 * httpSession.setAttribute(sessionStaff.getStaffCode()+"custtime",
-			 * endTime);
-			 * httpSession.setAttribute(sessionStaff.getStaffCode()+"custcount",
-			 * 1); }
-			 */
-		} catch (Exception e) {
-			// TODO: handle exception
 		}
 
 		Map resultMap = new HashMap();
@@ -475,6 +433,7 @@ public class CustController extends BaseController {
 		String identityCd = MapUtils.getString(paramMap, "identityCd", "");
 		String accNbr = MapUtils.getString(paramMap, "accNbr", "");
 		String soNbr = MapUtils.getString(paramMap, "soNbr", "");
+		super.getRequest().getSession().setAttribute("checkNumber", accNbr);//切换客户定位时选择的号码进行短信发送号码校验
 		try {
 			Map<String, Object> retMap = addAccountAndCustInfo(flowNum, sessionStaff, areaId, custId, accNbr, soNbr,
 					identityCd);
@@ -960,6 +919,7 @@ public class CustController extends BaseController {
 					if (datamap != null) {
 						String code = (String) datamap.get("code");
 						if (ResultCode.R_SUCC.equals(code)) {
+							httpSession.setAttribute("JUMPRESULT","Y");
 							map.put("isValidate", "true");
 							// 在session中保存当前客户信息
 							Map sessionCustInfo = MapUtils.getMap(listCustInfos, custId);
@@ -967,6 +927,8 @@ public class CustController extends BaseController {
 								httpSession.setAttribute(SysConstant.SESSION_CURRENT_CUST_INFO, sessionCustInfo);
 								listCustInfos.clear();
 							}
+						}else{
+							httpSession.setAttribute("JUMPRESULT","N");
 						}
 					}
 				} catch (BusinessException be) {
@@ -982,8 +944,11 @@ public class CustController extends BaseController {
 					String resultCode = MapUtils.getString(map, "resultCode");
 					String isValidateStr = MapUtils.getString(map, "isValidate");
 					if ("true".equals(isValidateStr)) {
+						httpSession.setAttribute("JUMPRESULT","Y");
 						httpSession.setAttribute("ValidateAccNbr", paramMap.get("accessNumber"));
 						httpSession.setAttribute("ValidateProdPwd", paramMap.get("prodPwd"));
+					}else{
+						httpSession.setAttribute("JUMPRESULT","N");
 					}
 				} catch (BusinessException be) {
 					return super.failedStr(model, be);
@@ -1011,8 +976,10 @@ public class CustController extends BaseController {
 			String menuName = MapUtils.getString(param, "menuName", "");// 当前所在菜单
 			if (SysConstant.FD.equals(menuName) || SysConstant.GHFD.equals(menuName)
 					|| SysConstant.GKHZLFD.equals(menuName)) {
+				httpSession.setAttribute("JUMPRESULT","Y");
 				map.put("isValidate", "true");
 			} else if (canJump == null || StringUtils.isBlank(custId) || isSms || "0".equals(canJump)) {
+				httpSession.setAttribute("JUMPRESULT","Y");
 				map.put("isValidate", "true");
 			} else {
 				map.put("isValidate", "false");
@@ -1609,7 +1576,7 @@ public class CustController extends BaseController {
 	 * @param flowNum
 	 * @param response
 	 * @return
-	 * @throws com.al.ecs.exception.BusinessException
+	 * @throws BusinessException
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/queryCustAlone", method = RequestMethod.GET)
@@ -1652,7 +1619,7 @@ public class CustController extends BaseController {
 	 * @param flowNum
 	 * @param response
 	 * @return
-	 * @throws com.al.ecs.exception.BusinessException
+	 * @throws BusinessException
 	 */
 	@RequestMapping(value = "/custInfo", method = { RequestMethod.POST })
 	public String custInfo(@RequestBody Map<String, Object> param, Model model, @LogOperatorAnn String optFlowNum,
@@ -2422,6 +2389,8 @@ public class CustController extends BaseController {
 					} else {
 						rMap.put("faceVerifyFlag", "N");
 					}
+					ServletUtils.setSessionAttribute(request, Const.SESSION_CONFIDENCES,confidences);
+					ServletUtils.setSessionAttribute(request, Const.SESSION_FACEVERIFYFLAG,rMap.get("faceVerifyFlag"));
 					jsonResponse = super.successed(rMap, ResultConstant.SUCCESS.getCode());
 				} else {
 					jsonResponse = super.failed(rMap, ResultConstant.FAILD.getCode());

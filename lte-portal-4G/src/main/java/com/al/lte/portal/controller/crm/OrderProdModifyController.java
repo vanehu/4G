@@ -899,8 +899,7 @@ public class OrderProdModifyController extends BaseController {
 			 String sessionId=request.getSession().getId();
 			 paramMap.put("portalId", portalId);
 			 paramMap.put("sessionId",sessionId);
-			 System.out.println("-订单日志开始生成---:"+paramMap.toString());
-			 resMap    = orderBmo.orderLog(paramMap, null, sessionStaff);
+			 resMap = orderBmo.orderLog(paramMap, null, sessionStaff);
 			 String resultCode = MapUtils.getString(resMap, "resultCode");
 			 if (ResultCode.R_SUCC.equals(resultCode)){
 				    //将portalId传与前台

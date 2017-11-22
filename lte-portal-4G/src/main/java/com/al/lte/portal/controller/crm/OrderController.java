@@ -5,14 +5,7 @@ import com.al.common.utils.StringUtil;
 import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ecs.common.entity.JsonResponse;
 import com.al.ecs.common.entity.PageModel;
-import com.al.ecs.common.util.BrowserUtil;
-import com.al.ecs.common.util.EncodeUtils;
-import com.al.ecs.common.util.FtpUtils;
-import com.al.ecs.common.util.JsonUtil;
-import com.al.ecs.common.util.MDA;
-import com.al.ecs.common.util.PageUtil;
-import com.al.ecs.common.util.PropertiesUtils;
-import com.al.ecs.common.util.UIDGenerator;
+import com.al.ecs.common.util.*;
 import com.al.ecs.common.web.ServletUtils;
 import com.al.ecs.common.web.SpringContextUtil;
 import com.al.ecs.exception.AuthorityException;
@@ -32,16 +25,8 @@ import com.al.lte.portal.bmo.crm.OrderBmo;
 import com.al.lte.portal.bmo.crm.ProdBmo;
 import com.al.lte.portal.bmo.print.PrintBmo;
 import com.al.lte.portal.bmo.staff.StaffBmo;
-import com.al.lte.portal.common.AESUtils;
-import com.al.lte.portal.common.CommonMethods;
-import com.al.lte.portal.common.CommonUtils;
-import com.al.lte.portal.common.Const;
-import com.al.lte.portal.common.Des33;
-import com.al.lte.portal.common.EhcacheUtil;
-import com.al.lte.portal.common.InterfaceClient;
-import com.al.lte.portal.common.MySimulateData;
-import com.al.lte.portal.common.PortalServiceCode;
-import com.al.lte.portal.common.SysConstant;
+import com.al.lte.portal.common.*;
+import com.al.lte.portal.common.Base64;
 import com.al.lte.portal.core.DataRepository;
 import com.al.lte.portal.model.SessionStaff;
 
@@ -49,6 +34,7 @@ import net.sf.json.JSON;
 import net.sf.json.JSONObject;
 import net.sf.json.xml.XMLSerializer;
 
+import org.apache.commons.codec.binary.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections.map.HashedMap;
@@ -3221,10 +3207,14 @@ public class OrderController extends BaseController {
     @ResponseBody
     public JsonResponse orderSubmit(@RequestBody Map<String, Object> param, HttpServletResponse response, HttpServletRequest request) throws Exception {
         SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SESSION_KEY_LOGIN_STAFF);
-    	JsonResponse jsonResponse = null;
+        //validate is jump
+        JsonResponse jsonResponse = null;
+        if("N".equals(request.getSession().getAttribute("JUMPRESULT"))){
+            return  super.failed("非法鉴权", ResultConstant.FAILD.getCode());
+        }
         Object realNameFlag =  MDA.REAL_NAME_PHOTO_FLAG.get("REAL_NAME_PHOTO_"+sessionStaff.getCurrentAreaId().substring(0, 3));
     	boolean isRealNameFlagOn  = realNameFlag == null ? false : "ON".equals(realNameFlag.toString()) ? true : false;//实名制拍照开关是否打开
-    	
+
     	if (commonBmo.checkToken(request, SysConstant.ORDER_SUBMIT_TOKEN)) {
             try {
                 if(orderBmo.verifyCustCertificate(param, request ,sessionStaff)){
@@ -3316,7 +3306,7 @@ public class OrderController extends BaseController {
                     	return super.failed(ErrorCode.PORTAL_INPARAM_ERROR, "订单提交数据过滤错误，原因可能是新建客户、经办人或使用人时证件信息为空，请清空浏览器缓存后重新尝试，不要进行非法提交、多窗口同时提交受理业务。", param);
                 	}
                 } else{
-                	return super.failed(ErrorCode.PORTAL_INPARAM_ERROR, "订单提交数据校验失败，原因可能是客户证件为身份证时未进行读卡，或身份证读卡数据被篡改，或经办人未拍照，请清空浏览器缓存后重新尝试，不要进行非法提交、多窗口同时提交受理业务。", param);
+                	return super.failed(ErrorCode.PORTAL_INPARAM_ERROR, "订单提交数据校验失败，原因可能是客户证件为身份证时未进行读卡，或身份证读卡数据被篡改，或经办人未拍照，或人像比对结果被篡改.请清空浏览器缓存后重新尝试，不要进行非法提交、多窗口同时提交受理业务。", param);
                 }
             } catch (BusinessException e) {
                 return super.failed(e);
@@ -5472,34 +5462,24 @@ public class OrderController extends BaseController {
 
         if(StringUtils.isBlank(MapUtils.getString(param, "operateSpec", ""))){
         	operateSpec = SysConstant.RXSH;
-        } else{
-        	operateSpec = MapUtils.getString(param, "operateSpec");
         }
         
-        String sessionKey = sessionStaff.getStaffId() + operateSpec;
-        
-        List<Map<String, Object>> staffList = (List<Map<String, Object>>) ServletUtils.getSessionAttribute(super.getRequest(), sessionKey);
-        if(staffList != null){
-        	jsonResponse = super.successed(staffList, ResultConstant.SUCCESS.getCode());
-        } else{
-        	try {
-            	result = staffBmo.qryOperateSpecStaffList(operateSpec, sessionStaff);
-                if (ResultCode.R_SUCC.equals(MapUtils.getString(result, SysConstant.RESULT_CODE, "1"))) {
-                	jsonResponse = super.successed(result.get(SysConstant.RESULT), ResultConstant.SUCCESS.getCode());
-                	ServletUtils.setSessionAttribute(super.getRequest(), sessionKey, result.get(SysConstant.RESULT));
-                } else {
-                    jsonResponse = super.failed(MapUtils.getString(result, SysConstant.RESULT_MSG, ""), ResultConstant.FAILD.getCode());
-                }
-            } catch (BusinessException be) {
-            	jsonResponse = super.failed(be);	
-            } catch (InterfaceException ie) {
-            	jsonResponse = super.failed(ie, param, ErrorCode.QUERY_STAFF_INFO);
-    		} catch (IOException ioe) {
-    			jsonResponse = super.failed(ErrorCode.QUERY_STAFF_INFO, ioe, param);
-    		} catch (Exception e) {
-    			jsonResponse = super.failed(ErrorCode.QUERY_STAFF_INFO, e, param);
-    		}
-        }
+    	try {
+        	result = staffBmo.qryOperateSpecStaffList(operateSpec, sessionStaff);
+            if (ResultCode.R_SUCC.equals(MapUtils.getString(result, SysConstant.RESULT_CODE, "1"))) {
+            	jsonResponse = super.successed(result.get(SysConstant.RESULT), ResultConstant.SUCCESS.getCode());
+            } else {
+                jsonResponse = super.failed(MapUtils.getString(result, SysConstant.RESULT_MSG, ""), ResultConstant.FAILD.getCode());
+            }
+        } catch (BusinessException be) {
+        	jsonResponse = super.failed(be);	
+        } catch (InterfaceException ie) {
+        	jsonResponse = super.failed(ie, param, ErrorCode.QUERY_STAFF_INFO);
+		} catch (IOException ioe) {
+			jsonResponse = super.failed(ErrorCode.QUERY_STAFF_INFO, ioe, param);
+		} catch (Exception e) {
+			jsonResponse = super.failed(ErrorCode.QUERY_STAFF_INFO, e, param);
+		}
         
         return jsonResponse;
     }

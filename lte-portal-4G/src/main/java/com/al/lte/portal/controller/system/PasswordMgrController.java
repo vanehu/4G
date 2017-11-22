@@ -337,7 +337,6 @@ public class PasswordMgrController extends BaseController {
 				Map<String, Object> successedData = new HashMap<String, Object>();
 				//随机生成密码
 	        	String pwd = getRandomString(8);
-	        	System.out.println(pwd);
 				successedData.put("pwd", pwd);
 				request.getSession().setAttribute("pwd", pwd);
 				request.getSession().setAttribute("staffId", returnMap.get("staffId"));

@@ -900,6 +900,35 @@ CacheData = (function() {
 		return {};
 	};
 	
+	//获取成员id
+	var _getMemberRoleCd = function(prodId){
+		var MemberRoleCd = "";
+		if(prodId>0){ //二次业务
+			if(OrderInfo.offer.offerMemberInfos!=undefined){
+				$.each(OrderInfo.offer.offerMemberInfos,function(i){
+					if(this.objInstId == prodId){
+						MemberRoleCd = this.roleCd;  
+						return false;
+					}
+				});
+			}
+		}else if(prodId<0){ //新装
+			if(OrderInfo.offerSpec.offerRoles!=undefined){
+				$.each(OrderInfo.offerSpec.offerRoles,function(i){
+					var roleCd = this.memberRoleCd;  
+					if(this.prodInsts!=undefined){
+						$.each(this.prodInsts,function(){
+							if(this.prodInstId == prodId){
+								MemberRoleCd = roleCd;
+								return false;
+							}
+						});
+					}
+				});
+			}
+		}
+		return MemberRoleCd;
+	};
 	
 	//获取功能产品互斥依赖参数
 	var _getExcDepServParam = function(prodId,servSpecId){
@@ -1457,6 +1486,7 @@ CacheData = (function() {
 		isGov					: _isGov,
         getCheckRules			: _getCheckRules,
         getCheckRuleByKey		: _getCheckRuleByKey,
-        isInCheckRuleByTypeCd   :_isInCheckRuleByTypeCd
+        isInCheckRuleByTypeCd   :_isInCheckRuleByTypeCd,
+        getMemberRoleCd         :_getMemberRoleCd
 	};
 })();

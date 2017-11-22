@@ -48,6 +48,12 @@ public class Const {
 
 	public static final String SESSION_SIGNATURE="SESSION_SIGNATURE";
 	
+	
+	/**人证比对相似度*/
+	public static final String SESSION_CONFIDENCES = "SESSION_CONFIDENCES";
+	/**人证比对成功标示*/
+	public static final String SESSION_FACEVERIFYFLAG = "SESSION_FACEVERIFYFLAG";
+	
 	/**经办人身份证读卡session校验*/
 	public static final String SESSION_SIGNATURE_HANDLE_CUST = "SESSION_SIGNATURE_HANDLE_CUST";
 	/**经办人证件照上传校验*/

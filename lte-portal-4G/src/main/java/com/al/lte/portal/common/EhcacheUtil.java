@@ -2,6 +2,7 @@ package com.al.lte.portal.common;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +11,10 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+
+import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ecs.common.web.ServletUtils;
 import com.al.ecs.common.web.SpringContextUtil;
 import com.al.ecs.exception.BusinessException;
@@ -450,5 +455,32 @@ public class EhcacheUtil {
 		return null;
 	}
 	
-	
+	/**
+	 * 报文篡改拦截，针对人像审核短信防篡改
+	 * @param params 请求报文
+	 * @return
+	 */
+	public static Map<String, Object> photographReviewTamperInterceptor(String phoneNumber, HttpServletRequest request){
+		Map<String, Object> result = new HashMap<String, Object>(16);
+		boolean isSuccess = false;
+		
+		if(StringUtils.isNotBlank(phoneNumber)){
+			SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(request, SysConstant.SESSION_KEY_LOGIN_STAFF);
+	        String sessionKey = SysConstant.RXSH + sessionStaff.getStaffId() + sessionStaff.getCurrentAreaId() + sessionStaff.getCurrentChannelId();
+	        
+	        Set<String> phoneNumberSet = sessionStaff.getPhotographReviewStaffPhoneNumberSet(sessionKey);
+	        
+	        if(CollectionUtils.isNotEmpty(phoneNumberSet)){
+	        	isSuccess = phoneNumberSet.contains(phoneNumber);
+	        }
+		}
+
+        Integer resultCode = isSuccess ? ResultCode.SUCCESS : ResultCode.FAIL;
+        String resultMsg = isSuccess ? "success" : "不存在的审核人员号码【"+phoneNumber+"】，请勿非法操作。";
+        
+        result.put(SysConstant.RESULT_CODE, resultCode);
+        result.put(SysConstant.RESULT_MSG, resultMsg);
+        
+		return result;
+	}
 }

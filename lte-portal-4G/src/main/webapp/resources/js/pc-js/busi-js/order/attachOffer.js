@@ -1578,6 +1578,7 @@ AttachOffer = (function() {
 		if(newSpec==undefined){ //没有在已开通附属销售列表中
 			return;
 		}
+
 		if(ec.util.isObj(newSpec) && ec.util.isObj(newSpec.agreementInfos) && newSpec.agreementInfos.length>0 && newSpec.agreementInfos[0].activtyType!=null && newSpec.agreementInfos[0].activtyType =="3"){//征信合约
 			if(OrderInfo.actionFlag == "6"){
 				$.alert("提示","主副卡成员变更场景下不能订购征信合约。");
@@ -1641,17 +1642,17 @@ AttachOffer = (function() {
 				yes:function(){
 				},
 				yesdo:function(){
-				    _addOfferSpecFunction(prodId,newSpec);
+				    _addOfferSpecFunction(prodId, newSpec);
 			    },
 				no:function(){
 				}
 			});
 		}else{
-			_addOfferSpecFunction(prodId,newSpec);
+			_addOfferSpecFunction(prodId, newSpec);
 		}
 	};
 	
-	var _addOfferSpecFunction = function(prodId,newSpec){
+	var _addOfferSpecFunction = function(prodId, newSpec){
 		var content = CacheData.getOfferProdStr(prodId,newSpec,0);
 		$.confirm("信息确认",content,{ 
 			yes:function(){
@@ -5283,6 +5284,40 @@ AttachOffer = (function() {
 		return response;
 	};
 	
+	var _setParam4RepeatOrder = function(prodId, offerSpecId){
+		var newSpec = _setSpec(prodId,offerSpecId);  //没有在已选列表里面
+		var offer = CacheData.getOfferBySpecId(prodId,offerSpecId); //从已订购数据中找
+
+		var offerOrderedTimesInPeriod = check.offer.getOrderedTimesInPeriod(offer);
+		if(!ec.util.isDigit(offerOrderedTimesInPeriod)){
+			return;
+		}
+		offer.orderCount = offerOrderedTimesInPeriod;
+
+		var content = '<form id="paramFormOfferCheckInPeriod">';
+		content += "重复订购次数" + ' : <input id="text_' + prodId + '_' + offerSpecId;
+		content += '" class="inputWidth183px" type="text" value="' + offer.counts + '"/></br>限期内已订购：' + offerOrderedTimesInPeriod + '次</br>'; 
+		content += '</form>';
+		var nums = null;
+		$.confirm("参数设置： ", content, {
+			yes:function(){
+				nums = $("#text_" + prodId + "_" + offerSpecId).val();
+			},
+			yesdo:function(){
+				if(!ec.util.isDigit(nums)){
+					$.alert("信息提示","请填写有效的订购次数，必须是正整数。");
+					return;
+				}
+				//校验销售品已订购、可订购次数
+				var checkResult = check.offer.orderTimes(offer, nums);
+				if(checkResult){
+					offer.counts = parseInt(nums);
+				}
+			},
+			no:function(){}
+		});
+	};
+	
 	return {
 		excludeAddServ:excludeAddServ,
 		addOffer 				: _addOffer,
@@ -5351,6 +5386,7 @@ AttachOffer = (function() {
 		delMyfavoriteSpec:_delMyfavoriteSpec,
 		myFavoriteList:_myFavoriteList,
 		qryPreliminaryInfo : _qryPreliminaryInfo,
-		terminCheckShow: _terminCheckShow
+		terminCheckShow: _terminCheckShow,
+		setParam4RepeatOrder:_setParam4RepeatOrder
 	};
 })();

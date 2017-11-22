@@ -7,9 +7,12 @@ import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.ArrayUtils;
@@ -898,7 +901,7 @@ public class StaffBmoImpl implements StaffBmo {
 	 * @throws InterfaceException 
 	 */
 	public String checkOperatBySpecCd(String operatSpecCd, SessionStaff sessionStaff) throws InterfaceException, IOException, Exception {
-		Map<String, Object> dataBusMap = new HashMap<String, Object>();
+		Map<String, Object> dataBusMap = new HashMap<String, Object>(16);
 		dataBusMap.put("opsManageCode", operatSpecCd);
 		dataBusMap.put("staffId", sessionStaff.getStaffId());
 		dataBusMap.put("areaId", sessionStaff.getAreaId());
@@ -993,13 +996,22 @@ public class StaffBmoImpl implements StaffBmo {
 	 */
 	@SuppressWarnings("unchecked")
 	public Map<String, Object> qryOperateSpecStaffList(String operatSpecCd, SessionStaff sessionStaff) throws InterfaceException, IOException, BusinessException, Exception {
-		Map<String, Object> params = new HashMap<String, Object>();
-		Map<String, Object> returnMap = new HashMap<String, Object>();
+		Map<String, Object> params = new HashMap<String, Object>(16);
+		Map<String, Object> returnMap = new HashMap<String, Object>(16);
 		
 		if(StringUtils.isBlank(operatSpecCd)){
 			returnMap.put(SysConstant.RESULT_CODE, ResultCode.R_FAILURE);
-			returnMap.put(SysConstant.RESULT_MSG, "无效入参operatSpecCd");
+			returnMap.put(SysConstant.RESULT_MSG, "无效的入参[operatSpecCd]");
 			throw new BusinessException(ErrorCode.PORTAL_INPARAM_ERROR, params, returnMap, null);
+		}
+		
+		String sessionKey = operatSpecCd + sessionStaff.getStaffId() + sessionStaff.getCurrentAreaId() + sessionStaff.getCurrentChannelId();
+		
+		List<Map<String, Object>> staffListFromSession = sessionStaff.getPhotographReviewStaffList(sessionKey);
+		if(CollectionUtils.isNotEmpty(staffListFromSession)){
+			returnMap.put(SysConstant.RESULT_CODE, ResultCode.R_SUCC);
+			returnMap.put(SysConstant.RESULT, staffListFromSession);
+			return returnMap;
 		}
 		
 		params.put("opsCd", operatSpecCd);
@@ -1021,6 +1033,7 @@ public class StaffBmoImpl implements StaffBmo {
 				} else{
 					returnMap.put(SysConstant.RESULT_CODE, ResultCode.R_SUCC);
 					returnMap.put(SysConstant.RESULT, staffList);
+					sessionStaff.setPhotographReviewStaffList(staffList, sessionKey);
 				}
 			} else {
 				returnMap.put(SysConstant.RESULT_CODE, ResultCode.R_FAILURE);
@@ -1033,6 +1046,7 @@ public class StaffBmoImpl implements StaffBmo {
 		
 		return returnMap;
 	}
+	
 	public Map<String, Object> checkStaffMessage(
 			Map<String, Object> dataBusMap, String optFlowNum,
 			SessionStaff sessionStaff) throws Exception {
@@ -1077,8 +1091,8 @@ public class StaffBmoImpl implements StaffBmo {
 	 */
 	@SuppressWarnings("unchecked")
 	public Map<String, Object> qryStaffAllPrivileges(SessionStaff sessionStaff) throws InterfaceException, IOException, BusinessException, Exception {
-		Map<String, Object> params = new HashMap<String, Object>();
-		Map<String, Object> returnMap = new HashMap<String, Object>();
+		Map<String, Object> params = new HashMap<String, Object>(16);
+		Map<String, Object> returnMap = new HashMap<String, Object>(16);
 		ArrayList<String> privileges = new ArrayList<String>();
 		
 		params.put(SysConstant.STAFF_ID, sessionStaff.getStaffId());

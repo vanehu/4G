@@ -769,8 +769,6 @@ public class BatchOrderControllerPreviousVer  extends BaseController {
 			code = "0";
 		}
 		long time3 = new Date().getTime();
-		System.out.println("=============去重判断==============" + "号码去重判断耗时"
-				+ (time2 - time1) + "uim卡去重耗时" + (time3 - time2));
 		returnMap.put("errorData", errorData.toString());
 		returnMap.put("mktResInstList", mktResInstList);
 		returnMap.put("list", list);
@@ -2304,8 +2302,6 @@ public class BatchOrderControllerPreviousVer  extends BaseController {
 			code = "0";
 		}
 		long time3 = new Date().getTime();
-		System.out.println("=============去重判断==============" + "号码去重判断耗时"
-				+ (time2 - time1) + "uim卡去重耗时 " + (time3 - time2));
 		returnMap.put("errorData", errorData.toString());
 		returnMap.put("mktResInstList", mktResInstList);
 		returnMap.put("list", list);

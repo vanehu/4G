@@ -35,7 +35,6 @@ public class XMLParse {
     public static void parseXML(Element element) {
         //获取 元素节点 的 信息  
         String name = element.getNodeName();
-        System.out.print("< " + name);
 
         //获取此元素节点的属性  
         NamedNodeMap map = element.getAttributes();
@@ -49,12 +48,9 @@ public class XMLParse {
 
                 String name1 = attr.getName();
                 String value1 = attr.getValue();
-                System.out.print(" " + name1 + "=\"" + value1 + "\"");
             }
 
         }
-
-        System.out.print(" >");
 
         for (int j = 0; j < child.getLength(); j++) {
             Node node = child.item(j);
@@ -67,24 +63,17 @@ public class XMLParse {
 
             //判断该节点是不是 文本,递归出口  
             else if (node.getNodeType() == Node.TEXT_NODE) {
-                System.out.print(node.getNodeValue() + "");
 
             }
 
             //判断该节点是不是 注释  
             else if (node.getNodeType() == Node.COMMENT_NODE) {
-                System.out.print("<!--");
                 Comment comment = (Comment) node;
                 //注释内容  
                 String data = comment.getData();
 
-                System.out.print(data);
-                System.out.print("-->");
-
             }
         }
-
-        System.out.println("</" + name + ">");
 
     }
 

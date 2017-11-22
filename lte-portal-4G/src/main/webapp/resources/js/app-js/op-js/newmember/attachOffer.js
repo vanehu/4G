@@ -1036,6 +1036,8 @@ AttachOffer = (function() {
 		if(newSpec==undefined){ //没有在已开通附属销售列表中
 			return;
 		}
+		
+		var offer = CacheData.getOfferBySpecId(prodId,offerSpecId); //从已订购数据中找
 		var content = CacheData.getOfferProdStr(prodId,newSpec,0);
 		$.confirm("信息确认",content,{ 
 			yes:function(){

@@ -548,6 +548,8 @@ AttachOffer = (function() {
 				labelIds.push(this.label);//遍历所有附属销售品规格标签，找出无父标签的id
 			})
 		})
+		var MemberRoleCdId = CacheData.getMemberRoleCd(prodId);
+		
 		var offerSepcName = $.trim($("#search_text_"+prodId).val());
 		var instCode = $.trim($("#search_instCode_"+prodId).val());
 		if(offerSepcName.replace(/\ /g,"")=="" && instCode.replace(/\ /g,"")==""){
@@ -563,6 +565,9 @@ AttachOffer = (function() {
 					prodId : prodId,
 					labelIds : labelIds
 			};
+			if(MemberRoleCdId == "401"){
+				param.memberRoleCd = MemberRoleCdId;
+			}
 			if(OrderInfo.menuName == "ZXHYBL"){//征信页面
 				param.agreementTypeList = [3];
 				param.subsidyAmount = OrderInfo.preliminaryInfo.money*100;
@@ -1976,15 +1981,12 @@ AttachOffer = (function() {
 		if(newSpec==undefined){ //没有在已开通附属销售列表中
 			return;
 		}
-		var feeType = $("select[name='pay_type_-1']").val();
-		if(feeType==undefined) feeType = order.prodModify.choosedProdInfo.feeType;
-		if(feeType == CONST.PAY_TYPE.BEFORE_PAY && (newSpec.feeType == CONST.PAY_TYPE.AFTER_PAY || newSpec.feeType==CONST.PAY_TYPE.QUASIREALTIME_AFTER_PAY || newSpec.feeType == CONST.PAY_TYPE.QUASIREALTIME_PAY)){
-			$.alert("提示信息","用户付费类型为预付费，不能订购该销售品！");
-			return;
-		}else if(feeType == CONST.PAY_TYPE.AFTER_PAY && (newSpec.feeType == CONST.PAY_TYPE.BEFORE_PAY || newSpec.feeType==CONST.PAY_TYPE.QUASIREALTIME_BEFORE_PAY || newSpec.feeType == CONST.PAY_TYPE.QUASIREALTIME_PAY)){
-			$.alert("提示信息","用户付费类型为后付费，不能订购该销售品！");
+		
+		var checkFeeTypeResult = check.offer.feeType(newSpec);
+		if(!checkFeeTypeResult){
 			return;
 		}
+
 		var offer = CacheData.getOfferBySpecId(prodId,offerSpecId); //从已订购数据中找
 		if(offer != undefined && offer.ifDueOrderAgain != "Y"){//如果是合约，则跳过，执行下面代码
 			var tipsContent = "您已订购 '"+newSpec.offerSpecName+"' 销售品 "+offer.counts+" 次，请确认是否继续订购";
@@ -1992,17 +1994,17 @@ AttachOffer = (function() {
 				yes:function(){
 				},
 				yesdo:function(){
-				    _addOfferSpecFunction(prodId,newSpec);
+				    _addOfferSpecFunction(prodId, newSpec);
 			    },
 				no:function(){
 				}
 			});
 		}else{
-			_addOfferSpecFunction(prodId,newSpec);
+			_addOfferSpecFunction(prodId, newSpec);
 		}
 	};
 	
-	var _addOfferSpecFunction = function(prodId,newSpec){
+	var _addOfferSpecFunction = function(prodId, newSpec){		
 		var content = CacheData.getOfferProdStr(prodId,newSpec,0);
 		$.confirm("信息确认",content,{ 
 			yes:function(){
@@ -4379,15 +4381,31 @@ AttachOffer = (function() {
 				if(labelId == "10020"){
 					isAgree = "Y";
 				}
-				var param = {
-					prodSpecId : prodSpecId,
-					offerSpecIds : [],
-					queryType : queryType,
-					prodId : prodId,
-					partyId : OrderInfo.cust.custId,
-					ifCommonUse : "",
-					isAgree : isAgree
-				};
+				var memberRoleCdId = CacheData.getMemberRoleCd(prodId);
+				//判断是不是加装副卡促销下的合约标签
+				if(memberRoleCdId == "401" && labelId == "10020"){
+					var param = {
+							prodSpecId : prodSpecId,
+							offerSpecIds : [],
+							queryType : queryType,
+							prodId : prodId,
+							partyId : OrderInfo.cust.custId,
+							ifCommonUse : "",
+							isAgree : isAgree,
+							memberRoleCd : memberRoleCdId 
+						};
+				}else{
+					var param = {
+							prodSpecId : prodSpecId,
+							offerSpecIds : [],
+							queryType : queryType,
+							prodId : prodId,
+							partyId : OrderInfo.cust.custId,
+							ifCommonUse : "",
+							isAgree : isAgree
+						};
+				}
+				
 				if(OrderInfo.actionFlag != 22 && OrderInfo.actionFlag != 23){
 					param.labelId = labelId;
 				}
@@ -4675,7 +4693,6 @@ AttachOffer = (function() {
 							SoOrder.createAttOffer(spec,opened.prodId,0,busiOrders);
 						}
 					}
-					
 				}
 			}
 		}
@@ -5334,8 +5351,8 @@ AttachOffer = (function() {
 			}
 		});
 		$('#paramForm').bind('formIsValid', function(event, form) {
+			var nums=$("#text_"+prodId+"_"+offerSpecId).val();
 			if(flag==1){
-				var nums=$("#text_"+prodId+"_"+offerSpecId).val();
 				if(newSpec.labelId == null || newSpec.labelId == ""){
 					nums=newSpec.counts; 
 				}
@@ -5345,7 +5362,6 @@ AttachOffer = (function() {
 					return;
 				}
 			}else{
-				var nums=$("#text_"+prodId+"_"+offerSpecId).val();
 				if(newSpec.labelId == null || newSpec.labelId == ""){
 					nums=newSpec.counts; 
 				}
@@ -5364,6 +5380,11 @@ AttachOffer = (function() {
 				return;
 			}
 			if(flag==1 && offer!=undefined){
+				//校验销售品已订购、可订购次数
+				var checkResult = check.offer.orderTimes(offer, nums);
+				if(!checkResult){
+					return;
+				}
 				if(offer.orderCount>nums){//退订附属销售品
 					if(!ec.util.isArray(offer.offerMemberInfos)){//销售品实例查询	
 						var param = {
@@ -6177,6 +6198,41 @@ AttachOffer = (function() {
 	var _searchClose=function(){
 		$("#search_info_div").hide();
 	};
+	
+	var _setParam4RepeatOrder = function(prodId, offerSpecId){
+		var newSpec = _setSpec(prodId,offerSpecId);  //没有在已选列表里面
+		var offer = CacheData.getOfferBySpecId(prodId,offerSpecId); //从已订购数据中找
+
+		var offerOrderedTimesInPeriod = check.offer.getOrderedTimesInPeriod(offer);
+		if(!ec.util.isDigit(offerOrderedTimesInPeriod)){
+			return;
+		}
+		offer.orderCount = offerOrderedTimesInPeriod;
+
+		var content = '<form id="paramFormOfferCheckInPeriod">';
+		content += "重复订购次数" + ' : <input id="text_' + prodId + '_' + offerSpecId;
+		content += '" class="inputWidth183px" type="text" value="' + offer.counts + '"/></br>限期内已订购：' + offerOrderedTimesInPeriod + '次</br>'; 
+		content += '</form>';
+		var nums = null;
+		$.confirm("参数设置： ", content, {
+			yes:function(){
+				nums = $("#text_" + prodId + "_" + offerSpecId).val();
+			},
+			yesdo:function(){
+				if(!ec.util.isDigit(nums)){
+					$.alert("信息提示","请填写有效的订购次数，必须是正整数。");
+					return;
+				}
+				//校验销售品已订购、可订购次数
+				var checkResult = check.offer.orderTimes(offer, nums);
+				if(checkResult){
+					offer.counts = parseInt(nums);
+				}
+			},
+			no:function(){}
+		});
+	};
+	
 	return {
 		addOffer 				: _addOffer,
 		addOfferSpec 			: _addOfferSpec,
@@ -6253,7 +6309,8 @@ AttachOffer = (function() {
 		searchSchools			: _searchSchools,
 		selectSearch			: _searchSelect,
 		schoolClose				: _searchClose,
-		updateCheckList : _updateCheckList,
-		addOfferSpecByCheckForUpdate : _addOfferSpecByCheckForUpdate
+		updateCheckList 		: _updateCheckList,
+		addOfferSpecByCheckForUpdate : _addOfferSpecByCheckForUpdate,
+		setParam4RepeatOrder	: _setParam4RepeatOrder
 	};
 })();

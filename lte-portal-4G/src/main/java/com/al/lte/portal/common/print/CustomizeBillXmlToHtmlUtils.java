@@ -238,7 +238,6 @@ public class CustomizeBillXmlToHtmlUtils {
 			
 			customizeBill.setBillFormatInfo(billFormatInfo);
 			
-			System.out.println(docMap);
 			logger.info("document.toString():" + document.toString());
 //			customizeBill = ParseXML.parseCustomizeBillPrintBill1ByDocument(document);
 		}

@@ -486,11 +486,18 @@ AttachOffer = (function() {
 	
 	//查询附属销售品规格
 	var _searchAttachOfferSpec = function(prodId,offerSpecId,prodSpecId) {
+		var labelIds = [];
+		$.each(AttachOffer.labelList,function(){
+			$.each(this.labels,function(){
+				labelIds.push(this.label);//遍历所有附属销售品规格标签，找出标签的id
+			})
+		})
 		var param = {   
 			prodId : prodId,
 		    prodSpecId : prodSpecId,
 		    offerSpecIds : [offerSpecId],
-		    ifCommonUse : "" 
+		    ifCommonUse : "",
+			labelIds : labelIds 
 		};
 //		if(OrderInfo.actionFlag == 2){ //套餐变更		
 //			param.offerSpecIds=[OrderInfo.offerSpec.offerSpecId];
@@ -1289,6 +1296,8 @@ AttachOffer = (function() {
 		if(newSpec==undefined){ //没有在已开通附属销售列表中
 			return;
 		}
+		
+		var offer = CacheData.getOfferBySpecId(prodId,offerSpecId); //从已订购数据中找
 		var content = CacheData.getOfferProdStr(prodId,newSpec,0);
 		//判断是否是新装二次加载业务
 		if(OrderInfo.provinceInfo.reloadFlag=="N"){
@@ -4415,6 +4424,40 @@ AttachOffer = (function() {
 		return response;
 	};
 	
+	var _setParam4RepeatOrder = function(prodId, offerSpecId){
+		var newSpec = _setSpec(prodId,offerSpecId);  //没有在已选列表里面
+		var offer = CacheData.getOfferBySpecId(prodId,offerSpecId); //从已订购数据中找
+
+		var offerOrderedTimesInPeriod = check.offer.getOrderedTimesInPeriod(offer);
+		if(!ec.util.isDigit(offerOrderedTimesInPeriod)){
+			return;
+		}
+		offer.orderCount = offerOrderedTimesInPeriod;
+
+		var content = '<form id="paramFormOfferCheckInPeriod">';
+		content += "重复订购次数" + ' : <input id="text_' + prodId + '_' + offerSpecId;
+		content += '" class="inputWidth183px" type="text" value="' + offer.counts + '"/></br>限期内已订购：' + offerOrderedTimesInPeriod + '次</br>'; 
+		content += '</form>';
+		var nums = null;
+		$.confirm("参数设置： ", content, {
+			yes:function(){
+				nums = $("#text_" + prodId + "_" + offerSpecId).val();
+			},
+			yesdo:function(){
+				if(!ec.util.isDigit(nums)){
+					$.alert("信息提示","请填写有效的订购次数，必须是正整数。");
+					return;
+				}
+				//校验销售品已订购、可订购次数
+				var checkResult = check.offer.orderTimes(offer, nums);
+				if(checkResult){
+					offer.counts = parseInt(nums);
+				}
+			},
+			no:function(){}
+		});
+	};
+	
 	return {
 		filterAttach2Coupons:_filterAttach2Coupons,
 		addOffer 				: _addOffer,
@@ -4487,6 +4530,7 @@ AttachOffer = (function() {
 		orderedOfferSpecIds:_orderedOfferSpecIds,
 		servSpecIds:_servSpecIds,
 		servSpecs:_servSpecs,
-		offerSpecs:_offerSpecs
+		offerSpecs:_offerSpecs,
+		setParam4RepeatOrder:_setParam4RepeatOrder
 	};
 })();

@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.al.ecs.common.util.*;
 import org.apache.commons.collections.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -27,11 +28,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ecs.common.entity.JsonResponse;
 import com.al.ecs.common.entity.PageModel;
-import com.al.ecs.common.util.JsonUtil;
-import com.al.ecs.common.util.MapUtil;
-import com.al.ecs.common.util.PageUtil;
-import com.al.ecs.common.util.PropertiesUtils;
-import com.al.ecs.common.util.UIDGenerator;
 import com.al.ecs.common.web.ServletUtils;
 import com.al.ecs.exception.AuthorityException;
 import com.al.ecs.exception.BusinessException;
@@ -64,6 +60,8 @@ public class StaffMgrController extends BaseController {
 	
 	/** 短信验证前，登陆会话临时ID */
 	public static final String SESSION_KEY_TEMP_LOGIN_STAFF = "_session_key_tenm_sms";
+	/** 客户鉴权短信验证号码 */
+	public static final String SESSION_CUSTAUTH_SMS_MUNBER = "_custauth_sms_munber";
 	
 	
 	@Autowired
@@ -247,6 +245,8 @@ public class StaffMgrController extends BaseController {
 		retnMap = staffBmo.sendMsgInfo(msgMap, null, null);
 		session.removeAttribute(SysConstant.SESSION_KEY_LOGIN_SMS);
 		session.setAttribute(SysConstant.SESSION_KEY_LOGIN_SMS, smsPwd);
+		session.setAttribute(SysConstant.SESSION_KEY_CHANGEUIM_SMS, smsPwd);
+		session.setAttribute(SESSION_CUSTAUTH_SMS_MUNBER, phoneNumber);
 		return retnMap;
 	}
 	// 短信发送
@@ -692,7 +692,12 @@ public void toPraise(HttpServletRequest request,  HttpServletResponse response) 
 				JsonResponse jsonResponse = new JsonResponse();
 				SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
 						SysConstant.SESSION_KEY_LOGIN_STAFF);
-				String phone=(String)param.get("phone");
+		     	String phone=(String)param.get("phone");
+			    super.getRequest().getSession().removeAttribute("VALIDATERESULT");
+			    String mainPhone = (String) session.getAttribute("mainPhoneNum_PC");
+			    if(!StringUtil.isEmptyStr(mainPhone) && !mainPhone.equals(phone)) {
+					return super.failed(ErrorCode.PORTAL_INPARAM_ERROR, "参数异常,存在修改手机号行为。", param);
+				}
 				try{
 					jsonResponse.setCode(0);
 		        	jsonResponse.setSuccessed(true);
