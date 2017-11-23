@@ -3,10 +3,13 @@ package com.linkage.portal.service.lte.dao;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import com.ailk.ecsp.util.SpringContextUtil;
+import com.al.ecs.exception.BusinessException;
 import com.linkage.portal.service.lte.common.StringUtil;
 import com.linkage.portal.service.lte.DBUtil;
 import com.linkage.portal.service.lte.core.resources.model.AccessToken;
@@ -17,22 +20,19 @@ public class AccessTokenDAOImpl implements AccessTokenDAO {
 	 private JdbcTemplate jdbc = (JdbcTemplate) SpringContextUtil.getBean(DBUtil.PORTAL_TEMPLATE);
 
 
-	public int insertAccessToken(AccessToken accessToken) {
-		// TODO Auto-generated method stub
-		int result = 0;
+	public int insertAccessToken(AccessToken accessToken) throws Exception {
 		try{
 	        StringBuffer sql = new StringBuffer();
 			sql.append("INSERT INTO OP_ACCESS_TOKEN(TOKEN_ID,ACCESS_TOKEN,ADD_TIME,STATUS,END_TIME,EXPIRES_IN,STAFF_CODE,STAFF_NAME,");
 			sql.append(" AREA_ID,AREA_CODE,AREA_NAME,CITY_NAME,CITY_CODE,PROVINCE_NAME,PROVINCE_CODE,CHANNEL_CODE,SYSTEM_ID,RANDOW_CODE)");	
 			sql.append(" VALUES(SEQ_OP_ACCESS_TOKEN.nextval,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");		
-			result = jdbc.update(sql.toString(), new Object[]{accessToken.getAccessToken(),accessToken.getAddTime(),accessToken.getStatus(),accessToken.getEndTime(),accessToken.getExpiresIn(),
+			return jdbc.update(sql.toString(), new Object[]{accessToken.getAccessToken(),accessToken.getAddTime(),accessToken.getStatus(),accessToken.getEndTime(),accessToken.getExpiresIn(),
 				accessToken.getStaffCode(),accessToken.getStaffName(),accessToken.getAreaId(),accessToken.getAreaCode(),accessToken.getAreaName(),accessToken.getCityName(),
 				accessToken.getCityCode(),accessToken.getProvinceName(),accessToken.getProvinceCode(),accessToken.getChannelCode(),accessToken.getSystemId(),accessToken.getRandowCode()});
-		}catch(Exception ex){
-			log.error("令牌入库异常：",ex);	
-			return 0;
+		}catch(Exception e){
+			log.error("AccessToken记录异常, accessToken=" + accessToken, e);
+			throw new Exception("AccessToken记录异常, accessToken=" + accessToken, e);
 		}
-		return result;
 	}
 
 	public List<Map<String, Object>> getAccessTokenList(
@@ -78,18 +78,61 @@ public class AccessTokenDAOImpl implements AccessTokenDAO {
 		return resultList;		
 	}
 
-
-	public void insertAccessTokenOld(long tokenId) {
-		// TODO Auto-generated method stub
-		StringBuffer sql = new StringBuffer();
-		sql.append("insert into op_access_token_old select * from op_access_token oat where oat.token_id = ?");	
-		this.jdbc.update(sql.toString(), new Object[]{tokenId});	
+	public void insertAccessTokenOld(long tokenId) throws Exception {
+		List<Map<String, Object>> resultList = this.queryAccessTokenOldByTokenId(tokenId);
+		if(CollectionUtils.isNotEmpty(resultList)){
+			int deleteResult = this.deleteAccessTokenOldByTokenId(tokenId);	
+			if(deleteResult <= 0){
+				log.error("AccessToken历史表记录异常, tokenId=" + tokenId);
+				throw new Exception("AccessToken历史表记录异常, tokenId=" + tokenId);
+			}
+		}
+		
+		int insertResult = this.insertAccessTokenOldByTokenId(tokenId);
+		if(insertResult <= 0){
+			log.error("AccessToken历史表记录异常, tokenId=" + tokenId);
+			throw new Exception("AccessToken历史表记录异常, tokenId=" + tokenId);
+		}
 	}
 
-
-	public void deleteAccessToken(long tokenId) {	
-		// TODO Auto-generated method stub
-		String sql = "delete from op_access_token oat where oat.token_id=?";
-		this.jdbc.update(sql, new Object[]{tokenId});
+	public int deleteAccessToken(long tokenId) throws Exception {	
+		try{
+			String sql = "delete from op_access_token oat where oat.token_id=?";
+			return this.jdbc.update(sql, new Object[]{tokenId});
+		}catch(Exception e){
+			log.error("AccessToken表更新异常, tokenId=" + tokenId, e);
+			throw new Exception("AccessToken表更新异常, tokenId=" + tokenId, e);
+		}
+	}
+	
+	private int insertAccessTokenOldByTokenId(long tokenId) throws Exception{
+		try{
+			String sql = "insert into op_access_token_old select * from op_access_token oat where oat.token_id = ?";	
+			return  this.jdbc.update(sql, new Object[]{tokenId});
+		}catch(Exception e){
+			log.error("AccessToken历史表记录异常, tokenId=" + tokenId, e);
+			throw new Exception("AccessToken历史表记录异常, tokenId=" + tokenId, e);
+		}
+	}
+	
+	public int deleteAccessTokenOldByTokenId(long tokenId) throws Exception {	
+		try{
+			String sql = "delete from op_access_token_old oat where oat.token_id = ?";
+			return this.jdbc.update(sql, new Object[]{tokenId});
+		}catch(Exception e){
+			log.error("AccessToken历史表更新异常, tokenId=" + tokenId, e);
+			throw new Exception("AccessToken历史表更新异常, tokenId=" + tokenId, e);
+		}
+	}
+	
+	public List<Map<String, Object>> queryAccessTokenOldByTokenId(long tokenId) throws Exception{
+		try{
+			String sql = "select * from op_access_token_old oat where oat.token_id = ?";
+			List<Map<String, Object>> resultList = this.jdbc.queryForList(sql, new Object[]{tokenId});
+			return resultList;
+		}catch(Exception e){
+			log.error("AccessToken历史表查询异常, tokenId=" + tokenId, e);
+			throw new Exception("AccessToken历史表查询异常, tokenId=" + tokenId, e);
+		}
 	}
 }
