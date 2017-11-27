@@ -5380,11 +5380,6 @@ AttachOffer = (function() {
 				return;
 			}
 			if(flag==1 && offer!=undefined){
-				//校验销售品已订购、可订购次数
-				var checkResult = check.offer.orderTimes(offer, nums);
-				if(!checkResult){
-					return;
-				}
 				if(offer.orderCount>nums){//退订附属销售品
 					if(!ec.util.isArray(offer.offerMemberInfos)){//销售品实例查询	
 						var param = {
