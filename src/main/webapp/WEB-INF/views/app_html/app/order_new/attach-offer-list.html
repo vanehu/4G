@@ -9,7 +9,7 @@
 			<label>
 				<div class="checkbox-box">
 					<!-- <input type="checkbox" value="1" id="str_${prodId}_${item.offerSpecId}" name="" /> -->
-					<input type="checkbox" value="1" name="" id="input_${prodId}_${item.offerSpecId}" onclick="AttachOffer.isLimit(${item.orderTimes},'${item.ifLimitTimes}',${prodId},${item.offerSpecId},'OfferSpec')">
+					<input type="checkbox" value="1" name="" id="input_${prodId}_${item.offerSpecId}" onclick="AttachOffer.isLimit('${item.orderTimes}','${item.ifLimitTimes}',${prodId},${item.offerSpecId},'OfferSpec')">
 					<!-- <labe for="str_${prodId}_${item.offerSpecId}" onclick="AttachOffer.selectAttachOffer(${prodId},${item.offerSpecId})"></label> -->
 					<label for="input_${prodId}_${item.offerSpecId}" ></label>
 					</input>
@@ -27,7 +27,7 @@
 		<div class="list-checkbox absolute-right">
 			<label>
 				<div class="checkbox-box">
-					<input type="checkbox" value="1" id="input_${prodId}_${item.servSpecId}" onclick="AttachOffer.isLimit(${item.orderTimes},'${item.ifLimitTimes}',${prodId},${item.servSpecId},'ServSpec','${item.servSpecName}','${item.ifParams}')" > 
+					<input type="checkbox" value="1" id="input_${prodId}_${item.servSpecId}" onclick="AttachOffer.isLimit('${item.orderTimes}','${item.ifLimitTimes}',${prodId},${item.servSpecId},'ServSpec','${item.servSpecName}','${item.ifParams}')" > 
 					<label for="input_${prodId}_${item.servSpecId}" ></label>
 					</input>
 				</div>

@@ -293,7 +293,7 @@ AttachOffer = (function() {
 							html='<li id="_li_'+ prodId + '_'+ this.offerSpecId  +'" ><i class="iconfont pull-left active" onclick="AttachOffer.delMyfavoriteSpec('+prodId+',\''+'\','+this.offerSpecId+',\''+this.offerSpecName+'\',$(this)'+','+1+');">&#xe62b;</i>';
 							html+='<span class="list-title">'+ this.offerSpecName +'</span>';
 							html+='<div class="list-checkbox absolute-right"><div class="checkbox-box">';
-							html+='<input type="checkbox" value="1" name="" id="input_'+ prodId + '_'+ this.offerSpecId  +'" onclick="javascript:{common.setBtnTimer(this);AttachOffer.isLimit('+this.orderTimes+',\''+this.ifLimitTimes+'\','+prodId+','+this.offerSpecId+','+"'OfferSpec'"+');}"><label for="input_'+ prodId + '_'+ this.offerSpecId  +'" checked="checked" ></label></input></div></div>';
+							html+='<input type="checkbox" value="1" name="" id="input_'+ prodId + '_'+ this.offerSpecId  +'" onclick="javascript:{common.setBtnTimer(this);AttachOffer.isLimit(\''+this.orderTimes+'\',\''+this.ifLimitTimes+'\','+prodId+','+this.offerSpecId+','+"'OfferSpec'"+');}"><label for="input_'+ prodId + '_'+ this.offerSpecId  +'" checked="checked" ></label></input></div></div>';
 							//html+='<h5 class="list-group-item-heading" style="padding-left: 40px;" onclick="AttachOffer.addOfferSpec('+prodId+','+this.offerSpecId+')">'+ this.offerSpecName +'</h5>';
 							html+='</li>';
 							i++;
@@ -1249,7 +1249,7 @@ AttachOffer = (function() {
 							html='<div class="panel-heading m-b-5" id="_li_'+prodId +'_'+this.servSpecId +'"><i class="iconfont pull-left p-l-10">&#xe635;</i>';
 							html+='<h3 class="panel-title"><a id="li_'+ prodId +'_'+ this.servSpecId + '" class="accordion-toggle accordion-toggle-styled border-none"  data-toggle="collapse" data-parent="#accordion" href="#collapse01">'+this.servSpecName+'</a>';
 							html+='</h3><div class="list-checkbox absolute-right"><div class="checkbox-box">';
-							html+='<input type="checkbox" value="1" name="" id="input_'+ prodId + '_'+ this.servSpecId  +'" onclick="javascript:{common.setBtnTimer(this);AttachOffer.isLimit('+this.orderTimes+','+this.ifLimitTimes+','+prodId+','+this.servSpecId+','+"'ServSpec'"+',\''+this.servSpecName+'\',\''+this.ifParams+'\');}"/><label for="input_'+prodId+'_'+this.servSpecId+'" ></label></div></div></div>';
+							html+='<input type="checkbox" value="1" name="" id="input_'+ prodId + '_'+ this.servSpecId  +'" onclick="javascript:{common.setBtnTimer(this);AttachOffer.isLimit(\''+this.orderTimes+'\',\''+this.ifLimitTimes+'\','+prodId+','+this.servSpecId+','+"'ServSpec'"+',\''+this.servSpecName+'\',\''+this.ifParams+'\');}"/><label for="input_'+prodId+'_'+this.servSpecId+'" ></label></div></div></div>';
 							$ul.append(html);
 							i++;
 						} else {
@@ -1261,7 +1261,7 @@ AttachOffer = (function() {
 							}
 							html+='<span class="list-title">'+ this.servSpecName +'</span>';
 							html+='<div class="list-checkbox absolute-right"><div class="checkbox-box">';
-							html+='<input type="checkbox" value="1"" name="" id="input_'+prodId+'_'+this.servSpecId+'" onclick="javascript:{common.setBtnTimer(this);AttachOffer.isLimit('+this.orderTimes+','+this.ifLimitTimes+','+prodId+','+this.servSpecId+','+"'ServSpec'"+',\''+this.servSpecName+'\',\''+this.ifParams+'\');}"/><label for="input_'+prodId+'_'+this.servSpecId+'" ></label></div></div>';						
+							html+='<input type="checkbox" value="1"" name="" id="input_'+prodId+'_'+this.servSpecId+'" onclick="javascript:{common.setBtnTimer(this);AttachOffer.isLimit(\''+this.orderTimes+'\',\''+this.ifLimitTimes+'\','+prodId+','+this.servSpecId+','+"'ServSpec'"+',\''+this.servSpecName+'\',\''+this.ifParams+'\');}"/><label for="input_'+prodId+'_'+this.servSpecId+'" ></label></div></div>';						
 							html+='</li>';
 							$ul.append(html);
 							i++;
@@ -1336,7 +1336,7 @@ AttachOffer = (function() {
 								}
 								html+='<span class="list-title">'+ this.offerSpecName +'</span>';
 								html+='<div class="list-checkbox absolute-right"><div class="checkbox-box">';
-								html+='<input type="checkbox" value="1" name="" id="input_'+ prodId + '_'+ this.offerSpecId  +'" onclick="javascript:{common.setBtnTimer(this);AttachOffer.isLimit('+this.orderTimes+',\''+this.ifLimitTimes+'\','+prodId+','+this.offerSpecId+','+"'OfferSpec'"+');}"/><label for="input_'+prodId+'_'+this.offerSpecId+'" ></label></div></div>';
+								html+='<input type="checkbox" value="1" name="" id="input_'+ prodId + '_'+ this.offerSpecId  +'" onclick="javascript:{common.setBtnTimer(this);AttachOffer.isLimit(\''+this.orderTimes+'\',\''+this.ifLimitTimes+'\','+prodId+','+this.offerSpecId+','+"'OfferSpec'"+');}"/><label for="input_'+prodId+'_'+this.offerSpecId+'" ></label></div></div>';
 								html+='</li>';
 								$ul.append(html);
 								i++;
@@ -1345,7 +1345,7 @@ AttachOffer = (function() {
 								html='<div class="panel-heading m-b-5" id="_li_'+prodId +'_'+this.offerSpecId +'"><i class="iconfont pull-left p-l-10">&#xe635;</i>';
 								html+='<h3 class="panel-title"><a id="li_'+ prodId +'_'+ this.offerSpecId + '" class="accordion-toggle accordion-toggle-styled border-none"  data-toggle="collapse" data-parent="#accordion" href="#collapse01">'+this.offerSpecName+'</a>';
 								html+='</h3><div class="list-checkbox absolute-right"><div class="checkbox-box">';
-								html+='<input type="checkbox" value="1" name="" id="input_'+ prodId + '_'+ this.offerSpecId  +'" onclick="javascript:{common.setBtnTimer(this);AttachOffer.isLimit('+this.orderTimes+','+this.ifLimitTimes+','+prodId+','+this.offerSpecId+','+"'OfferSpec'"+');}"/><label for="input_'+prodId+'_'+this.offerSpecId+'" ></label></div></div></div>';
+								html+='<input type="checkbox" value="1" name="" id="input_'+ prodId + '_'+ this.offerSpecId  +'" onclick="javascript:{common.setBtnTimer(this);AttachOffer.isLimit(\''+this.orderTimes+'\',\''+this.ifLimitTimes+'\','+prodId+','+this.offerSpecId+','+"'OfferSpec'"+');}"/><label for="input_'+prodId+'_'+this.offerSpecId+'" ></label></div></div></div>';
 								$ul.append(html);
 								i++;
 							}
@@ -3538,7 +3538,7 @@ AttachOffer = (function() {
 //		 isLimit = "Y";
 		 nowTimes = "";
 		 maxTimes = "";
-		 if(isLimit!=undefined && isLimit == "Y" ){
+		 if(isLimit!=undefined && isLimit!="" && isLimit == "Y" ){
 			 if(times!=undefined){
 				 maxTimes = times+"";
 			 }
