@@ -10,6 +10,11 @@ product.uim = (function() {
 	
 	//uim卡号校验
 	var _checkUim = function(prodId){
+		if(OrderInfo.actionFlag == 22){
+			if (OrderInfo.uimtypeflag == 0) {
+	        	OrderInfo.uimtypeflag = 21;
+	        }
+		}
         if(prodId>0 && (OrderInfo.actionFlag == 2 || OrderInfo.actionFlag == 3)){
         	var cardNo =$.trim($("#uim_input_"+prodId).val());
     		if(cardNo==undefined || cardNo==''){

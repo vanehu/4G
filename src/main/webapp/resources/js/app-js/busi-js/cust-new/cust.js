@@ -184,7 +184,6 @@ cust = (function(){
 		}
 		OrderInfo.cust.age=cust.getAge(OrderInfo.cust.identityNum,home.nowDateStr);
 		var flag=$("#flag").val();
-		alert(flag);
 		if(ec.util.isObj(flag)){//有值代表是实名制创建客户页面
 			var data = {
 				boCustInfos : [],
