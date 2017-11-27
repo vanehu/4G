@@ -80,7 +80,7 @@ SoOrder = (function() {
 			OrderInfo.busitypeflag = 12;
 		}else if(OrderInfo.actionFlag==22){//补换卡
 			//补卡经办人必填  换卡经办人非必填
-			if(OrderInfo.staff.isHandleCustNeeded == "true" && (OrderInfo.preBefore.idPicFlag != "OFF" || ageJbrMustFlag == "ON" ) && !OrderInfo.virOlId && OrderInfo.uimtypeflag == "22"){
+			if(OrderInfo.staff.isHandleCustNeeded == "true" && (OrderInfo.preBefore.idPicFlag != "OFF" || ageJbrMustFlag == "ON" ) && !OrderInfo.virOlId && (OrderInfo.uimtypeflag == "21" || OrderInfo.uimtypeflag == "22")){
 				$.alert("提示","经办人信息必填，请前往经办人页面进行实名拍照！");
 				return;
 			}
