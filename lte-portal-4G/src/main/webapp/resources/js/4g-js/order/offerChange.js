@@ -181,7 +181,9 @@ offerChange = (function() {
 					});
 				}
 			});
-			if(memberRoleCd !=1){
+			if(memberRoleCd ==1){
+				offerChangeConfirm();
+			}else{
 				easyDialog.open({
 					container : "member_dialog"
 				});
