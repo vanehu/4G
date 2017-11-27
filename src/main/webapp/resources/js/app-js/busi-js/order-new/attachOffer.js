@@ -3585,7 +3585,7 @@ AttachOffer = (function() {
 			 if(addType=="OfferSpec"){
 				 AttachOffer.addOfferSpec(prodId,sp_id);
 			 }else if(addType=="ServSpec"){
-		 		 openServSpec(prodId,sp_id,servSpecName,ifParams);
+				 AttachOffer.openServSpec(prodId,sp_id,servSpecName,ifParams);
 			 }
 		 }
 	 }
