@@ -457,7 +457,7 @@ prod.telnum = (function(){
                    phoneNum = '';
               } else if (query_flag_02 == 2) {
                    // 密码预占查询选择“是”，全位号码必填
-                   if (!ec.util.isObj(phoneNum) || !/^(180|189|133|134|153|181|108|170|173|177)\d{8}$/.test(phoneNum)) {
+                   if (!ec.util.isObj(phoneNum) || !CONST.LTE_PHONE_HEAD.test(phoneNum)) {
                         $.alert("提示", "请正确输入已经“靓号预占”的11位号码", "information", function() {
                              $("#phoneNum").focus();
                         });

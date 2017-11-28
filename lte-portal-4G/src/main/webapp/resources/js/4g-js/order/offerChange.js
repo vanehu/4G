@@ -195,8 +195,9 @@ offerChange = (function() {
 					$('#overlay').hide();
 				}
 			});
+		}else{
+			offerChangeConfirm();
 		}
-		offerChangeConfirm();
 	};
 	
 	function offerChangeConfirm(){

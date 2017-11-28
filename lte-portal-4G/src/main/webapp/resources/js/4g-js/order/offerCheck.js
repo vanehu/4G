@@ -36,45 +36,42 @@ check.offer = (function() {
 			return resultFlag;
 		}
 		
-		if(ec.util.isDigit(chooseOrderTimes)){
-			chooseOrderTimes = parseInt(chooseOrderTimes);
-		} else{
-			chooseOrderTimes = 0;
+		chooseOrderTimes = parseInt(chooseOrderTimes);
+		var orderedTimes = parseInt(orderedOffer.orderCount);
+		
+		if(chooseOrderTimes == orderedTimes){
+			return resultFlag;
 		}
-
-		var orderedTimes = _getOrderedTimes(orderedOffer);
-		if(orderedTimes > 0){
-			var canOrderTimes = offerLimitTimes.orderTimes;
-			var timeType = offerLimitTimes.timeType;
-			switch (timeType) {
-				case 1000://相对时间
-					resultFlag = _compareOrderTimesByRelativeTime(offerLimitTimes, orderedTimes + chooseOrderTimes, canOrderTimes); break;
-				case 1100://绝对时间
-					resultFlag = _compareOrderTimesByAbsoluteTime(offerLimitTimes, orderedTimes + chooseOrderTimes, canOrderTimes); break;
-				case 1200://无限制，表示用户一生只能订购1次
-					resultFlag = _compareOrderTimesByDefault(orderedTimes); break;
-				default: ;
-			}
-		} else if(orderedTimes < 0){
-			resultFlag = false;
+		
+		var canOrderTimes = offerLimitTimes.orderTimes;
+		var timeType = String(offerLimitTimes.timeType);
+		switch (timeType) {
+			case "1000"://相对时间
+				resultFlag = _compareOrderTimesByRelativeTime(offerLimitTimes, chooseOrderTimes, canOrderTimes); break;
+			case "1100"://绝对时间
+				resultFlag = _compareOrderTimesByAbsoluteTime(offerLimitTimes, chooseOrderTimes, canOrderTimes); break;
+			case "1200"://无限制，表示用户一生只能订购1次
+				resultFlag = _compareOrderTimesByDefault(orderedTimes); break;
+			default: ;
 		}
 
 		return resultFlag;
 	};
 	
-	var _compareOrderTimesByRelativeTime = function(newSpec, orderedTimes, canOrderTimes){
-		var timeUnit = newSpec.timeUnit;
-		var limitTime = newSpec.limitTime;
-		var effDate = new Date(newSpec.effDate);
-		var expDate = new Date(newSpec.effDate);
+	var _compareOrderTimesByRelativeTime = function(offerLimitRules, orderedTimes, canOrderTimes){
+		var timeUnit = String(offerLimitRules.timeUnit);
+		var limitTime = offerLimitRules.limitTime;
+		var effDate = ec.util.formatTimeStringToDate(String(offerLimitRules.offerCreatedDate), null, null);
+		var expDate = ec.util.formatTimeStringToDate(String(offerLimitRules.offerCreatedDate), null, null);
+		
 		var curDate = new Date();
 		
 		switch (timeUnit) {
-			case 1000:// 年
+			case "1000":// 年
 				expDate.setYear(limitTime); break;
-			case 1100:// 月
+			case "1100":// 月
 				expDate.setMonth(limitTime); break;
-			case 1200:// 日
+			case "1200":// 日
 				expDate.setDate(limitTime); break;
 			default: ;
 		}
@@ -84,12 +81,28 @@ check.offer = (function() {
 		return resultFlag;
 	};
 	
-	var _compareOrderTimesByAbsoluteTime = function(newSpec, orderedTimes, canOrderTimes){
-		var effDate = new Date(newSpec.effDate);
-		var expDate = new Date(newSpec.expDate);
+	var _compareOrderTimesByAbsoluteTime = function(offerLimitRules, orderedTimes, canOrderTimes){
+		var effDate = new Date(offerLimitRules.effDate);
+		var expDate = new Date(offerLimitRules.expDate);
 		var curDate = new Date();
 		
 		var resultFlag = _compareOrderTimes(curDate, effDate, expDate, orderedTimes, canOrderTimes);
+		
+		return resultFlag;
+	};
+	
+	//校验通过返回true，否则返回false
+	var _compareOrderTimes = function(curDate, effDate, expDate, orderedTimes, canOrderTimes){
+		var resultFlag = true;
+		
+		if(curDate - effDate >= 0 && curDate - expDate < 0){
+			resultFlag = orderedTimes > canOrderTimes ? false : true;
+		}
+		
+		if(!resultFlag){
+			var alertErrorMsg = "您选择的销售品限期内仅可订购" + canOrderTimes +"次，您已选择（包含已订购）共计" + orderedTimes + "次。";
+			$.alert("提示", alertErrorMsg);
+		}
 		
 		return resultFlag;
 	};
@@ -98,7 +111,7 @@ check.offer = (function() {
 		var resultFlag = orderedTimes >= 1 ? false : true;
 		
 		if(!resultFlag){
-			var alertErrorMsg = "您选择的销售品仅可订购一次，您已订购（或选择）" + orderedTimes + "次。";
+			var alertErrorMsg = "您选择的销售品限期内仅可订购1次，您已选择（包含已订购）共计" + orderedTimes + "次。";
 			$.alert("提示", alertErrorMsg);
 		}
 		
@@ -111,17 +124,20 @@ check.offer = (function() {
 	 * >0：校验
 	 * <0：返回异常提示
 	 */
-	var _getOrderedTimes = function(newSpec){
+	var _getOrderedTimesInPeriod = function(offerSpec){
 		var orderedTimes = 0;
 		
-		var queryData = query.offer.queryOfferOrderedTimes([{'offerSpecId':newSpec.offerSpecId}]);
+		var queryData = query.offer.queryOfferOrderedTimes([{'offerSpecId':offerSpec.offerSpecId}]);
 		if(ec.util.isObj(queryData) && ec.util.isArray(queryData.prodInfos)){
 			$.each(queryData.prodInfos, function(indexProd, prodInfo){
 				if(prodInfo.accNbr == OrderInfo.cust.accNbr){
 					if(ec.util.isArray(prodInfo.offerListInfo)){
 						$.each(prodInfo.offerListInfo, function(indexOffer, offerInfo){
-							if(offerInfo.prodOfferId == newSpec.offerSpecId){
+							if(offerInfo.prodOfferId == offerSpec.offerSpecId){
 								orderedTimes = parseInt(offerInfo.orderTimes);
+								if(ec.util.isObj(offerSpec.offerLimitTimes)){
+									offerSpec.offerLimitTimes['offerCreatedDate'] = String(offerInfo.createDate);
+								}
 								return false;
 							}
 						});
@@ -134,26 +150,11 @@ check.offer = (function() {
 
 		return orderedTimes;
 	};
-	
-	//校验通过返回true，否则返回false
-	var _compareOrderTimes = function(curDate, effDate, expDate, orderedTimes, canOrderTimes){
-		var resultFlag = true;
-		
-		if(curDate - effDate >= 0 && curDate - expDate < 0){
-			resultFlag = orderedTimes >= canOrderTimes ? false : true;
-		}
-		
-		if(!resultFlag){
-			var alertErrorMsg = "您选择的销售品仅可订购" + canOrderTimes +"次，您已订购（或已选择）" + orderedTimes + "次。";
-			$.alert("提示", alertErrorMsg);
-		}
-		
-		return resultFlag;
-	};
-	
+
 	return {
-		feeType				:_feeType,
-		orderTimes			:_orderTimes
+		feeType					:_feeType,
+		orderTimes				:_orderTimes,
+		getOrderedTimesInPeriod	:_getOrderedTimesInPeriod
 	};
 })();
 $(function() {});

@@ -1642,23 +1642,17 @@ AttachOffer = (function() {
 				yes:function(){
 				},
 				yesdo:function(){
-				    _addOfferSpecFunction(prodId, newSpec, offer);
+				    _addOfferSpecFunction(prodId, newSpec);
 			    },
 				no:function(){
 				}
 			});
 		}else{
-			_addOfferSpecFunction(prodId, newSpec, offer);
+			_addOfferSpecFunction(prodId, newSpec);
 		}
 	};
 	
-	var _addOfferSpecFunction = function(prodId, newSpec, orderedOffer){
-		if(ec.util.isObj(orderedOffer)){
-			var checkOrderTimesResult = check.offer.orderTimes(orderedOffer, null);
-			if(!checkOrderTimesResult){
-				return;
-			}
-		}
+	var _addOfferSpecFunction = function(prodId, newSpec){
 		var content = CacheData.getOfferProdStr(prodId,newSpec,0);
 		$.confirm("信息确认",content,{ 
 			yes:function(){
@@ -4911,11 +4905,6 @@ AttachOffer = (function() {
 				return;
 			}
 			if(flag==1 && offer!=undefined){
-				//校验销售品已订购、可订购次数
-				var checkResult = check.offer.orderTimes(offer, nums);
-				if(!checkResult){
-					return;
-				}
 				if(offer.orderCount>nums){//退订附属销售品
 					if(!ec.util.isArray(offer.offerMemberInfos)){//销售品实例查询	
 						var param = {
@@ -5295,6 +5284,40 @@ AttachOffer = (function() {
 		return response;
 	};
 	
+	var _setParam4RepeatOrder = function(prodId, offerSpecId){
+		var newSpec = _setSpec(prodId,offerSpecId);  //没有在已选列表里面
+		var offer = CacheData.getOfferBySpecId(prodId,offerSpecId); //从已订购数据中找
+
+		var offerOrderedTimesInPeriod = check.offer.getOrderedTimesInPeriod(offer);
+		if(!ec.util.isDigit(offerOrderedTimesInPeriod)){
+			return;
+		}
+		offer.orderCount = offerOrderedTimesInPeriod;
+
+		var content = '<form id="paramFormOfferCheckInPeriod">';
+		content += "重复订购次数" + ' : <input id="text_' + prodId + '_' + offerSpecId;
+		content += '" class="inputWidth183px" type="text" value="' + offer.counts + '"/></br>限期内已订购：' + offerOrderedTimesInPeriod + '次</br>'; 
+		content += '</form>';
+		var nums = null;
+		$.confirm("参数设置： ", content, {
+			yes:function(){
+				nums = $("#text_" + prodId + "_" + offerSpecId).val();
+			},
+			yesdo:function(){
+				if(!ec.util.isDigit(nums)){
+					$.alert("信息提示","请填写有效的订购次数，必须是正整数。");
+					return;
+				}
+				//校验销售品已订购、可订购次数
+				var checkResult = check.offer.orderTimes(offer, nums);
+				if(checkResult){
+					offer.counts = parseInt(nums);
+				}
+			},
+			no:function(){}
+		});
+	};
+	
 	return {
 		excludeAddServ:excludeAddServ,
 		addOffer 				: _addOffer,
@@ -5363,6 +5386,7 @@ AttachOffer = (function() {
 		delMyfavoriteSpec:_delMyfavoriteSpec,
 		myFavoriteList:_myFavoriteList,
 		qryPreliminaryInfo : _qryPreliminaryInfo,
-		terminCheckShow: _terminCheckShow
+		terminCheckShow: _terminCheckShow,
+		setParam4RepeatOrder:_setParam4RepeatOrder
 	};
 })();
