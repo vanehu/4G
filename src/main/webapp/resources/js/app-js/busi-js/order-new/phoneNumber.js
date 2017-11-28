@@ -52,7 +52,7 @@ order.phoneNumber = (function(){
 						var phoneNbrPoolList= response.data.phoneNbrPoolList;
 						if(OrderInfo.actionFlag == 112){
 							$("#nbrPool").empty();
-							$("#nbrPool").append('<option value="" selected="selected">请选择号池</option>');
+							//$("#nbrPool").append('<option value="" selected="selected">请选择号池</option>');
 							if(phoneNbrPoolList!=null){
 								$.each(phoneNbrPoolList,function(){
 									var $option = "";
@@ -70,8 +70,8 @@ order.phoneNumber = (function(){
 							var $div =$('<i class="iconfont pull-left p-l-10">&#xe66c;</i>');
 							var $div2 =$('<i class="iconfont pull-right p-r-10">&#xe66e;</i>');
 							var $sel = $('<select id="nbrPool" class="myselect select-option" data-role="none"></select>');  
-							var $defaultopt = $('<option value="" selected="selected">请选择号池</option>');
-							$sel.append($defaultopt);
+							//var $defaultopt = $('<option value="" selected="selected">请选择号池</option>');
+							//$sel.append($defaultopt);
 							if(phoneNbrPoolList!=null){
 								$.each(phoneNbrPoolList,function(){
 									var $option = "";
@@ -123,8 +123,8 @@ order.phoneNumber = (function(){
 						var $div =$('<i class="iconfont pull-left p-l-10">&#xe66c;</i>');
 						var $div2 =$('<i class="iconfont pull-right p-r-10">&#xe66e;</i>');
 						var $sel = $('<select id="nbrPool2" class="myselect select-option" data-role="none"></select>');  
-						var $defaultopt = $('<option value="" selected="selected">请选择号池</option>');
-						$sel.append($defaultopt);
+						//var $defaultopt = $('<option value="" selected="selected">请选择号池</option>');
+						//$sel.append($defaultopt);
 						if(phoneNbrPoolList!=null){
 							$.each(phoneNbrPoolList,function(){
 								var $option = "";
