@@ -2380,6 +2380,15 @@ public class CustController extends BaseController {
 			params = MDA.XJ_FACE_VERIFY_PARAMS_SECRET;
 		}
 
+		String liveness = MapUtils.getString(fzConfig, "FACE_VERIFY_LIVENESS", "OFF");
+		if ("ON".equals(liveness)) {
+			svcContMap.put("liveNess", "0"); // 是否打开后端防hack校验，默认关闭
+		}
+		String rotate = MapUtils.getString(fzConfig, "FACE_VERIFY_ROTATE", "OFF");
+		if ("ON".equals(rotate)) {
+			svcContMap.put("rotate","0");//是否翻转照片，默认不翻转关闭
+		}
+		
 		svcContMap.put("params", AESUtil.encryptToString(JsonUtil.toString(svcContMap.get("params")), params));
 		try {
 			rMap = custBmo.verify(reqMap, optFlowNum, sessionStaff);
