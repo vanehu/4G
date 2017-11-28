@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -1077,7 +1078,7 @@ public class LoginController extends BaseController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/login/smsValid", method = RequestMethod.POST)
 	@ResponseBody
-	public JsonResponse smsValidate(@RequestParam("smspwd") String smsPwd,
+	public JsonResponse smsValidate(@RequestParam("smspwd") String smsPwd,@LogOperatorAnn String flowNum,
 			HttpServletRequest request ,HttpServletResponse response) throws Exception {
 		this.log.debug("smsPwd={}", smsPwd);
 		//手机版本使用
@@ -1204,6 +1205,24 @@ public class LoginController extends BaseController {
 				ServletUtils.addCookie(response,"/",ServletUtils.ONE_WEEK_SECONDS,SysConstant.SESSION_KEY_PAD_FLAG,"0");
 				session.setAttribute(SysConstant.SESSION_KEY_PAD_FLAG, "0");
 			}
+			//发短信
+			if("ON".equals(com.al.ecs.common.util.MDA.MESSAGE_TAG.get("MESSAGE_FLAG"))){
+				Calendar cal = Calendar.getInstance();
+	            Map<String,Object> loginMsgMap = new HashMap<String,Object>();
+	            String bindNumber = sessionStaff.getBindNumber();
+	            String areaId = sessionStaff.getAreaId();
+	            String nowTime = cal.get(Calendar.HOUR_OF_DAY)+"时"+cal.get(Calendar.MINUTE)+"分";
+	            Object [] array = new Object[]{staffCode,nowTime};
+	            loginMsgMap.put("phoneNumber", bindNumber);
+	            loginMsgMap.put("MsgNumber", "5487");
+	            loginMsgMap.put("key", "123");
+	            loginMsgMap.put("areaId", areaId);
+	            loginMsgMap.put("sendflag", "MessageTag");
+	            loginMsgMap.put(InterfaceClient.DATABUS_DBKEYWORD,(String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY));
+	            String msg = MessageFormat.format(com.al.ecs.common.util.MDA.MESSAGE_TAG.get("LOGIN_SUCCESS"), array);
+	            loginMsgMap.put("message", msg);
+	            staffBmo.sendMsgInfo(loginMsgMap, flowNum, sessionStaff);
+			}
 			resData.put("msg", "短信验证成功.");
 			resData.put("areaId", sessionStaff.getAreaId());
 			//短信验证成功后记录短信验证码
@@ -1216,7 +1235,7 @@ public class LoginController extends BaseController {
 			boolean needSingleSign = 	BooleanUtils.toBoolean(param);
 			if (needSingleSign) {//查看是否需要单点登录，配置项在simulate.property文件或者系统参数表中
 				String token=UUID.randomUUID().toString();//生成唯一的uuid标记
-				String areaId=sessionStaff.getAreaId();
+				String areaId = sessionStaff.getAreaId();
 				String Provinceid = sessionStaff.getAreaId().substring(0, 3)+"0000";
 				addCookie(areaId,token,response,request);//保存本地cookie
 				Map dataBusMap = new HashMap();
@@ -1278,6 +1297,26 @@ public class LoginController extends BaseController {
 		} else if (smsPwdSession == null||mapSession==null) { // 已过期,需要重新校验登录
 			return super.failed("短信过期失败!", ResultConstant.ACCESS_NOT_NORMAL.getCode());
 		}else {
+			//发短信
+			if("ON".equals(com.al.ecs.common.util.MDA.MESSAGE_TAG.get("MESSAGE_FLAG"))){
+				SessionStaff sessionStaff = SessionStaff.setStaffInfoFromMap(mapSession);
+	            Calendar cal = Calendar.getInstance();
+	            Map<String,Object> loginMsgMap = new HashMap<String,Object>();
+	            String bindNumber = sessionStaff.getBindNumber();
+	            String areaId = sessionStaff.getAreaId();
+	            String staffCode = sessionStaff.getStaffCode();
+	            String nowTime = cal.get(Calendar.HOUR_OF_DAY)+"时"+cal.get(Calendar.MINUTE)+"分";
+	            Object [] array = new Object[]{staffCode,nowTime};
+	            loginMsgMap.put("phoneNumber", bindNumber);
+	            loginMsgMap.put("MsgNumber", "5487");
+	            loginMsgMap.put("key", "123");
+	            loginMsgMap.put("areaId", areaId);
+	            loginMsgMap.put("sendflag", "MessageTag");
+	            loginMsgMap.put(InterfaceClient.DATABUS_DBKEYWORD,(String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY));
+	            String msg = MessageFormat.format(com.al.ecs.common.util.MDA.MESSAGE_TAG.get("LOGIN_FAILED"), array);
+	            loginMsgMap.put("message", msg);
+	            staffBmo.sendMsgInfo(loginMsgMap, flowNum, sessionStaff);
+			}
 			return super.failed("短信验证码出错!", ResultConstant.FAILD.getCode());
 		}
 	}
