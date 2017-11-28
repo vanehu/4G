@@ -37,6 +37,7 @@ import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ecs.common.entity.JsonResponse;
 import com.al.ecs.common.entity.PageModel;
 import com.al.ecs.common.util.PageUtil;
+import com.al.ecs.common.util.PropertiesUtils;
 import com.al.ecs.common.web.ServletUtils;
 import com.al.ecs.exception.BusinessException;
 import com.al.ecs.exception.ErrorCode;
@@ -74,6 +75,9 @@ public class essOrderController extends BaseController {
 	@Autowired
     @Qualifier("com.al.lte.portal.bmo.staff.StaffBmo")
     private StaffBmo staffBmo;
+	
+	@Autowired
+	PropertiesUtils propertiesUtils;
 
 	/**
 	 * 转至ESS订单查询页面
@@ -140,6 +144,8 @@ public class essOrderController extends BaseController {
 				e.printStackTrace();
 			}
 	        model.addAttribute("writeCard_test", iseditOperation);
+	        String realNameAuthenticationToggle = propertiesUtils.getMessage(SysConstant.REAL_NAME_AUTHENTICATION_TOGGLE);
+			model.addAttribute("realNameAuthenticationToggle", realNameAuthenticationToggle);
 			if (pageFlag.equals("terminalInfoPage")) {// 终端回填
 				return "/ess/ess-terminal-info-list";
 			} else if (pageFlag.equals("writeCardPage")) {// 远程写卡
