@@ -579,6 +579,50 @@ ec.util=(function(){
         });
         return resultArray;
     };
+    
+    /**
+     * 默认格式化：
+     * timeStr必填，regExp, regRep非必填，或传null
+     * 将20171117154504格式化为2017-11-17 15:45:04
+     * 将20171117格式化为2017-11-17
+     * 
+     * 自定义格式化：
+     * timeStr必填，regExp正则表达式, regRep格式化替换字符
+     */
+    var _formatTimeString = function(timeStr, regExp, regRep){
+    	var timeString = null;
+    	var regExpress = null;
+    	var regReplace = null;
+    	
+    	if(_isObj(timeStr)){
+    		if(_isObj(regExp) && _isObj(regRep)){
+    			regExpress = regExp;
+    			regReplace = regRep;
+    		} else{
+    			if(timeStr.length == 14){
+        			regExpress = /^(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})$/;
+        			regReplace = "$1-$2-$3 $4:$5:$6";
+        		} else if(timeStr.length == 8){
+        			regExpress = /^(\d{4})(\d{2})(\d{2})$/;
+        			regReplace = "$1-$2-$3";
+        		}
+    		}
+    	}
+    	
+    	if(_isObj(regExpress) && _isObj(regReplace)){
+    		timeString = timeStr.replace(regExpress, regReplace);
+    	}
+    	
+    	return timeString;
+    };
+    
+    /**
+     * 将timeStr格式化并返回date对象
+     */
+    var _formatTimeStringToDate = function(timeStr, regExp, regRep){
+    	var resultTimeString = _formatTimeString(timeStr, regExp, regRep);
+    	return _isObj(resultTimeString) ? new Date(resultTimeString) : null;
+    };
 
 	//要暴露出的公共方法
 	return {
@@ -609,6 +653,8 @@ ec.util=(function(){
 		sort				:_sort,
 		checkParam			:_checkParam,
         mapGet              : _mapGet,
-        mapPut              : _mapPut
+        mapPut              : _mapPut,
+        formatTimeString	: _formatTimeString,
+        formatTimeStringToDate:_formatTimeStringToDate
 	};
 })();

@@ -509,6 +509,9 @@ public class MDA {
 	/**双屏互动服务端请求地址端口*/
 	public static final String PUSH_HOST_PORT = new String("");
 	
+	/**双屏互动把客户的身份证信息存入redis中**/
+	public static final String SAVE_CUST_ID = new String("");
+	
 	/**调用支付平台接口地址*/
 	public static final String PAY_TOKEN_URL=new String("");
 	

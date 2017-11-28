@@ -1638,8 +1638,10 @@
 
 		<const type="String" name="UNIFY_LOGIN_URI" value="https://crm.189.cn/ltePortal"
 			description="统一登录地址(一般生产使用)" />
-		<const type="String" name="PUSH_HOST_PORT" value="http://allen1707.xicp.net:80"
+		<!-- 192.168.1.49：7101 allen1707.xicp.net:80 -->
+		<const type="String" name="PUSH_HOST_PORT" value="http://10.128.90.195:7101"
 			description="双屏互动服务端地址端口" />
+		<const type="String" name="SAVE_CUST_ID" value="OFF" description="双屏互动把客户的身份证信息存入redis中" />
 		<const type="String" name="SECURITY_OFFICE_FLAG" value="OFF"
 			description="安全办公业务是否启用开关" />
 		<const type="String" name="RETURN_ACCOUNT_FLAG" value="OFF"
