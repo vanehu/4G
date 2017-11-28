@@ -43,7 +43,7 @@ order.phoneNumber = (function(){
 				$.ecOverlay("<strong>查询中,请稍等...</strong>");
 			},
 			"always":function(){
-				$.unecOverlay();
+				//$.unecOverlay();
 			},
 			"done" : function(response){
 				$.unecOverlay();
@@ -85,6 +85,11 @@ order.phoneNumber = (function(){
 								});
 							}
 							$("#nbrPoolDiv").append($div).append($sel).append($div2);
+						}
+						var poolId = $("#nbrPool option:selected").val();
+						if(poolId==undefined || poolId==""){
+							$.alert("提示","当前号池为空，请联系管理人员处理");
+							return;
 						}
 						_btnQueryPhoneNumber(1);
 						order.broadband.init_select();//刷新select组件，使样式生效
@@ -224,6 +229,12 @@ order.phoneNumber = (function(){
 	
 	//主卡号码列表查询
 	var _btnQueryPhoneNumber=function(flag,scroller,ifMain){
+		var poolId = $("#nbrPool option:selected").val();
+		if(poolId==undefined || poolId==""){
+			$.alert("提示","当前号池为空，请联系管理人员处理");
+			return;
+		}
+		
 //		if(mainFlag=="false"){//走副卡查询
 //			_btnQueryPhoneNumber2();
 //			return;
@@ -240,7 +251,6 @@ order.phoneNumber = (function(){
 			return;
 		}
 		$("#phoneNumber_search_model").modal("hide");//查询modal关闭
-		var poolId = $("#nbrPool option:selected").val();
 		var pnHead = $("#pnHead option:selected").val();//号码段
 		var pnType = $("#pnType option:selected").val();//号码类型
 		var pnEnd = $.trim($("#pnEnd").val());
