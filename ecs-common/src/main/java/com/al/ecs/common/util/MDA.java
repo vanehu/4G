@@ -701,6 +701,9 @@ public class MDA {
 	/**人证比对图片压缩参数*/
     public static final Map<String, List<String>> FACE_VERIFY_COMPRESS_CONFIG = new HashMap<String, List<String>>();
     
+    /**是否进行实名认证的开关*/
+    public static final String REAL_NAME_AUTHENTICATION_TOGGLE = new String("");
+    
     /**
 	 * 浏览器指纹记录地址
 	 */
