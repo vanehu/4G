@@ -1626,6 +1626,14 @@
 			]
 		</const>
 
+		<!-- 短信内容标识 -->
+		<const type="Map" name="MESSAGE_TAG" description="短信内容标识,MESSAGE_FLAG为ON时发送短信提醒，为OFF时关闭">
+			{
+			  'MESSAGE_FLAG':'ON',
+              'LOGIN_SUCCESS':'工号{0}于{1}登录中国电信CRM4G营业门户系统成功，请确认是否本人操作',
+              'LOGIN_FAILED':'工号{0}于{1}登录中国电信CRM4G营业门户系统失败，请确认是否本人操作'
+            }
+		</const>
 		<!--从sp_sys_param迁移到MDA，沿用表中的命名 -->
 		<const type="String" name="msgCodeFlag" value="1"
 			description="是否发送校验短信标识,1不发送,其他发送并验证(注:表中的配置须与sp_sys_param中的保持同步且一致)" />
