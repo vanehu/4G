@@ -117,21 +117,36 @@ staff.login = (function($) {
 	};
 	//忘记密码 - 链接
 	var _getPasswordUrl = function(){
+		var fid = $("#store-selector-text").attr("area-id");
+		var param = _getAreaAndProvName(fid);
+		var province = _getAreaName(fid); //省份拼音
+		var date = new Date();
+		var time = date.getFullYear()+""+(Number(date.getMonth())+1)+""+date.getDate()+""+date.getHours()+""+date.getMinutes()+""+date.getSeconds();
 		$.ajax({
 		    type: "get",
 		    dataType: "json",
 		    url: "password",
-		    data: {},
+		    data: {"province":province,"_":time},
 		    success: function (res) {
-		    	if(res!="9"){
-		    		var version = res;
-		    		var httpconfig = "https";
+		    	var provVersion = res.provVersion;
+		    	var provDomain =  res.provDomain;
+		    	if(provVersion == "9"){
+		    		alert("版本号获取失败[provVersion:"+provVersion+"]，请检查配置文件。");
+		    		return;
+		    	}
+		    	if(provDomain == null || provDomain == "")
+		    		provDomain = window.location.hostname;
+		    	if(provVersion!="9"){
+		    		var version = provVersion;
+		    		var httpconfig = "http";
 		    		if(version=="81" || version=="82"){
 		    			httpconfig = "http";
 		    		}else if(version=="83" || version=="84"){
 		    			httpconfig ="https";
+		    		}else if(version=="93" || version=="94"){
+		    			httpconfig = "https";
 		    		}
-		    		var url = httpconfig+"://"+window.location.hostname+":"+version+"/provPortal/passwordMgr/updatePwd";
+		    		var url = httpconfig+"://"+provDomain+":"+version+"/provPortal/passwordMgr/updatePwd";
 		    		window.location = url;
 		    	}
 		    }
