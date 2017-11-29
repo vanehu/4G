@@ -1212,7 +1212,7 @@ public class LoginController extends BaseController {
 	            String bindNumber = sessionStaff.getBindNumber();
 	            String areaId = sessionStaff.getAreaId();
 	            String nowTime = cal.get(Calendar.HOUR_OF_DAY)+"时"+cal.get(Calendar.MINUTE)+"分";
-	            Object [] array = new Object[]{staffCode,nowTime};
+	            Object [] array = new Object[]{sessionStaff.getStaffCode(),nowTime};
 	            loginMsgMap.put("phoneNumber", bindNumber);
 	            loginMsgMap.put("MsgNumber", "5487");
 	            loginMsgMap.put("key", "123");
