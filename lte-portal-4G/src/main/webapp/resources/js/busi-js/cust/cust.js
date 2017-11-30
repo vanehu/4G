@@ -4556,6 +4556,11 @@ order.cust = (function(){
                 if ($.inArray(prodId, checkData) != -1) {
                     checkCount = checkData.length - 1;
                 }
+                if (!ec.util.isObj(prodId) && ($.inArray(prodId, checkData) == -1)) {
+                	if(OrderInfo.actionFlag == 43 && ec.util.isObj(checkData)){
+                		checkCount = checkData.length - 1;
+                	}
+                }
                 if ((parseInt(result.usedNum) + checkCount) < 5) {
                     $.unique($.merge(checkData, [prodId]));
                     ec.util.mapPut(OrderInfo.oneCardFiveNum.checkNum, _getCustInfo415Flag(inParam), checkData);
