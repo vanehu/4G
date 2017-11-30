@@ -1148,7 +1148,8 @@ order.main = (function(){
 //				var jr = $.callServiceAsJson(contextPath + "/order/prodAuth", param);
 //				if (jr.code==0){
 					acctQueryParam = {
-						accessNumber : $("#d_query_nbr input").val()							
+						accessNumber : $("#d_query_nbr input").val(),
+						custId : OrderInfo.cust.custId
 					};
 //				} 
 //				else{
@@ -1162,7 +1163,8 @@ order.main = (function(){
 					return;
 				}
 				acctQueryParam = {
-					acctCd : $("#d_query_cd input").val()
+					acctCd : $("#d_query_cd input").val(),
+					custId : OrderInfo.cust.custId
 				};
 			}
 			//0.查询当前客户下帐户
