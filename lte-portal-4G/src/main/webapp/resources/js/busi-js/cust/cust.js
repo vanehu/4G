@@ -948,8 +948,8 @@ order.cust = (function(){
 			if(switchRedis == "ON" && identidiesTypeCd == "1"){
 				var redisData = $.cookie('redisData');
 				var cCustIdCard = $('#cCustIdCard').val();
-				if(ec.util.isObj(redisData) && cCustIdCard != redisData.certNumber){
-					$alert("提示","双屏互动身份证信息被篡改！");
+				if(ec.util.isObj(redisData) && cCustIdCard != redisData){
+					$.alert("提示","双屏互动身份证信息被篡改！");
 					return;
 				}
 			}
