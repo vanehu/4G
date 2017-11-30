@@ -19,6 +19,8 @@ var bindStatus = false;
 var servUrl = null;
 //实时监测app在线人数
 var appOnChatNumber = 0;
+//确认是自动绑定的状态还是扫码绑定登录
+var atomaticBindStatus = true;
 
 push.busi = (function($) {
 	
@@ -224,14 +226,14 @@ push.busi = (function($) {
 						break;
 					}
 				}
-//				if("true" != cookieQrLogin){
-//					push.busi.jumpQrCode();
-//					$('#bindClick span').text("待绑定");
-//					$('#bindClick').off("click").on('click',function(){
-//						push.busi.jumpQrCode();
-//					});
-//				}
-
+				if(atomaticBindStatus == false){
+					push.busi.jumpQrCode();
+					$('#bindClick span').text("待绑定");
+					$('#bindClick').off("click").on('click',function(){
+						push.busi.jumpQrCode();
+					});
+					atomaticBindStatus == true;
+				}
 			});
 		});
 		
@@ -392,7 +394,7 @@ push.busi = (function($) {
 		if(switchRedis == "ON"){
 			var url = contextPath + "/cust/saveDataToRedis";
 			var param={"pushType":pushType,"data":data.result,"uId":data.uId};
-			$.cookie("redisData", data.result, { path: '/' });
+			$.cookie("redisData", data.result.certNumber, { path: '/' });
 			$.callServiceAsJson(url, param, {				
 				"done" : function(response){
 					$.unecOverlay();
@@ -689,6 +691,7 @@ $(function(){
 	}
 
 	$('#bindClick').off("click").on('click',function(){
+		atomaticBindStatus = false;
 		push.busi.bindApp();
 	});
 	$('#bindCancel').off("click").on('click',function(){
