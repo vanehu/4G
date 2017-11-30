@@ -30,8 +30,6 @@ SoOrder = (function() {
 	
 	//初始化订单数据，非返档业务，可不填写入参submitFlag
 	var _initOrderData = function(submitFlag){
-		OrderInfo.confidence = 0 ;
-		OrderInfo.faceVerifyFlag = "N" ;
 		OrderInfo.resetSeq(); //重置序列
 		OrderInfo.SEQ.custSeq = -2;
 		OrderInfo.resetData(submitFlag); //重置 数据
