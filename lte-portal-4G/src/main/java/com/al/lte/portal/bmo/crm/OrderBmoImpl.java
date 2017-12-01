@@ -2934,9 +2934,10 @@ public class OrderBmoImpl implements OrderBmo {
 	        		}catch(Exception e){}
 	        	}
         	}
-        	ServletUtils.removeSessionAttribute(request, Const.SESSION_CONFIDENCES);
-        	ServletUtils.removeSessionAttribute(request, Const.SESSION_FACEVERIFYFLAG);
-
+        	//#2164871 门户新版本，订单提交提示信息被篡改，订单提交时候返回修改session被清掉会报错，不清除session
+//        	ServletUtils.removeSessionAttribute(request, Const.SESSION_CONFIDENCES);
+//        	ServletUtils.removeSessionAttribute(request, Const.SESSION_FACEVERIFYFLAG);
+        	
 //        	for (Map<String, Object> custOrderAttr : custOrderAttrs) {
 //	        	if("40010049".equals(MapUtils.getString(custOrderAttr, "itemSpecId", ""))){
 //	        		try{
