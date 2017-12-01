@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.al.ec.serviceplatform.client.DataBus;
 import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ecs.common.entity.JsonResponse;
 import com.al.ecs.common.entity.PageModel;
@@ -46,9 +47,13 @@ import com.al.ecs.spring.controller.BaseController;
 import com.al.lte.portal.bmo.crm.CustBmo;
 import com.al.lte.portal.bmo.crm.MktResBmo;
 import com.al.lte.portal.bmo.staff.StaffBmo;
+import com.al.lte.portal.common.AESDecUtil;
 import com.al.lte.portal.common.Base64;
+import com.al.lte.portal.common.DateSubtraction;
 import com.al.lte.portal.common.EhcacheUtil;
+import com.al.lte.portal.common.InterfaceClient;
 import com.al.lte.portal.common.MySimulateData;
+import com.al.lte.portal.common.PortalServiceCode;
 import com.al.lte.portal.common.SysConstant;
 import com.al.lte.portal.model.SessionStaff;
 
@@ -1364,9 +1369,64 @@ public class CustController extends BaseController {
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
                 SysConstant.SESSION_KEY_LOGIN_STAFF);
 		List custInfos = new ArrayList();
+		//获取后台返回的年龄标准		
+		Map<String,Object> newMap = new HashMap();
+		newMap.put("areaId", sessionStaff.getAreaId());
+		newMap.put("queryType", "3");
+		newMap.put("typeClass", "18");
+		DataBus db;
+		String valueE = "";
+		String valueS = "";
 		try {
+			db = InterfaceClient.callService(newMap, PortalServiceCode.REAL_NAME_SERVICE, "", sessionStaff);
+			Map<String, Object> mapOne = db.getReturnlmap();
+			if(((List)((Map)mapOne.get("result")).get("soConstConfigs")).size()!= 0){
+				valueE = MapUtils.getString((Map)((List)((Map)mapOne.get("result")).get("soConstConfigs")).get(0), "value", "");
+				newMap.put("typeClass", "17");
+				db = InterfaceClient.callService(newMap, PortalServiceCode.REAL_NAME_SERVICE, "", sessionStaff);
+				Map<String, Object> mapTwo = db.getReturnlmap();
+				valueS = MapUtils.getString((Map)((List)((Map)mapTwo.get("result")).get("soConstConfigs")).get(0), "value", "");
+
+			}
+		} catch (InterfaceException e2) {
+			e2.printStackTrace();
+		} catch (IOException e2) {
+			e2.printStackTrace();
+		} catch (Exception e2) {
+			e2.printStackTrace();
+		}
+		try {
+			//计算客户定位的年龄值
+			resultMap = custBmo.queryCustInfo(paramMap,
+					flowNum, sessionStaff);
+			List<String> custInfosList = (List<String>) resultMap.get("custInfos");
+			String custAge = "";
+			if (custInfosList.size() != 0) {
+				String mEs = MapUtils.getString(((Map) ((List) resultMap.get("custInfos")).get(0)), "certNum", ""); 
+				String mIdentityCd = MapUtils.getString(((Map) ((List) resultMap.get("custInfos")).get(0)),
+						"identityCd", "");
+				String nowIdCard = AESDecUtil.aesDecrypt(mEs);
+				String strCard = "";
+				// 判断需要截取的几种证件类型
+				if ("1".equals(mIdentityCd) || "12".equals(mIdentityCd) || "50".equals(mIdentityCd)
+						|| "51".equals(mIdentityCd) || "52".equals(mIdentityCd) || "41".equals(mIdentityCd)) {
+					if (nowIdCard.length() == 18) {
+						strCard = nowIdCard.substring(6, 14);
+					} else {
+						strCard = nowIdCard.substring(7, 13);
+					}
+					//计算客户年龄
+					custAge = String.valueOf(DateSubtraction.getAge(DateSubtraction.stringToDate(strCard)));
+				}
+			}
+			
 			resultMap = custBmo.queryCustCompreInfo(paramMap,
 					flowNum, sessionStaff);
+			//valueS = "18";
+			//valueE = "18";
+			resultMap.put("custAge", custAge);
+			resultMap.put("ageCust", valueS);
+			resultMap.put("ageHandle", valueE);
 			if (MapUtils.isNotEmpty(resultMap)) {
 				custInfos=(List<Map<String, Object>>) resultMap.get("custInfos");
 				if(custInfos.size()>0){

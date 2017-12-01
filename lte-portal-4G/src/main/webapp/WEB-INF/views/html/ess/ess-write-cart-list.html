@@ -52,11 +52,13 @@
 			<td>${orderLists.statusCdName}</td>
 			<td>${orderLists.version}</td>
 			<td>
-			    <form method="post" id="realNameAuth_action">
-			    <a class="purchase"
-				href="javascript:ess.writeCard.realNameAuth('${orderLists.extCustOrderId}')"
-				type="main">实名制认证</a>
-				</form>
+				<#if realNameAuthenticationToggle == 'ON' && orderLists.orderNeedAction == 'realNameAndWriteCard'>
+				    <form method="post" id="realNameAuth_action">
+				    <a class="purchase"
+					href="javascript:ess.writeCard.realNameAuth('${orderLists.extCustOrderId}')"
+					type="main">实名制认证</a>
+					</form>
+				</#if>
 				<#if orderLists.orderNeedAction != 'nothingToDo'>
 				    <a class="purchase"
 					href="javascript:order.writeCard.essWriteReadCard('${orderLists.accNbr}','${orderLists.extCustOrderId}','${orderLists.orderNeedAction}','${orderLists.commonRegionId}','${orderLists.zoneNumber}')"

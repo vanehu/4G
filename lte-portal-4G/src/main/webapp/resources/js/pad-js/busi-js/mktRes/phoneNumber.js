@@ -44,6 +44,10 @@ mktRes.phoneNbr = (function(){
 		selectedObj=null;//初始化原先选中的号码
 		//收集参数
 		param = _buildInParam(param);
+		if (!ec.util.isObj(param.poolId)) {
+			$.alert("提示","号池不可为空，请添加号池！");
+			return;
+		}
 		param.isReserveFlag=_queryFlag;
 		if(_queryFlag=='1'){//预约选号
 			param.queryFlag="3";

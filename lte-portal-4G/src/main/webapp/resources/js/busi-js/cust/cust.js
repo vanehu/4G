@@ -948,8 +948,8 @@ order.cust = (function(){
 			if(switchRedis == "ON" && identidiesTypeCd == "1"){
 				var redisData = $.cookie('redisData');
 				var cCustIdCard = $('#cCustIdCard').val();
-				if(ec.util.isObj(redisData) && cCustIdCard != redisData.certNumber){
-					$alert("提示","双屏互动身份证信息被篡改！");
+				if(ec.util.isObj(redisData) && cCustIdCard != redisData){
+					$.alert("提示","双屏互动身份证信息被篡改！");
 					return;
 				}
 			}
@@ -4555,6 +4555,11 @@ order.cust = (function(){
                 var checkCount = checkData.length;
                 if ($.inArray(prodId, checkData) != -1) {
                     checkCount = checkData.length - 1;
+                }
+                if (!ec.util.isObj(prodId) && ($.inArray(prodId, checkData) == -1)) {
+                	if(OrderInfo.actionFlag == 43 && ec.util.isObj(checkData)){
+                		checkCount = checkData.length - 1;
+                	}
                 }
                 if ((parseInt(result.usedNum) + checkCount) < 5) {
                     $.unique($.merge(checkData, [prodId]));

@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import com.ailk.ecsp.service.Service;
 import com.al.ec.serviceplatform.client.DataMap;
 import com.al.ec.serviceplatform.client.ResultCode;
+import com.al.ecs.common.util.JsonUtil;
 import com.al.ecs.exception.ResultConstant;
 import com.linkage.portal.service.lte.common.StringUtil;
 import com.linkage.portal.service.lte.core.resources.model.AccessToken;
@@ -64,59 +65,62 @@ public class AccessTokenService  extends Service{
 		return dataBus;
 	}
 	
-	public synchronized String getAccessToken(Map<String,Object> paramMap) {
+	public synchronized String getAccessToken(Map<String,Object> paramMap) throws Exception {
 		String appToken = "";
-		try {
-			AccessTokenDAO atd = new AccessTokenDAOImpl();	
-			List<Map<String, Object>> tokenList = atd.getAccessTokenList(paramMap);			
-			if(tokenList != null){
-				for(int i=0;i<tokenList.size();i++){
-					String tokenId = String.valueOf(tokenList.get(i).get("TOKEN_ID"));
-					atd.insertAccessTokenOld(Long.parseLong(tokenId));					
-					atd.deleteAccessToken(Long.parseLong(tokenId));
-				}									
-			}
-			
-			String staffCode = (String) paramMap.get("staffCode");
-			String areaId = (String) paramMap.get("areaId");
-			String tokenKey = (String) paramMap.get("tokenKey");
-			String randowCode = getRandomNumber();//随机码
-			appToken = getAppToken(staffCode, areaId,randowCode,tokenKey);	
-			log.error("生成的appToken=========>>>>"+appToken);
-			AccessToken accessToken = new AccessToken();
-			
-			//在线token		
-			Date date = new Date();   
-			Calendar dar = Calendar.getInstance();  
-			dar.setTime(date);			
-			accessToken.setAddTime(dar.getTime());
-			dar.add(java.util.Calendar.SECOND, Integer.parseInt(String.valueOf(paramMap.get("tokenTimes")))+10);
-			accessToken.setEndTime(dar.getTime());
-			accessToken.setAccessToken(appToken);
-			accessToken.setStatus("E");
-			accessToken.setExpiresIn(Long.parseLong(String.valueOf(paramMap.get("tokenTimes"))));
-			accessToken.setStaffCode(String.valueOf(paramMap.get("staffCode")));
-			accessToken.setStaffName(String.valueOf(paramMap.get("staffName")));
-			accessToken.setAreaId(String.valueOf(paramMap.get("areaId")));
-			accessToken.setAreaCode(String.valueOf(paramMap.get("areaCode")));
-			accessToken.setAreaName(String.valueOf(paramMap.get("areaName")));
-			accessToken.setCityName(String.valueOf(paramMap.get("cityName")));
-			accessToken.setCityCode(String.valueOf(paramMap.get("cityCode")));
-			accessToken.setProvinceName(String.valueOf(paramMap.get("provinceName")));
-			accessToken.setProvinceCode(String.valueOf(paramMap.get("provinceCode")));
-			accessToken.setChannelCode(String.valueOf(paramMap.get("channelCode")));
-			accessToken.setSystemId(String.valueOf(paramMap.get("systemId")));
-			accessToken.setRandowCode(randowCode);			
-			int result = atd.insertAccessToken(accessToken);
-			log.error("令牌入库结果："+result);
-			if(result > 0){
-				return appToken;	
-			}					
-		} catch (Exception e) {
-			log.error("令牌生成异常：",e);
-			return "-1";
+		AccessTokenDAO atd = new AccessTokenDAOImpl();	
+		List<Map<String, Object>> tokenList = atd.getAccessTokenList(paramMap);			
+		if(tokenList != null){
+			for(int i=0;i<tokenList.size();i++){
+				String tokenId = String.valueOf(tokenList.get(i).get("TOKEN_ID"));
+				atd.insertAccessTokenOld(Long.parseLong(tokenId));					
+				atd.deleteAccessToken(Long.parseLong(tokenId));
+			}									
 		}
-		return "-1";
+		
+		String staffCode = (String) paramMap.get("staffCode");
+		String areaId = (String) paramMap.get("areaId");
+		String tokenKey = (String) paramMap.get("tokenKey");
+		String randowCode = getRandomNumber();//随机码
+		appToken = getAppToken(staffCode, areaId,randowCode,tokenKey);	
+		log.debug("生成的appToken=========>>>>"+appToken);
+		AccessToken accessToken = new AccessToken();
+		
+		//在线token		
+		Date date = new Date();   
+		Calendar dar = Calendar.getInstance();  
+		dar.setTime(date);			
+		accessToken.setAddTime(dar.getTime());
+		dar.add(java.util.Calendar.SECOND, Integer.parseInt(String.valueOf(paramMap.get("tokenTimes")))+10);
+		accessToken.setEndTime(dar.getTime());
+		accessToken.setAccessToken(appToken);
+		accessToken.setStatus("E");
+		accessToken.setExpiresIn(Long.parseLong(String.valueOf(paramMap.get("tokenTimes"))));
+		accessToken.setStaffCode(String.valueOf(paramMap.get("staffCode")));
+		accessToken.setStaffName(String.valueOf(paramMap.get("staffName")));
+		accessToken.setAreaId(String.valueOf(paramMap.get("areaId")));
+		accessToken.setAreaCode(String.valueOf(paramMap.get("areaCode")));
+		accessToken.setAreaName(String.valueOf(paramMap.get("areaName")));
+		accessToken.setCityName(String.valueOf(paramMap.get("cityName")));
+		accessToken.setCityCode(String.valueOf(paramMap.get("cityCode")));
+		accessToken.setProvinceName(String.valueOf(paramMap.get("provinceName")));
+		accessToken.setProvinceCode(String.valueOf(paramMap.get("provinceCode")));
+		accessToken.setChannelCode(String.valueOf(paramMap.get("channelCode")));
+		accessToken.setSystemId(String.valueOf(paramMap.get("systemId")));
+		accessToken.setRandowCode(randowCode);
+		
+		int result = atd.insertAccessToken(accessToken);
+		
+		if(result > 0){
+			return appToken;	
+		} else{
+			StringBuffer sb = new StringBuffer()
+			.append("AccessToken生成和记录异常, accessToken=")
+			.append(appToken)
+			.append(" , paramMap=")
+			.append(JsonUtil.toString(paramMap));
+			log.error(sb.toString());
+			throw new Exception(sb.toString());
+		}
 	}
 	
 	private String getAppToken(String staffCode,String areaId,String randowCode,String tokenKey){		
@@ -180,9 +184,5 @@ public class AccessTokenService  extends Service{
 		} catch (Exception ex) {
 			throw new RuntimeException(ex);
 		}
-	}
-	
-	public static void main(String[] args) {
-		
 	}
 }

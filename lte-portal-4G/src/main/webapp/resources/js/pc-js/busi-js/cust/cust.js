@@ -1777,8 +1777,21 @@ order.cust = (function(){
 		}
 		$.ecOverlay("<strong>正在查询客户架构信息中,请稍等...</strong>");
 		var response = $.callServiceAsJson(contextPath+"/token/pc/cust/queryCustCompreInfo", param);
+		var custInfos = response.data.custInfos;
+		var identityCd = "";
+		if(ec.util.isObj(custInfos)){
+			identityCd = (custInfos[0]).identityCd;
+		}
+		OrderInfo.getCheckAge = $.extend(true, {}, response);
 		$.unecOverlay();
 		if(response.code == 0) {
+			var cookieSP = query.common.queryPropertiesValue("CHECK_SOLDIER_POLICE");
+			if(cookieSP == "ON"){
+				if(identityCd == "2" || identityCd == "14" ){
+					$.alert("提示", "军人身份证件、武装警察身份证件不能作为实名登记有效证件，不允许办理业务！");
+					return false;
+				}
+			}
 			if(response.data == null){
 				$.alert("提示","客户架构信息接口无数据返回。");
 				return false;
@@ -2547,6 +2560,7 @@ order.cust = (function(){
 				return;
 			}
 			_setValueForAgentOrderSpan(man.resultContent);
+			OrderInfo.handleCustCertReadInfos = $.extend(true, {}, man);
 			$("#orderAttrReadCertBtn").hide();
 			$("#orderAttrReset").show();
 			$("#orderIdentidiesTypeCd").attr("disabled","disabled"); 

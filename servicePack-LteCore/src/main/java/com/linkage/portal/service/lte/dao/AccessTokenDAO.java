@@ -10,8 +10,9 @@ public interface AccessTokenDAO {
     /**
      * 令牌信息入库
      * @param accessToken
+     * @throws Exception 
      */
-	public int insertAccessToken(AccessToken accessToken);
+	public int insertAccessToken(AccessToken accessToken) throws Exception;
 	
 	/**
 	 * 获取令牌信息
@@ -30,13 +31,15 @@ public interface AccessTokenDAO {
 	/**
 	 * 历史令牌信息入库
 	 * @param tokenId
+	 * @throws Exception 
 	 */
-	public void insertAccessTokenOld(long tokenId);
+	public void insertAccessTokenOld(long tokenId) throws Exception;
 	
 	/**
 	 * 删除令牌信息
 	 * @param tokenId
+	 * @throws Exception 
 	 */
-	public void deleteAccessToken(long tokenId);
+	public int deleteAccessToken(long tokenId) throws Exception;
   
 }

@@ -32,7 +32,7 @@ check.offer = (function() {
 		var resultFlag = true;
 		var offerLimitTimes = orderedOffer.offerLimitTimes;
 		
-		if(offerLimitTimes && offerLimitTimes.ifLimitTimes != "Y"){
+		if(!(ec.util.isObj(offerLimitTimes) && offerLimitTimes.ifLimitTimes == "Y")){
 			return resultFlag;
 		}
 		
