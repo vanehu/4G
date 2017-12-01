@@ -49,6 +49,27 @@ SoOrder = (function() {
 	//提交订单节点
 	var _submitOrder = function(data) {
 		_getCheckOperatSpec();
+		var checkNowCust = _checkCustAndOperator();
+		if(checkNowCust == false && checkNowCust != null && checkNowCust != undefined){
+			//激活提交按钮（或链接）
+			var $eles = $("#fillNextStep"); //可在此添加 需要还原click效果的元素，如 $("#fillNextStep,#submitButtonId")
+			if($eles.length > 0){
+				for(var i=0;i<$eles.length;i++){
+					//去除置灰，从href_o参数还原href参数 ，然后去除href_o参数
+					$($eles[i]).removeClass("btna_g").addClass("btna_o").attr("href",$($eles[i]).attr("href_o")).removeAttr("href_o").removeAttr("disabled");
+					//从绑定的click_o事件中还原绑定click事件，然后解绑click_o事件
+					var events = $.data($eles[i],"events");
+					if(events && events.click_o){
+						for(var j=0;j<events.click_o.length;j++){
+							$($eles[i]).on("click",events.click_o[j].data,events.click_o[j].handler);
+						}
+						$($eles[i]).off("click_o");
+					}
+				}
+			}
+			SoOrder.inSubmit = false;
+			return;
+		}
 		if(_getOrderInfo(data)){
 			//过滤订单数据判断是否有客户变更
 			OrderInfo.oneCardFiveNum = [];
@@ -3099,66 +3120,154 @@ SoOrder = (function() {
 				}
 			}
 		}
-		
-		var cookie = CommonUtils.getCookieFromJava("switchC");
-		var cookieE = CommonUtils.getCookieFromJava("switchE");
-		var ageS = CommonUtils.getCookieFromJava("nAgeS");
-		var ageE = CommonUtils.getCookieFromJava("nAgeE");
-		var cookieSP = CommonUtils.getCookieFromJava("switchSP");
-		var newMan = cert.readCert(CONST.CERT_READER_HANDLE_CUST)
-		//获取下拉框的值
-		var selectValue = $("#orderIdentidiesTypeCd").val();
+		return true; 
+	};
+	
+	/***
+	 * 对于经办人和客户办理业务的校验
+	 */
+	var _checkCustAndOperator = function(){
+		var cookie = query.common.queryPropertiesValue("LESS_THAN_SEVENTEEN");
+		var cookieE = query.common.queryPropertiesStatus("LESS_THAN_EIGHT_" + String(OrderInfo.staff.areaId).substr(0, 3));
+		//var identityName = $("#identityName").text();
+		//if(!ec.util.isObj(identityName)){
+		//	return true;
+		//}
+		//var theName = identityName.split("/")[0];
+		//var newMan = OrderInfo.handleCustCertReadInfos;
 		var orderAttrName = $("#orderAttrName").val();
 		var orderAttrIdCard = $("#orderAttrIdCard").val();
-		if(cookieSP == "ON"){
-			//军人身份证件、武装警察身份证件不能作为实名登记有效证件，不允许新装号码
-			if(selectValue == "2" || selectValue == "14"){
-				$.alert("提示", "军人身份证件、武装警察身份证件不能作为实名登记有效证件，不允许办理业务！");
-				return;
-			}
+		var custAge = "";
+		if(ec.util.isObj(OrderInfo.getCheckAge.data) == true){
+			custAge = OrderInfo.getCheckAge.data.custAge;
 		}
-		if(cookieE == "ON"){
-			//对于经办人的校验
-			if(orderAttrName != "" && orderAttrName != null && orderAttrName != undefined){
-				if(selectValue != "50"){
-					if(cookieSP == "ON"){
-						//军人身份证件、武装警察身份证件不能作为实名登记有效证件，不允许新装号码
-						if(selectValue == "2" || selectValue == "14"){
-							$.alert("提示", "军人身份证件、武装警察身份证件不能作为实名登记有效证件，不允许办理业务！");
-							return;
-						}
-					}else if(selectValue != "1" && selectValue != "51" && selectValue != "52"){
-						if(new Date().getFullYear() - orderAttrIdCard.substring(6,10) < ageE && selectValue != "50" && selectValue != "4" && selectValue != "3"){
-							$.alert("提示","经办人必须'"+ageE+"'岁以上！");
-							return false;
-						}
-					}else{
-						var cardNumber = newMan.resultContent.certNumber;
-						if(new Date().getFullYear() - cardNumber.substring(6,10) < ageE && selectValue != "50" && selectValue != "4" && selectValue != "3"){
-							$.alert("提示","经办人必须'"+ageE+"'岁以上！");
-							return false;
-						}
+		if(cookie == "ON" && ec.util.isObj(custAge) == true){
+			var ageS = OrderInfo.getCheckAge.data.ageCust;//CommonUtils.getCookieFromJava("ageS");
+			var nowCard = custAge;//CommonUtils.getCookieFromJava("cookCard");
+			//对于当前客户年龄的校验
+			var custInfos = (OrderInfo.getCheckAge.data.custInfos)[0].identityCd;
+			if(orderAttrName == "" || orderAttrName == null || orderAttrName == undefined){
+				//判断外国人永久居留证
+				if(custInfos == "50"){
+					if(nowCard - ageS < 0){
+						$.alert("提示","不满'"+ageS+"'岁必须填写经办人！");
+						return false;
 					}
-						
 				}else{
-					var nowYear = (new Date().getFullYear()).toString();
-					var twoNumber = orderAttrIdCard.substring(7,9);
-					if(nowYear.substring(2,4) < twoNumber){
-						if(new Date().getYear() - orderAttrIdCard.substring(7,9) < ageE){
-							$.alert("提示","经办人必须'"+ageE+"'岁以上！");
-							return false;
-						}
-					}else{
-						if(nowYear.substring(2,4) - orderAttrIdCard.substring(7,9) < ageE){
-							$.alert("提示","经办人必须'"+ageE+"'岁以上！");
+					if(custInfos == "1" || custInfos == "12" || custInfos == "41" || custInfos == "51" || custInfos == "52"){
+						if(nowCard - ageS < 0){
+							$.alert("提示","不满'"+ageS+"'岁必须填写经办人！");
 							return false;
 						}
 					}
 				}
 			}
 		}
-		return true; 
-	};
+			
+		//获取下拉框的值
+		var selectValue = $("#orderIdentidiesTypeCd").val();
+		if(selectValue != "1" && selectValue != "12" && selectValue != "41" && selectValue != "50" && selectValue != "51" && selectValue != "52"){
+			return true;
+		}
+		var cookieSP = query.common.queryPropertiesValue("CHECK_SOLDIER_POLICE");
+		if(cookieSP == "ON"){
+			//军人身份证件、武装警察身份证件不能作为实名登记有效证件，不允许新装号码
+			if(selectValue == "2" || selectValue == "14"){
+				$.alert("提示", "军人身份证件、武装警察身份证件不能作为实名登记有效证件，不允许办理业务！");
+				return false;
+			}
+		}
+		if(cookieE == true){
+			var ageE = OrderInfo.getCheckAge.data.ageHandle;
+			//对于经办人的校验
+			if(orderAttrName != "" && orderAttrName != null && orderAttrName != undefined){
+				if(selectValue != "50"){
+					if(cookieSP == "ON" && (selectValue == "2" || selectValue == "14")){
+						//军人身份证件、武装警察身份证件不能作为实名登记有效证件，不允许新装号码
+						if(selectValue == "2" || selectValue == "14"){
+							$.alert("提示", "军人身份证件、武装警察身份证件不能作为实名登记有效证件，不允许办理业务！");
+							return false;
+						}
+					}
+					else if(selectValue != "1" && selectValue != "51" && selectValue != "52"){
+						var isNeedHander = _getAgeByHandle(orderAttrIdCard) - ageE < 0;//new Date().getFullYear() - orderAttrIdCard.toString().substring(6,10) < ageE;
+						if( isNeedHander == true && selectValue != "50" && selectValue != "4" && selectValue != "3"){
+							$.alert("提示","经办人必须'"+ageE+"'岁以上！");
+							return false;
+						}
+					}else{
+						var newMan = OrderInfo.handleCustCertReadInfos;
+						if(!ec.util.isObj(newMan.resultContent.certNumber)){
+							return;
+						}
+						var cardNumber = newMan.resultContent.certNumber;
+						var isNeedHander = _getAgeByHandle(cardNumber) - ageE < 0;
+						if(isNeedHander == true && selectValue != "50" && selectValue != "4" && selectValue != "3"){
+							$.alert("提示","经办人必须'"+ageE+"'岁以上！");
+							return false;
+						}
+					}
+						
+				}else{
+					//闭包的引用，嵌套一层函数
+					function getAgeByFor(inCard){
+						var nowYear = (new Date().getFullYear()).toString();
+						var twoNumber = inCard.substring(7,9);
+						if(nowYear.substring(2,4) < twoNumber){
+							var isNeedHander = _getAgeByHandle(inCard) - ageE < 0;//new Date().getYear() - orderAttrIdCard.substring(7,9) < ageE;
+							if(isNeedHander == true){
+								$.alert("提示","经办人必须'"+ageE+"'岁以上！");
+								return false;
+							}
+						}else{
+							var isNeedHander = _getAgeByHandle(inCard) - ageE < 0;
+							if(isNeedHander == true){
+								$.alert("提示","经办人必须'"+ageE+"'岁以上！");
+								return false;
+							}
+						}
+					}
+					var cookieFOR = query.common.queryPropertiesValue("FOREGIN_LIVE");
+					var resultState;
+					if(cookieFOR == "ON"){
+						var newMan = OrderInfo.handleCustCertReadInfos;
+						var cardNumber = newMan.resultContent.certNumber;
+						resultState = getAgeByFor(cardNumber);
+					}else{
+						resultState = getAgeByFor(orderAttrIdCard);
+					}
+					return resultState;
+				}
+			}
+		}
+	}
+	
+	/**
+	 * js端年龄的计算
+	 */
+	var _getAgeByHandle = function(birthDate){
+		var firstDate = null;
+		var secondDate = null;
+		if(birthDate.length == 18){
+			firstDate = new Date(birthDate.substring(6,10), birthDate.substring(10,12), birthDate.substring(12,14));
+		}else{
+			var year = birthDate.substring(7,9);
+			var nowYear = (new Date().getFullYear()).toString();
+			var fYear = null;
+			if(nowYear.substring(2,4) > year){
+				fYear = "20" + year;
+			}else{
+				fYear = "19" + year;
+			}
+			firstDate = new Date(fYear, birthDate.substring(9,11), birthDate.substring(11,13));
+		}
+		secondDate = new Date();
+		var years = 0;
+		while(firstDate.setFullYear(firstDate.getFullYear() + 1) <= secondDate) {
+			years++;
+		}
+		return years;
+	}
 	
 	//判断是否包含有3G的机型
 	var _isThreeTerminal=function(termTypeFlags,isTerminal){
@@ -3821,6 +3930,8 @@ SoOrder = (function() {
 		checkOrder				: _checkOrder,
 		orderPrepare			: _orderPrepare,
 		getCheckOperatSpec		: _getCheckOperatSpec,
-		createProd				: _createProd
+		createProd				: _createProd,
+		checkCustAndOperator   	:_checkCustAndOperator,
+		getAgeByHandle          :_getAgeByHandle
 	};
 })();

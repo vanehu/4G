@@ -499,6 +499,9 @@ public class MDA {
 	
 	/**短信验证码是否发送标识(从sp_sys_param表迁移到MDA，故沿用表中的命名)*/
 	public static final String msgCodeFlag = new String("");
+
+	/**短信内容标识*/
+	public static final Map<String,String> MESSAGE_TAG = new HashMap<String,String>();
 	
 	/**翼支付收费调用支付平台分省开关*/
 	public static final Map<String,String> NEWPAYFLAG = new HashMap<String,String>();
@@ -697,6 +700,9 @@ public class MDA {
 	
 	/**人证比对图片压缩参数*/
     public static final Map<String, List<String>> FACE_VERIFY_COMPRESS_CONFIG = new HashMap<String, List<String>>();
+    
+    /**是否进行实名认证的开关*/
+    public static final String REAL_NAME_AUTHENTICATION_TOGGLE = new String("");
     
     /**
 	 * 浏览器指纹记录地址
