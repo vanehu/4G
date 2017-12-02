@@ -11,6 +11,7 @@ import com.al.ecs.exception.*;
 import com.al.ecs.spring.annotation.log.LogOperatorAnn;
 import com.al.ecs.spring.annotation.session.AuthorityValid;
 import com.al.ecs.spring.controller.BaseController;
+import com.al.lte.portal.bmo.crm.CertBmo;
 import com.al.lte.portal.bmo.crm.CustBmo;
 import com.al.lte.portal.bmo.crm.MktResBmo;
 import com.al.lte.portal.bmo.crm.OrderBmo;
@@ -54,6 +55,9 @@ public class CustController extends BaseController {
 	@Autowired
 	@Qualifier("com.al.lte.portal.bmo.crm.MktResBmo")
 	private MktResBmo mktResBmo;
+	@Autowired
+    @Qualifier("com.al.lte.portal.bmo.crm.CertBmo")
+    private CertBmo certBmo;
 
 	@RequestMapping(value = "/queryCust", method = { RequestMethod.POST })
 	public String queryCust(@RequestBody Map<String, Object> paramMap, Model model, @LogOperatorAnn String flowNum,
@@ -214,9 +218,12 @@ public class CustController extends BaseController {
 		}
 		List custInfos = new ArrayList();
 		try {
+			Map<String, Object> checkResult = certBmo.isReadCertBypassed(paramMap, request, "客户定位");
+			if(MapUtils.getIntValue(checkResult, SysConstant.RESULT_CODE) != ResultCode.SUCCESS){
+				return super.failedStr(model, ErrorCode.PORTAL_INPARAM_ERROR, MapUtils.getString(checkResult, SysConstant.RESULT_MSG, "客户定位异常"), paramMap);
+            }
 			
-			resultMap = custBmo.queryCustInfo(paramMap,
-					flowNum, sessionStaff);
+			resultMap = custBmo.queryCustInfo(paramMap, flowNum, sessionStaff);
 			List<String> custInfosList = (List<String>) resultMap.get("custInfos");
 			String custAge = "";
 			if (custInfosList.size() != 0) {
@@ -1695,18 +1702,21 @@ public class CustController extends BaseController {
 	@RequestMapping(value = "/queryoffercust", method = RequestMethod.POST)
 	@ResponseBody
 	public JsonResponse queryoffercust(@RequestBody Map<String, Object> paramMap, @LogOperatorAnn String flowNum,
-			HttpServletResponse response) {
+			HttpServletResponse response, HttpServletRequest request) {
 		Map<String, Object> resultMap = null;
 		JsonResponse jsonResponse = null;
-		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
-				SysConstant.SESSION_KEY_LOGIN_STAFF);
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(request, SysConstant.SESSION_KEY_LOGIN_STAFF);
 
-		String areaId = (String) paramMap.get("areaId");
-		if (("").equals(areaId) || areaId == null) {
+		paramMap.put("staffId", sessionStaff.getStaffId());
+		if(StringUtils.isBlank(MapUtils.getString(paramMap, "areaId"))) {
 			paramMap.put("areaId", sessionStaff.getCurrentAreaId());
 		}
-		paramMap.put("staffId", sessionStaff.getStaffId());
+
 		try {
+			Map<String, Object> checkResult = certBmo.isReadCertBypassed(paramMap, request, "经办人");
+			if(MapUtils.getIntValue(checkResult, SysConstant.RESULT_CODE) != ResultCode.SUCCESS){
+				return super.failed(ErrorCode.PORTAL_INPARAM_ERROR, MapUtils.getString(checkResult, SysConstant.RESULT_MSG, "经办人查询异常"), paramMap);
+	        }
 			resultMap = custBmo.queryCustInfo(paramMap, flowNum, sessionStaff);
 			if (MapUtils.isNotEmpty(resultMap)) {
 				List<Map<String, Object>> custInfos = (List<Map<String, Object>>) resultMap.get("custInfos");
@@ -1718,12 +1728,10 @@ public class CustController extends BaseController {
 						}
 					}
 					// 针对套餐变更、主副卡成员变更加装老号码作为副卡，判断该号码客户的证件类型并缓存session
-					if (custInfos.size() > 0
-							&& "offerOrMemberChange".equals(MapUtils.getString(paramMap, "queryFlag", ""))) {
+					if (custInfos.size() > 0 && "offerOrMemberChange".equals(MapUtils.getString(paramMap, "queryFlag", ""))) {
 						Map<String, Object> custInfo = custInfos.get(0);// js端也是取第一个，这里也随之取第一个
 						if (!"1".equals(MapUtils.getString(custInfo, "identityCd", ""))) {
-							ServletUtils.setSessionAttribute(super.getRequest(), SysConstant.IS_ACTION_FLAG_LIMITED,
-									true);
+							ServletUtils.setSessionAttribute(request, SysConstant.IS_ACTION_FLAG_LIMITED, true);
 						}
 					}
 					jsonResponse = super.successed(resultMap, ResultConstant.SUCCESS.getCode());
@@ -1740,6 +1748,7 @@ public class CustController extends BaseController {
 		} catch (Exception e) {
 			return super.failed(ErrorCode.QUERY_CUST, e, resultMap);
 		}
+		
 		return jsonResponse;
 	}
 

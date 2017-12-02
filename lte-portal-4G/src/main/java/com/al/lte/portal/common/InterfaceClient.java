@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Random;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -2196,9 +2197,17 @@ public class InterfaceClient {
 				logObj.put("REMOTE_PORT",	"request is null");
 			}
 			//记录基本信息
+			String logId = serviceLog.getLogSeqId();
+			if(StringUtils.isBlank(logId)){
+				logId = UUID.randomUUID().toString().replaceAll("-", "");
+			}
+			String remark = ServletUtils.getRequestHost(request)
+					+ "；\n工号是否具有跳过经办人权限：" 
+					+ (serviceLog.getSessionStaff().isHasOperatSpecCd(SysConstant.TGJBRBTQX) ? "是 " : "否 ") + serviceLog.getRemark();
+			logObj.put("REMARK", 		remark);
+			logObj.put("LOG_SEQ_ID", 	logId);
 			logObj.put("IP", 			serviceLog.getIp());//这IP什么鬼
 			logObj.put("OL_ID", 		serviceLog.getOlId());
-			logObj.put("REMARK", 		serviceLog.getRemark());
 			logObj.put("SO_NBR", 		serviceLog.getSoNbr());
 			logObj.put("AREA_ID", 		serviceLog.getAreaId());
 			logObj.put("INTF_URL", 		serviceLog.getIntfUrl());
@@ -2209,7 +2218,6 @@ public class InterfaceClient {
 			logObj.put("ROLE_CODE", 	serviceLog.getDataBus().getRoleCode());
 			logObj.put("START_TIME", 	serviceLog.getBeginTime());
 			logObj.put("ERROR_CODE", 	serviceLog.getErrorCode());
-			logObj.put("LOG_SEQ_ID", 	serviceLog.getLogSeqId());
 			logObj.put("RESULT_CODE", 	serviceLog.getDataBus().getResultCode());
 			logObj.put("PORTAL_CODE", 	serviceLog.getDataBus().getPortalCode());
 			logObj.put("INTF_METHOD",	serviceLog.getServiceCode());

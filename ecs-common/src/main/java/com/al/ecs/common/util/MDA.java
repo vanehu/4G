@@ -708,4 +708,7 @@ public class MDA {
 	 * 浏览器指纹记录地址
 	 */
 	public static final String FINGER_PRINT_ADDRESS = new String("");
+	
+	/**必须读卡的证件：人民武装警察居民身份证52、现役军人居民身份证51、居民身份证1*/
+    public static final List<String> CERTIFICATES_MUST_READ_CERT = new ArrayList<String>();
 }

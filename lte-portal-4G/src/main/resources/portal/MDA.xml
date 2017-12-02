@@ -3666,5 +3666,9 @@
 		</const>
 		<const type="String" name="REAL_NAME_AUTHENTICATION_TOGGLE" value="OFF" description="是否进行实名认证的开关ON OFF"></const>
 		<const type="String" name="FINGER_PRINT_ADDRESS" value="http://10.128.21.66:8020/fingerprint/browser" description="浏览器指纹记录地址"></const>
+		
+		<const type="List" name="CERTIFICATES_MUST_READ_CERT" description="必须读卡的证件：人民武装警察居民身份证52、现役军人居民身份证51、居民身份证1">
+		["1", "51", "52"]
+		</const>
 	</mda>
 </mdas>
