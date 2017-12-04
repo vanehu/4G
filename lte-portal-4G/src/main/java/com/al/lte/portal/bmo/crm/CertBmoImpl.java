@@ -235,15 +235,22 @@ public class CertBmoImpl implements CertBmo {
 		//1.证件类型是否必须读卡
 		if(MDA.CERTIFICATES_MUST_READ_CERT.contains(identityCd)){
 			//2.是否已经读卡
-			boolean isReadCert = (Boolean) ServletUtils.getSessionAttribute(request, identityNum);
-			isReadCertBypassed = isReadCert ? false : true;
+			Object isReadCert = ServletUtils.getSessionAttribute(request, identityNum);
+			isReadCertBypassed = (Boolean) (isReadCert == null ? true : isReadCert);
 		}
 		
 		//3.读卡已被绕过
 		if(isReadCertBypassed){
-			log.error("读卡已被绕过，操作={}，查询入参={}", queryType, queryCustParam);
+			this.strBuffer.setLength(0);
+			this.strBuffer.append("您选择的证件类型必须读卡，请勿非法操作。");
+			this.strBuffer.append("（工号： ");
+			this.strBuffer.append(sessionStaff.getStaffCode());
+			this.strBuffer.append("，操作： ");
+			this.strBuffer.append(queryType);
+			this.strBuffer.append("） 。");
+			log.error("读卡绕过已被拦截，操作={}，工号={}，入参={}", queryType, sessionStaff.getStaffCode(), queryCustParam);
 			returnMap.put(SysConstant.RESULT_CODE, ResultCode.FAIL);
-			returnMap.put(SysConstant.RESULT_MSG, "您选择的证件类型必须读卡，请勿非法操作 " + queryType);
+			returnMap.put(SysConstant.RESULT_MSG,  this.strBuffer.toString());
 			//4.记录日志
 			Cert.saveCertLog(queryCustParam, returnMap, null, sessionStaff);
 		}
