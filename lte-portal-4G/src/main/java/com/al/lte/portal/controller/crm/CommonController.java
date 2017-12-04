@@ -283,6 +283,7 @@ public class CommonController extends BaseController {
             request.getSession().setAttribute(Const.SESSION_SIGNATURE, signature);
         }
 	    MapUtils.safeAddToMap(resultMap, "signature", signature);
+	    ServletUtils.setSessionAttribute(request, new String(certNumber), true);
 	    return super.successed(resultMap);
 	}
 
@@ -516,6 +517,7 @@ public class CommonController extends BaseController {
 						signature);
 			}
 			MapUtils.safeAddToMap(certificateMap, "signature", signature);
+			ServletUtils.setSessionAttribute(request, new String(certNumber), true);
 			return super.successed(certificateMap);
 		} catch (BusinessException be) {
 			this.log.error("调用主数据接口失败", be);
