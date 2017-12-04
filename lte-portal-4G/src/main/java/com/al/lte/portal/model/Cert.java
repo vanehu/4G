@@ -433,18 +433,17 @@ public class Cert {
 	}
 	
 	public static void saveCertLog(Map<String, Object> param, Map<String, Object> returnMap, String remark, SessionStaff sessionStaff){
+		ServiceLog serviceLog = ServiceLog.getNewInstance();
+		String paramString = JsonUtil.toString(param);
+		String rawRetn = JsonUtil.toString(returnMap);
+		Date date = new Date();
+
 		DataBus db = new DataBus();
 		db.setResultCode(ResultCode.R_SUCC);
 		db.setParammap(param);
 		db.setReturnlmap(returnMap);
 		
-		ServiceLog serviceLog = ServiceLog.getNewInstance();
 		serviceLog.initDataBus(db, null);
-				
-		String paramString = JsonUtil.toString(param);
-		String rawRetn = JsonUtil.toString(returnMap);
-		Date date = new Date();
-
 		serviceLog.setDataBus(db);
 		serviceLog.setParamStr(paramString);
 		serviceLog.setReturnStr(rawRetn);

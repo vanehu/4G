@@ -3,7 +3,6 @@ package com.al.lte.portal.common;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
-import java.net.InetAddress;
 import java.net.SocketTimeoutException;
 import java.net.URLEncoder;
 import java.util.Calendar;
@@ -138,6 +137,8 @@ public class InterfaceClient {
 	public static final String CDATA_BEGIN = "<![CDATA[";
 	public static final String CDATA_END = "]]>";
 	public static final String CDATA_END_REPLACEMENT = "]]&gt;";
+	
+	private static final StringBuilder stringBuilder = new StringBuilder();
 	
 	static {
 		getPropertiesUtils();
@@ -734,7 +735,11 @@ public class InterfaceClient {
 		long startTime = System.currentTimeMillis();
 		
 		try {
-			String log_flag = MySimulateData.getInstance().getParam(dbKeyWord,prefix+"-"+serviceCode);
+			stringBuilder.setLength(0);
+			stringBuilder.append(prefix);
+			stringBuilder.append("-");
+			stringBuilder.append(serviceCode);
+			String log_flag = MySimulateData.getInstance().getParam(dbKeyWord,stringBuilder.toString());
 			if(!"1".equals(log_flag)){
 				if("2".equals(log_flag)){
 					if(ResultCode.R_SUCC.equals(db.getResultCode()) || ResultCode.R_SUCCESS.equals(db.getResultCode())|| ResultCode.RES_SUCCESS.equals(db.getResultCode())){
@@ -887,15 +892,16 @@ public class InterfaceClient {
 				logClobObj.put("IN_PARAM", paramString);						
 				logClobObj.put("OUT_PARAM", rawRetn);
 				boolean isDefaultLog = true;
-				if (propertiesUtils.getMessage(SysConstant.PORTAL_SERVICE_LOG_P).contains(serviceCode)) {
+				
+				if (MDA.PORTAL_SERVICE_LOG_P.contains(serviceCode)) {
 					isDefaultLog = false;
 					logSender.sendLog2DB(SysConstant.PORTAL_SERVICE_LOG_P, logObj, logClobObj);
 				}
-				if (propertiesUtils.getMessage(SysConstant.PORTAL_SERVICE_LOG_Y).contains(serviceCode)) {
+				if (MDA.PORTAL_SERVICE_LOG_Y.contains(serviceCode)) {
 					isDefaultLog = false;
 					logSender.sendLog2DB(SysConstant.PORTAL_SERVICE_LOG_Y, logObj, logClobObj);
 				}
-				if (propertiesUtils.getMessage(SysConstant.PORTAL_SERVICE_LOG_W).contains(serviceCode)) {
+				if (MDA.PORTAL_SERVICE_LOG_W.contains(serviceCode)) {
 					isDefaultLog = false;
 					logSender.sendLog2DB(SysConstant.PORTAL_SERVICE_LOG_W, logObj, logClobObj);
 				}
@@ -2152,9 +2158,11 @@ public class InterfaceClient {
 			serviceLog.setRequest(((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest());
 		}
 		
-		Map<String, Object> logObj = new HashMap<String, Object>();
-		Map<String, Object> logClobObj = new HashMap<String, Object>();
-		String logLevel = propertiesUtils.getMessage(serviceLog.getPrefix() + " - " + serviceLog.getServiceCode());
+		stringBuilder.setLength(0);
+		stringBuilder.append(serviceLog.getPrefix());
+		stringBuilder.append("-");
+		stringBuilder.append(serviceLog.getServiceCode());
+		String logLevel = propertiesUtils.getMessage(stringBuilder.toString());
 		
 		if(!"1".equals(logLevel)){
 			if("2".equals(logLevel)){
@@ -2178,6 +2186,8 @@ public class InterfaceClient {
 				serviceLog.setErrorCode("2");
 			}
 			//记录请求
+			Map<String, Object> logObj = new HashMap<String, Object>();
+			Map<String, Object> logClobObj = new HashMap<String, Object>();
 			if(serviceLog.getRequest() != null){
 				try{
 					logObj.put("LOCAL_ADDR", 	serviceLog.getLocalAddr());

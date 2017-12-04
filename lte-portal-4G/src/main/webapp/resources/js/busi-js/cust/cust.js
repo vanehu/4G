@@ -391,22 +391,19 @@ order.cust = (function(){
 		}
 	};
 	//判断经办人证件类型是否需要显示读卡按钮
-    var _ifHandleReadButton = function(identidiesTypeCd){
-    	//读取经办人填写时需要显示读卡按钮的配置
-		var identidiesTypeCdAll = query.common.queryPropertiesValue("HANDLE_READ_BUTTON");
-		var identidiesTypeCds = identidiesTypeCdAll.split(",");
-		var ifReadButton = false;
-		//判断页面选择经办人证件类型是否存在于配置中
-		for(var i = 0; i < identidiesTypeCds.length; i++){
-			if(identidiesTypeCd == identidiesTypeCds[i]){
-				ifReadButton = true;
-				break;
-			}else{
-				ifReadButton = false;
-			}
-		}
-		return ifReadButton;
-    }
+	var identidiesTypeCdListMustReadCert = [];
+	var _ifHandleReadButton = function(identidiesTypeCd){
+	    var ifReadButton = false;
+	    //读取经办人填写时需要显示读卡按钮的配置
+	    if(!ec.util.isArray(identidiesTypeCdListMustReadCert)){
+	        identidiesTypeCdListMustReadCert = query.common.queryPropertiesObject("CERTIFICATES_MUST_READ_CERT");
+	    }
+	    //判断页面选择经办人证件类型是否存在于配置中
+	    if($.inArray(identidiesTypeCd, identidiesTypeCdListMustReadCert) >= 0){
+	        ifReadButton = true;
+	    }
+	    return ifReadButton;
+	}
 	//创建客户证件类型选择事件
 	var _identidiesTypeCdChoose = function(scope,id) {
 		var cookieSP = query.common.queryPropertiesValue("CHECK_SOLDIER_POLICE");

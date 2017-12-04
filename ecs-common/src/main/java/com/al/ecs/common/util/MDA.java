@@ -61,20 +61,6 @@ public class MDA {
 	public static final String FOREGIN_LIVE = new String("");
 	
 	/**
-	 * 2017-10-26 人民武装警察居民身份证（52）、现役军人居民身份证（51）、居民身份证（1） 经办人信息填写显示读卡按钮配置
-	 */
-	public static final String HANDLE_READ_BUTTON = new String("");
-
-//	/**
-//	 * 问卷调查 题目查询
-//	 */
-//	public static final String CSB_HTTP_QUESTION = new String("");
-//
-//	/**
-//	 * 问卷调查 答题结果回写
-//	 */
-//	public static final String CSB_HTTP_QUESTION_RESET = new String("");
-	/**
 	 * 宽带甩单过csb的http地址
 	 */
 	public static final String CSB_HTTP_MIDDLE_URL=new String("");
@@ -704,9 +690,7 @@ public class MDA {
     /**是否进行实名认证的开关*/
     public static final String REAL_NAME_AUTHENTICATION_TOGGLE = new String("");
     
-    /**
-	 * 浏览器指纹记录地址
-	 */
+    /**浏览器指纹记录地址*/
 	public static final String FINGER_PRINT_ADDRESS = new String("");
 	
 	/**必须读卡的证件：人民武装警察居民身份证52、现役军人居民身份证51、居民身份证1*/
