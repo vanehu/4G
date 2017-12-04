@@ -428,12 +428,13 @@ public class CustController extends BaseController {
 			}
 			return "/cust/cust-list";
 		} catch (BusinessException be) {
+			log.error(be);
 			return super.failedStr(model, be);
 		} catch (InterfaceException ie) {
-
+			log.error(ie);
 			return super.failedStr(model, ie, paramMap, ErrorCode.QUERY_CUST);
 		} catch (Exception e) {
-
+			log.error(e);
 			return super.failedStr(model, ErrorCode.QUERY_CUST, e, paramMap);
 		}
 	}

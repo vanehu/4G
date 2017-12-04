@@ -138,7 +138,7 @@ public class InterfaceClient {
 	public static final String CDATA_END = "]]>";
 	public static final String CDATA_END_REPLACEMENT = "]]&gt;";
 	
-	private static final StringBuilder stringBuilder = new StringBuilder();
+	private static final StringBuffer stringBuffer = new StringBuffer();
 	
 	static {
 		getPropertiesUtils();
@@ -735,11 +735,11 @@ public class InterfaceClient {
 		long startTime = System.currentTimeMillis();
 		
 		try {
-			stringBuilder.setLength(0);
-			stringBuilder.append(prefix);
-			stringBuilder.append("-");
-			stringBuilder.append(serviceCode);
-			String log_flag = MySimulateData.getInstance().getParam(dbKeyWord,stringBuilder.toString());
+			stringBuffer.setLength(0);
+			stringBuffer.append(prefix);
+			stringBuffer.append("-");
+			stringBuffer.append(serviceCode);
+			String log_flag = MySimulateData.getInstance().getParam(dbKeyWord,stringBuffer.toString());
 			if(!"1".equals(log_flag)){
 				if("2".equals(log_flag)){
 					if(ResultCode.R_SUCC.equals(db.getResultCode()) || ResultCode.R_SUCCESS.equals(db.getResultCode())|| ResultCode.RES_SUCCESS.equals(db.getResultCode())){
@@ -2158,11 +2158,11 @@ public class InterfaceClient {
 			serviceLog.setRequest(((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest());
 		}
 		
-		stringBuilder.setLength(0);
-		stringBuilder.append(serviceLog.getPrefix());
-		stringBuilder.append("-");
-		stringBuilder.append(serviceLog.getServiceCode());
-		String logLevel = propertiesUtils.getMessage(stringBuilder.toString());
+		stringBuffer.setLength(0);
+		stringBuffer.append(serviceLog.getPrefix());
+		stringBuffer.append("-");
+		stringBuffer.append(serviceLog.getServiceCode());
+		String logLevel = propertiesUtils.getMessage(stringBuffer.toString());
 		
 		if(!"1".equals(logLevel)){
 			if("2".equals(logLevel)){
