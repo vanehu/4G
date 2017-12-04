@@ -177,6 +177,19 @@ public class AppCommonOutInterfinceController extends BaseController{
 		Map<String, Object> rMap = new HashMap<String, Object>();
 		Map<String, Object> reqMap = new HashMap<String, Object>();
 		String imageBest = (String) param.get("image_best");
+		Map<String, Object> verify_cfg = MDA.PROV_AUTH_SWITH.get((sessionStaff.getAreaId() + "").substring(0, 3));
+		String liveNess = String.valueOf(verify_cfg.get("LIVE_NESS"));//防翻拍开关
+		String rotate = String.valueOf(verify_cfg.get("ROTATE"));//照片旋转开关
+		if("ON".equals(liveNess)){
+			liveNess = "0";
+		}else{
+			liveNess = "1";
+		}
+		if("ON".equals(rotate)){
+			rotate = "0";
+		}else{
+			rotate = "1";
+		}
 		System.out.println("++++++人证比对壳子入参"+JsonUtil.toString(param));
 		param.remove("image_best");
 		param.put("channel_type", sessionStaff.getCurrentChannelType());
@@ -196,6 +209,8 @@ public class AppCommonOutInterfinceController extends BaseController{
 				System.out.println("++++++params对应的加密密钥"+MDA.FACE_VERIFY_PARAMS_SECRET);
 				SvcCont.put("params", AESUtil.encryptToString(JsonUtil.toString(param),MDA.FACE_VERIFY_PARAMS_SECRET));
 				SvcCont.put("image_best", imageBest.replaceAll("\n|\r", ""));
+				SvcCont.put("liveNess", liveNess);
+				SvcCont.put("rotate", rotate);
 				Map<String, Object> TcpCont = new HashMap<String, Object>();
 				TcpCont.put("Method", "auth.face.faceVerify");
 				TcpCont.put("Sign", "123");
@@ -208,7 +223,6 @@ public class AppCommonOutInterfinceController extends BaseController{
 				rMap = custBmo.verify(reqMap, optFlowNum, sessionStaff);
 	 			log.debug("return={}", JsonUtil.toString(rMap));
 	 			if (rMap != null&& ResultCode.R_SUCCESS.equals(rMap.get("code").toString())) {
-	 				Map<String, Object> verify_cfg = MDA.PROV_AUTH_SWITH.get((sessionStaff.getAreaId() + "").substring(0, 3));
 	 				Float FZ = Float.parseFloat((String) verify_cfg.get("FZ"));//相似度最低要求（阀值）
 	 				Float XSD = Float.parseFloat(String.valueOf(rMap.get("confidence")));//相似度
 					if(FZ>XSD){

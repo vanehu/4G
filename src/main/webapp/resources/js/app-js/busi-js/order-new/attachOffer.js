@@ -2200,6 +2200,70 @@ AttachOffer = (function() {
 		if(flag==1){
 			newSpec.counts=offer.counts;
 		}
+		nowTimes = "";
+		 maxTimes = "";
+		 if(offer.offerLimitTimes!=undefined && offer.offerLimitTimes!="" && offer.offerLimitTimes.ifLimitTimes == "Y"){
+			 var intime = true;
+			 if(offer.timeType!=undefined && offer.timeType == "1100"){
+				 var now_time = new Date(Date.parse(home.sysTime));
+				 var b_time = new Date(Date.parse(offer.sysTime));
+				 var e_time = new Date(Date.parse(offer.sysTime));
+				 if(b_time>=now_time || now_time>=e_time){
+					 intime = false;
+				 }
+			 }
+			 if(intime){
+				 if(offer.offerLimitTimes.orderTimes!=undefined){
+					 maxTimes = String(offer.offerLimitTimes.orderTimes);
+					 newSpec.orderCount = maxTimes;
+				 }
+				 var acc_nbr = OrderInfo.getAccessNumber(prodId);
+				 var param ={
+						 "accNbr":acc_nbr,
+						 "offerList":[{"offerSpecId":offerSpecId+""}],
+						 "curPage":"1",
+						 "prodBigClass":"12",
+						 "pageSize":"5"
+				 };
+				 $.callServiceAsJson(contextPath + "/app/offer/queryProdOfferOrderTimes", param, {
+		                "before": function () {
+		                    $.ecOverlay("<strong>正在 查询中,请稍等...</strong>");
+		                }, "done": function (response) {
+		                	$.unecOverlay();
+		                    if (response.code == 0) {
+		                    	if(response.data.result!=undefined && response.data.result.prodInfos!=undefined){
+		                    		for(var i=0;i<response.data.result.prodInfos.length;i++){
+		                    			if(response.data.result.prodInfos[i].accNbr == acc_nbr && response.data.result.prodInfos[i].offerListInfo.length>0){
+		                    				nowTimes = response.data.result.prodInfos[i].offerListInfo[0].orderTimes;
+		                    				newSpec.counts = nowTimes;
+		                    				offer.orderCount = nowTimes;
+		                    			}
+		                    		}
+		                    	}
+//		                    	if(nowTimes!="" && maxTimes!="" && nowTimes>=maxTimes){
+//		                    		$.alert("提示","该销售品可订购次数："+maxTimes+",已订购次数："+nowTimes+",无法继续订购！");
+//		                    		return;
+//		                    	}
+		                    	confirmParam(prodId,offerSpecId,flag,offer,newSpec);
+		                    }else {
+		                        $.alertM(response.data);
+		                        return;
+		                    }
+		                },fail:function(response){
+		    				$.unecOverlay();
+		    				$.alert("提示","查询失败，请稍后再试！");
+		    				return;
+		    			}
+		            });
+			 }else{
+				 confirmParam(prodId,offerSpecId,flag,offer,newSpec);
+			 }
+		 }else{
+			 confirmParam(prodId,offerSpecId,flag,offer,newSpec);
+		 }
+	};
+	
+	var confirmParam = function(prodId,offerSpecId,flag,offer,newSpec){
 		var content = '<form id="paramForm">' ;
 		if(ec.util.isObj(newSpec.labelId)){
 			content += "重复订购次数" + ' : <input id="text_'+prodId+'_'+offerSpecId  
