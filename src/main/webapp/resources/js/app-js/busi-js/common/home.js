@@ -11,6 +11,7 @@ home = (function($) {
 	var _READ_UIM="";
 	var _menuData = {};
 	var _nowDateStr="";
+	var _sysTime="";
 	var _getHome = function()
 	{
 		var method=urlParams.method;// /app/prodModify/custAuth
@@ -327,6 +328,7 @@ home = (function($) {
 		phoneType				:   _phoneType,
 		READ_UIM				:	_READ_UIM,
 		sp_flag					:	_sp_flag,
-		nowDateStr              :   _nowDateStr
+		nowDateStr              :   _nowDateStr,
+		sysTime					:	_sysTime
 	};
 })(jQuery);

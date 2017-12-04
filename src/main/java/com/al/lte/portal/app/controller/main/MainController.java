@@ -248,7 +248,9 @@ public class MainController extends BaseController {
 		String app_version=(String) ServletUtils.getSessionAttribute(request,SysConstant.SESSION_KEY_APP_VERSION);
 		model.addAttribute("app_version",app_version);//客户端版本号
 		String nowDateStr=DateUtil.getFormatTimeString(new Date(), "yyyy/MM/dd");//获取系统当前时间
+		String sysTime = DateUtil.getFormatTimeString(new Date(), DateUtil.DATE_FORMATE_STRING_A);//获取系统当前时间
 		model.addAttribute("nowDateStr", nowDateStr);
+		model.addAttribute("sysTime", sysTime);
 		//移除已加载过js标志
 		session.removeAttribute("firstLoad");
 		//爱运维菜单需要给原生传秘钥
