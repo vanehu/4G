@@ -376,6 +376,7 @@ cert = (function() {
 				
 				//过滤partyId仍为空的节点
 				$.each(OrderInfo.certInfoKeys, function(index, certInfoKey){
+					delete certInfoKey["certNumber"];//去除非协议字段
 					if(!ec.util.isObj(certInfoKey.partyId)){
 						OrderInfo.certInfoKeys.splice(index, 1);
 					}

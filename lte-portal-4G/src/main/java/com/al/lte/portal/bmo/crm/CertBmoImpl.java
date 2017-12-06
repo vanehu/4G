@@ -231,12 +231,11 @@ public class CertBmoImpl implements CertBmo {
 
 		//1.证件类型是否必须读卡
 		if(MDA.CERTIFICATES_MUST_READ_CERT.contains(identityCd)){
-			boolean isReadCertBypassed = false;
 			String identityNum = MapUtils.getString(queryCustParam, "identityNum");
 
 			//2.是否已经读卡
 			Object isReadCert = ServletUtils.getSessionAttribute(request, identityNum);
-			isReadCertBypassed = !Boolean.parseBoolean(String.valueOf(isReadCert));
+			boolean isReadCertBypassed = !Boolean.parseBoolean(String.valueOf(isReadCert));
 			
 			//3.读卡已被绕过
 			if(isReadCertBypassed){

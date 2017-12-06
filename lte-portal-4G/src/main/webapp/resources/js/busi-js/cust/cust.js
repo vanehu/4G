@@ -3563,7 +3563,7 @@ order.cust = (function(){
 			"queryTypeValue"	:"",
 			"identidies_type"	:$("#orderIdentidiesTypeCd  option:selected").text()
 		};
-		$.callServiceAsJson(contextPath + "/cust/queryoffercust", param, {
+		$.callServiceAsJson(contextPath + "/cust/qryHandleCust", param, {
 			"before" : function() {
 				$.ecOverlay("<strong>正在查询经办人信息, 请稍等...</strong>");
 			},
