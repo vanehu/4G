@@ -314,10 +314,6 @@ order.cust = (function(){
 	};
 	//客户定位证件类型选择事件
 	var _custidentidiesTypeCdChoose = function(scope,id) {
-		var menuName = $("#menuName").attr("menuName");
-		if((menuName=="FD" || menuName=="WJHCJ" || menuName=="WSMFX")&& scope == "#p_cust_identityCd"){//#1756932 返档客户定位只能是接入号
-			$(scope).val("-1");
-		}
 		// 非接入号隐藏产品类别选择
 		$("#prodTypeCd").hide();
 		$("#"+id).val("");
@@ -373,6 +369,10 @@ order.cust = (function(){
 			_custLookforButton();
 		}
 
+        var menuName = $("#menuName").attr("menuName");
+        if((menuName=="FD" || menuName=="WJHCJ" || menuName=="WSMFX")&& scope == "#p_cust_identityCd"){//#1756932 返档客户定位只能是接入号
+            $("#p_cust_identityCd").val("-1");
+        }
 		//如果是身份证，则禁止输入，否则启用输入控件
 //		var isID = identidiesTypeCd==1;
 //		var isIdTypeOff = OrderInfo.staff.idType=="OFF";
