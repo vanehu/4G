@@ -871,6 +871,10 @@ common = (function($) {
 	}
 	//宽带甩单经办调用摄像头拍照
 	var _callPhotos2=function(method){
+		if(OrderInfo.jbr.identityPic == undefined || OrderInfo.jbr.identityPic.length<50){
+			$.alert("提示","请先读取经办人身份证信息。");
+			return;
+		}
 		var params = {};
 		if(order.broadband.haveCallPhote && order.broadband.resetId == false){
 			var url=contextPath+"/app/order/getTransactionID";

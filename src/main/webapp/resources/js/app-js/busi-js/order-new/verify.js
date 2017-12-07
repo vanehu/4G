@@ -25,7 +25,12 @@ verify = (function(){
 				$("#prodofferPrepare").hide();
 				$("#verifyPrepare").html(response.data).show();
 				$("#jbr_pic").attr("src","data:image/jpeg;base64,"+OrderInfo.jbr.identityPic);
-				
+				if($("#jbr_pic").attr("src").length<50){
+					$('#du_ka').modal('show');
+					if(home.phoneType == "iphone"){
+						 $("#duka_otg").hide();
+					 }
+				}
 			},
 			fail:function(){
 				$.unecOverlay();

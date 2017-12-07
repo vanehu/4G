@@ -2059,6 +2059,10 @@ var _saveHtml2Pdf=function(){
 	};
 	
    var _closeJbr=function(){
+	   if(OrderInfo.jbr.identityPic == undefined || OrderInfo.jbr.identityPic.length<50){
+			$.alert("提示","请先读取经办人身份证信息。");
+			return;
+		}
 	   if(!order.broadband.isSameOne){
 		   var validate=$("#jbrFormdata").Validform();
 			if(!validate.check()){
