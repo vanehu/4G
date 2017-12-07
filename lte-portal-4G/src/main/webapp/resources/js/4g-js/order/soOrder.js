@@ -718,27 +718,6 @@ SoOrder = (function() {
 			itemSpecId : CONST.BUSI_ORDER_ATTR.BUSITYPE_FLAG,
 			value : order.prepare.isPreInstall() ? 27 : OrderInfo.busitypeflag
 		});
-		var identityCd = OrderInfo.cust.identityCd;
-		if(ec.util.isObj(identityCd)){
-			data.custOrderAttrs.push({//证件类型
-	            itemSpecId : CONST.BUSI_ORDER_ATTR.IDENTIDIES_TYPE_CD,
-	            value : identityCd
-	        });
-	        data.custOrderAttrs.push({//证件号码
-	            itemSpecId : CONST.BUSI_ORDER_ATTR.IDENTIDIES_NUMBER,
-	            value : OrderInfo.boCustIdentities.identityNum
-	        });
-		}else{
-			data.custOrderAttrs.push({//证件类型
-	            itemSpecId : CONST.BUSI_ORDER_ATTR.IDENTIDIES_TYPE_CD,
-	            value : $("#identidiesTypeCd").val()
-	        });
-	        data.custOrderAttrs.push({//证件号码
-	            itemSpecId : CONST.BUSI_ORDER_ATTR.IDENTIDIES_NUMBER,
-	            value : OrderInfo.boCustIdentities.identityNum
-	        });
-		}
-		
 		OrderInfo.orderData.orderList.orderListInfo.custOrderAttrs = data.custOrderAttrs;
 		//填入订单
 		$.each(data.terminalList,function(){

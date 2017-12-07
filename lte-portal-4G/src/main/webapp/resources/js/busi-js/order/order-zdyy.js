@@ -256,7 +256,34 @@ order.zdyy = (function(){
 			itemSpecId : CONST.BUSI_ORDER_ATTR.DELIVERY_NBR,
 			value : $("#p_nbr").val()
 		};
-		var custOrderAttrs = []; 
+		
+		var identityCd = OrderInfo.cust.identityCd;
+		var oldIdentidiesTypeCd = {
+			itemSpecId : CONST.BUSI_ORDER_ATTR.IDENTIDIES_TYPE_CD,
+	        value : identityCd	
+		};
+		var oldIdentidiesNumber = {
+			itemSpecId : CONST.BUSI_ORDER_ATTR.IDENTIDIES_NUMBER,
+		    value : OrderInfo.cust.certNum,
+		    isEncrypt : "Y"	
+		};
+		var newIdentidiesTypeCd = {
+			itemSpecId : CONST.BUSI_ORDER_ATTR.IDENTIDIES_TYPE_CD,
+		    value : $("#identidiesTypeCd").val()	
+		};
+		var newIdentidiesNumber = {
+			itemSpecId : CONST.BUSI_ORDER_ATTR.IDENTIDIES_NUMBER,
+	        value : OrderInfo.boCustIdentities.identityNum	
+		};
+		var custOrderAttrs = [];
+		//老客户定位
+		if(ec.util.isObj(identityCd)){
+			custOrderAttrs.push(oldIdentidiesTypeCd);//证件类型
+			custOrderAttrs.push(oldIdentidiesNumber);//证件号码
+		}else{//新建客户
+			custOrderAttrs.push(newIdentidiesTypeCd);//证件类型
+			custOrderAttrs.push(newIdentidiesNumber);//证件号码
+		}
 		custOrderAttrs.push(deliveryMethod);
 		custOrderAttrs.push(deliveryAddress);
 		custOrderAttrs.push(deliveryTime);
