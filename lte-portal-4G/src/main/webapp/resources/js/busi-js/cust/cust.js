@@ -350,13 +350,19 @@ order.cust = (function(){
 			$("#"+id).attr("placeHolder","请输入证件号码");
 			$("#"+id).attr("data-validate","validate(required:请准确填写证件号码) on(keyup)");
 		}
+        var menuName = $("#menuName").attr("menuName");
+        if((menuName=="FD" || menuName=="WJHCJ" || menuName=="WSMFX")&& scope == "#p_cust_identityCd"){//#1756932 返档客户定位只能是接入号
+            $("#p_cust_identityCd").val("-1");
+            $("#"+id).attr("placeHolder","请输入接入号码");
+            $("#"+id).attr("data-validate","validate(required:请准确填写接入号码) on(keyup)");
+        }
 
 		// 反档处理
-		if(OrderInfo.actionFlag == 43 && id != "p_cust_identityNum_choose"){
-			var isID = identidiesTypeCd==1;
-			var isIdTypeOff = OrderInfo.staff.idType=="OFF";
-			$("#"+id).attr("disabled",isID&&(!isIdTypeOff));
-		}
+		if(OrderInfo.actionFlag == 43 && id != "p_cust_identityNum_choose") {
+            var isID = identidiesTypeCd == 1;
+            var isIdTypeOff = OrderInfo.staff.idType == "OFF";
+            $("#" + id).attr("disabled", isID && (!isIdTypeOff));
+        }
 
 		if(identidiesTypeCd==-1 || identidiesTypeCd=="cloudId"){
 			$("#isAppointNum").attr("checked",true);
@@ -368,11 +374,6 @@ order.cust = (function(){
 		} else {
 			_custLookforButton();
 		}
-
-        var menuName = $("#menuName").attr("menuName");
-        if((menuName=="FD" || menuName=="WJHCJ" || menuName=="WSMFX")&& scope == "#p_cust_identityCd"){//#1756932 返档客户定位只能是接入号
-            $("#p_cust_identityCd").val("-1");
-        }
 		//如果是身份证，则禁止输入，否则启用输入控件
 //		var isID = identidiesTypeCd==1;
 //		var isIdTypeOff = OrderInfo.staff.idType=="OFF";
