@@ -500,7 +500,7 @@ ec.util=(function(){
 	
 	//判断是否是空数组
 	var _isArray = function(obj){
-		if(!!obj && obj.length>0){
+		if(Object.prototype.toString.call(obj) === '[object Array]' && obj.length > 0){
 			return true;
 		}else{
 			return false;

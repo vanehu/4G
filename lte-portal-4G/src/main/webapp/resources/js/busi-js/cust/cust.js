@@ -314,10 +314,6 @@ order.cust = (function(){
 	};
 	//客户定位证件类型选择事件
 	var _custidentidiesTypeCdChoose = function(scope,id) {
-		var menuName = $("#menuName").attr("menuName");
-		if((menuName=="FD" || menuName=="WJHCJ" || menuName=="WSMFX")&& scope == "#p_cust_identityCd"){//#1756932 返档客户定位只能是接入号
-			$(scope).val("-1");
-		}
 		// 非接入号隐藏产品类别选择
 		$("#prodTypeCd").hide();
 		$("#"+id).val("");
@@ -373,6 +369,10 @@ order.cust = (function(){
 			_custLookforButton();
 		}
 
+        var menuName = $("#menuName").attr("menuName");
+        if((menuName=="FD" || menuName=="WJHCJ" || menuName=="WSMFX")&& scope == "#p_cust_identityCd"){//#1756932 返档客户定位只能是接入号
+            $("#p_cust_identityCd").val("-1");
+        }
 		//如果是身份证，则禁止输入，否则启用输入控件
 //		var isID = identidiesTypeCd==1;
 //		var isIdTypeOff = OrderInfo.staff.idType=="OFF";
@@ -391,22 +391,19 @@ order.cust = (function(){
 		}
 	};
 	//判断经办人证件类型是否需要显示读卡按钮
-    var _ifHandleReadButton = function(identidiesTypeCd){
-    	//读取经办人填写时需要显示读卡按钮的配置
-		var identidiesTypeCdAll = query.common.queryPropertiesValue("HANDLE_READ_BUTTON");
-		var identidiesTypeCds = identidiesTypeCdAll.split(",");
-		var ifReadButton = false;
-		//判断页面选择经办人证件类型是否存在于配置中
-		for(var i = 0; i < identidiesTypeCds.length; i++){
-			if(identidiesTypeCd == identidiesTypeCds[i]){
-				ifReadButton = true;
-				break;
-			}else{
-				ifReadButton = false;
-			}
-		}
-		return ifReadButton;
-    }
+	var identidiesTypeCdListMustReadCert = [];
+	var _ifHandleReadButton = function(identidiesTypeCd){
+	    var ifReadButton = false;
+	    //读取经办人填写时需要显示读卡按钮的配置
+	    if(!ec.util.isArray(identidiesTypeCdListMustReadCert)){
+	        identidiesTypeCdListMustReadCert = query.common.queryPropertiesObject("CERTIFICATES_MUST_READ_CERT");
+	    }
+	    //判断页面选择经办人证件类型是否存在于配置中
+	    if($.inArray(identidiesTypeCd, identidiesTypeCdListMustReadCert) >= 0){
+	        ifReadButton = true;
+	    }
+	    return ifReadButton;
+	}
 	//创建客户证件类型选择事件
 	var _identidiesTypeCdChoose = function(scope,id) {
 		var cookieSP = query.common.queryPropertiesValue("CHECK_SOLDIER_POLICE");

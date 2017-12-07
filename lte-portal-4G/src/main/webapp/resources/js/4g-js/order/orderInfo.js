@@ -1850,6 +1850,8 @@ OrderInfo = (function() {
 			//OrderInfo.getCustAgeByCheck = {}
 			
 			cert.deleteCertReaderCustInfosByServCode(CONST.CERT_READER_HANDLE_CUST);
+			OrderInfo.confidence = 0 ;
+			OrderInfo.faceVerifyFlag = "N" ;
 		}
 	};
 	

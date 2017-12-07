@@ -139,8 +139,7 @@ OrderInfo = (function() {
 		partyName : "",
 		vipLevel : "",
 		vipLevelName : "",
-		custFlag :"1100",//1000：红客户，1100：白客户，1200：黑客户
-		getCheckAge:""//拿到校验的年龄
+		custFlag :"1100"//1000：红客户，1100：白客户，1200：黑客户
 	}; 
 	
 	var _oneCardFiveNum=[];//一证五号校验缓存
@@ -1620,7 +1619,6 @@ OrderInfo = (function() {
 			OrderInfo.certInfoKeys.push(certInfoKeys);
 		}
 	};
-	var _handleCustCertReadInfos = {};
     var _needCheckFlag  = "N";//是否需要调用一证五号
 	return {
 		certInfoKeys			:_certInfoKeys,
@@ -1730,7 +1728,6 @@ OrderInfo = (function() {
 		queryCustInfo  : _queryCustInfo,
 		preliminaryInfo : _preliminaryInfo,
 		_oldUserInfos	: _oldUserInfos,
-        needCheckFlag  :_needCheckFlag,
-        handleCustCertReadInfos:_handleCustCertReadInfos
+        needCheckFlag  :_needCheckFlag
 	};
 })();

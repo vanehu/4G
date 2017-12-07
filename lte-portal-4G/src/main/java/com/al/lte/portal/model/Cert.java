@@ -432,6 +432,32 @@ public class Cert {
 		serviceLog.saveLogAsyn();
 	}
 	
+	public static void saveCertLog(Map<String, Object> param, Map<String, Object> returnMap, String remark, SessionStaff sessionStaff){
+		ServiceLog serviceLog = ServiceLog.getNewInstance();
+		String paramString = JsonUtil.toString(param);
+		String rawRetn = JsonUtil.toString(returnMap);
+		Date date = new Date();
+
+		DataBus db = new DataBus();
+		db.setResultCode(ResultCode.R_SUCC);
+		db.setParammap(param);
+		db.setReturnlmap(returnMap);
+		
+		serviceLog.initDataBus(db, null);
+		serviceLog.setDataBus(db);
+		serviceLog.setParamStr(paramString);
+		serviceLog.setReturnStr(rawRetn);
+		serviceLog.setPrefix("portal");
+		serviceLog.setServCode("readCertBypassed");
+		serviceLog.setServiceCode("readCertBypassed");
+		serviceLog.setBeginTime(date);
+		serviceLog.setEndTime(date);
+		serviceLog.setRemark(remark);
+		serviceLog.setSessionStaff(sessionStaff);
+		
+		serviceLog.saveLogAsyn();
+	}
+	
 	/**
 	 * USB传统读卡签名校验<br>
 	 * 校验通过返回true，其他情况返回false
