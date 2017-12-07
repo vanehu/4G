@@ -1472,6 +1472,12 @@ cust = (function(){
 			} else {
 				OrderInfo.cust.identityPic = identityPic;//证件照片
 			}
+		}else{
+			if(OrderInfo.actionFlag!=9){//返档需查客户
+				if((OrderInfo.cust.custId != "-1" && OrderInfo.cust.idCardNumber == idcard) || (OrderInfo.cust.custId == "-1" && OrderInfo.cust.identityNum == idcard)){
+					OrderInfo.cust.identityPic = identityPic;//证件照片
+				}
+			}
 		}
 	};
 	

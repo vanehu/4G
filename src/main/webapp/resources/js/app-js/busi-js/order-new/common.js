@@ -154,6 +154,10 @@ common = (function($) {
 	
 	//调用客户端的拍照方法       method：表示回调js方法 如：order.prodModify.getIDCardInfos
 	var _callPhotos=function(method){
+		if(OrderInfo.jbr.identityPic == undefined || OrderInfo.jbr.identityPic.length<50){
+			$.alert("提示","请先读取经办人身份证信息。");
+			return;
+		}
 		if(cust.isSameOne == undefined){
 			return;
 		}
@@ -310,8 +314,8 @@ common = (function($) {
 	
 	//调用客户端的二代证识别方法       method：表示回调js方法 如：order.prodModify.getIDCardInfos
 	var _callGenerationRec=function(method,type,isKhjq){
-		if(isKhjq!=undefined && isKhjq == "1"){
-			cust.isKhjq = "1";
+		if(isKhjq!=undefined && isKhjq.length>0){
+			cust.isKhjq = isKhjq+"";
 		}else{
 			cust.isKhjq = "";
 		}
@@ -1714,6 +1718,10 @@ common = (function($) {
 	}
 	//宽带甩单经办调用摄像头拍照
 	var _callPhotos2=function(method){
+		if(OrderInfo.jbr.identityPic == undefined || OrderInfo.jbr.identityPic.length<50){
+			$.alert("提示","请先读取经办人身份证信息。");
+			return;
+		}
 		var custIdentidiesTypeCd=OrderInfo.cust.identityCd;//客户证件类型
 		var custNumber=OrderInfo.cust.idCardNumber;//客户证件号码
 		var partyName = $('#orderAttrName').val().trim();//经办人名称

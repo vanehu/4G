@@ -255,6 +255,9 @@ order.dealer = (function() {
 	    if($("#tab1_jbr").length>0){
 	    	$("#tab1_jbr").click();
 	    }
+	    if(OrderInfo.jbr.identityPic==undefined || OrderInfo.jbr.identityPic.length<50){
+	    	$("#jbrself_read_card").show();
+	    }
 	}
 	
 	function _closeJBR(){
