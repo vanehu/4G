@@ -48,6 +48,10 @@ order.phoneNumber = (function(){
 		selectedObj=null;//初始化原先选中的号码
 		//收集参数
 		param = _buildInParam(param);
+		if (!ec.util.isObj(param.poolId)) {
+			$.alert("提示","号池不可为空，请添加号池！");
+			return;
+		}
 		param.isReserveFlag=_queryFlag;
 		if(_queryFlag=='1'){//预约选号
 			param.queryFlag="3";
@@ -957,8 +961,8 @@ order.phoneNumber = (function(){
 			if(response.data){
 				var phoneNbrPoolList= response.data.phoneNbrPoolList;
 				var $sel = $('<select id="nbrPool" style="width:200px;"></select>');  
-				var $defaultopt = $('<option value="" selected="selected">请选择号池</option>');
-				$sel.append($defaultopt);
+//				var $defaultopt = $('<option value="" selected="selected">请选择号池</option>');
+//				$sel.append($defaultopt);
 				if(phoneNbrPoolList!=null){
 					$.each(phoneNbrPoolList,function(){
 						var $option = "";

@@ -122,14 +122,14 @@ public class ServiceLog{
 	}
 	
 	public void saveLog(){
-		InterfaceClient.saveLog(serviceLog);
+		InterfaceClient.saveLog(this);
 	}
 	
 	/**
 	 * how to save log asynchronously？
 	 */
 	public void saveLogAsyn(){
-		InterfaceClient.saveLog(serviceLog);
+		InterfaceClient.saveLog(this);
 	}
 
 	public String getLogSeqId() {

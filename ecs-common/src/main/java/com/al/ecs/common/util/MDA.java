@@ -61,20 +61,6 @@ public class MDA {
 	public static final String FOREGIN_LIVE = new String("");
 	
 	/**
-	 * 2017-10-26 人民武装警察居民身份证（52）、现役军人居民身份证（51）、居民身份证（1） 经办人信息填写显示读卡按钮配置
-	 */
-	public static final String HANDLE_READ_BUTTON = new String("");
-
-//	/**
-//	 * 问卷调查 题目查询
-//	 */
-//	public static final String CSB_HTTP_QUESTION = new String("");
-//
-//	/**
-//	 * 问卷调查 答题结果回写
-//	 */
-//	public static final String CSB_HTTP_QUESTION_RESET = new String("");
-	/**
 	 * 宽带甩单过csb的http地址
 	 */
 	public static final String CSB_HTTP_MIDDLE_URL=new String("");
@@ -499,6 +485,9 @@ public class MDA {
 	
 	/**短信验证码是否发送标识(从sp_sys_param表迁移到MDA，故沿用表中的命名)*/
 	public static final String msgCodeFlag = new String("");
+
+	/**短信内容标识*/
+	public static final Map<String,String> MESSAGE_TAG = new HashMap<String,String>();
 	
 	/**翼支付收费调用支付平台分省开关*/
 	public static final Map<String,String> NEWPAYFLAG = new HashMap<String,String>();
@@ -508,6 +497,9 @@ public class MDA {
 	
 	/**双屏互动服务端请求地址端口*/
 	public static final String PUSH_HOST_PORT = new String("");
+	
+	/**双屏互动把客户的身份证信息存入redis中**/
+	public static final String SAVE_CUST_ID = new String("");
 	
 	/**调用支付平台接口地址*/
 	public static final String PAY_TOKEN_URL=new String("");
@@ -695,8 +687,12 @@ public class MDA {
 	/**人证比对图片压缩参数*/
     public static final Map<String, List<String>> FACE_VERIFY_COMPRESS_CONFIG = new HashMap<String, List<String>>();
     
-    /**
-	 * 浏览器指纹记录地址
-	 */
+    /**是否进行实名认证的开关*/
+    public static final String REAL_NAME_AUTHENTICATION_TOGGLE = new String("");
+    
+    /**浏览器指纹记录地址*/
 	public static final String FINGER_PRINT_ADDRESS = new String("");
+	
+	/**必须读卡的证件：人民武装警察居民身份证52、现役军人居民身份证51、居民身份证1*/
+    public static final List<String> CERTIFICATES_MUST_READ_CERT = new ArrayList<String>();
 }

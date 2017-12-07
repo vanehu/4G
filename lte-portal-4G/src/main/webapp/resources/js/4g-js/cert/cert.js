@@ -133,7 +133,7 @@ cert = (function() {
 	    		if(certUnifyFlag == "ON"){// 统一控件
 	    		    man.createFlag = $('#createFlag').val();
 			        man.jbrFlag = "Y";// 添加经办人读卡标识
-	    		    var url = contextPath + "/order/certUnifyInfo";
+	    		    var url = contextPath + "/cert/certUnifyInfo";
 				    var response = $.callServiceAsJson(url,man);
 				    if (response.code == 0) {
 				    	_recordCertReaderCustInfos(response.data);
@@ -148,7 +148,7 @@ cert = (function() {
 	    			// USB读身份证老版本
 	    		    var certInfo=man.resultContent;
 		    	    var param={};
-		    	    var url = contextPath + "/order/isOpenNewCert";
+		    	    var url = contextPath + "/cert/isOpenNewCert";
 				    var response = $.callServiceAsJson(url,JSON.stringify(param));
 				    if (response.code == 0&&response.data=='ON') {
 					    if(man.venderId==undefined||man.signature==undefined){
@@ -179,7 +179,7 @@ cert = (function() {
 				    if(OrderInfo.order.portalId!=null&&OrderInfo.order.portalId!=undefined&&OrderInfo.order.portalId!=""){
 				    	certInfo.portalId=OrderInfo.order.portalId;
 			    	}
-	    		    url = contextPath + "/order/certInfo";
+	    		    url = contextPath + "/cert/certInfo";
 				    var response = $.callServiceAsJson(url,JSON.stringify(certInfo));
 				    if (response.code == 0) {
 				    	_recordCertReaderCustInfos(certInfo);

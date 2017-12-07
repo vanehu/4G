@@ -11,6 +11,7 @@ import com.al.ecs.exception.*;
 import com.al.ecs.spring.annotation.log.LogOperatorAnn;
 import com.al.ecs.spring.annotation.session.AuthorityValid;
 import com.al.ecs.spring.controller.BaseController;
+import com.al.lte.portal.bmo.crm.CertBmo;
 import com.al.lte.portal.bmo.crm.CustBmo;
 import com.al.lte.portal.bmo.crm.MktResBmo;
 import com.al.lte.portal.bmo.crm.OrderBmo;
@@ -54,6 +55,9 @@ public class CustController extends BaseController {
 	@Autowired
 	@Qualifier("com.al.lte.portal.bmo.crm.MktResBmo")
 	private MktResBmo mktResBmo;
+	@Autowired
+    @Qualifier("com.al.lte.portal.bmo.crm.CertBmo")
+    private CertBmo certBmo;
 
 	@RequestMapping(value = "/queryCust", method = { RequestMethod.POST })
 	public String queryCust(@RequestBody Map<String, Object> paramMap, Model model, @LogOperatorAnn String flowNum,
@@ -61,6 +65,14 @@ public class CustController extends BaseController {
 		httpSession.removeAttribute("JUMPRESULT");
 		request.getSession().removeAttribute("checkNumber");
 		request.getSession().removeAttribute("accNbrInfos");
+		//by huangyn 双屏互动鉴定redis的数据和页面提交的数据是否一致
+		String cardType = (String)paramMap.get("identityCd");
+		String cardNumber = (String)paramMap.get("identityNum");
+		String isCustTally = "";
+		if(cardType.length() > 0 && cardNumber.length() > 0){
+			isCustTally = CustCardRedisUtil.compareRedisCard(cardType, cardNumber, request);
+			//request.getSession().setAttribute("isCustTally", isCustTally);
+		}
 		String checkNumber = (String) (paramMap.get("acctNbr") == ""
 				? paramMap.get("identityNum") == "" ? paramMap.get("queryTypeValue") : paramMap.get("identityNum")
 				: paramMap.get("acctNbr"));
@@ -70,6 +82,7 @@ public class CustController extends BaseController {
 		if (sessionStaff == null) {
 			return "/cust/cust-list";
 		}
+		model.addAttribute("isCustTally", isCustTally);
 		String areaId = (String) paramMap.get("areaId");
 		try {
 			// 记录表SP_BUSI_RUN_LOG
@@ -205,9 +218,12 @@ public class CustController extends BaseController {
 		}
 		List custInfos = new ArrayList();
 		try {
+			Map<String, Object> checkResult = certBmo.isReadCertBypassed(paramMap, request, "客户定位");
+			if(MapUtils.getIntValue(checkResult, SysConstant.RESULT_CODE) != ResultCode.SUCCESS){
+				return super.failedStr(model, ErrorCode.PORTAL_INPARAM_ERROR, MapUtils.getString(checkResult, SysConstant.RESULT_MSG, "客户定位异常"), paramMap);
+            }
 			
-			resultMap = custBmo.queryCustInfo(paramMap,
-					flowNum, sessionStaff);
+			resultMap = custBmo.queryCustInfo(paramMap, flowNum, sessionStaff);
 			List<String> custInfosList = (List<String>) resultMap.get("custInfos");
 			String custAge = "";
 			if (custInfosList.size() != 0) {
@@ -412,12 +428,13 @@ public class CustController extends BaseController {
 			}
 			return "/cust/cust-list";
 		} catch (BusinessException be) {
+			log.error(be);
 			return super.failedStr(model, be);
 		} catch (InterfaceException ie) {
-
+			log.error(ie);
 			return super.failedStr(model, ie, paramMap, ErrorCode.QUERY_CUST);
 		} catch (Exception e) {
-
+			log.error(e);
 			return super.failedStr(model, ErrorCode.QUERY_CUST, e, paramMap);
 		}
 	}
@@ -1686,18 +1703,21 @@ public class CustController extends BaseController {
 	@RequestMapping(value = "/queryoffercust", method = RequestMethod.POST)
 	@ResponseBody
 	public JsonResponse queryoffercust(@RequestBody Map<String, Object> paramMap, @LogOperatorAnn String flowNum,
-			HttpServletResponse response) {
+			HttpServletResponse response, HttpServletRequest request) {
 		Map<String, Object> resultMap = null;
 		JsonResponse jsonResponse = null;
-		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
-				SysConstant.SESSION_KEY_LOGIN_STAFF);
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(request, SysConstant.SESSION_KEY_LOGIN_STAFF);
 
-		String areaId = (String) paramMap.get("areaId");
-		if (("").equals(areaId) || areaId == null) {
+		paramMap.put("staffId", sessionStaff.getStaffId());
+		if(StringUtils.isBlank(MapUtils.getString(paramMap, "areaId"))) {
 			paramMap.put("areaId", sessionStaff.getCurrentAreaId());
 		}
-		paramMap.put("staffId", sessionStaff.getStaffId());
+
 		try {
+			Map<String, Object> checkResult = certBmo.isReadCertBypassed(paramMap, request, "经办人");
+			if(MapUtils.getIntValue(checkResult, SysConstant.RESULT_CODE) != ResultCode.SUCCESS){
+				return super.failed(ErrorCode.PORTAL_INPARAM_ERROR, MapUtils.getString(checkResult, SysConstant.RESULT_MSG, "经办人查询异常"), paramMap);
+	        }
 			resultMap = custBmo.queryCustInfo(paramMap, flowNum, sessionStaff);
 			if (MapUtils.isNotEmpty(resultMap)) {
 				List<Map<String, Object>> custInfos = (List<Map<String, Object>>) resultMap.get("custInfos");
@@ -1709,12 +1729,10 @@ public class CustController extends BaseController {
 						}
 					}
 					// 针对套餐变更、主副卡成员变更加装老号码作为副卡，判断该号码客户的证件类型并缓存session
-					if (custInfos.size() > 0
-							&& "offerOrMemberChange".equals(MapUtils.getString(paramMap, "queryFlag", ""))) {
+					if (custInfos.size() > 0 && "offerOrMemberChange".equals(MapUtils.getString(paramMap, "queryFlag", ""))) {
 						Map<String, Object> custInfo = custInfos.get(0);// js端也是取第一个，这里也随之取第一个
 						if (!"1".equals(MapUtils.getString(custInfo, "identityCd", ""))) {
-							ServletUtils.setSessionAttribute(super.getRequest(), SysConstant.IS_ACTION_FLAG_LIMITED,
-									true);
+							ServletUtils.setSessionAttribute(request, SysConstant.IS_ACTION_FLAG_LIMITED, true);
 						}
 					}
 					jsonResponse = super.successed(resultMap, ResultConstant.SUCCESS.getCode());
@@ -1731,6 +1749,7 @@ public class CustController extends BaseController {
 		} catch (Exception e) {
 			return super.failed(ErrorCode.QUERY_CUST, e, resultMap);
 		}
+		
 		return jsonResponse;
 	}
 
@@ -2371,6 +2390,15 @@ public class CustController extends BaseController {
 			params = MDA.XJ_FACE_VERIFY_PARAMS_SECRET;
 		}
 
+		String liveness = MapUtils.getString(fzConfig, "FACE_VERIFY_LIVENESS", "OFF");
+		if ("ON".equals(liveness)) {
+			svcContMap.put("liveNess", "0"); // 是否打开后端防hack校验，默认关闭
+		}
+		String rotate = MapUtils.getString(fzConfig, "FACE_VERIFY_ROTATE", "OFF");
+		if ("ON".equals(rotate)) {
+			svcContMap.put("rotate","0");//是否翻转照片，默认不翻转关闭
+		}
+		
 		svcContMap.put("params", AESUtil.encryptToString(JsonUtil.toString(svcContMap.get("params")), params));
 		try {
 			rMap = custBmo.verify(reqMap, optFlowNum, sessionStaff);
@@ -2556,6 +2584,21 @@ public class CustController extends BaseController {
 		}
 		jsonResponse = super.successed(resMap, ResultConstant.SUCCESS.getCode());
 		// request.getSession().removeAttribute("dxState");
+		return jsonResponse;
+	}
+	
+	@RequestMapping(value = "/saveDataToRedis", method = RequestMethod.POST)
+	@ResponseBody
+	public JsonResponse saveDataToRedis(@RequestBody Map<String, Object> paramMap, HttpServletResponse response, HttpServletRequest request) {
+		JsonResponse jsonResponse = null;
+		String pushType = paramMap.get("pushType") + "";
+		if("1".equals(pushType)){
+			//身份证的信息读取
+			RedisUtil.set((String)paramMap.get("uId"), paramMap.get("data"));
+			request.getSession().setAttribute("uId", (String)paramMap.get("uId"));
+		}
+		Map<String, Object> resMap = new HashMap<String, Object>();
+		jsonResponse = super.successed(resMap, ResultConstant.SUCCESS.getCode());
 		return jsonResponse;
 	}
 }

@@ -2004,7 +2004,10 @@ AttachOffer = (function() {
 		}
 	};
 	
-	var _addOfferSpecFunction = function(prodId, newSpec){		
+	var _addOfferSpecFunction = function(prodId, newSpec){
+		$.each(OrderInfo.attach2Coupons,function(){
+			this.attachSepcId = newSpec.offerSpecId;
+		});
 		var content = CacheData.getOfferProdStr(prodId,newSpec,0);
 		$.confirm("信息确认",content,{ 
 			yes:function(){

@@ -114,6 +114,10 @@ order.phoneNumber = (function(){
 		if (param == false) {
 			return;
 		}
+		if (!ec.util.isObj(param.poolId)) {
+			$.alert("提示","号池不可为空，请添加号池！");
+			return;
+		}
 		param.isReserveFlag=_queryFlag;
 		if(_queryFlag=='1'){//预约选号
 			param.queryFlag="1";
@@ -1085,8 +1089,8 @@ order.phoneNumber = (function(){
 			if(response.data){
 				var phoneNbrPoolList= response.data.phoneNbrPoolList;
 				var $sel = $('<select id="nbrPool" style="width:200px;"></select>');  
-				var $defaultopt = $('<option value="" selected="selected">请选择号池</option>');
-				$sel.append($defaultopt);
+//				var $defaultopt = $('<option value="" selected="selected">请选择号池</option>');
+//				$sel.append($defaultopt);
 				if(phoneNbrPoolList!=null){
 					$.each(phoneNbrPoolList,function(){
 						var $option = "";

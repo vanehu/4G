@@ -391,22 +391,19 @@ order.cust = (function(){
 		}
 	};
 	//判断经办人证件类型是否需要显示读卡按钮
-    var _ifHandleReadButton = function(identidiesTypeCd){
-    	//读取经办人填写时需要显示读卡按钮的配置
-		var identidiesTypeCdAll = query.common.queryPropertiesValue("HANDLE_READ_BUTTON");
-		var identidiesTypeCds = identidiesTypeCdAll.split(",");
-		var ifReadButton = false;
-		//判断页面选择经办人证件类型是否存在于配置中
-		for(var i = 0; i < identidiesTypeCds.length; i++){
-			if(identidiesTypeCd == identidiesTypeCds[i]){
-				ifReadButton = true;
-				break;
-			}else{
-				ifReadButton = false;
-			}
-		}
-		return ifReadButton;
-    }
+	var identidiesTypeCdListMustReadCert = [];
+	var _ifHandleReadButton = function(identidiesTypeCd){
+	    var ifReadButton = false;
+	    //读取经办人填写时需要显示读卡按钮的配置
+	    if(!ec.util.isArray(identidiesTypeCdListMustReadCert)){
+	        identidiesTypeCdListMustReadCert = query.common.queryPropertiesObject("CERTIFICATES_MUST_READ_CERT");
+	    }
+	    //判断页面选择经办人证件类型是否存在于配置中
+	    if($.inArray(identidiesTypeCd, identidiesTypeCdListMustReadCert) >= 0){
+	        ifReadButton = true;
+	    }
+	    return ifReadButton;
+	}
 	//创建客户证件类型选择事件
 	var _identidiesTypeCdChoose = function(scope,id) {
 		var cookieSP = query.common.queryPropertiesValue("CHECK_SOLDIER_POLICE");
@@ -941,6 +938,18 @@ order.cust = (function(){
 			if(result != true){
 				return;
 			}
+			
+			//把客户的身份证信息存入到redis的请求中去
+			var switchRedis = query.common.queryPropertiesValue("SAVE_CUST_ID");
+			var identidiesTypeCd = $("#identidiesTypeCd").val();
+			if(switchRedis == "ON" && identidiesTypeCd == "1"){
+				var redisData = $.cookie('redisData');
+				var cCustIdCard = $('#cCustIdCard').val();
+				if(ec.util.isObj(redisData) && cCustIdCard != redisData){
+					$.alert("提示","双屏互动身份证信息被篡改！");
+					return;
+				}
+			}
 			_checkIdentity();
 	     }).ketchup({bindElement:"createcustsussbtn"});
     };
@@ -978,6 +987,14 @@ order.cust = (function(){
 		}
 		var content$ = $("#custList");
 		content$.html(response.data).show();
+		//双屏互动redis缓存数据和客户端数据比较
+		var isCustTally = $("#isCustTally").val();
+		if(isCustTally == "1" && appOnChatNumber == 1){
+			content$.html(response.data).hide();
+			easyDialog.close();
+			$.alert("提示","双屏互动pc端身份证信息被修改！");
+			return;
+		}
 		//拦截先点击选购套餐在定位的非法请求，户口簿，军人和警察的请求
 		if(order.service.releaseFlag == 2){
 			var resultS = _checkAddNumberAndMeal(response);
@@ -4535,6 +4552,11 @@ order.cust = (function(){
                 var checkCount = checkData.length;
                 if ($.inArray(prodId, checkData) != -1) {
                     checkCount = checkData.length - 1;
+                }
+                if (!ec.util.isObj(prodId) && ($.inArray(prodId, checkData) == -1)) {
+                	if(OrderInfo.actionFlag == 43 && ec.util.isObj(checkData)){
+                		checkCount = checkData.length - 1;
+                	}
                 }
                 if ((parseInt(result.usedNum) + checkCount) < 5) {
                     $.unique($.merge(checkData, [prodId]));

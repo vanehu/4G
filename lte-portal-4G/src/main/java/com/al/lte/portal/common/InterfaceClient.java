@@ -3,7 +3,6 @@ package com.al.lte.portal.common;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
-import java.net.InetAddress;
 import java.net.SocketTimeoutException;
 import java.net.URLEncoder;
 import java.util.Calendar;
@@ -12,6 +11,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Random;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -137,6 +137,8 @@ public class InterfaceClient {
 	public static final String CDATA_BEGIN = "<![CDATA[";
 	public static final String CDATA_END = "]]>";
 	public static final String CDATA_END_REPLACEMENT = "]]&gt;";
+	
+	private static final StringBuffer stringBuffer = new StringBuffer();
 	
 	static {
 		getPropertiesUtils();
@@ -733,7 +735,11 @@ public class InterfaceClient {
 		long startTime = System.currentTimeMillis();
 		
 		try {
-			String log_flag = MySimulateData.getInstance().getParam(dbKeyWord,prefix+"-"+serviceCode);
+			stringBuffer.setLength(0);
+			stringBuffer.append(prefix);
+			stringBuffer.append("-");
+			stringBuffer.append(serviceCode);
+			String log_flag = MySimulateData.getInstance().getParam(dbKeyWord,stringBuffer.toString());
 			if(!"1".equals(log_flag)){
 				if("2".equals(log_flag)){
 					if(ResultCode.R_SUCC.equals(db.getResultCode()) || ResultCode.R_SUCCESS.equals(db.getResultCode())|| ResultCode.RES_SUCCESS.equals(db.getResultCode())){
@@ -886,15 +892,16 @@ public class InterfaceClient {
 				logClobObj.put("IN_PARAM", paramString);						
 				logClobObj.put("OUT_PARAM", rawRetn);
 				boolean isDefaultLog = true;
-				if (propertiesUtils.getMessage(SysConstant.PORTAL_SERVICE_LOG_P).contains(serviceCode)) {
+				
+				if (MDA.PORTAL_SERVICE_LOG_P.contains(serviceCode)) {
 					isDefaultLog = false;
 					logSender.sendLog2DB(SysConstant.PORTAL_SERVICE_LOG_P, logObj, logClobObj);
 				}
-				if (propertiesUtils.getMessage(SysConstant.PORTAL_SERVICE_LOG_Y).contains(serviceCode)) {
+				if (MDA.PORTAL_SERVICE_LOG_Y.contains(serviceCode)) {
 					isDefaultLog = false;
 					logSender.sendLog2DB(SysConstant.PORTAL_SERVICE_LOG_Y, logObj, logClobObj);
 				}
-				if (propertiesUtils.getMessage(SysConstant.PORTAL_SERVICE_LOG_W).contains(serviceCode)) {
+				if (MDA.PORTAL_SERVICE_LOG_W.contains(serviceCode)) {
 					isDefaultLog = false;
 					logSender.sendLog2DB(SysConstant.PORTAL_SERVICE_LOG_W, logObj, logClobObj);
 				}
@@ -2151,9 +2158,11 @@ public class InterfaceClient {
 			serviceLog.setRequest(((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest());
 		}
 		
-		Map<String, Object> logObj = new HashMap<String, Object>();
-		Map<String, Object> logClobObj = new HashMap<String, Object>();
-		String logLevel = propertiesUtils.getMessage(serviceLog.getPrefix() + " - " + serviceLog.getServiceCode());
+		stringBuffer.setLength(0);
+		stringBuffer.append(serviceLog.getPrefix());
+		stringBuffer.append("-");
+		stringBuffer.append(serviceLog.getServiceCode());
+		String logLevel = propertiesUtils.getMessage(stringBuffer.toString());
 		
 		if(!"1".equals(logLevel)){
 			if("2".equals(logLevel)){
@@ -2177,6 +2186,8 @@ public class InterfaceClient {
 				serviceLog.setErrorCode("2");
 			}
 			//记录请求
+			Map<String, Object> logObj = new HashMap<String, Object>();
+			Map<String, Object> logClobObj = new HashMap<String, Object>();
 			if(serviceLog.getRequest() != null){
 				try{
 					logObj.put("LOCAL_ADDR", 	serviceLog.getLocalAddr());
@@ -2196,9 +2207,17 @@ public class InterfaceClient {
 				logObj.put("REMOTE_PORT",	"request is null");
 			}
 			//记录基本信息
+			String logId = serviceLog.getLogSeqId();
+			if(StringUtils.isBlank(logId)){
+				logId = UUID.randomUUID().toString().replaceAll("-", "");
+			}
+			String remark = ServletUtils.getRequestHost(request)
+					+ "；\n工号是否具有跳过经办人权限：" 
+					+ (serviceLog.getSessionStaff().isHasOperatSpecCd(SysConstant.TGJBRBTQX) ? "是 " : "否 ") + serviceLog.getRemark();
+			logObj.put("REMARK", 		remark);
+			logObj.put("LOG_SEQ_ID", 	logId);
 			logObj.put("IP", 			serviceLog.getIp());//这IP什么鬼
 			logObj.put("OL_ID", 		serviceLog.getOlId());
-			logObj.put("REMARK", 		serviceLog.getRemark());
 			logObj.put("SO_NBR", 		serviceLog.getSoNbr());
 			logObj.put("AREA_ID", 		serviceLog.getAreaId());
 			logObj.put("INTF_URL", 		serviceLog.getIntfUrl());
@@ -2209,7 +2228,6 @@ public class InterfaceClient {
 			logObj.put("ROLE_CODE", 	serviceLog.getDataBus().getRoleCode());
 			logObj.put("START_TIME", 	serviceLog.getBeginTime());
 			logObj.put("ERROR_CODE", 	serviceLog.getErrorCode());
-			logObj.put("LOG_SEQ_ID", 	serviceLog.getLogSeqId());
 			logObj.put("RESULT_CODE", 	serviceLog.getDataBus().getResultCode());
 			logObj.put("PORTAL_CODE", 	serviceLog.getDataBus().getPortalCode());
 			logObj.put("INTF_METHOD",	serviceLog.getServiceCode());
