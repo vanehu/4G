@@ -1435,7 +1435,16 @@ cust = (function(){
 	};
 	
 	var _getGenerationInfos=function(name,idcard,address,identityPic){
-		
+		if(cust.isKhjq == "1" || cust.isKhjq == "2"){
+			if(OrderInfo.actionFlag!=9){//返档需查客户
+				if((OrderInfo.cust.custId != "-1" && OrderInfo.cust.idCardNumber == idcard) || (OrderInfo.cust.custId == "-1" && OrderInfo.cust.identityNum == idcard)){
+					OrderInfo.cust.identityPic = identityPic;//证件照片
+				}else{
+					$.alert("提示","证件号码与客户身份证号码不一致！");
+					return;
+				}
+			}
+		}
 		$("#cm_identidiesTypeCd").val("1");
 		$("#cm_identidiesTypeCd").change();
 		$("#cmCustIdCard").val(idcard);
@@ -1457,7 +1466,7 @@ cust = (function(){
 				$("#idCardNumber6").val(idcard);
 			}
 		}
-		if(cust.isKhjq != "1"){
+		if(cust.isKhjq != "1" && cust.isKhjq != "2"){
 			cust.custCatsh = {};
 			cust.custCatsh.name = name;
 			cust.custCatsh.idcard = idcard;
@@ -1471,12 +1480,6 @@ cust = (function(){
 				cust.searchUser("1",idcard,name,address);
 			} else {
 				OrderInfo.cust.identityPic = identityPic;//证件照片
-			}
-		}else{
-			if(OrderInfo.actionFlag!=9){//返档需查客户
-				if((OrderInfo.cust.custId != "-1" && OrderInfo.cust.idCardNumber == idcard) || (OrderInfo.cust.custId == "-1" && OrderInfo.cust.identityNum == idcard)){
-					OrderInfo.cust.identityPic = identityPic;//证件照片
-				}
 			}
 		}
 	};
