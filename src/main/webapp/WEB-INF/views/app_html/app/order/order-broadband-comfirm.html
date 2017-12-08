@@ -97,7 +97,7 @@ $(function() {
 	    if(OrderInfo.cust.custId == -1){
 			$("#orderAttrPhoneNbr").val(OrderInfo.cust.custOther1.mobilePhone);
 		}else{
-			if(OrderInfo.cust.contactInfos[0].contactMobilePhone != undefined && OrderInfo.cust.contactInfos[0].contactMobilePhone != ""){
+			if(OrderInfo.cust.contactInfos != undefined && OrderInfo.cust.contactInfos[0].contactMobilePhone != undefined && OrderInfo.cust.contactInfos[0].contactMobilePhone != ""){
 				$("#orderAttrPhoneNbr").val(OrderInfo.cust.contactInfos[0].contactMobilePhone);
 			} else {
 				$("#orderAttrPhoneNbr").val($("#cust_phone").val());
