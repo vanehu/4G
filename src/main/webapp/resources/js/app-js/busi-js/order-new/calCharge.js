@@ -317,25 +317,36 @@ order.calcharge = (function(){
 								"olId" : olId
 								
 						};
-						var response = $.callServiceAsJson(checkUrl, checkParams);
-						if (response.code != 0) {// 支付平台购物车id查询未支付成功才打开支付页面，否则直接下计费接口
-							if(OrderInfo.actionFlag==112){//融合甩单
-								_getPayTockenRh();
-							}else{
-								_getPayTocken();
+						$.callServiceAsJson(checkUrl, checkParams, {
+							"before":function(){
+								$.ecOverlay("<strong>正在查询中,请稍等会儿....</strong>");
+							},	
+							"done" : function(response){
+								$.unecOverlay();
+								if (response.code != 0) {// 支付平台购物车id查询未支付成功才打开支付页面，否则直接下计费接口
+									if(OrderInfo.actionFlag==112){//融合甩单
+										_getPayTockenRh();
+									}else{
+										_getPayTocken();
+									}
+									return;
+								}else{
+									if (response.data==""){//有可能支付查询接口异常
+										$.alert("提示","支付接口查询失败!");
+										return;
+									}
+									//获取支付方式
+									payType=response.data.payCode+"";
+								}
+								_chargeSave(1);
+							},fail:function(response){
+								$.unecOverlay();
+								$.alert("提示","系统异常，请稍后再试！");
 							}
-							return;
-						}else{
-							if (response.data==""){//有可能支付查询接口异常
-								$.alert("提示","支付接口查询失败!");
-								return;
-							}
-							//获取支付方式
-							payType=response.data.payCode+"";
-						}
-
+						});
+					}else{
+						_chargeSave(1);
 					}
-					_chargeSave(1);
 				}
 			});
 		}else{
@@ -357,24 +368,36 @@ order.calcharge = (function(){
 						"olId" : olId
 						
 				};
-				var response = $.callServiceAsJson(checkUrl, checkParams);
-				if (response.code != 0) {// 支付平台购物车id查询未支付成功才打开支付页面，否则直接下计费接口
-					if(OrderInfo.actionFlag==112){//融合甩单
-						_getPayTockenRh();
-					}else{
-						_getPayTocken();
+				$.callServiceAsJson(checkUrl, checkParams, {
+					"before":function(){
+						$.ecOverlay("<strong>正在查询中,请稍等会儿....</strong>");
+					},	
+					"done" : function(response){
+						$.unecOverlay();
+						if (response.code != 0) {// 支付平台购物车id查询未支付成功才打开支付页面，否则直接下计费接口
+							if(OrderInfo.actionFlag==112){//融合甩单
+								_getPayTockenRh();
+							}else{
+								_getPayTocken();
+							}
+							return;
+						}else{
+							if (response.data==""){//有可能支付查询接口异常
+								$.alert("提示","支付接口查询失败!");
+								return;
+							}
+							//获取支付方式
+							payType=response.data.payCode+"";
+						}
+						_chargeSave(0);
+					},fail:function(response){
+						$.unecOverlay();
+						$.alert("提示","系统异常，请稍后再试！");
 					}
-					return;
-				}else{//获取支付方式
-					if (response.data==""){//有可能支付查询接口异常
-						$.alert("提示","支付接口查询失败!");
-						return;
-					}
-					payType=response.data.payCode+"";
-				}
-
+				});
+			}else{
+				_chargeSave(0);
 			}
-			_chargeSave(0);
 		}
 		
 	};
