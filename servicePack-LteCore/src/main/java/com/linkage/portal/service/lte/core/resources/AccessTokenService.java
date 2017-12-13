@@ -3,7 +3,6 @@ package com.linkage.portal.service.lte.core.resources;
 import java.util.Date;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import org.apache.commons.collections.MapUtils;
@@ -11,18 +10,18 @@ import org.apache.commons.lang.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.ailk.ecsp.service.Service;
+import com.ailk.ecsp.util.SpringContextUtil;
 import com.al.ec.serviceplatform.client.DataMap;
 import com.al.ec.serviceplatform.client.ResultCode;
-import com.al.ecs.common.util.JsonUtil;
+import com.al.ecs.common.util.PortalConstant;
 import com.al.ecs.exception.ResultConstant;
 import com.linkage.portal.service.lte.common.StringUtil;
 import com.linkage.portal.service.lte.core.resources.model.AccessToken;
-import com.linkage.portal.service.lte.dao.AccessTokenDAO;
 import com.linkage.portal.service.lte.dao.AccessTokenDAOImpl;
 import com.linkage.portal.service.lte.util.AESUtils;
 
 
-public class AccessTokenService  extends Service{
+public class AccessTokenService extends Service{
 
     private final Logger log = LoggerFactory.getLogger(this.getClass());    
     
@@ -39,13 +38,12 @@ public class AccessTokenService  extends Service{
 		         dataBus.setResultMsg("paramMap is null");
 		         return dataBus;
 		    }		
-     		String accessToken = getAccessToken(paramMap);  
+     		String accessToken = this.getAccessToken(paramMap);  
 			if (!StringUtil.isEmptyStr(accessToken) && !"-1".equals(accessToken)) {
 				returnMap.put("resultCode", "0");
 				returnMap.put("resultMsg", "成功");
 				returnMap.put("accessToken", accessToken);
 				returnMap.put("expiresIn", paramMap.get("tokenTimes"));	
-				log.error("生成令牌返回结果=========>>>>"+returnMap);
 				dataBus.setOutParam(returnMap);
 			}else{
 				returnMap.put("resultCode", "2");
@@ -65,30 +63,17 @@ public class AccessTokenService  extends Service{
 		return dataBus;
 	}
 	
-	public synchronized String getAccessToken(Map<String,Object> paramMap) throws Exception {
-		String appToken = "";
-		AccessTokenDAO atd = new AccessTokenDAOImpl();	
-		List<Map<String, Object>> tokenList = atd.getAccessTokenList(paramMap);			
-		if(tokenList != null){
-			for(int i=0;i<tokenList.size();i++){
-				String tokenId = String.valueOf(tokenList.get(i).get("TOKEN_ID"));
-				atd.insertAccessTokenOld(Long.parseLong(tokenId));					
-				atd.deleteAccessToken(Long.parseLong(tokenId));
-			}									
-		}
-		
+	private String getAccessToken(Map<String,Object> paramMap) throws Exception {		
 		String staffCode = (String) paramMap.get("staffCode");
 		String areaId = (String) paramMap.get("areaId");
 		String tokenKey = (String) paramMap.get("tokenKey");
 		String randowCode = getRandomNumber();//随机码
-		appToken = getAppToken(staffCode, areaId,randowCode,tokenKey);	
-		log.debug("生成的appToken=========>>>>"+appToken);
-		AccessToken accessToken = new AccessToken();
+		String appToken = getAppToken(staffCode, areaId,randowCode,tokenKey);	
 		
-		//在线token		
-		Date date = new Date();   
-		Calendar dar = Calendar.getInstance();  
-		dar.setTime(date);			
+		Calendar dar = Calendar.getInstance();
+		AccessToken accessToken = new AccessToken();
+
+		dar.setTime(new Date());			
 		accessToken.setAddTime(dar.getTime());
 		dar.add(java.util.Calendar.SECOND, Integer.parseInt(String.valueOf(paramMap.get("tokenTimes")))+10);
 		accessToken.setEndTime(dar.getTime());
@@ -108,27 +93,22 @@ public class AccessTokenService  extends Service{
 		accessToken.setSystemId(String.valueOf(paramMap.get("systemId")));
 		accessToken.setRandowCode(randowCode);
 		
-		int result = atd.insertAccessToken(accessToken);
-		
-		if(result > 0){
-			return appToken;	
-		} else{
-			StringBuffer sb = new StringBuffer()
-			.append("AccessToken生成和记录异常, accessToken=")
-			.append(appToken)
-			.append(" , paramMap=")
-			.append(JsonUtil.toString(paramMap));
-			log.error(sb.toString());
-			throw new Exception(sb.toString());
-		}
+		AccessTokenDAOImpl atdi = (AccessTokenDAOImpl) SpringContextUtil.getBean("accessTokenDAO");
+		Map<String, Object> updateResult = atdi.updateNewAccessToken(paramMap, accessToken);
+		if(MapUtils.getIntValue(updateResult, PortalConstant.RESULT_CODE) != ResultCode.SUCCESS){
+			log.error(MapUtils.getString(updateResult, PortalConstant.RESULT_MSG, "未知异常"));
+			throw new Exception(MapUtils.getString(updateResult, PortalConstant.RESULT_MSG, "未知异常"));
+        } else{
+        	return appToken;
+        }
 	}
 	
 	private String getAppToken(String staffCode,String areaId,String randowCode,String tokenKey){		
 		String str = staffCode + "#" + areaId + "#" + randowCode;
-		log.error("----------c1---------------加密信息："+str);
-		log.error("----------c2---------------加密密钥："+tokenKey);
+		log.debug("----------c1---------------加密信息："+str);
+		log.debug("----------c2---------------加密密钥："+tokenKey);
 		String result=AESUtils.encryptToString(str, tokenKey);
-		log.error("----------c3---------------加密完成："+result);
+		log.debug("----------c3---------------加密完成："+result);
 		return result;
 	}
 	

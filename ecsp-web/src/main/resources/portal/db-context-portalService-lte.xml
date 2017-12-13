@@ -398,14 +398,17 @@ http://www.springframework.org/schema/cache http://www.springframework.org/schem
         <property name="basePackage" value="com.ailk.ecsp.mybatis.mapper" />
         <!-- <property name="sqlSessionFactory" ref="ecspSqlSessionFactory"/> -->
         <property name="sqlSessionFactoryBeanName" value="ecspSqlSessionFactory"/>
-    </bean>
-	<!-- enable transaction demarcation with annotations-->
-	<tx:annotation-driven transaction-manager="ecsp-transactionManager" proxy-target-class="true" />
-	
+    </bean>
+    
+    <bean id="accessTokenDAO" class="com.linkage.portal.service.lte.dao.AccessTokenDAOImpl" scope="singleton">
+    	<property name="jdbc" ref="jdbcTemplate"></property>
+    </bean>	
 	<!-- transaction manager, use JtaTransactionManager for global tx-->
     <bean id="ecsp-transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
         <property name="dataSource" ref="multiDataSource" />
-       	<qualifier value="ecspTransaction"/>
+       	<qualifier value="lteEcspTransaction"/>
     </bean>
+	<!-- enable transaction demarcation with annotations-->
+	<tx:annotation-driven transaction-manager="ecsp-transactionManager" proxy-target-class="true" />
 
 </beans>
