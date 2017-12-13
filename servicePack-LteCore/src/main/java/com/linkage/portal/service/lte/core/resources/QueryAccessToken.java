@@ -8,6 +8,7 @@ import org.apache.commons.lang.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.ailk.ecsp.service.Service;
+import com.ailk.ecsp.util.SpringContextUtil;
 import com.al.ec.serviceplatform.client.DataMap;
 import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ecs.exception.ResultConstant;
@@ -33,7 +34,7 @@ public class QueryAccessToken  extends Service{
 		        dataBus.setResultMsg("paramMap is null");
 		        return dataBus;
 		    }	  
-		    AccessTokenDAO atd = new AccessTokenDAOImpl();	
+		    AccessTokenDAO atd = (AccessTokenDAOImpl) SpringContextUtil.getBean("accessTokenDAO");
 			List<Map<String, Object>> tokenList = atd.queryAccessToken(paramMap);	
 			if(tokenList != null && tokenList.size() == 1){
 				String accessToken = String.valueOf(tokenList.get(0).get("ACCESS_TOKEN"));

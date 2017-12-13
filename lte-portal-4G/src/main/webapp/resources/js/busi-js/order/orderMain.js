@@ -2524,7 +2524,8 @@ order.main = (function(){
 			container : 'acctDialog'
 		});
 		var acctQueryParam = {
-			acctCd : acctSel.find("option:selected").attr("acctcd")
+			acctCd : acctSel.find("option:selected").attr("acctcd"),
+			custId : OrderInfo.cust.custId
 		};			
 		$.callServiceAsJson(contextPath+"/order/account", acctQueryParam, {
 			"before":function(){

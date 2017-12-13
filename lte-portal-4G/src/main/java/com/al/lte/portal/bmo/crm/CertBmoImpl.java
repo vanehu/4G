@@ -225,38 +225,37 @@ public class CertBmoImpl implements CertBmo {
 	
 	public Map<String, Object> isReadCertBypassed(Map<String, Object> queryCustParam, HttpServletRequest request, String queryType){
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(request, SysConstant.SESSION_KEY_LOGIN_STAFF);
-		String identityCd = MapUtils.getString(queryCustParam, "identityCd");
-		String identityNum = MapUtils.getString(queryCustParam, "identityNum");
-		
-		boolean isReadCertBypassed = false;
 		Map<String, Object> returnMap = new HashMap<String, Object>();
 		returnMap.put(SysConstant.RESULT_CODE, ResultCode.SUCCESS);
-		
+		String identityCd = MapUtils.getString(queryCustParam, "identityCd");
+
 		//1.证件类型是否必须读卡
 		if(MDA.CERTIFICATES_MUST_READ_CERT.contains(identityCd)){
+			String identityNum = MapUtils.getString(queryCustParam, "identityNum");
+
 			//2.是否已经读卡
 			Object isReadCert = ServletUtils.getSessionAttribute(request, identityNum);
-			isReadCertBypassed = (Boolean) (isReadCert == null ? true : isReadCert);
+			boolean isReadCertBypassed = !Boolean.parseBoolean(String.valueOf(isReadCert));
+			
+			//3.读卡已被绕过
+			if(isReadCertBypassed){
+				this.strBuffer.setLength(0);
+				this.strBuffer.append("您选择的证件类型必须读卡，请勿非法操作。");
+				this.strBuffer.append("（工号： ");
+				this.strBuffer.append(sessionStaff.getStaffCode());
+				this.strBuffer.append("，操作： ");
+				this.strBuffer.append(queryType);
+				this.strBuffer.append("） 。");
+				log.error("读卡绕过已被拦截，操作={}，工号={}，入参={}", queryType, sessionStaff.getStaffCode(), queryCustParam);
+				returnMap.put(SysConstant.RESULT_CODE, ResultCode.FAIL);
+				returnMap.put(SysConstant.RESULT_MSG,  this.strBuffer.toString());
+				//4.记录日志
+				Cert.saveCertLog(queryCustParam, returnMap, null, sessionStaff);
+			}
+			
+			//5.校验一次清一次
+			ServletUtils.removeSessionAttribute(request, identityNum);
 		}
-		
-		//3.读卡已被绕过
-		if(isReadCertBypassed){
-			this.strBuffer.setLength(0);
-			this.strBuffer.append("您选择的证件类型必须读卡，请勿非法操作。");
-			this.strBuffer.append("（工号： ");
-			this.strBuffer.append(sessionStaff.getStaffCode());
-			this.strBuffer.append("，操作： ");
-			this.strBuffer.append(queryType);
-			this.strBuffer.append("） 。");
-			log.error("读卡绕过已被拦截，操作={}，工号={}，入参={}", queryType, sessionStaff.getStaffCode(), queryCustParam);
-			returnMap.put(SysConstant.RESULT_CODE, ResultCode.FAIL);
-			returnMap.put(SysConstant.RESULT_MSG,  this.strBuffer.toString());
-			//4.记录日志
-			Cert.saveCertLog(queryCustParam, returnMap, null, sessionStaff);
-		}
-		
-		//5.校验一次清一次
-		ServletUtils.removeSessionAttribute(request, identityNum);
 		
 		return returnMap;
 	}

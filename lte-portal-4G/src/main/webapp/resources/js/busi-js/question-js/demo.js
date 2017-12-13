@@ -152,76 +152,49 @@ question.term = (function() {
 
 	// 创建不满意选项
 	myd.create_notsatisfy = function() {
-		for (var i = 0; i < myd.notsatisfy_option.length; i++) {
-			var not_option = myd.notsatisfy_option[i];
-			// 生成选项唯一的id
-			var not_option_key = not_option.question_id + '-'
-					+ not_option.option_id + '-'
-					+ not_option.notsatisfy_option_id;
-			// 生成上级选项的id
-			var option_key = not_option.question_id + '-'
-					+ not_option.option_id;
-			// 先隐藏
-			var dom_checkbox = "<div class='checkbox notsatisfy'  style='padding-left:8%;display:none;'><label><input type='checkbox' question_id='"
-					+ not_option.question_id
-					+ "' option_id='"
-					+ not_option.option_id
-					+ "' notsatisfy_option_id='"
-					+ not_option.notsatisfy_option_id
-					+ "' parent_option_key='"
-					+ option_key
-					+ "' id='"
-					+ not_option_key
-					+ "' option_name='"
-					+ not_option.notsatisfy_option_name
-					+ "'>"
-					+ not_option.notsatisfy_option_name
-					+ "</label></div>";
-			$('#q' + not_option.question_id).before(dom_checkbox);
-		}
-		// 增加其他原因填写
-		for (var i = 0; i < myd.option.length; i++) {
-			var option = myd.option[i];
-			var option_key = option.question_id + '-' + option.option_id;
-			if (option.not_satisfy == 1) {
-				var dom_text = "<form class='form-inline'><div class='form-group notsatisfy' style='padding-left:10%;display:none;'>其他：<input type='text' question_id='"
-						+ option.question_id
-						+ "' parent_option_key='"
-						+ option_key
-						+ "' class='form-control' style='width:80%'></div></form>";
-				$('#q' + option.question_id).before(dom_text);
-			}
-		}
+	    //增加其他原因填写
+	    for (var i = 0; i < myd.option.length; i++) {
+	        var option = myd.option[i];
+	        var option_key = option.question_id + '-' + option.option_id;
+	        if (option.not_satisfy == 1) {
+	            var dom_text = "<form class='form-inline'><div class='form-group notsatisfy' style='padding-left:10%;display:none;'>其他：<input type='text' question_id='" + option.question_id + "' parent_option_key='" + option_key + "' class='form-control' style='width:80%'></div></form>";
+	            var target = $("[option_key='" + option_key + "']").parents('.radio');
+	            target.after(dom_text);
+	        }
+	    }
+	    //增加不满意选项
+	    for (var i = myd.notsatisfy_option.length - 1; i >= 0; i--) {
+	        var not_option = myd.notsatisfy_option[i];
+	        //生成选项唯一的id
+	        var not_option_key = not_option.question_id + '-' + not_option.option_id + '-' + not_option.notsatisfy_option_id;
+	        //生成上级选项的id
+	        var option_key = not_option.question_id + '-' + not_option.option_id;
+	        //先隐藏
+	        var dom_checkbox = "<div class='checkbox notsatisfy'  style='padding-left:8%;display:none;'><label><input type='checkbox' question_id='" + not_option.question_id + "' option_id='" + not_option.option_id + "' notsatisfy_option_id='" + not_option.notsatisfy_option_id + "' parent_option_key='" + option_key + "' id='" + not_option_key + "'>" + not_option.notsatisfy_option_name + "</label></div>";
+	        var target = $("[option_key='" + option_key + "']").parents('.radio');
+	        target.after(dom_checkbox);
+	    }
 	};
 
 	// 绑定radio点击不满意的事件
+	//绑定radio点击不满意的事件 --20171208修改
 	myd.radio_click = function() {
-		$(".radio,label,ins").on(
-				'click',
-				function() {
-					var target = $(this).parents('.radio').find('input:radio');
-					if (target.length == 0) {
-						return;
-					}
-					;
-					var question_id = target.attr('question_id');
-					if (target.attr('not_satisfy') == 1) {
-						$(
-								"input:checkbox[question_id='" + question_id
-										+ "'],input:text[question_id='"
-										+ question_id + "']").parents(
-								'.notsatisfy').css('display', 'block');
-					}
-					;
-					if (target.attr('not_satisfy') == 0) {
-						$(
-								"input:checkbox[question_id='" + question_id
-										+ "'],input:text[question_id='"
-										+ question_id + "']").parents(
-								'.notsatisfy').css('display', 'none');
-					}
-					;
-				});
+	    $(".radio,label,ins").on('click',
+	    function() {
+	        var target = $(this).parents('.radio').find('input:radio');
+	        if (target.length == 0) {
+	            return;
+	        };
+	        var question_id = target.attr('question_id');
+	        var option_key = target.attr('option_key');
+	        if (target.attr('not_satisfy') == 1) {
+	            $("input:checkbox[question_id='" + question_id + "'],input:text[question_id='" + question_id + "']").parents('.notsatisfy').css('display', 'none');
+	            $("input:checkbox[parent_option_key='" + option_key + "'],input:text[parent_option_key='" + option_key + "']").parents('.notsatisfy').css('display', 'block');
+	        };
+	        if (target.attr('not_satisfy') == 0) {
+	            $("input:checkbox[question_id='" + question_id + "'],input:text[question_id='" + question_id + "']").parents('.notsatisfy').css('display', 'none');
+	        };
+	    });
 	};
 
 	// 创建纯文本框
@@ -238,12 +211,16 @@ question.term = (function() {
 	};
 
 	// 初始化radio和checkbox样式
+	//初始化radio和checkbox样式 --20171208修改
 	myd.startICheck = function() {
-		$('input').iCheck({
-			checkboxClass : 'icheckbox_square-blue',
-			radioClass : 'iradio_square-blue',
-			increaseArea : '20%' // optional
-		});
+	    $('input').iCheck({
+	        checkboxClass: 'icheckbox_square-blue',
+	        radioClass: 'iradio_square-blue',
+	        increaseArea: '20%' // optional
+	    });
+
+	    //$("input[not_satisfy='1']").parents('.radio').css('margin-bottom', '-10px');
+
 	};
 
 	// 初始化点击样式
