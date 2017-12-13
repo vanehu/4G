@@ -2195,6 +2195,7 @@ order.main = (function(){
 		});
 		var acctQueryParam = {
 			acctCd : acctSel.find("option:selected").attr("acctcd"),
+			custId : OrderInfo.cust.custId,
 			isServiceOpen:"Y"   //是否能力开放,Y-是,N-否
 		};			
 		

@@ -186,7 +186,7 @@ essOrder.main = (function() {
 
 	};
  
-	var _queryOrderInfo = function(olId,splitOrderOlId,commonRegionId) {
+	var _queryOrderInfo = function(olId,splitOrderOlId,commonRegionId,staffName,staffCode) {
 		var olIds;
 		if(splitOrderOlId!=null && splitOrderOlId !=""){
 			olIds = [olId,splitOrderOlId];
@@ -195,7 +195,9 @@ essOrder.main = (function() {
 		}
 		var param = {
 		    "olIds":olIds,
-		    areaId : commonRegionId
+		    areaId : commonRegionId,
+		    "staffName":staffName,
+		    "staffCode":staffCode
 		};
 		$.callServiceAsHtml(contextPath+"/ess/order/queryOrderInfo",param,{
 			"before":function(){

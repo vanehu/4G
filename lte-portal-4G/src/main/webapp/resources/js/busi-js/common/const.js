@@ -244,6 +244,8 @@ CONST = (function(){
 		orderIdentidiesTypeCd :"30010026",//经办人证件类型
 		orderAttrIdCard :"30010021",//证件号码
 		orderAttrAddr :"30010022" ,//经办人证件地址
+		IDENTIDIES_TYPE_CD : "800000050",//新老客户定位证件类型
+        IDENTIDIES_NUMBER : "800000051",//新老客户定位证件号码
 		EXT_CUST_ID : "20900011", //省内客户实例ID保存在订单属性中的规格ID
 		COR_CUST_ID : "30010027", //集团外部客户实例ID保存在订单属性中的规格ID
 		EXT_PROD_INST_ID : "30010045", //省内产品实例ID
