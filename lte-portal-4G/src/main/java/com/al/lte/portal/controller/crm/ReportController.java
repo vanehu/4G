@@ -1438,7 +1438,6 @@ public class ReportController extends BaseController {
     @AuthorityValid(isCheck = false)
     public String offerSynQuery(Model model, HttpSession session) throws AuthorityException {
         model.addAttribute("current", EhcacheUtil.getCurrentPath(session, "report/offerSynQuery"));
-
         SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
                 SysConstant.SESSION_KEY_LOGIN_STAFF);
         
