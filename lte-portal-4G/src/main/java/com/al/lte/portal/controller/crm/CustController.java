@@ -232,11 +232,13 @@ public class CustController extends BaseController {
 						|| "51".equals(mIdentityCd) || "52".equals(mIdentityCd) || "41".equals(mIdentityCd)) {
 					if (nowIdCard.length() == 18) {
 						strCard = nowIdCard.substring(6, 14);
-					} else {
+						//计算客户年龄
+						custAge = String.valueOf(DateSubtraction.getAge(DateSubtraction.stringToDate(strCard)));
+					} else if(nowIdCard.length() == 15 && "50".equals(mIdentityCd)) {
 						strCard = nowIdCard.substring(7, 13);
+						//计算客户年龄
+						custAge = String.valueOf(DateSubtraction.getAge(DateSubtraction.stringToDate(strCard)));
 					}
-					//计算客户年龄
-					custAge = String.valueOf(DateSubtraction.getAge(DateSubtraction.stringToDate(strCard)));
 				}
 			}
 			model.addAttribute("custAgeLocation", custAge);
