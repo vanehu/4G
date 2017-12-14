@@ -1426,4 +1426,25 @@ public class ReportController extends BaseController {
 			} 
 		}
     }
+    
+    /**
+     * 销售品同步信息查询页面
+     * @param model
+     * @param session
+     * @return
+     * @throws AuthorityException
+     */
+    @RequestMapping(value = "/offerSynQuery", method = RequestMethod.GET)
+    @AuthorityValid(isCheck = false)
+    public String offerSynQuery(Model model, HttpSession session) throws AuthorityException {
+        model.addAttribute("current", EhcacheUtil.getCurrentPath(session, "report/offerSynQuery"));
+
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+                SysConstant.SESSION_KEY_LOGIN_STAFF);
+        
+        Map<String, Object> defaultAreaInfo = CommonMethods.getDefaultAreaInfo_MinimumC3(sessionStaff);
+        model.addAttribute("p_areaId", defaultAreaInfo.get("defaultAreaId"));
+        model.addAttribute("p_areaId_val", defaultAreaInfo.get("defaultAreaName"));
+        return "/cart/offer-syn-query";
+    }
 }
