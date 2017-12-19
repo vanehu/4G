@@ -214,7 +214,29 @@ public class MainController extends BaseController {
 					}
 
 				} else {
-					model.addAttribute("isQuestion", "2");
+					//开关关闭情况
+					// 查询用户答题的状态
+					String system_id = SysConstant.QESTION_SYS_ID;
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+					java.util.Date date = new java.util.Date();
+					String timestamp = sdf.format(date);
+					String token = Base64.encode(MD5Utils.encode(system_id + timestamp + MDA.QESTION_KEY).getBytes());
+					
+					Map<String, Object> userList = new HashMap<String, Object>();
+					Map<String, Object> paramMap = new HashMap<String, Object>();
+					param.put("staff_code", sessionStaff.getStaffCode());
+					param.put("system_id", system_id);
+					param.put("timestamp", timestamp);
+					param.put("token", token);
+					
+					userList = questionBmo.queryStaff(param, sessionStaff);
+					// 此处0表示用户需要进行答题
+					if ("0".equals(userList.get("state").toString())) {
+						model.addAttribute("isQuestion", "2");
+					} else {
+						// 表示用户已经答题或者不需要答题
+						model.addAttribute("isQuestion", "1");
+					}
 				}
 
 			} else {
