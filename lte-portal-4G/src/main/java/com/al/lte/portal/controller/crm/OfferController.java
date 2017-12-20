@@ -2,7 +2,9 @@ package com.al.lte.portal.controller.crm;
 
 import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ecs.common.entity.JsonResponse;
+import com.al.ecs.common.entity.PageModel;
 import com.al.ecs.common.util.JsonUtil;
+import com.al.ecs.common.util.PageUtil;
 import com.al.ecs.common.web.ServletUtils;
 import com.al.ecs.exception.BusinessException;
 import com.al.ecs.exception.ErrorCode;
@@ -1089,4 +1091,52 @@ public class OfferController extends BaseController {
         
 		return jsonResponse;
 	}
+	
+	/**
+     * 销售品同步信息列表
+     */
+    @RequestMapping(value = "/queryOfferSynList", method = RequestMethod.GET)
+    public String queryOfferSynList(Model model, @RequestParam Map<String, Object> param,HttpServletRequest req) throws BusinessException {
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+                SysConstant.SESSION_KEY_LOGIN_STAFF);
+        List<Map<String,Object>> nowPageModel =  (List<Map<String,Object>>) req.getAttribute("pageModel");
+            
+        List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+        Integer totalSize = 0;
+        int nowPage = MapUtils.getIntValue(param, "nowPage", 1);
+        try {
+            Map<String, Object> resMap = offerBmo.queryOfferSynInfo(param, null, sessionStaff);
+            if (ResultCode.R_SUCC.equals(resMap.get("resultCode"))) {
+                    list = (List<Map<String, Object>>) resMap.get("syncInfos");
+                    totalSize = list.size();
+                    if(totalSize != 0){
+                    	for(int i=0;i<totalSize;i++){
+                    		if("S".equals(((Map)list.get(i)).get("dealFlag")) ){ 
+                    			((Map)list.get(i)).put("dealFlagName", "成功");
+                    		}else{
+                    			((Map)list.get(i)).put("dealFlagName", "失败");
+                    		}
+                        }
+                    }
+                PageModel<Map<String, Object>> pm = PageUtil.buildPageModel(nowPage, 10, totalSize < 1 ? 1 : totalSize, list);
+                model.addAttribute("pageModel", pm);
+                model.addAttribute("code", "0");
+
+            } else {
+                model.addAttribute("code", resMap.get("resultCode"));
+                model.addAttribute("mess", resMap.get("resultMsg"));
+            }
+            return "/cart/offer-syn-query-list";
+        } catch (BusinessException be) {
+            return super.failedStr(model, be);
+        } catch (InterfaceException ie) {
+            return super.failedStr(model, ie, param, ErrorCode.QRY_OFFER_SYN_INFO);
+        } catch (Exception e) {
+            log.error("销售品同步信息查询/offer/queryOfferSynList方法异常", e);
+            return super.failedStr(model, ErrorCode.QRY_OFFER_SYN_INFO, e, param);
+        }
+    }
+
+	
+	
 }
