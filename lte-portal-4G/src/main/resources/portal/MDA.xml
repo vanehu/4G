@@ -3668,5 +3668,6 @@
 		<const type="List" name="CERTIFICATES_MUST_READ_CERT" description="必须读卡的证件：人民武装警察居民身份证52、现役军人居民身份证51、居民身份证1">
 		["1", "51", "52"]
 		</const>
+		<const type="String" name="WRITE_FILTER_LOG_FLAG" value="ON" description="是否进行开启订单过滤器"></const>
 	</mda>
 </mdas>
