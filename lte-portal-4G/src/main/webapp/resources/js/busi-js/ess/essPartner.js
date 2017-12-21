@@ -52,6 +52,29 @@ essPartner.main = (function() {
 		var startDate = ec.util.defaultStr($("#p_startDate").val());
 		var endDate = ec.util.defaultStr($("#p_endDate").val());
 		var accNbr = ec.util.defaultStr($("#p_accNbr").val());
+		if(extCustOrderId == "" && orderType == "" && commonRegionId == "" && transactionId == "" && orderStatus == "" && channelId == "" && startDate == "" && endDate == "" && accNbr == ""){
+			$.alert("提示","请输入查询条件！");
+			return;
+		}
+		if(startDate != "" || endDate != ""){
+			if(startDate == ""){
+				$.alert("提示","请选择 开始时间！");
+				return;
+			}
+			if(endDate == ""){
+				var nowDate = Date.now();
+				endDate = DateUtil.Format('yyyy-MM-dd', nowDate);
+			}
+			try {
+				var startDate_temp = new Date(startDate);
+				var endDate_temp = new Date(endDate);
+				if((endDate_temp.getTime() - startDate_temp.getTime())/1000/60/60/24 > 31){
+					$.alert("提示","请将查询时间段缩小至一个月以内！");
+					return;
+				}
+			} catch (e) {
+			}
+		}
 		var param = {
 			extCustOrderId : extCustOrderId,
 			orderType : orderType,

@@ -1252,6 +1252,9 @@ public final class PortalServiceCode {
     
     /**销售品订购次数查询接口*/
     public static final String QRY_OFFER_ORDERED_TIMES = "biz-service/intf.prodOfferInstSerivce/queryProdOfferOrderTimes";
+    
+    /**销售品同步信息查询 */
+    public static final String QRY_OFFER_SYN_INFO = "biz-service/intf.soService/queryOrderSyncInfo";
 
 }
 
