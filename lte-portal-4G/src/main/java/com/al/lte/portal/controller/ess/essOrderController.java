@@ -242,6 +242,15 @@ public class essOrderController extends BaseController {
 					cartInfo.put("custOrderList", mainCustOrderList);
 				}
 			}
+			List<Map<String,Object>> couponInfo = (List<Map<String, Object>>)cartInfo.get("couponInfo");
+			if(couponInfo != null && couponInfo.size()>0){
+				for(Map<String,Object> cpInfo : couponInfo){
+					if("103006000".equals(cpInfo.get("couponTypeCd"))){
+						cpInfo.put("staffCode", paramMap.get("staffCode"));
+						cpInfo.put("staffName", paramMap.get("staffName"));
+					}
+				}
+			}
 			model.addAttribute("cart", cartInfo);
 			return "/ess/ess-order-detail";
 		} catch (BusinessException be) {
@@ -615,6 +624,7 @@ public class essOrderController extends BaseController {
 		Map<String, Object> rMap = null;
 		JsonResponse jsonResponse = null;
 		try {
+			param.put("staffId", sessionStaff.getStaffId());
 			rMap = essOrderBmo.mktResInstMakeUp(param, flowNum, sessionStaff);
 			if (rMap != null
 					&& ResultCode.R_SUCC.equals(rMap.get("resultCode")

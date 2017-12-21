@@ -218,11 +218,6 @@ public class CustController extends BaseController {
 		}
 		List custInfos = new ArrayList();
 		try {
-			Map<String, Object> checkResult = certBmo.isReadCertBypassed(paramMap, request, "客户定位");
-			if(MapUtils.getIntValue(checkResult, SysConstant.RESULT_CODE) != ResultCode.SUCCESS){
-				return super.failedStr(model, ErrorCode.PORTAL_INPARAM_ERROR, MapUtils.getString(checkResult, SysConstant.RESULT_MSG, "客户定位异常"), paramMap);
-            }
-			
 			resultMap = custBmo.queryCustInfo(paramMap, flowNum, sessionStaff);
 			List<String> custInfosList = (List<String>) resultMap.get("custInfos");
 			String custAge = "";
@@ -1706,6 +1701,14 @@ public class CustController extends BaseController {
 			HttpServletResponse response, HttpServletRequest request) {
 		Map<String, Object> resultMap = null;
 		JsonResponse jsonResponse = null;
+
+		if("queryHandleCust".equals(MapUtils.getString(paramMap, "queryFlag"))){
+			Map<String, Object> checkResult = certBmo.isReadCertBypassed(paramMap, request, "经办人");
+			if(MapUtils.getIntValue(checkResult, SysConstant.RESULT_CODE) != ResultCode.SUCCESS){
+				return super.failed(ErrorCode.PORTAL_INPARAM_ERROR, MapUtils.getString(checkResult, SysConstant.RESULT_MSG, "经办人查询异常"), paramMap);
+	        }
+		}
+		
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(request, SysConstant.SESSION_KEY_LOGIN_STAFF);
 
 		paramMap.put("staffId", sessionStaff.getStaffId());
@@ -1713,11 +1716,44 @@ public class CustController extends BaseController {
 			paramMap.put("areaId", sessionStaff.getCurrentAreaId());
 		}
 
+		return this.queryCustInfos(paramMap, flowNum, request);
+	}
+	
+	/**
+	 * 经办人专用
+	 * @param paramMap
+	 * @param flowNum
+	 * @param response
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = "/qryHandleCust", method = RequestMethod.POST)
+	@ResponseBody
+	public JsonResponse qryHandleCust(@RequestBody Map<String, Object> paramMap, @LogOperatorAnn String flowNum,
+			HttpServletResponse response, HttpServletRequest request) {
+		
+		
+		Map<String, Object> checkResult = certBmo.isReadCertBypassed(paramMap, request, "经办人");
+		if(MapUtils.getIntValue(checkResult, SysConstant.RESULT_CODE) != ResultCode.SUCCESS){
+			return super.failed(ErrorCode.PORTAL_INPARAM_ERROR, MapUtils.getString(checkResult, SysConstant.RESULT_MSG, "经办人查询异常"), paramMap);
+        }
+		
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(request, SysConstant.SESSION_KEY_LOGIN_STAFF);
+
+		paramMap.put("staffId", sessionStaff.getStaffId());
+		if(StringUtils.isBlank(MapUtils.getString(paramMap, "areaId"))) {
+			paramMap.put("areaId", sessionStaff.getCurrentAreaId());
+		}
+
+		return this.queryCustInfos(paramMap, flowNum, request);
+	}
+	
+	private JsonResponse queryCustInfos(Map<String, Object> paramMap, String flowNum, HttpServletRequest request){
+		JsonResponse jsonResponse = null;
+		Map<String, Object> resultMap = null;
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(request, SysConstant.SESSION_KEY_LOGIN_STAFF);
+
 		try {
-			Map<String, Object> checkResult = certBmo.isReadCertBypassed(paramMap, request, "经办人");
-			if(MapUtils.getIntValue(checkResult, SysConstant.RESULT_CODE) != ResultCode.SUCCESS){
-				return super.failed(ErrorCode.PORTAL_INPARAM_ERROR, MapUtils.getString(checkResult, SysConstant.RESULT_MSG, "经办人查询异常"), paramMap);
-	        }
 			resultMap = custBmo.queryCustInfo(paramMap, flowNum, sessionStaff);
 			if (MapUtils.isNotEmpty(resultMap)) {
 				List<Map<String, Object>> custInfos = (List<Map<String, Object>>) resultMap.get("custInfos");
@@ -1737,22 +1773,22 @@ public class CustController extends BaseController {
 					}
 					jsonResponse = super.successed(resultMap, ResultConstant.SUCCESS.getCode());
 				} else {
-					return super.failed(ErrorCode.QUERY_CUST, "客户查询营业受理后台未返回结果集，custInfos为null", paramMap);
+					jsonResponse = super.failed(ErrorCode.QUERY_CUST, "客户查询营业受理后台未返回结果集，custInfos为null", paramMap);
 				}
 			} else {
-				return super.failed(ErrorCode.QUERY_CUST, "客户查询营业受理后台未返回结果集，result为空", paramMap);
+				jsonResponse = super.failed(ErrorCode.QUERY_CUST, "客户查询营业受理后台未返回结果集，result为空", paramMap);
 			}
 		} catch (BusinessException be) {
-			return super.failed(be);
+			jsonResponse = super.failed(be);
 		} catch (InterfaceException ie) {
-			return super.failed(ie, resultMap, ErrorCode.QUERY_CUST);
+			jsonResponse = super.failed(ie, resultMap, ErrorCode.QUERY_CUST);
 		} catch (Exception e) {
-			return super.failed(ErrorCode.QUERY_CUST, e, resultMap);
+			jsonResponse = super.failed(ErrorCode.QUERY_CUST, e, resultMap);
 		}
 		
 		return jsonResponse;
 	}
-
+	
 	@RequestMapping(value = "/offerorderprod", method = RequestMethod.POST)
 	@ResponseBody
 	public JsonResponse offerorderprod(@RequestBody Map<String, Object> param, @LogOperatorAnn String flowNum,
