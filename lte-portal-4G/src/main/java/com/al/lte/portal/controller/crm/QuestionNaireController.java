@@ -175,7 +175,7 @@ public class QuestionNaireController extends BaseController {
 		java.util.Date date = new java.util.Date();
 		String timestamp = sdf.format(date);
 		// 1.3、token令牌加密
-		String token = Base64.encode(MD5Utils.encode(system_id + timestamp + MDA.QESTION_KEY).getBytes());
+		String token = Base64.encode(MD5Utils.encode(system_id + timestamp + MDA.QESTION_KEY).getBytes()).replace("\r\n", "");
 
 		param.put("system_id", system_id);
 		param.put("timestamp", timestamp);
