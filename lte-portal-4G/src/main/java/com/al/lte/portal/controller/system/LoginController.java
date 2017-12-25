@@ -1092,6 +1092,7 @@ public class LoginController extends BaseController {
 		// 验证码内容
 		String smsPwdSession = (String) ServletUtils.getSessionAttribute(request, SysConstant.SESSION_KEY_LOGIN_SMS);
 		//如果不需要发送短信，验证码就为空，不提示短信过期失效
+		System.out.println("msgCode="+"主机ip="+HttpUtils.getSimplifyHostIpAddress()+"+随机数"+ServletUtils.getSessionAttribute(request, SysConstant.SESSION_KEY_LOGIN_RANDONCODE)+" + 短信内容" +smsPwdSession + " 客户端请求短信="+smsPwd);
 		if(!("1".equals(msgCodeFlag) || "N".equals(smsPassFlag)) && StringUtil.isEmpty(smsPwdSession)){
 			return super.failed("短信过期失效，请重新发送!", ResultConstant.FAILD.getCode());
 		}
