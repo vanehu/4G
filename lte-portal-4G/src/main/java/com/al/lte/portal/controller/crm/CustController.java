@@ -108,7 +108,7 @@ public class CustController extends BaseController {
 				logmap.put("CHANNEL_ID", sessionStaff.getCurrentChannelId());
 				logmap.put("OPERATORS_ID", sessionStaff.getOperatorsId());
 				logmap.put("AREA_ID", areaId);
-				logmap.put("IN_PARAM", JsonUtil.toString(paramMap));
+				logmap.put("IN_PARAM", "");
 				staffBmo.insert_sp_busi_run_log(logmap, flowNum, sessionStaff);
 			}
 		} catch (Exception e) {
@@ -151,7 +151,7 @@ public class CustController extends BaseController {
 							logmap.put("CHANNEL_ID", sessionStaff.getCurrentChannelId());
 							logmap.put("OPERATORS_ID", sessionStaff.getOperatorsId());
 							logmap.put("AREA_ID", areaId);
-							logmap.put("IN_PARAM", JsonUtil.toString(paramMap));
+							logmap.put("IN_PARAM", "");
 							staffBmo.insert_sp_busi_run_log(logmap, flowNum, sessionStaff);
 						}
 						model.addAttribute("showDiffcode", "Y");
@@ -575,7 +575,7 @@ public class CustController extends BaseController {
 				logmap.put("CHANNEL_ID", sessionStaff.getCurrentChannelId());
 				logmap.put("OPERATORS_ID", sessionStaff.getOperatorsId());
 				logmap.put("AREA_ID", sessionStaff.getCurrentAreaId());
-				logmap.put("IN_PARAM", JsonUtil.toString(paramMap));
+				logmap.put("IN_PARAM","");
 				staffBmo.insert_sp_busi_run_log(logmap, flowNum, sessionStaff);
 			}
 		} catch (Exception e) {
