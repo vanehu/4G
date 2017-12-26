@@ -255,6 +255,10 @@ order.undo = (function(){
 						instId : '',
 						type : "2"
 				};
+				//添加一个prodBigClass节点传入
+				if(ec.util.isObj($(this).attr("prodBigClass"))){
+					param.prodBigClass = $(this).attr("prodBigClass");
+				}
 				flag = query.offer.invokeLoadInst(param);
 		   });
 		}else{
@@ -296,6 +300,10 @@ order.undo = (function(){
 							instId : '',
 							type : "2"
 					};
+					//添加一个prodBigClass节点传入
+					if(ec.util.isObj($(this).attr("prodBigClass"))){
+						param.prodBigClass = $(this).attr("prodBigClass");
+					}
 					flag = query.offer.invokeLoadInst(param);
 			});
 		}

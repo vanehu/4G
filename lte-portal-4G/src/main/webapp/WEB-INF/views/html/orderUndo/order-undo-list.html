@@ -185,7 +185,7 @@
                		</tr>
                	</#list>
                	<#list order.phoneNumbers as phoneNum >
-               	  <a style="display: none" index="${phoneNum_index}"name="phoneList" areaId="${phoneNum.areaId}" phoneNumer="${phoneNum.phoneNumber}"></a>
+               	  <a index="${phoneNum_index}"name="phoneList" areaId="${phoneNum.areaId}" phoneNumer="${phoneNum.phoneNumber}" prodBigClass="${phoneNum.prodBigClass}"></a>
                	</#list>
                 </#if>
               </#list>
