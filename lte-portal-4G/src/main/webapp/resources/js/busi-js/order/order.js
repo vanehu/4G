@@ -653,6 +653,9 @@ order.service = (function(){
 	var _subNumNoLim = function(id){
 		var num = Number($("#"+id).val());
 		num-=1;
+		if(num<0){
+			num = 0;
+		}
 		$("#"+id).val(num);		
 	};
 	
