@@ -241,7 +241,7 @@ public class CustController extends BaseController {
 			logmap.put("ACTION_IP", sessionStaff.getIp());
 			logmap.put("CHANNEL_ID", sessionStaff.getCurrentChannelId());
 			logmap.put("OPERATORS_ID", sessionStaff.getOperatorsId());
-			logmap.put("IN_PARAM", JsonUtil.toString(paramMap));
+			logmap.put("IN_PARAM", "");
 			staffBmo.insert_sp_busi_run_log(logmap,flowNum,sessionStaff);
 		}catch (Exception e) {
 			log.error("客户定位日志录入异常",e);
@@ -421,7 +421,7 @@ public class CustController extends BaseController {
 			logmap.put("ACTION_IP", sessionStaff.getIp());
 			logmap.put("CHANNEL_ID", sessionStaff.getCurrentChannelId());
 			logmap.put("OPERATORS_ID", sessionStaff.getOperatorsId());
-			logmap.put("IN_PARAM", JsonUtil.toString(paramMap));
+			logmap.put("IN_PARAM", "");
 			staffBmo.insert_sp_busi_run_log(logmap,flowNum,sessionStaff);
 		}catch (Exception e) {
 			// TODO: handle exception

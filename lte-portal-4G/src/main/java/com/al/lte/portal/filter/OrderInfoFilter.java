@@ -17,10 +17,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 
+import com.al.ecs.common.util.MDA;
+import com.al.ecs.spring.annotation.log.LogOperatorAnn;
+import com.al.lte.portal.bmo.crm.MktResBmo;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.al.ecs.common.util.JsonUtil;
@@ -36,6 +41,10 @@ import com.al.lte.portal.model.SessionStaff;
  * 
  */
 public class OrderInfoFilter extends OncePerRequestFilter {
+
+	@Autowired
+	@Qualifier("com.al.lte.portal.bmo.crm.MktResBmo")
+	private MktResBmo mktResBmo;
 
 	private static Log log = Log.getLog(OrderInfoFilter.class);
 	 
@@ -68,7 +77,10 @@ public class OrderInfoFilter extends OncePerRequestFilter {
 			HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
 		long start = System.currentTimeMillis();
-		request = filterOrderInfo(request,response);
+		String filterFlag = MDA.WRITE_FILTER_LOG_FLAG;
+		if("ON".equals(filterFlag)){
+			request = filterOrderInfo(request,response);
+		}
 		log.debug("OrderInfoFilter use time:{} ms", System.currentTimeMillis() - start);
 		
 		filterChain.doFilter(request, response);
@@ -102,6 +114,7 @@ public class OrderInfoFilter extends OncePerRequestFilter {
 		BufferedReader br = request.getReader();
 		StringBuilder sb = new StringBuilder();
 		String s = null;
+		String soNbr = "";
 		while((s = br.readLine()) != null){
 			sb.append(s);
 		}
@@ -147,6 +160,16 @@ public class OrderInfoFilter extends OncePerRequestFilter {
 					Object jsonParamObj = jsonObject.get("orderList");
 					JSONObject jsonParam = JSONObject.fromObject(jsonParamObj);
 					Object custOrderObjs = jsonParam.get("custOrderList");
+					Object orderListInfo = jsonParam.get("orderListInfo");
+					if(orderListInfo != null){
+						JSONArray orderListInfoList = JSONArray.fromObject(orderListInfo);
+						Object orderListArrs[] = orderListInfoList.toArray();
+						for (int i = 0; i < orderListArrs.length; i++) {
+							Object orderListArr = orderListArrs[i];
+							JSONObject orderListObj = JSONObject.fromObject(orderListArr);
+							soNbr = (String)orderListObj.get("soNbr");
+						}
+					}
 					
 					String flag = "";
 					String flag2 = "";
@@ -200,9 +223,11 @@ public class OrderInfoFilter extends OncePerRequestFilter {
 												//	System.out.println(ojbId.toString());
 													if (accessNumber != null && list2 != null) {
 														if(!list2.contains(accessNumber)){
-															response.getWriter().println(JsonUtil.toString(map));
+															/*response.getWriter().println(JsonUtil.toString(map));
 															response.getWriter().close();
-															throw new ServletException();
+															throw new ServletException();*/
+															//记录信息
+															flag = "error";
 														}
 													}
 												}
@@ -243,9 +268,11 @@ public class OrderInfoFilter extends OncePerRequestFilter {
 																String accessNumber = (String) dataArrObj2.get("accessNumber");
 																if (accessNumber != null && list2 !=null ) {
 																	if(!list2.contains(accessNumber)){
-																		response.getWriter().println(JsonUtil.toString(map));
+																		/*response.getWriter().println(JsonUtil.toString(map));
 																		response.getWriter().close();
-																		throw new ServletException();
+																		throw new ServletException();*/
+																		//记录信息
+																		flag2 = "error";
 																	}
 																}
 															  }	
@@ -260,15 +287,39 @@ public class OrderInfoFilter extends OncePerRequestFilter {
 						}	
 				     }
 					if(!"".equals(flag) && !"success".equals(flag) || (!"".equals(flag2) && !"success".equals(flag2))){
-						response.getWriter().println(JsonUtil.toString(map));
+						/*response.getWriter().println(JsonUtil.toString(map));
 						response.getWriter().close();
-						throw new ServletException();
+						throw new ServletException();*/
+						//记录信息
+						saveFilterInfo(request,soNbr);
 					}
                 }
 				log.debug("after filter, jsondata:{}", newJson);
 			}
 	//	}
 		return newJson;
+	}
+
+	/**
+	 * 保存订单过滤信息
+	 */
+	public void saveFilterInfo(HttpServletRequest request, String soNbr){
+		Map<String, Object> param = new HashMap<String,Object>();
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(request,
+				SysConstant.SESSION_KEY_LOGIN_STAFF);
+		param.put("filter_type", "orderFilter");
+		param.put("order_id", soNbr);
+		param.put("area_id", sessionStaff.getAreaId());
+		param.put("ip", ServletUtils.getIpAddr(request));
+		param.put("method_name", "订单过滤器记录");
+		param.put("remark","");
+		param.put("IN_PARAM", JsonUtil.toString(param));
+		try {
+			mktResBmo.writeCardLogInfo("WRITE_FILTER_LOG_W",param, "", sessionStaff);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	class ParameterRequestWrapper extends HttpServletRequestWrapper {

@@ -1,0 +1,36 @@
+<table class="numberList" id="tab_offerSynList">
+    <thead>
+    <tr>
+        <td width="80">购物车流水</td>
+        <td width="80">同步流水</td>
+        <td width="80">同步平台编码</td>
+        <td width="80">同步平台名称</td>
+        <td width="60">号码</td>
+        <td width="60">省份</td>
+        <td width="60">是否同步</td>                       
+    </tr>
+    </thead>
+    <tbody>
+    <#if (pageModel.list)?? &&((pageModel.list)?size>0)>
+        <#list pageModel.list as item >
+        <tr>
+            <td>${item.custSoNbr}</td>
+            <td>${item.transactionId}</td>
+            <td>${item.dstSysId}</td>
+            <td>${item.dstSysName}</td>
+            <td>${item.accessNbr}</td>
+            <td>${item.areaId}</td>
+            <td>${item.dealFlagName}</td>
+        </tr>
+        </#list>
+    <#else>
+    <tr>
+        <td colspan="9">没有查询到结果</td>
+    </tr>
+    </#if>
+    </tbody>
+</table>
+<!--页码-->
+<@portal.modelPagination pageModel 5 "cart.main.queryOfferSynList"/>
+<script src="${contextPath}/js/our-js/ec.pagination.js?${jsversion}" type="text/javascript"></script>
+<!--页码 end-->

@@ -1230,7 +1230,63 @@ cart.main = (function(){
 			}
 		});
 	};
+
+	/**
+     * 销售品同步信息列表
+     * @param pageIndex
+     * @private
+     */
+    var _queryOfferSynList = function (pageIndex) {
+        var curPage = 1;
+        if (pageIndex > 0) {
+            curPage = pageIndex;
+        }
+        var param = {};
+        var custSoNbr = $.trim($("#p_custSoNbr").val());
+        var accessNbr = $("#p_accessNbr").val();
+        var areaId = $("#p_areaId").val();
+        if (ec.util.isObj(accessNbr) && (!/^1\d{10}$/.test(accessNbr))) {
+            $.alert("提示", "请输入正确的手机号！");
+            return;
+        }
+        
+        param = {
+            "custSoNbr": custSoNbr,
+            "accessNbr": accessNbr,
+            "areaId": areaId,
+            "nowPage": curPage,
+            "pageSize": 10
+        };
+        $.callServiceAsHtmlGet(contextPath + "/offer/queryOfferSynList", param, {
+            "before": function () {
+                $.ecOverlay("销售品同步信息查询中，请稍等...");
+            },
+            "always": function () {
+                $.unecOverlay();
+            },
+            "done": function (response) {
+                if (response && response.code == -2) {
+                    return;
+                } else if (response.data && response.data.substring(0, 6) != "<table") {
+                    $.alert("提示", response.data);
+                } else {
+                    $("#cart_list").html(response.data).show();
+                }
+            },
+            fail: function () {
+                $.unecOverlay();
+                $.alert("提示", "请求可能发生异常，请稍后再试！");
+            }
+        });
+    };
 	
+    /**
+     * 地区选择
+     * @private
+     */
+    var _chooseArea = function () {
+        order.area.chooseAreaTreeManger("report/cartMain", "p_areaId_val", "p_areaId", 3);
+    };
 	
 	return {
 		addStyle			:_addStyle,
@@ -1262,7 +1318,8 @@ cart.main = (function(){
 	 	chooseProAndLocalArea:_chooseProAndLocalArea,
 	 	qryElecRecord		:_qryElecRecord,
 	 	downLoadElecRecord  :_downLoadElecRecord,
-	 	blackListInvalid   :_blackListInvalid
+	 	blackListInvalid   :_blackListInvalid,
+	 	queryOfferSynList  :_queryOfferSynList
 	};
 	
 })();
@@ -1450,5 +1507,7 @@ $(function(){
 			}
 		});
 		$("#bt_cardprogressQry").off("click").on("click",function(){cart.main.cardProgressQuery();});
+		// 查询按钮事件绑定
+	    $("#bt_offerSynQry").off("click").on("click", function () {cart.main.queryOfferSynList(1);});
 	}
 });

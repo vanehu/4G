@@ -15,7 +15,7 @@ ess.repeatWriteCard = (function() {
 		var startDate = ec.util.defaultStr($("#p_startDate").val());
 		var endDate = ec.util.defaultStr($("#p_endDate").val());
 		if(extCustOrderId=="" && accNbr==""){
-			$.alert("提示","'订单流水号'和'手机号码'必须输入一个条件！");
+			$.alert("提示","'外部订单号'和'手机号码'必须输入一个条件！");
 			return;
 		}
 		var param = {
