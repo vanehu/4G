@@ -2206,7 +2206,7 @@
 		</const>
 		<const type="Map" name="PORTAL_REGEXP" description="门户常用正则表达式集合">
 			{
-			"LTEPHONEHEAD" :"^(149|133|153|173|177|180|181|189)\\d{8}?$",	<!-- 电信号码号段正则表达式(portal.properties迁移沿用命名) -->
+			"LTEPHONEHEAD" :"^(149|133|153|173|177|180|181|189|199)\\d{8}?$",	<!-- 电信号码号段正则表达式(portal.properties迁移沿用命名) -->
 			"REGEXP_PRICE" :"^[0-9]+(.[0-9]{1,2})?$",						<!-- 批量订购裸终端价格校验正则表达式 -->
 			"REGEXP_DEALER" :"^\\d+@\\d+@\\d+@\\d+?$",						<!-- 批量修改发展人[产品发展人]正则表达式 -->
 			"REGEXP_OFFER" :"^\\d+@\\d+@\\d+@\\d+?$",						<!-- 批量修改发展人[销售品发展人]正则表达式 -->
@@ -3668,5 +3668,6 @@
 		<const type="List" name="CERTIFICATES_MUST_READ_CERT" description="必须读卡的证件：人民武装警察居民身份证52、现役军人居民身份证51、居民身份证1">
 		["1", "51", "52"]
 		</const>
+		<const type="String" name="WRITE_FILTER_LOG_FLAG" value="ON" description="是否进行开启订单过滤器"></const>
 	</mda>
 </mdas>

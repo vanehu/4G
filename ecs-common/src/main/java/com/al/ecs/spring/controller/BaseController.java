@@ -325,6 +325,28 @@ public class BaseController {
 	}
 	
 	/**
+	 * 能力开放页面跳转报错,Exception
+	 */
+	protected String failedStrErr(Model model, ErrorCode error, Object data, Map<String, Object> paramMap) {
+		Map<String, Object> tempMap = new HashMap<String, Object>();
+		tempMap.put("errCode", error.getCode());
+		tempMap.put("errMsg", error.getErrMsg());
+		tempMap.put("paramMap", JsonUtil.toString(paramMap));
+		if (data instanceof Exception) {
+			tempMap.put("errData", ExceptionUtils.getFullStackTrace((Throwable) data));			
+		} else {
+			tempMap.put("errData", data.toString());
+		}
+		Map<String, Object> retnMap = new HashMap<String, Object>();
+		retnMap.put("code", "-2");
+		retnMap.put("data", tempMap);
+		
+		String errorMsg = "错误编码【"+tempMap.get("errCode")+"】"+tempMap.get("errMsg")+",错误详情："+JsonUtil.toString(retnMap);
+		model.addAttribute("errorMsg", errorMsg);
+		return "/common/error";
+	}
+	
+	/**
 	 * 获取html模板异常，通过公用错误提示界面返回前台
 	 * @param model 
 	 * @param ie
@@ -381,6 +403,65 @@ public class BaseController {
 		return "/common/errorJson";
 	}
 	
+	/**
+	 * 能力开放页面跳转报错 InterfaceException
+	 * 获取html模板异常，通过公用错误提示界面返回前台
+	 * @param model 
+	 * @param ie
+	 * @param paramMap
+	 * @param errCode
+	 * @return
+	 */
+	protected String failedStrErr(Model model, InterfaceException ie, Map<String, Object> paramMap, ErrorCode error) {
+		Map<String, Object> tempMap = new HashMap<String, Object>();
+		String errCode = "";
+		String errMsg = "";
+		try {
+			if (ie.getErrType() == ErrType.OPPOSITE) {
+				errCode = error.getOppoCode();
+				errMsg = error.getOppoErrMsg();
+			} else if (ie.getErrType() == ErrType.PORTAL) {
+				errCode = error.getCode();
+				errMsg = error.getErrMsg();
+			} else if (ie.getErrType() == ErrType.ECSP) {
+				errCode = error.getCode();
+				errMsg = error.getErrMsg();
+			} else if (ie.getErrType() == ErrType.CSB) {
+				errCode = ie.getErrCode();
+				errMsg = ie.getMsg();
+			} else if (ie.getErrType() == ErrType.CATCH) {
+				errCode = ie.getErrCode();
+				errMsg = ie.getMsg();
+			}
+		} catch (Exception e) {
+			log.error("获取错误编码出错", e);
+		}
+		tempMap.put("errCode", errCode);
+		tempMap.put("errMsg",  errMsg);
+		tempMap.put("paramMap", ie.getParamString());
+		String errorInstNbr = ie.getErrorInstNbr();
+		if (StringUtils.isNotEmpty(errorInstNbr)) {
+			tempMap.put("errorInstNbr", errorInstNbr);
+		}
+		
+		if (ie.getErrType() == ErrType.PORTAL) {
+			tempMap.put("errData", ExceptionUtils.getFullStackTrace(ie));
+		} else {
+			tempMap.put("errData", ie.getErrStack());
+		}
+		if (StringUtils.isNotEmpty(ie.getLogSeqId())) {
+			tempMap.put("logSeqId", ie.getLogSeqId());
+		} else {
+			tempMap.put("logSeqId", "");
+		}
+		Map<String, Object> retnMap = new HashMap<String, Object>();
+		retnMap.put("code", "-2");
+		retnMap.put("data", tempMap);
+
+	    String errorMsg = "错误编码【"+tempMap.get("errCode")+"】"+tempMap.get("errMsg")+",错误详情："+JsonUtil.toString(retnMap);
+		model.addAttribute("errorMsg", errorMsg);
+		return "/common/error";
+	}
 	
 	protected JsonResponse failed(BusinessException be) {
 		Map<String, Object> retnMap = new HashMap<String, Object>();
@@ -410,6 +491,24 @@ public class BaseController {
 		retnMap.put("data", tempMap);
 		model.addAttribute("errorJson", JsonUtil.toString(retnMap));
 		return "/common/errorJson";
+	}
+	/**
+	 * 能力开放页面跳转报错,BusinessException
+	 */
+	protected String failedStrErr(Model model, BusinessException be) {
+		Map<String, Object> tempMap = new HashMap<String, Object>();
+		tempMap.put("errCode", be.getError().getCode());
+		tempMap.put("errMsg", be.getError().getErrMsg());
+		tempMap.put("paramMap", JsonUtil.toString(be.getParamMap()));
+		tempMap.put("resultMap", JsonUtil.toString(be.getResultMap()));
+		tempMap.put("errData", ExceptionUtils.getFullStackTrace(be));
+		
+		Map<String, Object> retnMap = new HashMap<String, Object>();
+		retnMap.put("code", "-2");
+		retnMap.put("data", tempMap);
+		String errorMsg = "错误编码【"+tempMap.get("errCode")+"】"+tempMap.get("errMsg")+",错误详情："+JsonUtil.toString(retnMap);
+		model.addAttribute("errorMsg", errorMsg);
+		return "/common/error";
 	}
 	
 	/**

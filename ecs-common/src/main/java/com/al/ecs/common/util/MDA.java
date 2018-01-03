@@ -695,4 +695,7 @@ public class MDA {
 	
 	/**必须读卡的证件：人民武装警察居民身份证52、现役军人居民身份证51、居民身份证1*/
     public static final List<String> CERTIFICATES_MUST_READ_CERT = new ArrayList<String>();
+
+    /**订单过滤器开启开关*/
+	public static final String WRITE_FILTER_LOG_FLAG = new String("");
 }

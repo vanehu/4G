@@ -62,20 +62,20 @@ query.common = (function() {
 	 */
 	var _queryPropertiesValue = function(key){
 		
-		var resultFlag = null;
+		var result = null;
 		
 		if(key == null || key == undefined || key == ""){
 			$.alert("提示","入参key为空");
 		} else{
 			var response = $.callServiceAsJson(contextPath + "/properties/getValue", {"key": key});
 			if (response.code == "0") {
-				resultFlag = response.data;
+				result = response.data;
 			} else if (response.code == "1"){
 				$.alert("提示","Error: 配置查询失败");
 			}
 		}
 		
-		return resultFlag;
+		return result;
 	};
 	
 	/**

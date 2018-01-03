@@ -755,11 +755,8 @@ CONST = (function(){
 //初始化
 $(function(){
 	CONST.getAppDesc();
-	var response = $.callServiceAsJson(contextPath + "/properties/getValue", {"key": "LTEPHONEHEAD"});
-	if (response.code == "0") {
-		var reg = new RegExp(response.data);
-		if (ec.util.isObj(reg)) {
-			CONST.LTE_PHONE_HEAD = reg;
-		}
+	var reg = new RegExp(query.common.queryPropertiesValue("LTEPHONEHEAD"));
+	if (ec.util.isObj(reg)) {
+		CONST.LTE_PHONE_HEAD = reg;
 	}
 });

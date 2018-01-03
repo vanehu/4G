@@ -13,6 +13,7 @@ offerChange = (function() {
 	var _newMemberFlag = false;
 	var _oldMemberFlag = false;
 	var maxNum = 0;
+	var minNum = 0;
 	
 	//初始化套餐变更页面
 	var _init = function (){
@@ -114,6 +115,7 @@ offerChange = (function() {
 			var areaidflag = order.memberChange.areaidJurisdiction();
 			var iflag = 0; //判断是否弹出副卡选择框 false为不选择
 			var max = 0;
+			var min = 0;
 			var $tbody = $("#member_tbody");
 			$tbody.html("");
 			$("#main_title").text(OrderInfo.offerSpec.offerSpecName);
@@ -146,24 +148,31 @@ offerChange = (function() {
 							})
 							if(this.minQty !=0){
                                 this.minQty = this.minQty-membernum;
-                                this.dfQty = this.dfQty-membernum;
+                                this.dfQty = 0;
                                 if(this.minQty<0){
                                      this.minQty = 0;
                                 }
-                                if(this.dfQty<0){
-                                     this.dfQty = 0;
-                                }
                           }
 							max = this.maxQty<0?"不限制":this.maxQty-membernum;
+							min = this.minQty;
 							if(max<0){
 								max = 0;
 							}
 							maxNum = max;
-							$tr.append("<td align='left' colspan='3'>"+this.objName+" :<i id='plan_no' style='margin-top: 3px; display: inline-block; vertical-align: middle;'>"+
-									"<a class='add' href='javascript:order.service.subNum(\""+objInstId+"\","+this.minQty+");'></a>"+
-									"<input id='"+objInstId+"' type='text' value='"+this.dfQty+"' class='numberTextBox width22' readonly='readonly'>"+
-									"<a class='add2' href='javascript:order.service.addNum(\""+objInstId+"\","+this.maxQty+",\""+offerRole.parentOfferRoleId+"\");'> </a>"+
-									"</i>"+this.minQty+"-"+max+"（张） </td>");	
+							minNum = min;
+							if(this.minQty !=0){
+								$tr.append("<td align='left' colspan='3'>"+this.objName+" :<i id='plan_no' style='margin-top: 3px; display: inline-block; vertical-align: middle;'>"+
+										"<a class='add' href='javascript:order.service.subNumNoLim(\""+objInstId+"\");'></a>"+
+										"<input id='"+objInstId+"' type='text' value='"+this.dfQty+"' class='numberTextBox width22' readonly='readonly'>"+
+										"<a class='add2' href='javascript:order.service.addNum(\""+objInstId+"\","+this.maxQty+",\""+offerRole.parentOfferRoleId+"\");'> </a>"+
+										"</i>"+this.minQty+"-"+max+"（张） </td>");
+							}else{
+								$tr.append("<td align='left' colspan='3'>"+this.objName+" :<i id='plan_no' style='margin-top: 3px; display: inline-block; vertical-align: middle;'>"+
+										"<a class='add' href='javascript:order.service.subNum(\""+objInstId+"\","+this.minQty+");'></a>"+
+										"<input id='"+objInstId+"' type='text' value='"+this.dfQty+"' class='numberTextBox width22' readonly='readonly'>"+
+										"<a class='add2' href='javascript:order.service.addNum(\""+objInstId+"\","+this.maxQty+",\""+offerRole.parentOfferRoleId+"\");'> </a>"+
+										"</i>"+this.minQty+"-"+max+"（张） </td>");
+							}
 							iflag++;
 							if(max>0 && areaidflag!="" && areaidflag.net_vice_card=="0"){
 								var oldTips = "注意：纳入老用户必须和主卡账户一致!";
@@ -257,7 +266,20 @@ offerChange = (function() {
 			$.alert("提示","加装数量已经超过能加装的最大数量【"+maxNum+"】!");
 			return;
 		}
-
+		var minTag = false;
+		$.each(OrderInfo.offerSpec.offerRoles,function(){
+			if(this.memberRoleCd=="401"){
+				minTag = true;
+			}
+		});
+		console.log("############newnum:"+newnum);
+		console.log("############order.memberChange.viceCartNum:"+order.memberChange.viceCartNum);
+		if(minTag){
+			if(parseInt(newnum)+parseInt(order.memberChange.viceCartNum)<minNum){
+				$.alert("提示","加装数量少于能加装的最小数量【"+minNum+"】!");
+				return;
+			}
+		}
         var usedNum=ec.util.mapGet(OrderInfo.oneCardFiveNum.usedNum,order.cust.getCustInfo415Flag(order.cust.getCustInfo415()));
         if(!ec.util.isObj(usedNum)){
             usedNum = 0;

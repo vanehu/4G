@@ -218,4 +218,14 @@ public interface OfferBmo {
 	 */
 	public Map<String, Object> queryOfferOrderedTimes(Map<String, Object> params, SessionStaff sessionStaff) throws InterfaceException, IOException, BusinessException, Exception;
 	
+	/**
+	 * 销售品同步信息查询
+	 * @param paramMap
+	 * @param optFlowNum
+	 * @param sessionStaff
+	 * @return
+	 * @throws Exception
+	 */
+	public Map<String, Object> queryOfferSynInfo(Map<String, Object> paramMap, String optFlowNum,SessionStaff sessionStaff)throws Exception;
+	
 }

@@ -14,6 +14,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,10 @@ import com.al.ecs.common.util.JsonUtil;
 import com.al.ecs.common.util.PropertiesUtils;
 import com.al.ecs.common.web.HttpUtils;
 import com.al.ecs.common.web.ServletUtils;
+import com.al.ecs.exception.BusinessException;
+import com.al.ecs.exception.ErrorCode;
 import com.al.ecs.exception.InterfaceException;
+import com.al.ecs.exception.InterfaceException.ErrType;
 import com.al.ecs.spring.controller.BaseController;
 import com.al.lte.portal.bmo.crm.OfferBmo;
 import com.al.lte.portal.bmo.crm.TokenBmo;
@@ -98,12 +102,12 @@ public class APPModelController extends BaseController {
 			log.error("令牌key："+tokenKey);
 			String jmAccessToken = AESUtils.decryptToString(accessToken, tokenKey);
 			if(StringUtil.isEmptyStr(jmAccessToken)){				
-				model.addAttribute("errorMsg", "令牌信息解密异常");
+				model.addAttribute("errorMsg", "令牌信息通过TOKENKEY解密异常。");
 				return "/common/error";
 			}
 			String[] accessTokenStr = jmAccessToken.split("#");
 			if(accessTokenStr.length != 3){
-				model.addAttribute("errorMsg", "令牌信息异常");
+				model.addAttribute("errorMsg", "令牌信息解密出的参数不正常，请省份检查accessToken的参数。");
 				return "/common/error";
 			}	
 			
@@ -123,17 +127,31 @@ public class APPModelController extends BaseController {
 			String areaId = String.valueOf(resultMap.get("areaId"));
 			String provinceCode = String.valueOf(resultMap.get("provinceCode"));
 			String channelCode = String.valueOf(resultMap.get("channelCode"));
-			Map<String,Object> staffInfo = staffBmo.queryStaffByStaffCode4Login(staffCode, areaId);
-			log.error("获取员工信息："+staffInfo.toString());
-			if(staffInfo.get("resultCode") != null){				
-				model.addAttribute("errorMsg", "获取员工信息异常");
-				return "/common/error";
-			}
-			
+			Map<String,Object> staffInfo = new HashMap<String,Object>();
+			Map<String, Object> queryStaffMap = new HashMap<String,Object>();
+			queryStaffMap.put("staffCode", staffCode);
+			queryStaffMap.put("areaId", areaId);
+			try {
+				staffInfo = staffBmo.queryStaffByStaffCode4Login(staffCode, areaId);
+				log.error("获取员工信息："+staffInfo.toString());
+				if(staffInfo.get("resultCode") != null){				
+					model.addAttribute("errorMsg", "获取员工信息异常,"+staffInfo.get("resultMsg"));
+					return "/common/error";
+				}
+			} catch (BusinessException be) {
+	            log.error("门户处理系统管理的queryStaffByStaffCode4Login服务返回的数据异常", be);
+	            return super.failedStrErr(model, be);
+	        } catch (InterfaceException ie) {
+	            log.error("PAD单点页面集成调用queryStaffByStaffCode4Login接口服务异常:",ie);
+	            return super.failedStrErr(model, ie, queryStaffMap, ErrorCode.ORDER_CTGMAINDATA);
+	        } catch(Exception e){
+				log.error("PAD单点页面集成调用queryStaffByStaffCode4Login接口异常:",e);
+				return super.failedStrErr(model, ErrorCode.ORDER_CTGMAINDATA, e, queryStaffMap);
+			}	
 			String privateKey = MySimulateData.getInstance().getParam("token."+provinceCode+".key",(String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),"token."+provinceCode+".key");
 			log.error("省份私钥："+privateKey);
 			if(StringUtil.isEmptyStr(privateKey)){		
-				model.addAttribute("errorMsg", "私钥为空");
+				model.addAttribute("errorMsg", "MDA配置 'token."+provinceCode+".key' 私钥为空");
 				return "/common/error";
 			}
 			String jmParams = AESUtils.decryptToString(params, privateKey);
@@ -142,6 +160,10 @@ public class APPModelController extends BaseController {
 				return "/common/error";
 			}
 			Map<String,Object> paramsMap = JsonUtil.toObject(jmParams, HashMap.class);
+			if(paramsMap == null || paramsMap.size() <= 0){		
+				model.addAttribute("errorMsg", "省份入参params参数封装异常，请省份检查入参params");
+				return "/common/error";
+			}
 			//redmine2074987
 			String lanId = MapUtils.getString(paramsMap,"lanId","");
 			staffInfo.put("accessToken", accessToken);
@@ -152,10 +174,6 @@ public class APPModelController extends BaseController {
 			if(!StringUtils.isEmpty(lanId)){
 				request.getSession().setAttribute(SysConstant.TOKEN_LANID,lanId);
 			}
-			if(paramsMap == null || paramsMap.size() <= 0){		
-				model.addAttribute("errorMsg", "参数解析异常");
-				return "/common/error";
-			}
 			log.error("解析后的参数集："+paramsMap.toString());
 			String mainProdOfferId = String.valueOf(paramsMap.get("mainProdOfferId"));//主套餐内部ID 对应Ext_Prod_Offer_Id
 			if(!StringUtil.isEmptyStr(mainProdOfferId)){	
@@ -163,28 +181,39 @@ public class APPModelController extends BaseController {
 				offerMap.put("areaId", areaId);
 				offerMap.put("extProdOfferId", mainProdOfferId);
 				log.error("销售品转换参数："+offerMap.toString());
-				Map<String,Object> changeMap = offerBmo.prodOfferChange(offerMap, null, sessionStaff);
-				log.error("销售品转换结果："+changeMap.toString());
-				if(changeMap != null && changeMap.size() <= 0){
-					model.addAttribute("errorMsg", "销售品编码转换异常");
-					return "/common/error";
+				try {
+					Map<String,Object> changeMap = offerBmo.prodOfferChange(offerMap, null, sessionStaff);
+					log.error("销售品转换结果："+changeMap.toString());
+					if(changeMap != null && changeMap.size() <= 0){
+						model.addAttribute("errorMsg", "销售品编码转换异常，后台接口返回："+changeMap.toString());
+						return "/common/error";
+					}
+					if(!ResultCode.R_SUCCESS.equals(String.valueOf(changeMap.get("code")))){
+						model.addAttribute("errorMsg", "销售品编码转换失败，后台接口返回："+changeMap.toString());
+						return "/common/error";
+					}
+					List<Map<String, Object>> resultList = (List<Map<String, Object>>) changeMap.get("result");
+					if(resultList == null || resultList.size() <= 0){
+						model.addAttribute("errorMsg", "销售品编码转换结果为空，后台接口返回："+changeMap.toString());
+						return "/common/error";
+					}				
+					paramsMap.put("prodOfferId", resultList.get(0).get("prodOfferId"));
+					paramsMap.put("offerNbr", resultList.get(0).get("offerNbr"));
+					paramsMap.put("prodOfferName", resultList.get(0).get("prodOfferName"));
+				} catch (BusinessException be) {
+		            log.error("门户处理营业后台的queryProdOfferByExtprodofferId接口服务返回的数据异常", be);
+		            return super.failedStrErr(model, be);
+		        } catch (InterfaceException ie) {
+		            log.error("PAD单点页面集成调用queryProdOfferByExtprodofferId接口服务异常:",ie);
+		            return super.failedStrErr(model, ie, offerMap, ErrorCode.QUERY_OFFER_PARAM);
+		        } catch(Exception e){
+					log.error("PAD单点页面集成调用queryProdOfferByExtprodofferId接口异常:",e);
+					return super.failedStrErr(model, ErrorCode.QUERY_OFFER_PARAM, e, offerMap);
 				}
-				if(!ResultCode.R_SUCCESS.equals(String.valueOf(changeMap.get("code")))){
-					model.addAttribute("errorMsg", "销售品编码转换失败");
-					return "/common/error";
-				}
-				List<Map<String, Object>> resultList = (List<Map<String, Object>>) changeMap.get("result");
-				if(resultList == null || resultList.size() <= 0){
-					model.addAttribute("errorMsg", "销售品编码转换结果为空");
-					return "/common/error";
-				}				
-				paramsMap.put("prodOfferId", resultList.get(0).get("prodOfferId"));
-				paramsMap.put("offerNbr", resultList.get(0).get("offerNbr"));
-				paramsMap.put("prodOfferName", resultList.get(0).get("prodOfferName"));								
 			}
 			String actionFlag = String.valueOf(paramsMap.get("actionFlag"));//业务类型
 			if(StringUtil.isEmptyStr(actionFlag)){	
-				model.addAttribute("errorMsg", "业务类型为空");
+				model.addAttribute("errorMsg", "省份入参业务类型为空");
 				return "/common/error";
 			}
 			String provIsale = String.valueOf(paramsMap.get("provIsale"));//单点登录流水
@@ -242,12 +271,17 @@ public class APPModelController extends BaseController {
 			String modelUrl = MySimulateData.getInstance().getParam("app."+actionFlag+".url",(String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),"app."+actionFlag+".url");//业务跳转地址
 			log.error("业务跳转地址："+modelUrl);
 			if(StringUtil.isEmptyStr(modelUrl)){	
-				model.addAttribute("errorMsg", "业务跳转地址为空");
+				model.addAttribute("errorMsg", "MDA配置 'app."+actionFlag+".url' 业务跳转地址为空");
 				return "/common/error";
 			}
 			String commonParamKey = MySimulateData.getInstance().getParam("COMMON_PARAM_KEY",(String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY),"common.param.key");//公共参数加密KEY
 			log.warn("公共参数加密KEY："+commonParamKey);
 			StringBuilder strb = new StringBuilder();
+			String comParams = AESUtils.encryptToString(JsonUtil.toString(paramsMap), commonParamKey);
+			if(StringUtil.isEmptyStr(comParams)){			
+				model.addAttribute("errorMsg", "省份入参params通过公共参数加密KEY解密异常");
+				return "/common/error";
+			}
 			strb.append("?params="+ AESUtils.encryptToString(JsonUtil.toString(paramsMap), commonParamKey)).append("&accessToken="+accessToken);
 			modelUrl = (new StringBuilder(String.valueOf(modelUrl))).append(strb.toString()).toString();
 			log.error("回调地址："+modelUrl);
@@ -280,9 +314,22 @@ public class APPModelController extends BaseController {
 					return super.redirect(modelUrl);
 				}
 			}
-		}catch(Exception ex){
-			log.error("APP单点页面集成接口异常:",ex);
-			model.addAttribute("errorMsg", "服务异常。");
+		}catch (InterfaceException ie) {
+            log.error("PAD单点页面集成调用接口服务异常:",ie);
+            System.out.println(ie.getErrType());
+            if (ie.getErrType() == ErrType.PORTAL) {
+            	model.addAttribute("errorMsg","单点页面服务异常:"+ExceptionUtils.getFullStackTrace(ie));
+    		} else {
+    			model.addAttribute("errorMsg","单点页面服务异常:"+ie.getErrStack());
+    		}
+            return "/common/error";
+        } catch(Exception ex){
+			log.error("PAD单点页面集成接口异常:",ex);
+			if (ex instanceof Exception) {
+				model.addAttribute("errorMsg","单点页面服务异常:"+ExceptionUtils.getFullStackTrace((Throwable) ex));
+			} else {
+				model.addAttribute("errorMsg","单点页面服务异常:"+ex.toString());
+			}
 			return "/common/error";
 		}		
 	}
