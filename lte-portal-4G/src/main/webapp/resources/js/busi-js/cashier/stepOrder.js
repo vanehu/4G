@@ -43,7 +43,6 @@ stepOrder.main = (function(){
 	 */
     var _orderReduction = function(orderParam,funcIfCancel){
     	try {
-    		console.log(orderParam);
     		_dataDestory();
     	} catch (e) {
     	}
@@ -86,10 +85,6 @@ stepOrder.main = (function(){
     var _queryOrderListInfoByCustomerOrderId = function(param){
     	if(param == null || !param.olId){
     		$.alert("提示","数据抽取入参异常，无法继续受理！");
-    		try {
-        		console.log(param);
-    		} catch (e) {
-    		}
     		return false;
     	}
     	var url = contextPath+"/order/queryOrderListInfoByCustomerOrderId";
