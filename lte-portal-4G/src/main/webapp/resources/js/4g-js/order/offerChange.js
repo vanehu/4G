@@ -272,8 +272,6 @@ offerChange = (function() {
 				minTag = true;
 			}
 		});
-		console.log("############newnum:"+newnum);
-		console.log("############order.memberChange.viceCartNum:"+order.memberChange.viceCartNum);
 		if(minTag){
 			if(parseInt(newnum)+parseInt(order.memberChange.viceCartNum)<minNum){
 				$.alert("提示","加装数量少于能加装的最小数量【"+minNum+"】!");

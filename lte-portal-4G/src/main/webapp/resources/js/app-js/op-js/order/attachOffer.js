@@ -159,9 +159,6 @@ AttachOffer = (function() {
 	
 	
 	var _terminCheckShow = function (prodId,newSpec){
-		console.log("******");
-		console.log(newSpec);
-		console.log(newSpec.agreementInfos)
 		if(ec.util.isArray(newSpec.agreementInfos)){ //合约销售品需要输入终端 mark
 			if(OrderInfo.actionFlag!=14){
 				//非购机入口的
