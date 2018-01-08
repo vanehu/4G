@@ -179,7 +179,11 @@ SoOrder = (function() {
 							order.main.restoreYzfInitialState();
 						}
 					}else{
-						$.alertM(response.data);
+						if(response.data.code == "123456"){
+							$.alert("信息提示","省份异常："+response.data.msg);
+						}else{
+							$.alertM(response.data);
+						}
 						if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==14 || OrderInfo.actionFlag==6){//新装与主副卡成员变更需要重置翼支付订购状态
 							order.main.restoreYzfInitialState();
 						}
