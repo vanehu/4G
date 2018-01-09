@@ -191,6 +191,9 @@ common.print = (function($){
 	}
 		
 	var _printVoucher=function(voucherInfo){
+		if(ec.util.isObj(voucherInfo)){
+			voucherInfo["busitypeFlag"] = OrderInfo.busitypeflag;
+		}
 	 $("#voucherForm").remove();
 		if(_getCookie('_session_pad_flag')=='1'){
 			var arr=new Array(3);

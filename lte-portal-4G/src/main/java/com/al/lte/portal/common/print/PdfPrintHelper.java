@@ -13,9 +13,14 @@ import java.util.Map;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.aspectj.org.eclipse.jdt.core.dom.ThisExpression;
+
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JREmptyDataSource;
 import net.sf.jasperreports.engine.JRExporterParameter;
+import net.sf.jasperreports.engine.JRPrintPage;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
@@ -23,7 +28,11 @@ import net.sf.jasperreports.engine.export.JRHtmlExporter;
 import net.sf.jasperreports.engine.export.JRHtmlExporterParameter;
 
 import com.al.ecs.common.util.DateUtil;
+import com.al.ecs.common.util.MDA;
+import com.al.ecs.common.util.StringUtil;
 import com.al.ecs.log.Log;
+import com.al.lte.portal.common.SysConstant;
+import com.itextpdf.text.pdf.PdfStructTreeController.returnType;
 import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.PdfStamper;
 import com.lowagie.text.pdf.PdfWriter;
@@ -80,7 +89,7 @@ public class PdfPrintHelper {
             //InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(m_vJasperFileName);
             inputStream = new ByteArrayInputStream(byteJasperFile);
             
-            bytes = runReportToPdf(inputStream, hasParameters, new JREmptyDataSource(), pageWidth, pageHeigth);
+            bytes = runReportToPdf(inputStream, hasParameters, new JREmptyDataSource(), pageWidth, pageHeigth, null, null);
             bConvertOK = true;//转换成功
             
             bytes = appendPrintControlScript(bytes);
@@ -113,7 +122,7 @@ public class PdfPrintHelper {
      * @return
      * @throws Exception
      */
-    public byte[] getPdfStreamWithParametersAndFields(Map<String, Object> hasParameters, Collection<Map<String, Object>> lstFields) throws Exception {
+    public byte[] getPdfStreamWithParametersAndFields(Map<String, Object> hasParameters, Collection<Map<String, Object>> lstFields, String busitypeFlag, String currentAreaId) throws Exception {
     	String strMsg = "";
         if(m_vJasperFileName == null || "".equals(m_vJasperFileName)){
             throw new Exception("异常：请先传入[pdf模板路径名称]来初始化本PdfPrintHelper类!");
@@ -126,7 +135,7 @@ public class PdfPrintHelper {
         try {
             inputStream = new ByteArrayInputStream(byteJasperFile);
             
-            bytes = runReportToPdf(inputStream, hasParameters, new ListDataSource(lstFields), pageWidth, pageHeigth);
+            bytes = runReportToPdf(inputStream, hasParameters, new ListDataSource(lstFields), pageWidth, pageHeigth, null, null);
             bConvertOK = true;//转换成功
             
             bytes = appendPrintControlScript(bytes);
@@ -174,7 +183,7 @@ public class PdfPrintHelper {
         try {
             inputStream = new ByteArrayInputStream(byteJasperFile);
             
-            bytes = runReportToPdf(inputStream, hasParameters, new ListDataSource(lstFields), pageWidth, pageHeigth);
+            bytes = runReportToPdf(inputStream, hasParameters, new ListDataSource(lstFields), pageWidth, pageHeigth, null, null);
             bConvertOK = true;//转换成功
             
         } catch (Exception exp) {
@@ -339,20 +348,50 @@ public class PdfPrintHelper {
      * <p>接管Jasper工具类，自定义高度和宽度 这样就可以针对那种卡孔的发票进行连打了，即一个pdf中有多张发票或回执，可以连打出来。
      */
     public static byte[] runReportToPdf(InputStream inputStream,
-    		Map<String, Object> parameters, JRDataSource jrDataSource, int pageWidth, int pageHeigth) throws Exception  {
+    		Map<String, Object> parameters, JRDataSource jrDataSource, int pageWidth, int pageHeigth, String busiTypeFlag, String currentAreaId) throws Exception  {
     	JasperPrint jasperPrint ;
         jasperPrint = JasperFillManager.fillReport(inputStream, parameters, jrDataSource);
+        
+        PdfPrintHelper.appendPdf(jasperPrint, busiTypeFlag, currentAreaId);
+        
         if(pageWidth>0){
             jasperPrint.setPageWidth(pageWidth);
         }
         if(pageHeigth>0){
             jasperPrint.setPageHeight(pageHeigth);
         }
-        
+                
         //JasperExportManager.exportReportToPdfFile(jasperPrint,"e:\\NewTestPrint.pdf");
         
 		return JasperExportManager.exportReportToPdf(jasperPrint);
     }
+    
+    /**
+     * 针对海南新装增加入网协议打印
+     * @param jasperPrint
+     * @param busiTypeFlag
+     * @return
+     * @throws Exception
+     */
+	private static JasperPrint appendPdf(JasperPrint jasperPrint, String busiTypeFlag, String currentAreaId) throws Exception {
+
+		if (StringUtils.isNotBlank(busiTypeFlag) && StringUtils.isNotBlank(currentAreaId)) {
+			Map<String, String> provConfig = MapUtils.getMap(MDA.PDF_PRINT_CONFIG, "PDF_PRINT_CONFIG_" + currentAreaId.substring(0, 3));
+			String jasperName = MapUtils.getString(provConfig, busiTypeFlag, "");
+			if (StringUtils.isNotBlank(jasperName)) {
+				String jasperFile = SysConstant.P_MOD_BASE_DIR + SysConstant.P_MOD_SUB_CTG_PDF + jasperName;
+				byte[] appendJasper = FileHandle.readJasper(jasperFile);
+				InputStream inputStream = new ByteArrayInputStream(appendJasper);
+				JasperPrint appendJasperPrint = JasperFillManager.fillReport(inputStream, null);
+				List<JRPrintPage> jrPrintPages = appendJasperPrint.getPages();
+				for (JRPrintPage page : jrPrintPages) {
+					jasperPrint.addPage(page);
+				}
+			}
+		}
+
+		return jasperPrint;
+	}
     
     public static void main(String[] args) throws Exception {
     	

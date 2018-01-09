@@ -167,7 +167,10 @@ public class PrintBmoImpl implements PrintBmo {
 			String optFlowNum,
 			HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
-
+		
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(request, SysConstant.SESSION_KEY_LOGIN_STAFF);
+		
+		String busitypeFlag = MapUtils.getString(paramMap, "busitypeFlag", "");
 		String busiType = MapUtils.getString(paramMap, "busiType");
 		String printType = MapUtils.getString(paramMap, "printType");
 		String agreement = MapUtils.getString(paramMap, "needAgreement");
@@ -203,17 +206,13 @@ public class PrintBmoImpl implements PrintBmo {
 			return printData;
 		}
 		if(signFlag.equals(SysConstant.PREVIEW_SIGN)){
-			return runVoucherPrint(printData, response, printType, needAgreement,signFlag);
+			return runVoucherPrint(printData, response, printType, needAgreement,signFlag, null, null);
 		}else if(signFlag.equals(SysConstant.PREVIEW_SIGN_HTML)){
 			return getVoucherDataForApp(params, needAgreement, optFlowNum, request);
 		}else if(signFlag.equals(SysConstant.PREVIEW_SIGN_PDF)){
-			SessionStaff sessionStaff = (SessionStaff) ServletUtils
-					.getSessionAttribute(request, SysConstant.SESSION_KEY_LOGIN_STAFF);
 			printData.put("areaName", "中国电信股份有限公司"+DataSignTool.getAreaName(sessionStaff.getCurrentAreaId(), sessionStaff)+"分公司业务登记单");
-			return runVoucherPrint(printData, response, printType, needAgreement,signFlag);
+			return runVoucherPrint(printData, response, printType, needAgreement,signFlag, null, null);
 		}else if(signFlag.equals(SysConstant.SAVE_PDF)){
-	    	SessionStaff sessionStaff = (SessionStaff) ServletUtils
-					.getSessionAttribute(request, SysConstant.SESSION_KEY_LOGIN_STAFF);
 	    	String login_area_id = "";
 	    	Object area=request.getSession().getAttribute("padLogin_area");
 	    	if(area!=null&&!area.equals("")){
@@ -232,7 +231,7 @@ public class PrintBmoImpl implements PrintBmo {
 			printData.put("companyseal", is2);
 			is.close();
 			is2.close();
-			Map<String, Object> ret=runVoucherPrint(printData, response, printType, needAgreement,signFlag);
+			Map<String, Object> ret=runVoucherPrint(printData, response, printType, needAgreement,signFlag, null, null);
 			ret.put("olId", params.get("olId"));
 			ret.put("areaId", sessionStaff.getAreaId());
 			ret.put("action", "ADD");
@@ -243,8 +242,6 @@ public class PrintBmoImpl implements PrintBmo {
 				return null;
 			}
 		}else if(signFlag.equals(SysConstant.SAVE_SIGN_PDF_APP)){
-	    	SessionStaff sessionStaff = (SessionStaff) ServletUtils
-					.getSessionAttribute(request, SysConstant.SESSION_KEY_LOGIN_STAFF);
 	    	String login_area_id = "";
 	    	Object area=request.getSession().getAttribute("appLogin_area");
 	    	if(area!=null&&!area.equals("")){
@@ -305,9 +302,7 @@ public class PrintBmoImpl implements PrintBmo {
 	    		return obj;
 	    	}
 		}else if(signFlag.equals(SysConstant.SAVE_NO_SIGN_PDF)){
-	    	SessionStaff sessionStaff = (SessionStaff) ServletUtils
-					.getSessionAttribute(request, SysConstant.SESSION_KEY_LOGIN_STAFF);
-			Map<String, Object> ret=runVoucherPrint(printData, response, printType, needAgreement,signFlag);
+			Map<String, Object> ret=runVoucherPrint(printData, response, printType, needAgreement,signFlag, null, null);
 			ret.put("olId", params.get("olId"));
 			ret.put("areaId", sessionStaff.getAreaId());
 			ret.put("action", "ADD");
@@ -322,7 +317,7 @@ public class PrintBmoImpl implements PrintBmo {
 			}
 		}else{
 			// 3. 数据驱动模板、展示打印页面
-			runVoucherPrint(printData, response, printType, needAgreement,signFlag);
+			runVoucherPrint(printData, response, printType, needAgreement,signFlag, busitypeFlag, sessionStaff.getCurrentAreaId());
 			return printData;
 		}
 	}
@@ -5330,7 +5325,7 @@ public class PrintBmoImpl implements PrintBmo {
 
 	private Map<String, Object> runVoucherPrint(Map<String, Object> printData,
 			HttpServletResponse response, String printType,
-			boolean needAgreement,String signflag) throws Exception {
+			boolean needAgreement,String signflag, String busitypeFlag, String currentAreaId) throws Exception {
 		String printTypeDir = SysConstant.P_MOD_SUB_CTG_PDF;
 		if (SysConstant.PRINT_TYPE_HTML.equals(printType)) {
 			printTypeDir = SysConstant.PRINT_TYPE_HTML;
@@ -5403,8 +5398,7 @@ public class PrintBmoImpl implements PrintBmo {
 					commonHtmlPrint(strJasperFileName, reportParams, inFields,
 							response, 0, 0);
 				} else {
-					commonPdfPrint(strJasperFileName, reportParams, inFields,
-							response, 0, 0);
+					commonPdfPrint(strJasperFileName, reportParams, inFields, response, 0, 0, busitypeFlag, currentAreaId);
 				}
 			}
 		} catch (Exception e) {
@@ -5420,7 +5414,7 @@ public class PrintBmoImpl implements PrintBmo {
         //获取Jasper模板对应的printHelper
         PdfPrintHelper vPdfPrintHelper = PrintHelperMgnt.getPrintHelper(strJasperFileName, pageWidth, pageHeight);
         //生成pdf文件
-        byte[] bytes = vPdfPrintHelper.getPdfStreamWithParametersAndFields(hasParameters, lstFields);
+        byte[] bytes = vPdfPrintHelper.getPdfStreamWithParametersAndFields(hasParameters, lstFields, null, null);
         String orderInfo=Base64.encodeBase64String(bytes).replaceAll("\n|\r", "");
 		ret.put("orderInfo", orderInfo);
         return ret;
@@ -5462,14 +5456,14 @@ public class PrintBmoImpl implements PrintBmo {
 	private void commonPdfPrint(String strJasperFileName,
 			Map<String, Object> hasParameters,
 			Collection<Map<String, Object>> lstFields,
-			HttpServletResponse response, int pageWidth, int pageHeight)
+			HttpServletResponse response, int pageWidth, int pageHeight, String busitypeFlag, String currentAreadId)
 			throws Exception {
 		try {
             //获取Jasper模板对应的printHelper
             PdfPrintHelper vPdfPrintHelper = PrintHelperMgnt.getPrintHelper(strJasperFileName, pageWidth, pageHeight);
 
             //生成pdf文件
-            byte[] bytes = vPdfPrintHelper.getPdfStreamWithParametersAndFields(hasParameters, lstFields);
+            byte[] bytes = vPdfPrintHelper.getPdfStreamWithParametersAndFields(hasParameters, lstFields, busitypeFlag, currentAreadId);
             //快销卡需要上传PDF文件
             Map<String, Object> printData  = new HashMap<String, Object>();
             Iterator it =lstFields.iterator();
@@ -5882,7 +5876,7 @@ public class PrintBmoImpl implements PrintBmo {
 					response, 0, 0);
 		} else {
 			commonPdfPrint(strJasperFileName, reportParams, inFields,
-					response, 0, 0);
+					response, 0, 0, null, null);
 		}
 
 		return resultMap;
@@ -5917,7 +5911,7 @@ public class PrintBmoImpl implements PrintBmo {
         if (SysConstant.PRINT_TYPE_HTML.equals(printType)) {
             commonHtmlPrint(strJasperFileName, reportParams, inFields, response, 0, 0);
         } else {
-            commonPdfPrint(strJasperFileName, reportParams, inFields, response, 0, 0);
+            commonPdfPrint(strJasperFileName, reportParams, inFields, response, 0, 0, null, null);
         }
 
         return resultMap;
@@ -5991,7 +5985,7 @@ public class PrintBmoImpl implements PrintBmo {
             if(SysConstant.PRINT_TYPE_HTML.equals(MapUtils.getString(dataBusMap, "printType"))){
             	commonHtmlPrint(strJasperFileName, reportParams, inFields, response, 0, 0);
             }else{
-            	commonPdfPrint(strJasperFileName, reportParams, inFields, response, 0, 0);
+            	commonPdfPrint(strJasperFileName, reportParams, inFields, response, 0, 0, null, null);
             }
             resultCode = ResultCode.R_SUCC;
 		}else{
@@ -6071,7 +6065,7 @@ public class PrintBmoImpl implements PrintBmo {
         reportParams.put("SUBREPORT_DIR", printTypeDir);
 
         //输出打印内容
-        commonPdfPrint(strJasperFileName, reportParams, inFields, response, 0, 0);
+        commonPdfPrint(strJasperFileName, reportParams, inFields, response, 0, 0, null, null);
 		return ResultCode.R_SUCC;
 	}
 
@@ -6112,7 +6106,7 @@ public class PrintBmoImpl implements PrintBmo {
 					response, 0, 0);
 		} else {
 			commonPdfPrint(strJasperFileName, reportParams, inFields,
-					response, 0, 0);
+					response, 0, 0, null, null);
 		}
 
 		return resultMap;
@@ -8517,7 +8511,7 @@ public class PrintBmoImpl implements PrintBmo {
 			return printData;
 		}
 		if(signFlag.equals(SysConstant.PREVIEW_SIGN)){
-			return runVoucherPrint(printData, response, printType, needAgreement,signFlag);
+			return runVoucherPrint(printData, response, printType, needAgreement,signFlag, null, null);
 		}else if(signFlag.equals(SysConstant.PREVIEW_SIGN_HTML)){
 			return getVoucherDataForAgentApp(params, needAgreement, optFlowNum, request);
 		}else if(signFlag.equals(SysConstant.SAVE_PDF)){
@@ -8541,7 +8535,7 @@ public class PrintBmoImpl implements PrintBmo {
 			printData.put("companyseal", is2);
 			is.close();
 			is2.close();
-			Map<String, Object> ret=runVoucherPrint(printData, response, printType, needAgreement,signFlag);
+			Map<String, Object> ret=runVoucherPrint(printData, response, printType, needAgreement,signFlag, null, null);
 			ret.put("olId", params.get("olId"));
 			ret.put("areaId", sessionStaff.getAreaId());
 			ret.put("action", "ADD");
@@ -8581,7 +8575,7 @@ public class PrintBmoImpl implements PrintBmo {
 		}else if(signFlag.equals(SysConstant.SAVE_NO_SIGN_PDF)){
 	    	SessionStaff sessionStaff = (SessionStaff) ServletUtils
 					.getSessionAttribute(request, SysConstant.SESSION_KEY_LOGIN_STAFF);
-			Map<String, Object> ret=runVoucherPrint(printData, response, printType, needAgreement,signFlag);
+			Map<String, Object> ret=runVoucherPrint(printData, response, printType, needAgreement,signFlag, null, null);
 			ret.put("olId", params.get("olId"));
 			ret.put("areaId", sessionStaff.getAreaId());
 			ret.put("action", "ADD");
@@ -8593,7 +8587,7 @@ public class PrintBmoImpl implements PrintBmo {
 			}
 		}else{
 			// 3. 数据驱动模板、展示打印页面
-			runVoucherPrint(printData, response, printType, needAgreement,signFlag);
+			runVoucherPrint(printData, response, printType, needAgreement,signFlag, null, null);
 			return printData;
 		}
 	}
