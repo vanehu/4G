@@ -2391,6 +2391,7 @@ public class CustController extends BaseController {
 			paramsMap.put("cert_org", MapUtils.getString(paramMaps, "certOrg"));// 签发机关
 			paramsMap.put("eff_date", MapUtils.getString(paramMaps, "effDate"));// 起始有效期
 			paramsMap.put("exp_date", MapUtils.getString(paramMaps, "expDate"));// 终止有效期
+			paramsMap.put("cert_type", MapUtils.getShort(paramMaps, "certType"));//证件类型
 			image_idcard = MapUtils.getString(paramMaps, "identityPic");
 			paramsMap.put("image_idcard", image_idcard);// 照片
 		} else {
