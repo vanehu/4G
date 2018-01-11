@@ -1,13 +1,14 @@
 package com.al.lte.portal.bmo.crm;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.collections.MapUtils; 
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.dom4j.DocumentException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import com.al.ec.serviceplatform.client.DataBus;
 import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ecs.common.util.JsonUtil;
 import com.al.ecs.common.util.PropertiesUtils;
+import com.al.ecs.common.util.XmlUtil;
 import com.al.ecs.common.web.ServletUtils;
 import com.al.ecs.exception.BusinessException;
 import com.al.ecs.exception.ErrorCode;
@@ -669,7 +671,61 @@ public class MktResBmoImpl implements MktResBmo {
 			resultMap.put("code",  ResultCode.R_FAIL);
 			resultMap.put("message", db.getResultMsg());
 		}
+		//ESS页面操作需要记录卡资源申请流水至远写组件日志接口
+		String essWriteCard = (String)param.get("essWriteCard");
+		if(StringUtils.isNotBlank(essWriteCard) && essWriteCard.equals("Y")){
+			essSaveTransId2WriteCardLog(param,optFlowNum,sessionStaff,db);
+		}
 		return resultMap;
+	}
+
+	private void essSaveTransId2WriteCardLog(Map<String, Object> param,
+			String optFlowNum, SessionStaff sessionStaff, DataBus db) {
+		Map<String, Object> logparam =  new HashMap<String, Object>();
+		
+		String couponInstanceCode =  (String) (param.get("iccserial")==null?"":param.get("iccserial"));
+		String iccId = (String) (param.get("iccid")==null?"":param.get("iccid"));
+		int serviceCode = (Integer) (param.get("serviceCode")==null?"":param.get("serviceCode"));
+		String remark = (String) (param.get("remark")==null?"":param.get("remark"));
+		String ip = (String) (param.get("ip")==null?"":param.get("ip"));
+		
+		if(MapUtils.isNotEmpty(db.getParammap())){
+			Map<String, Object> TcpCont = (Map<String, Object>) db.getParammap().get("TcpCont");
+			if(MapUtils.isNotEmpty(TcpCont)){
+				logparam.put("contactRecord", TcpCont.get("TransactionID"));
+			}
+		}
+		logparam.put("channelId", sessionStaff.getCurrentChannelId());
+		logparam.put("staffId", sessionStaff.getStaffId());
+		logparam.put("couponInstanceCode",couponInstanceCode);
+		logparam.put("areaId", sessionStaff.getAreaId());
+		logparam.put("iccId",iccId);
+		logparam.put("serviceCode", serviceCode+"");
+		logparam.put("ip", ip);
+		logparam.put("cardSource", remark);
+		logparam.put("operateDate", new Date());
+		logparam.put("methodName", "GetUimCardInfo");//申请卡资源
+		String extCustOrderId = (String) (param.get("extCustOrderId")==null?"":param.get("extCustOrderId"));
+		String accNbr = (String) (param.get("phoneNumber")==null?"":param.get("phoneNumber"));
+		logparam.put("extCustOrderId", extCustOrderId);
+		logparam.put("accNbr", accNbr);
+		
+		if (ResultCode.R_SUCCESS.equals(StringUtils.defaultString(db.getResultCode()))) {
+			Map<String,Object> returnlMap = db.getReturnlmap();
+			if(MapUtils.isNotEmpty(returnlMap)){
+				logparam.put("errDesc", returnlMap.get("cardInfo"));
+				logparam.put("result", returnlMap.get("code"));
+			}
+		} else {
+			logparam.put("errDesc", db.getResultMsg());
+			logparam.put("result", ResultCode.R_FAIL);
+		}
+		
+		try {
+			intcardNubInfoLog(logparam, optFlowNum, sessionStaff);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public Map<String, Object> getUimCardType(Map<String, Object> dataBusMap, String optFlowNum, SessionStaff sessionStaff) throws Exception {
@@ -692,7 +748,38 @@ public class MktResBmoImpl implements MktResBmo {
 			String optFlowNum, SessionStaff sessionStaff)
 			throws Exception {
 		Map<String, Object> resultMap = new HashMap<String, Object>();
+		String essWriteCard = (String)param.get("essWriteCard");
+		Map<String, Object> logparam = null;
+		if(StringUtils.isNotBlank(essWriteCard) && essWriteCard.equals("Y")){
+			logparam = (Map<String, Object>) param.get("logparam");
+			param.remove("essWriteCard");
+			param.remove("logparam");
+		}
 		DataBus db = ServiceClient.callService(param, PortalServiceCode.SUBMIT_UIM_CARD_INFO, optFlowNum, sessionStaff);
+		//ESS页面操作需要记录卡资源申请流水至远写组件日志接口
+		if(StringUtils.isNotBlank(essWriteCard) && essWriteCard.equals("Y")){
+			String requestXmlStr = db.getInIntParam();
+			String SubmitCardTransId = null;
+			if(StringUtils.isNotBlank(requestXmlStr)){
+				SubmitCardTransId = XmlUtil.getXMLNodeValue(requestXmlStr, "TransactionID", false);
+			}
+			logparam.put("contactRecord", SubmitCardTransId);
+			logparam.put("methodName", "SubmitUimCardInfo");//写卡上报
+			
+			Map<String,Object> submitCardReturnMap = db.getReturnlmap();
+			if(MapUtils.isNotEmpty(submitCardReturnMap)){
+				logparam.put("errDesc", submitCardReturnMap.get("message"));
+				logparam.put("result", submitCardReturnMap.get("code"));
+			}else{
+				logparam.put("errDesc", db.getResultMsg());
+				logparam.put("result", db.getResultCode());
+			}
+			try {
+				intcardNubInfoLog(logparam, optFlowNum, sessionStaff);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 		// 服务层调用与接口层调用都成功时，返回列表；否则返回空列表
 		if (ResultCode.R_SUCCESS.equals(StringUtils.defaultString(db.getResultCode()))) {
 			if ((MapUtils.getString(db.getReturnlmap(), "code").equals(ResultCode.R_SUCCESS))){
@@ -713,6 +800,16 @@ public class MktResBmoImpl implements MktResBmo {
 					resultMap.put("code",  MapUtils.getString(db2.getReturnlmap(), "resultCode"));
 					resultMap.put("message", MapUtils.getString(db2.getReturnlmap(), "returnMsg"));
 					resultMap.put("result", rtMap);
+					
+					//ESS页面操作的需要获取白卡入库的请求流水号
+					if(StringUtils.isNotBlank(essWriteCard) && essWriteCard.equals("Y")){
+						String cardInputTransId = null;
+						String responseXmlStr = db2.getResultMsg();
+						if(StringUtils.isNotBlank(responseXmlStr)){
+							cardInputTransId = XmlUtil.getXMLNodeValue(responseXmlStr, "TransactionID", false);
+						}
+						resultMap.put("cardInputTransId", cardInputTransId);
+					}
 				}else{
 					resultMap.putAll(db.getReturnlmap());
 				}
