@@ -1,0 +1,227 @@
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>山东电信</title>
+<link rel="stylesheet" href="../../../resources/css/pad-css/jquery.mobile-1.4.2.css">
+<link rel="stylesheet" href="../../../resources/css/pad-css/pad.css">
+<script src="../../../resources/js/pad-js/third-js/jquery-1.9.1.min.js"></script>
+<script src="../../../resources/js/pad-js/third-js/jquery.mobile-1.4.2.min.js"></script>
+<script type="text/javascript">
+	//$.get("top.html",function(data){
+	//$("#top").html(data);
+	//});
+$(document).ready(function(){
+	$("#logobar").on("tap",function(){
+		$("#navbar").slideToggle(400);
+	});
+	$(".pakeagelist li").on("tap",function(){
+		$(this).addClass("pakeagelistlibg").siblings().removeClass("pakeagelistlibg");
+	});
+	$("#searchmore").on("tap",function(){
+		$("#moresearch").slideToggle(400);
+		$(this).toggleClass("ui-icon-plus");
+		$(this).toggleClass("ui-icon-minus");
+	});
+});
+
+</script>
+</head>
+<body>
+<div data-role="page" class="index">
+  <div data-role="header" data-position="fixed" data-tap-toggle="false" data-theme="i" id="top"> <span class="logo4g"></span>
+    <form method="post" action="demoform.asp" class="usersearch">
+      <label>客户定位</label>
+      <select name="user" id="user" data-native-menu="false" class="searchselect"  data-icon="select">
+        <option value=”京” selected=”selected”>北京</option>
+        <option value=”沪”>上海</option>
+        <option value=”津”>天津</option>
+        <option value=”渝”>重庆</option>
+        <option value=”冀”>河北</option>
+        <option value=”豫”>河南</option>
+        <option value=”鄂”>湖北</option>
+        <option value=”湘”>湖南</option>
+        <option value=”苏”>江苏</option>
+        <option value=”赣”>江西</option>
+        <option value=”辽”>辽宁</option>
+        <option value=”吉”>吉林</option>
+        <option value=”黑”>黑龙江</option>
+        <option value=”陕”>陕西</option>
+        <option value=”鲁”>山东</option>
+        <option value=”晋”>山西</option>
+        <option value=”川”>四川</option>
+        <option value=”青”>青海</option>
+        <option value=”皖”>安徽</option>
+        <option value=”琼”>海南</option>
+        <option value=”粤”>广东</option>
+        <option value=”桂”>广西</option>
+        <option value=”贵”>贵州</option>
+        <option value=”浙”>浙江</option>
+        <option value=”闽”>福建</option>
+        <option value=”甘”>甘肃</option>
+        <option value=”云”>云南</option>
+        <option value=”蒙”>内蒙古</option>
+        <option value=”宁”>宁夏</option>
+        <option value=”新”>新疆</option>
+        <option value=”藏”>西藏</option>
+        <option value=”港澳台”>港澳台</option>
+      </select>
+      <select name="usertype" id="usertype" data-native-menu="false" class="searchselect" data-icon="select">
+        <option value="mon">接入号码</option>
+      </select>
+      <select name="numonoff" id="numonoff" data-role="slider" class="numonoff">
+        <option value="numon">指定号码</option>
+        <option value="numoff">不指定号码</option>
+      </select>
+      <input type="text" name="usernum" id="usernum" placeholder="请输入接入号码" class="searchtext">
+      <a href="#userresult" data-role="button" data-icon="search" data-theme="g">查询</a> <a href="#" data-role="button" data-icon="plus" data-theme="g">新建客户</a>
+    </form>
+  </div>
+  <div data-role="content">
+  	 <div class="search">
+    	<span>套餐</span>
+        <fieldset data-role="controlgroup" data-type="horizontal" data-theme="s">
+        <label for="pakeage01">积木套餐<span></span></label>
+        <input type="radio" name="pakeage" id="pakeage01" value="pakeage01" checked>
+        <label for="pakeage02">乐享套餐<span></span></label>
+        <input type="radio" name="pakeage" id="pakeage02" value="pakeage02">	
+        <label for="pakeage03">飞Young套餐<span></span></label>
+        <input type="radio" name="pakeage" id="pakeage03" value="pakeage03">	
+      </fieldset>
+      <input type="search" name="search" id="search" placeholder="请输入套餐名称" data-theme="r" class="pks">
+      <a id="searchmore" href="#" data-role="button" data-icon="plus" data-iconpos="notext" data-theme="r">更多</a>
+      <div class="moresearch" id="moresearch">
+        <label>流量：</label>
+        <select name="traffic" id="traffic" data-native-menu="false">
+        <option value="0">不限</option>
+        </select>
+        <label>价格区间：</label>
+        <select name="money" id="money" data-native-menu="false">
+        <option value="0">不限</option>
+        </select>
+        <label>语音时长：</label>
+        <select name="speechtime" id="speechtime" data-native-menu="false">
+        <option value="0">不限</option>
+        </select>
+      </div>
+    </div>
+    <dl class="pakeagetitle">
+        <dt>套餐</dt><dt>价格(元)</dt><dt>语音(分钟)</dt><dt>流量(M)</dt><dt>Wifi(分钟)</dt><dt>短信(条)</dt><dt>彩信(条)		    </dt>
+    </dl>
+    <ul data-role="listview" class="pakeagelist">
+      <li>
+        <dl>
+        	<dd>积木套餐-语音套餐-29元200分钟</dd>
+           <dd>29</dd>
+           <dd>200</dd>
+           <dd>300</dd>
+           <dd>0</dd>
+           <dd>10</dd>
+           <dd>10</dd>
+        </dl>
+      </li>
+      <li>
+        <dl>
+        	<dd>积木套餐-语音套餐-29元200分钟</dd>
+           <dd>29</dd>
+           <dd>200</dd>
+           <dd>300</dd>
+           <dd>0</dd>
+           <dd>10</dd>
+           <dd>10</dd>
+        </dl>
+      </li>
+      <li>
+        <dl>
+        	<dd>积木套餐-语音套餐-29元200分钟</dd>
+           <dd>29</dd>
+           <dd>200</dd>
+           <dd>300</dd>
+           <dd>0</dd>
+           <dd>10</dd>
+           <dd>10</dd>
+        </dl>
+      </li>
+      <li>
+        <dl>
+        	<dd>积木套餐-语音套餐-29元200分钟</dd>
+           <dd>29</dd>
+           <dd>200</dd>
+           <dd>300</dd>
+           <dd>0</dd>
+           <dd>10</dd>
+           <dd>10</dd>
+        </dl>
+      </li>
+      <li>
+        <dl>
+        	<dd>积木套餐-语音套餐-29元200分钟</dd>
+           <dd>29</dd>
+           <dd>200</dd>
+           <dd>300</dd>
+           <dd>0</dd>
+           <dd>10</dd>
+           <dd>10</dd>
+        </dl>
+      </li>
+      <li>
+        <dl>
+        	<dd>积木套餐-语音套餐-29元200分钟</dd>
+           <dd>29</dd>
+           <dd>200</dd>
+           <dd>300</dd>
+           <dd>0</dd>
+           <dd>10</dd>
+           <dd>10</dd>
+        </dl>
+      </li>
+      <li>
+        <dl>
+        	<dd>积木套餐-语音套餐-29元200分钟</dd>
+           <dd>29</dd>
+           <dd>200</dd>
+           <dd>300</dd>
+           <dd>0</dd>
+           <dd>10</dd>
+           <dd>10</dd>
+        </dl>
+      </li>
+      <li>
+        <dl>
+        	<dd>积木套餐-语音套餐-29元200分钟</dd>
+           <dd>29</dd>
+           <dd>200</dd>
+           <dd>300</dd>
+           <dd>0</dd>
+           <dd>10</dd>
+           <dd>10</dd>
+        </dl>
+      </li>
+    </ul>
+	<div class="page">↓ 滚动更多<span><font class="green">1</font>/2</span></div>
+  </div>
+  <a class="logo" id="logobar"></a>
+  <div id="navbar" data-role="footer" data-position="fixed" data-tap-toggle="false" data-theme="i">
+    <div data-role="navbar">
+      <ul class="navbar4g">
+        <li><a href="#" data-icon="bar01">营业受理</a></li>
+        <li><a href="#" data-icon="bar02">批量受理</a></li>
+        <li><a href="#" data-icon="bar03">费用管理</a></li>
+        <li><a href="#" data-icon="bar04">综合查询</a></li>
+        <li><a href="#" data-icon="bar05">营业报表</a></li>
+        <li><a href="#" data-icon="bar06">工作支持</a></li>
+      </ul>
+    </div>
+  </div>
+  <div data-role="footer" data-position="fixed" data-tap-toggle="false" data-theme="n">
+    <div class="pakeage">
+    <span>天翼手机套餐测试版--459元</span>
+    <p>套餐外流量：0.0003元/KB    套餐外语音：0.15元/分钟</p>
+    </div>
+    <button data-inline="true" data-icon="next">下一步</button>
+  </div>
+  <div data-role="panel" data-position="right" id="userresult">
+  </div>
+</div>
+</body>
+</html>

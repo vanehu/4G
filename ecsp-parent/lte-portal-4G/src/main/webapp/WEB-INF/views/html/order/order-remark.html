@@ -1,0 +1,35 @@
+<h5 class="s_title">订单信息</h5>
+<ul class="fillin">
+	<li class="full" id="li_order_remark">
+		<label>订单备注：</label> 
+		<textarea rows="4" class="order-remark" id="order_remark" name="beizhu"></textarea>
+	</li>
+    <li class="full" id="li_order_sms" style="display: none;">
+        <label style="width: 120px;">橙分期短信验证码：</label>
+        <input id="cfqSMSCode" type="text" class="inputWidth183px" placeholder="请输入短信验证码">
+        <label class="f_red">*</label>
+    </li>
+	<li class="full" id="li_is_activation" style="display: none;">
+		<label>首话单激活：</label>
+		<input type="checkbox" onclick="SoOrder.showActivation()" id="isActivation" style="margin-left: 0px; margin-top:7px">
+	</li>
+	<li class="full" id="templateOrderDiv">
+		<label>批量模板：</label>
+		<input type="checkbox" onclick="SoOrder.showTemplateOrderName()" id="isTemplateOrder" style="margin-left: 0px; margin-top:7px">
+		<label class="template_info_name" id="templateOrderTitle" style="display: none" >模板名称：</label>
+		<input class="template_info_name inputWidth183px" type="text" id="templateOrderName" style="display: none" ></input>
+		<label class="template_info_type" style="display: none" >模板类型：</label>
+		<select class="inputWidth183px template_info_type" style="display: none" onchange="order.main.templateTypeCheck(this)" >
+			<option value="1">批量新装</option>
+			<option value="0">批量开活卡</option>
+		</select>
+	    <label class="share_info_type" style="display: none" >是否共享：</label>
+		<select class="inputWidth183px share_info_type" style="display: none" id="shareType" >
+			<option value="0">不共享</option>
+			<option value="1">本地网共享</option>
+			<option value="2">全省共享</option>
+		</select>
+		<label id="templateOrderTips" style="width: initial;display: none;padding-left: 10px;"></label>
+	</li>
+</ul>
+<div class="height18"></div>

@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="foregift" language="groovy" pageWidth="595" pageHeight="842" columnWidth="540" leftMargin="55" rightMargin="0" topMargin="60" bottomMargin="50">
+	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="48"/>
+	<style name="styleSong9" fontName="宋体" fontSize="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<field name="title" class="java.lang.String"/>
+	<field name="partyName" class="java.lang.String"/>
+	<field name="year" class="java.lang.String"/>
+	<field name="month" class="java.lang.String"/>
+	<field name="day" class="java.lang.String"/>
+	<field name="invoiceCdTitle" class="java.lang.String"/>
+	<field name="invoiceCd" class="java.lang.String"/>
+	<field name="invoiceNbr" class="java.lang.String"/>
+	<field name="acceNumber" class="java.lang.String"/>
+	<field name="payMethod" class="java.lang.String"/>
+	<field name="sumCharge" class="java.lang.String"/>
+	<field name="sumChargeRMB" class="java.lang.String"/>
+	<field name="staffName" class="java.lang.String"/>
+	<field name="staffCode" class="java.lang.String"/>
+	<field name="channelName" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="75" splitType="Stretch">
+			<staticText>
+				<reportElement style="styleSong9" x="0" y="60" width="81" height="15"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[缴款单位（人）：]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="styleSong9" x="248" y="60" width="15" height="15"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[年]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="styleSong9" x="276" y="60" width="15" height="15"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[月]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="styleSong9" x="306" y="60" width="15" height="15"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[日]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="styleSong9" x="351" y="60" width="50" height="14"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[票据号码：]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="74" width="500" height="1"/>
+				<graphicElement>
+					<pen lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<textField>
+				<reportElement style="styleSong9" x="401" y="60" width="99" height="15"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{invoiceNbr}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="styleSong9" x="81" y="32" width="129" height="41"/>
+				<textElement verticalAlignment="Bottom"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{partyName}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="styleSong9" x="226" y="60" width="22" height="15"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{year}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="styleSong9" x="263" y="60" width="13" height="15"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{month}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="styleSong9" x="291" y="60" width="15" height="15"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{day}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="styleSong9" x="351" y="45" width="50" height="15"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{invoiceCdTitle}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="styleSong9" x="401" y="45" width="99" height="15"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{invoiceCd}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="169" splitType="Stretch">
+			<line>
+				<reportElement x="0" y="20" width="500" height="1"/>
+				<graphicElement>
+					<pen lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="0" y="94" width="500" height="1"/>
+				<graphicElement>
+					<pen lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="0" y="114" width="500" height="1"/>
+				<graphicElement>
+					<pen lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement style="styleSong9" x="1" y="94" width="90" height="21"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[合计人民币（大写）]]></text>
+			</staticText>
+			<line>
+				<reportElement x="91" y="94" width="1" height="20"/>
+				<graphicElement>
+					<pen lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<textField>
+				<reportElement style="styleSong9" x="103" y="94" width="398" height="20"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sumChargeRMB}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="styleSong9" x="-1" y="-1" width="162" height="22"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[接入号码]]></text>
+			</staticText>
+			<line>
+				<reportElement x="161" y="-1" width="1" height="95"/>
+				<graphicElement>
+					<pen lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement style="styleSong9" x="162" y="-1" width="160" height="22"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[付费方式]]></text>
+			</staticText>
+			<line>
+				<reportElement x="321" y="-1" width="1" height="96"/>
+				<graphicElement>
+					<pen lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement style="styleSong9" x="321" y="-1" width="179" height="22"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[金额（元）]]></text>
+			</staticText>
+			<textField>
+				<reportElement style="styleSong9" x="0" y="20" width="162" height="26"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="宋体" size="10"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{acceNumber}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="styleSong9" x="162" y="21" width="160" height="25"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{payMethod}]]></textFieldExpression>
+			</textField>
+			<textField pattern="¤ #,##0.00">
+				<reportElement style="styleSong9" x="322" y="21" width="177" height="25"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{sumCharge}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="styleSong9" x="379" y="113" width="91" height="15"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[收款单位（盖章）：]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="styleSong9" x="1" y="115" width="41" height="13"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[营业员：]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="styleSong9" x="103" y="113" width="32" height="15"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[工号：]]></text>
+			</staticText>
+			<textField>
+				<reportElement style="styleSong9" x="42" y="115" width="61" height="54"/>
+				<textElement verticalAlignment="Top"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{staffName}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="styleSong9" x="135" y="113" width="67" height="15"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{staffCode}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="styleSong9" x="210" y="113" width="54" height="15"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[营业部门：]]></text>
+			</staticText>
+			<textField>
+				<reportElement style="styleSong9" x="264" y="115" width="109" height="54"/>
+				<textElement verticalAlignment="Top"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{channelName}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="499" y="-1" width="1" height="115"/>
+				<graphicElement>
+					<pen lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="-1" y="-1" width="1" height="116"/>
+				<graphicElement>
+					<pen lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<lastPageFooter>
+		<band height="21"/>
+	</lastPageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContractRoot>
+	<TcpCont>
+	    <BusCode>${TcpCont.BusCode}</BusCode>
+	    <ServiceCode>${TcpCont.ServiceCode}</ServiceCode>
+	    <ServiceContractVer>${TcpCont.ServiceContractVer}</ServiceContractVer>
+	    <ActionCode>${TcpCont.ActionCode}</ActionCode>
+		<TransactionID>${TcpCont.TransactionID}</TransactionID>
+		<ServiceLevel>${TcpCont.ServiceLevel}</ServiceLevel>
+		<SrcOrgID>${TcpCont.SrcOrgID}</SrcOrgID>
+		<SrcSysID>${TcpCont.SrcSysID}</SrcSysID>
+		<SrcSysSign>${TcpCont.SrcSysSign}</SrcSysSign>
+		<DstOrgID>${TcpCont.DstOrgID}</DstOrgID>
+		<DstSysID>${TcpCont.DstSysID}</DstSysID>
+		<ReqTime>${TcpCont.ReqTime}</ReqTime>
+	</TcpCont>
+	<SvcCont>
+	<BusinessEvent>
+    	  <ReqInfo>
+    	    <ICCID>${iccId}</ICCID>
+            <ToAreanum>${areaCode}</ToAreanum>
+            <ToLanid>${areaId}</ToLanid>
+            <MVNO>${mvnoCode}</MVNO>
+            <StaffID>${staffId}</StaffID>
+            <StaffName>${staffName}</StaffName>
+            <ChannelID>${channelId}</ChannelID>
+            <ChannelName>${channelName}</ChannelName>
+          </ReqInfo>
+	</BusinessEvent>    
+	</SvcCont>	
+</ContractRoot>

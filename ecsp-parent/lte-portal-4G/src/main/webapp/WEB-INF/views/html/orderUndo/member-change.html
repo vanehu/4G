@@ -1,0 +1,94 @@
+<div class="main_div"> 
+  <div class=" main_warp">
+  <div class="ordercon">
+  <!--订单确认-->
+    <div class="order_confirmation ordertabcon" style="display:none">
+  <div class="main_body">
+	<div id="div_main_index" class="main_index">
+         <div id="framecenter" style="min-height: 300px;height: auto !important; repeat-x fixed center;" >
+             <div>
+                 <div>
+                     <#include "/pcpublic/order-template.html"/>
+                 </div>
+                 <div class="main_bottom"></div>
+             </div>
+         </div>
+     </div>
+  </div>
+</div>
+</div>
+<!--订单填写 end-->
+</div>
+</div>
+<!--内容 end--> 
+<!--弹出框的内容-->
+<div class="easyDialogdiv" style="width:400px;height:200px;vertical-align: middle;" id="packageTip_dialog" >
+  <div id="infoTipContent" style="height: 200px;"></div>
+</div>
+<script type="text/javascript">
+	var querycustflag = "${querycustflag}";
+	if(querycustflag=="-1"){
+		$.alert("错误","客户定位异常！");
+	}else if(querycustflag=="1"){
+		$.alert("提示","没有定位到客户！");
+	}else{
+		OrderInfo.cust={
+				addressStr: "${addressStr}",
+				areaId: "${areaId}",
+				areaName: "${areaName}",
+				authFlag: "1",
+				custFlag: "${custFlag}",
+				custId: "${custId}",
+				idCardNumber: "${idCardNumber}",
+				identityCd: "${identityCd}",
+				identityName: "${identityName}",
+				norTaxPayer: "${norTaxPayer}",
+				partyName: "${partyName}",
+				segmentId: "${segmentId}",
+				segmentName: "${segmentName}",
+				vipLevel: "${vipLevel}",
+				vipLevelName: "${vipLevelName}"
+		};
+		var queryorderflag = "${queryorderflag}";
+		if(queryorderflag=="-1"){
+			var errMsg = "${errMsg}";
+			$.alert("提示",errMsg);
+		}else if(queryorderflag=="1"){
+			$.alert("提示","客户下没有可以办理业务的移动用户！");
+		}else{
+			order.prodModify.choosedProdInfo = {
+					accNbr :"${accNbr}",//产品接入号
+					productName :"${productName}",//产品规格名称
+					prodStateName :"${prodStateName}",//产品状态名称
+					feeTypeName :"${feeTypeName}",//付费方式名称
+					prodInstId :"${prodInstId}",//产品ID
+					extProdInstId : "${extProdInstId}",//省内产品实例ID
+					corProdInstId : "${corProdInstId}",//外部产品实例ID
+					prodStateCd :"${prodStateCd}",//产品状态CD
+					productId :"${productId}",//产品规格ID
+					feeType :"${feeType}",//付费方式id
+					prodClass :"${prodClass}",//产品大类 4 表示4G；3表示3G
+					stopRecordCd :"${stopRecordCd}",//停机记录CD
+					stopRecordName :"${stopRecordName}",//停机记录名称
+					prodOfferName :"${prodOfferName}",//主套餐名称
+					custName :"${custName}",//所属人客户名称
+					startDt :"${startDt}",//生效时间
+					endDt :"${endDt}",//失效时间
+					prodOfferId :"${prodOfferId}",//主套餐规格ID
+					prodOfferInstId :"${prodOfferInstId}",//主套餐实例ID
+					custId :"${custId}",//所属人客户ID
+					is3G :"${is3G}",//3G/4G主销售品标识
+					areaCode :"${areaCode}",//产品地区CODE
+					areaId : "${areaId}"//产品地区id
+			};
+			order.memberChange.reloadFlag = "N";
+			order.memberChange.newSubPhoneNum = "";
+			order.memberChange.oldSubPhoneNum = "";
+			order.memberChange.mktResInstCode = "";
+			order.memberChange.showOfferCfgDialog();
+		}
+	}
+	//OrderInfo.cust={addressStr: "小关路663号",areaId: "8330100",areaName: "杭州市",authFlag: "1",custFlag: "1100",custId: "140000886805",idCardNumber: "330723********0015",identityCd: "3",identityName: "护照",norTaxPayer: "",partyName: "杭州812",segmentId: "1101",segmentName: "",vipLevel: "1300",vipLevelName: "普通"};
+	//order.prodModify.choosedProdInfo={accNbr: "17767073058",areaCode: "0571",areaId: "8330100",corProdInstId: "993600140029730444",custId: "140000886805",custName: "20350401000000",endDt: "2035-04-01 00:00:00",extProdInstId: "3-1AO0FDQG",feeType: "1200",feeTypeName: "后付费",is3G: "N",prodClass: "3",prodInstId: "140029730444",prodOfferId: "81010",prodOfferInstId: "140009516289",prodOfferName: "乐享4G201407 599元-主套餐",prodStateCd: "100000",prodStateName: "在用",productId: "235010000",productName: "移动电话（仅含本地语音）",startDt: "2015-04-01 00:00:00",stopRecordCd: "",stopRecordName: ""};
+	
+</script>

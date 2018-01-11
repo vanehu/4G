@@ -1,0 +1,496 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="CtgPrintCommonMod" language="groovy" pageWidth="595" pageHeight="842" columnWidth="509" leftMargin="43" rightMargin="43" topMargin="113" bottomMargin="96">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="styleNorm" mode="Transparent" fill="Solid" fontName="宋体" fontSize="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfEncoding="Identity-H"/>
+	<style name="styleBold" fill="Solid" fontName="宋体" fontSize="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+	<style name="styleBlackBold16" fontName="宋体" fontSize="16" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+	<style name="styleBlackBold12" fontName="宋体" fontSize="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+	<style name="styleBlackBold10_5" fontName="宋体" fontSize="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+	<style name="styleBlackBold10" fontName="宋体" fontSize="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+	<style name="styleSong9" fontName="宋体" fontSize="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<field name="olNbr" class="java.lang.String"/>
+	<field name="acceYear" class="java.lang.String"/>
+	<field name="acceMonth" class="java.lang.String"/>
+	<field name="acceDay" class="java.lang.String"/>
+	<field name="staffName" class="java.lang.String"/>
+	<field name="staffNumber" class="java.lang.String"/>
+	<field name="channelName" class="java.lang.String"/>
+	<field name="custInfos" class="java.util.List"/>
+	<field name="orderEvents" class="java.util.List"/>
+	<field name="deliveryMethod" class="java.util.List"/>
+	<field name="feeInfos" class="java.util.List"/>
+	<field name="terminalInfos" class="java.util.List"/>
+	<field name="remarkInfos" class="java.util.List"/>
+	<field name="advtInfos" class="java.util.List"/>
+	<field name="iCardPlace" class="java.util.List"/>
+	<field name="signPic" class="java.io.InputStream"/>
+	<field name="isShowSign" class="java.lang.String"/>
+	<field name="companyseal" class="java.io.InputStream"/>
+	<field name="isShowReplaceStr" class="java.lang.String"/>
+	<field name="areaName" class="java.lang.String"/>
+	<group name="groupCustInfo">
+		<groupExpression><![CDATA[$F{custInfos}]]></groupExpression>
+		<groupHeader>
+			<band height="16">
+				<subreport>
+					<reportElement x="35" y="1" width="465" height="15" isRemoveLineWhenBlank="true"/>
+					<subreportParameter name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{custInfos})]]></dataSourceExpression>
+					<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "CtgPrintCustInfo.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<group name="groupOrderEvent">
+		<groupExpression><![CDATA[$F{orderEvents}]]></groupExpression>
+		<groupHeader>
+			<band height="36">
+				<subreport>
+					<reportElement x="0" y="21" width="500" height="15" isRemoveLineWhenBlank="true"/>
+					<subreportParameter name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{orderEvents})]]></dataSourceExpression>
+					<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "CtgPrintOrderEvents.jasper"]]></subreportExpression>
+				</subreport>
+				<line>
+					<reportElement x="0" y="3" width="500" height="1"/>
+					<graphicElement>
+						<pen lineStyle="Solid"/>
+					</graphicElement>
+				</line>
+				<staticText>
+					<reportElement style="styleBlackBold10_5" x="10" y="6" width="58" height="15"/>
+					<textElement/>
+					<text><![CDATA[登记信息：]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<group name="groupDeliveryMethod">
+		<groupExpression><![CDATA[$F{deliveryMethod}]]></groupExpression>
+		<groupHeader>
+			<band height="36">
+				<printWhenExpression><![CDATA[$F{deliveryMethod}!=null]]></printWhenExpression>
+				<subreport>
+					<reportElement x="25" y="21" width="475" height="15" isRemoveLineWhenBlank="true">
+						<printWhenExpression><![CDATA[$F{deliveryMethod}!=null&$F{deliveryMethod}.size()>0]]></printWhenExpression>
+					</reportElement>
+					<subreportParameter name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{deliveryMethod})]]></dataSourceExpression>
+					<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "CtgPrintBaseString.jasper"]]></subreportExpression>
+				</subreport>
+				<line>
+					<reportElement x="0" y="3" width="500" height="1" isRemoveLineWhenBlank="true">
+						<printWhenExpression><![CDATA[$F{deliveryMethod}!=null&&$F{deliveryMethod}.size()>0]]></printWhenExpression>
+					</reportElement>
+					<graphicElement>
+						<pen lineStyle="Dashed"/>
+					</graphicElement>
+				</line>
+				<staticText>
+					<reportElement style="styleBlackBold10_5" x="10" y="6" width="58" height="15" isRemoveLineWhenBlank="true">
+						<printWhenExpression><![CDATA[$F{deliveryMethod}!=null&$F{deliveryMethod}.size()>0]]></printWhenExpression>
+					</reportElement>
+					<textElement/>
+					<text><![CDATA[提货方式：]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<group name="groupFeeInfo">
+		<groupExpression><![CDATA[$F{feeInfos}]]></groupExpression>
+		<groupHeader>
+			<band height="36">
+				<subreport>
+					<reportElement x="25" y="21" width="475" height="15" isRemoveLineWhenBlank="true">
+						<printWhenExpression><![CDATA[$F{feeInfos}!=null&&$F{feeInfos}.size()>0]]></printWhenExpression>
+					</reportElement>
+					<subreportParameter name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{feeInfos})]]></dataSourceExpression>
+					<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "CtgPrintFeeInfos.jasper"]]></subreportExpression>
+				</subreport>
+				<line>
+					<reportElement x="0" y="3" width="500" height="1">
+						<printWhenExpression><![CDATA[$F{custInfos}!=null]]></printWhenExpression>
+					</reportElement>
+					<graphicElement>
+						<pen lineStyle="Solid"/>
+					</graphicElement>
+				</line>
+				<staticText>
+					<reportElement style="styleBlackBold10_5" x="10" y="6" width="58" height="15" isRemoveLineWhenBlank="true">
+						<printWhenExpression><![CDATA[$F{feeInfos}!=null&&$F{feeInfos}.size()>0]]></printWhenExpression>
+					</reportElement>
+					<textElement/>
+					<text><![CDATA[付费信息：]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<group name="groupTerminalInfo">
+		<groupExpression><![CDATA[$F{terminalInfos}]]></groupExpression>
+		<groupHeader>
+			<band height="36">
+				<printWhenExpression><![CDATA[$F{terminalInfos}!=null]]></printWhenExpression>
+				<subreport>
+					<reportElement x="25" y="21" width="475" height="15" isRemoveLineWhenBlank="true">
+						<printWhenExpression><![CDATA[$F{terminalInfos}!=null&&$F{terminalInfos}.size()>0]]></printWhenExpression>
+					</reportElement>
+					<subreportParameter name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{terminalInfos})]]></dataSourceExpression>
+					<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "CtgPrintTerminalInfos.jasper"]]></subreportExpression>
+				</subreport>
+				<line>
+					<reportElement x="0" y="3" width="500" height="1" isRemoveLineWhenBlank="true">
+						<printWhenExpression><![CDATA[$F{terminalInfos}!=null&&$F{terminalInfos}.size()>0&&$F{feeInfos}.size()>0]]></printWhenExpression>
+					</reportElement>
+					<graphicElement>
+						<pen lineStyle="Dashed"/>
+					</graphicElement>
+				</line>
+				<staticText>
+					<reportElement style="styleBlackBold10_5" x="10" y="6" width="58" height="15" isRemoveLineWhenBlank="true">
+						<printWhenExpression><![CDATA[$F{terminalInfos}!=null&&$F{terminalInfos}.size()>0]]></printWhenExpression>
+					</reportElement>
+					<textElement/>
+					<text><![CDATA[物品清单：]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<group name="groupRemarkInfo">
+		<groupExpression><![CDATA[$F{remarkInfos}]]></groupExpression>
+		<groupHeader>
+			<band height="36">
+				<printWhenExpression><![CDATA[$F{remarkInfos}!=null]]></printWhenExpression>
+				<subreport>
+					<reportElement x="25" y="21" width="475" height="15" isRemoveLineWhenBlank="true">
+						<printWhenExpression><![CDATA[$F{remarkInfos}!=null&$F{remarkInfos}.size()>0]]></printWhenExpression>
+					</reportElement>
+					<subreportParameter name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{remarkInfos})]]></dataSourceExpression>
+					<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "CtgPrintBaseString.jasper"]]></subreportExpression>
+				</subreport>
+				<line>
+					<reportElement x="0" y="3" width="500" height="1" isRemoveLineWhenBlank="true">
+						<printWhenExpression><![CDATA[$F{remarkInfos}!=null&&$F{remarkInfos}.size()>0&&($F{feeInfos}.size()>0||$F{terminalInfos}.size()>0)]]></printWhenExpression>
+					</reportElement>
+					<graphicElement>
+						<pen lineStyle="Dashed"/>
+					</graphicElement>
+				</line>
+				<staticText>
+					<reportElement style="styleBlackBold10_5" x="10" y="6" width="58" height="15" isRemoveLineWhenBlank="true">
+						<printWhenExpression><![CDATA[$F{remarkInfos}!=null&$F{remarkInfos}.size()>0]]></printWhenExpression>
+					</reportElement>
+					<textElement/>
+					<text><![CDATA[备    注：]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<group name="groupAdvtInfos">
+		<groupExpression><![CDATA[$F{advtInfos}]]></groupExpression>
+		<groupHeader>
+			<band height="36">
+				<printWhenExpression><![CDATA[$F{advtInfos}!=null]]></printWhenExpression>
+				<subreport>
+					<reportElement x="25" y="21" width="475" height="15" isRemoveLineWhenBlank="true">
+						<printWhenExpression><![CDATA[$F{advtInfos}!=null&&$F{advtInfos}.size()>0]]></printWhenExpression>
+					</reportElement>
+					<subreportParameter name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{advtInfos})]]></dataSourceExpression>
+					<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "CtgPrintBaseString.jasper"]]></subreportExpression>
+				</subreport>
+				<line>
+					<reportElement x="0" y="3" width="500" height="1" isRemoveLineWhenBlank="true">
+						<printWhenExpression><![CDATA[$F{advtInfos}!=null&&$F{advtInfos}.size()>0&&($F{feeInfos}.size()>0||$F{terminalInfos}.size()>0||$F{remarkInfos}.size()>0)]]></printWhenExpression>
+					</reportElement>
+					<graphicElement>
+						<pen lineStyle="Dashed"/>
+					</graphicElement>
+				</line>
+				<staticText>
+					<reportElement style="styleBlackBold10_5" x="10" y="6" width="58" height="15" isRemoveLineWhenBlank="true">
+						<printWhenExpression><![CDATA[$F{advtInfos}!=null&&$F{advtInfos}.size()>0]]></printWhenExpression>
+					</reportElement>
+					<textElement/>
+					<text><![CDATA[温馨提示：]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<group name="groupICardPlacet">
+		<groupExpression><![CDATA[$F{iCardPlace}]]></groupExpression>
+		<groupHeader>
+			<band height="21">
+				<printWhenExpression><![CDATA[$F{iCardPlace}!=null]]></printWhenExpression>
+				<subreport>
+					<reportElement x="0" y="6" width="500" height="15" isRemoveLineWhenBlank="true"/>
+					<subreportParameter name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{iCardPlace})]]></dataSourceExpression>
+					<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "CtgPrintICardPlace.jasper"]]></subreportExpression>
+				</subreport>
+				<line>
+					<reportElement x="0" y="3" width="500" height="1"/>
+					<graphicElement>
+						<pen lineStyle="Solid"/>
+					</graphicElement>
+				</line>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="18" splitType="Stretch">
+			<textField>
+				<reportElement style="styleBlackBold10_5" x="68" y="0" width="170" height="15">
+					<printWhenExpression><![CDATA[$F{olNbr}!=null]]></printWhenExpression>
+				</reportElement>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{olNbr}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="styleBlackBold10_5" x="10" y="0" width="58" height="15"/>
+				<textElement/>
+				<text><![CDATA[订单编号：]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="styleBlackBold10_5" x="239" y="0" width="15" height="15"/>
+				<textElement/>
+				<text><![CDATA[第]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="styleBlackBold10_5" x="267" y="0" width="35" height="15"/>
+				<textElement/>
+				<text><![CDATA[页 (共]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="styleBlackBold10_5" x="321" y="0" width="20" height="15"/>
+				<textElement/>
+				<text><![CDATA[页)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="styleBlackBold10_5" x="360" y="1" width="58" height="15"/>
+				<textElement/>
+				<text><![CDATA[受理日期：]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="styleBlackBold10_5" x="442" y="0" width="12" height="15"/>
+				<textElement/>
+				<text><![CDATA[年]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="styleBlackBold10_5" x="466" y="0" width="12" height="15"/>
+				<textElement/>
+				<text><![CDATA[月]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="styleBlackBold10_5" x="490" y="0" width="12" height="15"/>
+				<textElement/>
+				<text><![CDATA[日]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="16" width="500" height="1"/>
+				<graphicElement>
+					<pen lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<textField>
+				<reportElement style="styleBlackBold10_5" x="254" y="0" width="10" height="15"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="宋体" size="9" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Integer"><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement style="styleBlackBold10_5" x="305" y="0" width="10" height="15"/>
+				<textElement textAlignment="Center">
+					<font fontName="宋体" size="9" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
+				</textElement>
+				<textFieldExpression class="java.lang.Integer"><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="styleBlackBold10_5" x="418" y="0" width="24" height="15">
+					<printWhenExpression><![CDATA[$F{acceYear}!=null]]></printWhenExpression>
+				</reportElement>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{acceYear}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="styleBlackBold10_5" x="454" y="0" width="12" height="15">
+					<printWhenExpression><![CDATA[$F{acceMonth}!=null]]></printWhenExpression>
+				</reportElement>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{acceMonth}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="styleBlackBold10_5" x="478" y="0" width="12" height="15">
+					<printWhenExpression><![CDATA[$F{acceDay}!=null]]></printWhenExpression>
+				</reportElement>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{acceDay}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="styleBlackBold16" x="33" y="-48" width="447" height="20">
+					<printWhenExpression><![CDATA[$F{areaName}!=null]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{areaName}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<lastPageFooter>
+		<band height="120">
+			<staticText>
+				<reportElement style="styleBlackBold12" x="10" y="10" width="490" height="16"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[客户确认：（以上资料属实，已阅读并同意本登记单内容及背面载的条款附加协议） ]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="28" width="500" height="1"/>
+				<graphicElement>
+					<pen lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<textField>
+				<reportElement style="styleBlackBold10_5" x="391" y="35" width="109" height="14">
+					<printWhenExpression><![CDATA[$F{staffName}!=null]]></printWhenExpression>
+				</reportElement>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{staffName}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="styleBlackBold10_5" x="371" y="49" width="129" height="14">
+					<printWhenExpression><![CDATA[$F{staffNumber}!=null]]></printWhenExpression>
+				</reportElement>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{staffNumber}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="styleBlackBold10_5" x="351" y="63" width="149" height="42">
+					<printWhenExpression><![CDATA[$F{channelName}!=null]]></printWhenExpression>
+				</reportElement>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{channelName}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="styleBlackBold10_5" x="281" y="35" width="110" height="14"/>
+				<textElement/>
+				<text><![CDATA[业务受理人(签章)：]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="styleBlackBold10_5" x="281" y="49" width="90" height="14"/>
+				<textElement/>
+				<text><![CDATA[业务受理工号:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="styleBlackBold10_5" x="281" y="63" width="70" height="14"/>
+				<textElement/>
+				<text><![CDATA[受理网点：]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="styleBlackBold10_5" x="40" y="35" width="130" height="14"/>
+				<textElement/>
+				<text><![CDATA[申请人/经办人(签字)： ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="styleBlackBold10_5" x="40" y="49" width="100" height="14"/>
+				<textElement/>
+				<text><![CDATA[经办人证件类型: ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="styleBlackBold10_5" x="40" y="63" width="100" height="14"/>
+				<textElement/>
+				<text><![CDATA[经办人证件号码: ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="171" y="35" width="92" height="14" forecolor="#FFFFFF">
+					<printWhenExpression><![CDATA[Boolean.valueOf($F{isShowReplaceStr})]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font size="6"/>
+				</textElement>
+				<text><![CDATA[signCustName]]></text>
+			</staticText>
+			<image scaleImage="RetainShape">
+				<reportElement x="171" y="35" width="100" height="50">
+					<printWhenExpression><![CDATA[Boolean.valueOf($F{isShowSign})]]></printWhenExpression>
+				</reportElement>
+				<imageExpression class="java.io.InputStream"><![CDATA[$F{signPic}]]></imageExpression>
+			</image>
+			<image scaleImage="RetainShape">
+				<reportElement x="371" y="20" width="100" height="100">
+					<printWhenExpression><![CDATA[Boolean.valueOf($F{isShowSign})]]></printWhenExpression>
+				</reportElement>
+				<imageExpression class="java.io.InputStream"><![CDATA[$F{companyseal}]]></imageExpression>
+			</image>
+		</band>
+	</lastPageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

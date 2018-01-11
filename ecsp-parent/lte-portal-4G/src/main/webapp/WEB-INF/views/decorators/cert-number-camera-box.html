@@ -1,0 +1,50 @@
+<!--一证五卡拍照弹框 start-->
+<div style="display:none;background:#fff;" id="ec-dialog-one-five-photo-graph" class="ec-dialog-form-container">
+    <div class="easyDialogclose" id="staff_dialog_close" onclick="oneFive.certNumber.close()"></div>
+    <div class="ec-dialog-form-top">
+        <h1 class="ec-dialog-form-title">一证五卡经办人拍照(非强制性拍照，无需要可直接关闭)</h1>
+    </div>
+    <div class="order">
+        <div class="order_nav_new">
+            <div class="order-camera-box">
+                <ul class="fillin show" style="overflow: hidden;">
+                    <li style="width: 80%;">
+                        <label>选择设备：</label>
+                        <select class="inputWidth183px" id="device15"></select>
+                    <#if Session["_camera_driver_download_url"]?? >
+                        <a href="${Session['_camera_driver_download_url']}" class="purchase" id="">下载控件</a>
+                    <#else>
+                        <a href="https://crm.189.cn/portalstatic/assets/camera/DoccameraOcx.exe" class="purchase" id="">下载控件</a>
+                    </#if>
+                        <span id="tips15" style="color:#F00; font-weight:bold;font-size:14px;margin-left:10%;"></span>
+                    </li>
+                </ul>
+                <div class="camera-box">
+                    <div style="overflow: hidden;">
+                        <a style="display:inline-block; width: 200px; height: 258px; margin: 54px 50px 0 50px; overflow: hidden;"><img
+                                id="img_Cert15" src="${contextPath}/image/id_card.jpg" class=""></a>
+                        <a id="a_obj15"
+                           style="display:inline-block; width: 640px; height: 360px; margin-right: 50px; vertical-align: top;">
+                            <img id="startPhotos15" src="${contextPath}/image/start_photo.jpg"/>
+                            <img id="img_Photo15">
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div align="center" style="margin:30px auto;" id="photographReviewDiv15">
+                <a class="btna_o" id="takePhotos15"><span>确认拍照</span></a>
+                <a style=" margin-left:20px;" class="btna_o" id="rePhotos15"><span>重新拍照</span></a>
+                <a style=" margin-left:20px;" class="btna_o" id="confirmAgree15"><span>暂存照片</span></a>
+            </div>
+        </div>
+    </div>
+</div>
+<!--一证五卡拍照弹框 End-->
+
+<script>
+    if (cert.getBrowser() == 'FF') {
+        $("#a_obj15").append("<object type='application/x-itst-activex' clsid='{454C18E2-8B7D-43C6-8C17-B1825B49D7DE}' id='capture15'  width='640' height='360'  style='float: right; margin-right: 10px;'></object>");
+    } else {
+        $("#a_obj15").append("<object classid='clsid:454C18E2-8B7D-43C6-8C17-B1825B49D7DE' id='capture15'  width='640' height='360'  style='float: right; margin-right: 10px;'></object>");
+    }
+</script>

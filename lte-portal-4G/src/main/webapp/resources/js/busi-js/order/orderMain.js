@@ -3270,7 +3270,9 @@ order.main = (function(){
 		$("#"+id).attr("onkeyup", "value=value.replace(/[^A-Za-z0-9]/ig,'')");
 		var identidiesTypeCd = $(scope).val();
 		$("#"+id).attr("maxlength", "100");
-		if (identidiesTypeCd == 1 && $(dom).attr("servType") != 2) {
+		//判断外国人的分省开关是否读卡
+		var foreginLiveKey = query.common.queryPropertiesStatus("FOREGIN_LIVE_FLAG_" + String(OrderInfo.staff.areaId).substr(0, 3));
+		if ((identidiesTypeCd == 1 || (identidiesTypeCd == 50 && foreginLiveKey == true)) && $(dom).attr("servType") != 2) {
 			$("#orderUserResetBtn").hide();
 			$("#orderUserQryBtn").hide();
 			$("#orderUserReadCertBtn").show();
@@ -3328,7 +3330,7 @@ order.main = (function(){
 
 	// 使用人读卡
 	var _readCertWhenUser = function(dom) {
-		var man = cert.readCert();
+		var man = cert.readCert("使用人+" + $("#orderIdentidiesTypeCdB").val());
 		if (man.resultFlag != 0){
 			$.alert("提示", man.errorMsg);
 			return;

@@ -1,0 +1,52 @@
+<#if flag=="yes">
+<div id="returndata" style="display:none;">0</div>
+<input type="text" id="offerSpecName" value="${resultmap.offerSpecName}" style="display:none;">
+<input type="text" id="offerSpecId" value="${resultmap.offerSpecId}" style="display:none;">
+<div id="offerRoles" style="display:none;">${resultroleJson}</div>
+<table id="serconfim" width="100%" height="70px" cellpadding="0" cellspacing="0">
+	<tr>
+		<td align="right">${furoles.offerRoleName}：</td>
+		<td>
+			<i id="plan_no" style="float: none;">
+				<a class="add" href="javascript:order.service.subNum('qty',${furoles.minQty});"></a>
+				<input id="qty" type="text" value="${furoles.defQty}" class="numberTextBox width22">
+				<a class="add2" href="javascript:order.service.addNum('qty',${furoles.maxQty});"> </a>
+			</i>${furoles.minQty}-${furoles.maxQty}（张）
+		</td>
+	</tr>
+	<#if resultmap.feeType=="1200">
+	<tr>
+		<td align="right">付费类型：
+		</td>
+		<td>
+			<input type="radio" name="feeType" value="1200" checked="checked">后付费
+		</td>
+	</tr>
+	</#if>
+	<#if resultmap.feeType=="2100">
+	<tr>
+		<td align="right">付费类型：
+		</td>
+		<td>
+			<input type="radio" name="feeType" value="2100" checked="checked">预付费
+		</td>
+	</tr>
+	</#if>
+	<#if resultmap.feeType=="3100">
+	<tr>
+		<td align="right">付费类型：
+		</td>
+		<td>
+			<input type="radio" name="feeType" value="1200" checked="checked">后付费
+			<input type="radio" name="feeType" value="2100" >预付费
+		</td>
+	</tr>
+	</#if>
+</table>
+<script>
+	var resultlst=eval('(${resultlst})');
+	OrderInfo.offerSpec = resultlst;
+</script>
+<#else>
+<div id="returndata" style="display:none;">${resultJson}</div>
+</#if>

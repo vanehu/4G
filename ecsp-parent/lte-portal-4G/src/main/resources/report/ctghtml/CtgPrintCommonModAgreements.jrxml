@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="CtgPrintCommonModAgreements" language="groovy" pageWidth="550" pageHeight="842" columnWidth="550" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<field name="iphoneAgreements" class="java.util.List"/>
+	<field name="speNbrAgreements" class="java.util.List"/>
+	<field name="terminalAgreements" class="java.util.List"/>
+	<field name="businessAgreements" class="java.util.List"/>
+	<group name="iphoneAgreement">
+		<groupExpression><![CDATA[$F{iphoneAgreements}]]></groupExpression>
+		<groupHeader>
+			<band height="15">
+				<subreport>
+					<reportElement x="0" y="0" width="550" height="15" isRemoveLineWhenBlank="true">
+						<printWhenExpression><![CDATA[$F{iphoneAgreements}!=null&&$F{iphoneAgreements}.size()>0]]></printWhenExpression>
+					</reportElement>
+					<subreportParameter name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{iphoneAgreements})]]></dataSourceExpression>
+					<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "CtgPrintAgreementIphone.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<group name="speNbrAgreements">
+		<groupExpression><![CDATA[$F{speNbrAgreements}]]></groupExpression>
+		<groupHeader>
+			<band height="15">
+				<subreport>
+					<reportElement x="0" y="0" width="550" height="15" isRemoveLineWhenBlank="true">
+						<printWhenExpression><![CDATA[$F{speNbrAgreements}!=null&&$F{speNbrAgreements}.size()>0]]></printWhenExpression>
+					</reportElement>
+					<subreportParameter name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{speNbrAgreements})]]></dataSourceExpression>
+					<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "CtgPrintAgreementSpecNumber.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<group name="terminalGroup">
+		<groupExpression><![CDATA[$F{terminalAgreements}]]></groupExpression>
+		<groupHeader>
+			<band height="15">
+				<subreport>
+					<reportElement x="0" y="0" width="550" height="15"/>
+					<subreportParameter name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{terminalAgreements})]]></dataSourceExpression>
+					<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "CtgPrintAgreementTerminal.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<group name="businessAgreement">
+		<groupExpression><![CDATA[$F{businessAgreements}]]></groupExpression>
+		<groupHeader>
+			<band height="15">
+				<subreport>
+					<reportElement x="0" y="0" width="550" height="15" isRemoveLineWhenBlank="true">
+						<printWhenExpression><![CDATA[$F{businessAgreements}!=null&$F{businessAgreements}.size()>0]]></printWhenExpression>
+					</reportElement>
+					<subreportParameter name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{businessAgreements})]]></dataSourceExpression>
+					<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "CtgPrintAgreementBusiness.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

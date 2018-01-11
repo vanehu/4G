@@ -1,0 +1,640 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="CtgPrintAgreementIphone" language="groovy" pageWidth="550" pageHeight="842" columnWidth="550" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="47"/>
+	<style name="agr_title" fontName="黑体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
+	<style name="agr_content" fontName="黑体" fontSize="9" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H">
+		<paragraph lineSpacing="Proportional" lineSpacingSize="1.2"/>
+	</style>
+	<subDataset name="Table Dataset 1"/>
+	<subDataset name="IphoneParamTable"/>
+	<field name="custName" class="java.lang.String"/>
+	<field name="identityType" class="java.lang.String"/>
+	<field name="identityNbr" class="java.lang.String"/>
+	<field name="identityAddr" class="java.lang.String"/>
+	<field name="currentAddr" class="java.lang.String"/>
+	<field name="postNbr" class="java.lang.String"/>
+	<field name="linkNbr" class="java.lang.String"/>
+	<field name="accessNumber" class="java.lang.String"/>
+	<field name="effectMonth" class="java.lang.String"/>
+	<field name="terminalType" class="java.lang.String"/>
+	<field name="offerSpecName" class="java.lang.String"/>
+	<field name="baseFee" class="java.lang.String"/>
+	<field name="offerSpecDesc" class="java.lang.String"/>
+	<field name="preFee" class="java.lang.String"/>
+	<field name="preFeeBig" class="java.lang.String"/>
+	<field name="limitFee" class="java.lang.String"/>
+	<field name="attachOfferSpecDesc" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="735" splitType="Stretch">
+			<staticText>
+				<reportElement style="agr_title" x="0" y="0" width="550" height="55"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="黑体" size="16" isBold="true" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
+				</textElement>
+				<text><![CDATA[中国电信股份有限公司北京分公司
+iPhone天翼合约计划协议]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="agr_content" x="0" y="94" width="80" height="13"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="黑体"/>
+				</textElement>
+				<text><![CDATA[客户名称]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="agr_content" x="0" y="107" width="80" height="13"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="黑体"/>
+				</textElement>
+				<text><![CDATA[证件号码]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="agr_content" x="0" y="120" width="80" height="13"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="黑体"/>
+				</textElement>
+				<text><![CDATA[现住址]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="agr_content" x="0" y="133" width="80" height="13"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="黑体"/>
+				</textElement>
+				<text><![CDATA[联系电话]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="agr_content" x="0" y="146" width="80" height="13"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="黑体"/>
+				</textElement>
+				<text><![CDATA[约定在网期(月)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="agr_content" x="0" y="159" width="80" height="107"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="黑体"/>
+				</textElement>
+				<text><![CDATA[套餐信息]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="agr_content" x="0" y="266" width="80" height="13"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="黑体"/>
+				</textElement>
+				<text><![CDATA[预存话费金额]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="agr_content" x="0" y="279" width="80" height="26"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="黑体"/>
+				</textElement>
+				<text><![CDATA[促销内容描述]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="agr_content" x="275" y="94" width="85" height="13"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="黑体"/>
+				</textElement>
+				<text><![CDATA[证件类型]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="agr_content" x="275" y="107" width="85" height="13"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="黑体"/>
+				</textElement>
+				<text><![CDATA[证件地址]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="agr_content" x="275" y="120" width="85" height="13"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="黑体"/>
+				</textElement>
+				<text><![CDATA[邮政编码]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="agr_content" x="275" y="133" width="85" height="13"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="黑体"/>
+				</textElement>
+				<text><![CDATA[加入合约电话号码]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="agr_content" x="275" y="146" width="85" height="13"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="黑体"/>
+				</textElement>
+				<text><![CDATA[机型]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="agr_content" x="275" y="266" width="85" height="13"/>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="黑体"/>
+				</textElement>
+				<text><![CDATA[月最低消费额]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="agr_content" x="0" y="68" width="550" height="26"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement>
+					<font fontName="黑体" size="9"/>
+				</textElement>
+				<text><![CDATA[    为维护双方权益，在平等、自愿、公平、诚实信用基础上，客户自愿加入中国电信iPhone天翼合约计划，并就合约计划业务服务的相关事宜达成如下协议：]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="agr_content" x="80" y="159" width="48" height="13"/>
+				<box>
+					<leftPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="黑体"/>
+				</textElement>
+				<text><![CDATA[套餐名称：]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="agr_content" x="80" y="172" width="85" height="13"/>
+				<box>
+					<leftPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="黑体"/>
+				</textElement>
+				<text><![CDATA[套餐月基本费(元)：]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="agr_content" x="80" y="187" width="60" height="13"/>
+				<box>
+					<leftPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="黑体"/>
+				</textElement>
+				<text><![CDATA[套餐内包含：]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="agr_content" x="80" y="224" width="470" height="42"/>
+				<box>
+					<leftPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement>
+					<font fontName="黑体"/>
+				</textElement>
+				<text><![CDATA[备注：
+1.套餐包含的"国内语音拨打分钟数"是指在本地和国内漫游拨打的通话时长(不含港澳台地区)。
+2.合约计划从入网的次月开始生效。新入网的套餐当月生效，当月大餐月基本费按照入网当日至月末的天数按天收取(含入网当日)。]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="agr_content" x="545" y="159" width="5" height="26"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement>
+					<font fontName="黑体"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="agr_content" x="0" y="305" width="550" height="430"/>
+				<textElement>
+					<font fontName="黑体"/>
+					<paragraph lineSpacing="Proportional" lineSpacingSize="1.3"/>
+				</textElement>
+				<text><![CDATA[    一、客户购买的iPhone手机在中国大陆地区支持 CDMA EV-DO Rev. A (800/1900MHz)，在国际及港澳台地区也支持 UMTS/HSDPA/HSUPA 和 GSM/EDGE 频段, 蜂窝功能的可用性取决于无线网络。
+    二、客户选择预存话费优惠购机，电信公司将每月从客户预存的话费中扣除本合同第四条约定的可抵扣的月使用费，当客户实际产生的通信费或所选套餐月基本费超出预存款当月返还额度时，客户应及时预存相应款项或按时在缴费期限内缴清费用。客户预存的使用费扣完后，客户须按时到电信公司交费网点交纳使用费。若客户未按时交纳使用费，电信公司将做停机处理，且电信公司有权每日按欠费金额的3‰向客户收取违约金；若客户欠费三个月，电信公司将对上述号码进行销号，并有权继续追缴客户欠费、违约金及约定消费总额与实交使用费总额的差额部分。约定消费总额指客户在约定在网期限内承诺话费消费总额。
+    三、客户承诺在约定在网期限内，客户不得申请停机、销号、换号、停机保号和过户。若客户违反承诺，客户应向电信公司支付违约金以补偿电信公司提供的购机优惠等损失，违约金按“办理合约时零售价与优惠购机价之间的差额×未完成的协议月份数/协议约定月份数”，电信公司有权从尚未返还客户的预存话费中直接抵扣该等违约金，不足部分电信公司有权随时要求客户一次性补交。约定在网期限内，客户若变更套餐仅可变更为更高档次的乐享3G上网版套餐，套餐变更次月生效。变更为更高档的套餐后，预存话费分月返还额度不变。
+    四、预存话费优惠购机指客户通过预存话费、承诺月最低消费及约定在网期限的形式，享受电信公司提供的购机优惠。购机送费指客户通过自购机、承诺月最低消费及约定在网期限的形式，享受电信公司提供的话费赠送。预存话费返款和分月的赠送话费均从用户办理iPhone天翼合约计划成功后的次月开始返还。如返还话费当月未消费完，在约定在网期限内可累计使用；如返还话费在约定在网期限内未使用完，可延期使用，但不予退还。iPhone天翼合约计划中的预存分月返还话费可抵扣除国际长途费、国际漫游费、无线宽带费以及由电信公司代收的、归属于内容服务商的声讯费和信息费以外的其他通信费。iPhone4S天翼合约计划中的“购机送费”计划的赠送话费只能抵扣套餐月基本费。
+    五、本协议中月最低消费额指：客户在执行标准资费或电信公司认可的优惠资费标准下，每个月使用电信公司业务产生的，除国际长途费、国际漫游费、无线宽带费以及由电信公司代收的、归属于内容服务商的声讯费和信息费以外的其他使用费应达到的最小金额。客户每月实际发生的使用费小于约定的月最低消费额，客户应按约定的月最低消费额向电信公司交费；客户每月实际发生的使用费超出月最低消费额，客户按实际使用费向电信公司交费。
+    六、iPhone天翼合约计划为移动通信服务与通信终端绑定产品，客户只有在绑定使用所购买的通信服务、UIM卡、移动业务号码以及iPhone 手机(即机卡不分离)的情况下,方可享受电信公司提供的优惠政策。自合约计划生效后，电信公司每月进行核实，如发生机卡分离使用的情况，电信公司有权取消对客户的优惠政策，并有权对客户号码作停机处理。客户应向电信公司支付违约金(违约金按违约行为发生次月起剩余的约定在网期限内各月通信费月最低消费额之和计算)，电信公司有权从客户尚未返还的iPhone手机合约计划预存款中直接扣除，不足部分电信公司有权随时要求客户一次性补足。违约行为发生当月所产生的通信费用与分月返还金额的差额部分，客户仍须正常缴纳。在机卡分离停机后90天内，客户可持有效身份证件、合约计划中绑定的UIM卡和iPhone手机到电信公司营业厅，在足额缴纳所产生的欠费、违约金及相关费用后，可申请办理恢复开机。如机卡分离停机超过90天，电信公司有权对客户号码进行销号处理。
+    七、在本协议有效期内，如客户向电信公司购买的手机丢失或坏损，客户需自行解决手机终端问题，并继续履行本协议中要求的月最低消费额及约定在网期限、约定消费总额。客户购买的手机终端的维修等售后服务，按照国家相关规定执行“三包”政策，由终端的生产厂家负责，超过“三包”期的维修费用由客户承担。
+    八、本协议自客户签字或盖章、电信公司盖章之日起生效。本协议一式两份，客户与电信公司各执一份，具有同等法律效力。
+    九、客户已认真阅读并理解本协议的全部内容，并同意遵守本协议。
+]]></text>
+			</staticText>
+			<textField>
+				<reportElement style="agr_content" x="80" y="94" width="195" height="13">
+					<printWhenExpression><![CDATA[$F{custName}!=null]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="黑体" isUnderline="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{custName}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="agr_content" x="360" y="94" width="190" height="13">
+					<printWhenExpression><![CDATA[$F{identityType}!=null]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="黑体" isUnderline="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{identityType}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="agr_content" x="80" y="107" width="195" height="13">
+					<printWhenExpression><![CDATA[$F{identityNbr}!=null]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="黑体" isUnderline="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{identityNbr}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="agr_content" x="360" y="107" width="190" height="13">
+					<printWhenExpression><![CDATA[$F{identityAddr}!=null]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="黑体" isUnderline="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{identityAddr}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="agr_content" x="80" y="120" width="195" height="13">
+					<printWhenExpression><![CDATA[$F{currentAddr}!=null]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="黑体" isUnderline="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{currentAddr}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="agr_content" x="360" y="120" width="190" height="13">
+					<printWhenExpression><![CDATA[$F{postNbr}!=null]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="黑体" isUnderline="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{postNbr}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="agr_content" x="80" y="133" width="195" height="13">
+					<printWhenExpression><![CDATA[$F{linkNbr}!=null]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="黑体" isUnderline="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{linkNbr}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="agr_content" x="360" y="133" width="190" height="13">
+					<printWhenExpression><![CDATA[$F{accessNumber}!=null]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="黑体" isUnderline="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{accessNumber}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="agr_content" x="130" y="146" width="30" height="13">
+					<printWhenExpression><![CDATA[$F{effectMonth}!=null]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="黑体" isUnderline="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{effectMonth}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="agr_content" x="360" y="146" width="190" height="13">
+					<printWhenExpression><![CDATA[$F{terminalType}!=null]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="黑体" isUnderline="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{terminalType}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="agr_content" x="128" y="159" width="417" height="13">
+					<printWhenExpression><![CDATA[$F{offerSpecName}!=null]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="黑体" isUnderline="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{offerSpecName}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="agr_content" x="165" y="172" width="380" height="13">
+					<printWhenExpression><![CDATA[$F{baseFee}!=null]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font fontName="黑体" isUnderline="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{baseFee}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="agr_content" x="140" y="185" width="410" height="39">
+					<printWhenExpression><![CDATA[$F{offerSpecDesc}!=null]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement>
+					<font fontName="黑体" isUnderline="true"/>
+					<paragraph lineSpacing="Proportional" lineSpacingSize="1.3"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{offerSpecDesc}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="agr_content" x="80" y="266" width="40" height="13">
+					<printWhenExpression><![CDATA[$F{preFee}!=null]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="黑体" isUnderline="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{preFee}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="agr_content" x="360" y="266" width="40" height="13">
+					<printWhenExpression><![CDATA[$F{limitFee}!=null]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="黑体" isUnderline="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{limitFee}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="agr_content" x="80" y="279" width="470" height="26">
+					<printWhenExpression><![CDATA[$F{attachOfferSpecDesc}!=null]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement>
+					<font fontName="黑体" isUnderline="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{attachOfferSpecDesc}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="agr_content" x="80" y="146" width="50" height="13"/>
+				<box>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="黑体"/>
+				</textElement>
+				<text><![CDATA[约定在网：]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="agr_content" x="160" y="146" width="115" height="13"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="黑体"/>
+				</textElement>
+				<text><![CDATA[个月]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="agr_content" x="120" y="266" width="45" height="13"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="黑体"/>
+				</textElement>
+				<text><![CDATA[元(大写：]]></text>
+			</staticText>
+			<textField>
+				<reportElement style="agr_content" x="165" y="266" width="100" height="13">
+					<printWhenExpression><![CDATA[$F{preFeeBig}!=null]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="黑体" isUnderline="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{preFeeBig}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="agr_content" x="265" y="266" width="10" height="13"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+				</box>
+				<textElement>
+					<font fontName="黑体"/>
+				</textElement>
+				<text><![CDATA[)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="agr_content" x="400" y="266" width="150" height="13"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="黑体"/>
+				</textElement>
+				<text><![CDATA[元]]></text>
+			</staticText>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

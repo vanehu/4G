@@ -233,7 +233,16 @@ public class CertController extends BaseController {
     		String partyName = MapUtils.getString(param, "partyName", "");// 姓名
     		String identityPic = MapUtils.getString(param, "identityPic");// 照片
       		String createFlag = MapUtils.getString(param, "createFlag");
-            
+      		String certType = MapUtils.getString(param, "certType");//获取读卡的证件类型
+      		boolean isExit = param.containsKey("servCodeIdType");
+      		if(isExit == true){
+	      		String servCodeIdType = MapUtils.getString(param, "servCodeIdType");//获取营业员选择的证件类型
+	      		if(!servCodeIdType.equals(certType)){
+	      			return super.failed("读卡的返回证件类型和已选择的证件类型不一致", -1);
+	      		}
+      		}
+            //如果读卡返回的证件类型和已选择的证件类型一致，移除掉servCodeIdType
+      		param.remove("servCodeIdType");
             //二代证读卡session缓存
             String nonce = RandomStringUtils.randomAlphanumeric(Const.RANDOM_STRING_LENGTH); //随机字符串
             String signature1 = commonBmo.signature(partyName, certNumber, certAddress, identityPic, nonce, MDA.APP_SECRET);

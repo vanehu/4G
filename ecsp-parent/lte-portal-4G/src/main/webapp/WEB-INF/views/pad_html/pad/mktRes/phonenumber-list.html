@@ -1,0 +1,53 @@
+<div data-role="content">
+	<div class="numbertitle">
+	 	<div class="ui-grid-b">
+	     	<div class="ui-block-a">号码</div>
+	        <div class="ui-block-b">预存话费</div>
+	        <div class="ui-block-c">月保底消费</div>
+	    </div>
+	    <div class="ui-grid-b">
+	     	<div class="ui-block-a">号码</div>
+	        <div class="ui-block-b">预存话费</div>
+	        <div class="ui-block-c">月保底消费</div>
+	    </div>
+	</div>
+<#if phoneNumList?? &&(phoneNumList?size>0)>
+	<!--号码列表-->
+	 <ul data-role="listview" class="numberlist">
+	  <#list phoneNumList?chunk(2) as mkt_row>
+      <li>
+      	<#list mkt_row as item>
+      	<#assign phoneNumber="${item.phoneNumber}" />
+	 	<#assign phonehead="${(item.phoneNumber)?substring(0,3)}" />
+	 	<#assign phonemiddle="${(item.phoneNumber)?substring(3,7)}" />
+	 	<#assign phoneend="${(item.phoneNumber)?substring(7,(item.phoneNumber)?length)}" />	
+        <div class="ui-grid-b" ispurchased="${ispurchased!'0'}" zoneNumber="${item.zoneNumber}" numberVal="${item.phoneNumber}_${item.prePrice}_${item.pnPrice}_${item.anTypeCd}_${item.pnCharacterId}_${item.pnLevelId}_${item.phoneNumId}_${item.needPwd?default("0")}">
+        	<div class="ui-block-a">${phonehead} ${phonemiddle} ${phoneend}</div>
+           <div class="ui-block-b">${item.prePrice}元</div>
+           <div class="ui-block-c">${item.pnPrice}元</div>
+        </div>
+         </#list>
+      </li>
+       </#list>
+      </ul>
+	 <div data-role="footer" data-position="fixed" data-tap-toggle="false" data-theme="n">
+	     <div style="display: none; text-align:right;border-bottom:1px solid #f6b219;"  id="dlg-phonenumber-pwd">
+		  <div class="ui-grid-c" style="width: 550px;">
+		   <div class="ui-block-a"><label for="pree_password_text" style="padding:15px 0px;">预占密码：</label></div>
+		   <div class="ui-block-b"><input name="pree_password_text" id="pree_password_text" type="text" placeHolder="请输入密码" maxlength="12"></div>
+		   <div class="ui-block-c" ><button id="phoneNbrSurebtn" data-inline="true" data-icon="check">确认</button></div>
+		   <div class="ui-block-d"><button id="phoneNbrCancelbtn" data-inline="true"  data-icon="back">取消</button></div>
+		</div>
+	  	</div> 
+	  	<button id="btn_enter_phoneNum_next" data-inline="true" data-icon="next" >下一步</button>
+	  	<button id="btn_enter_prev" data-inline="true" data-icon="prev" style="display:none">上一步</button>  
+	</div> 
+<!--号码列表 end-->  
+<#else>
+	<div class="no_search"> 
+		<div class="h1">
+			<img style="vertical-align:middle" src="${contextPath}/image/common/query_search.gif" />&nbsp;&nbsp;抱歉，没有找到相关的号码，请尝试其他筛选条件。
+		</div>
+	</div>
+</#if>
+</div>

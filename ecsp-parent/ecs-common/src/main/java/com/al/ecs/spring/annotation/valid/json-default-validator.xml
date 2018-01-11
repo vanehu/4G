@@ -1,0 +1,56 @@
+<!DOCTYPE form-validation PUBLIC
+     "-//Apache Software Foundation//DTD Commons Validator Rules Configuration 1.3.0//EN"
+     "/com/linkage/portal/validator/resources/validator_1_3_0.dtd">
+
+<form-validation>
+	<global>
+		<!--判断是否是JSON格式 -->
+		<validator name="isJson" classname="com.al.ecs.validator.JsonValidator"
+			method="validateIsJson" methodParams="java.lang.Object,com.al.ecs.validator.Field"
+			msg="" />
+		<!--验证非NULL -->
+		<validator name="required" classname="com.al.ecs.validator.JsonValidator"
+			method="validateRequired" methodParams="java.lang.Object,com.al.ecs.validator.Field"
+			depends="isJson" msg="" />
+		<!--针对字符串验证非空和NULL,trim var -->
+		<validator name="requiredStr" classname="com.al.ecs.validator.JsonValidator"
+			method="validateRequiredStr" methodParams="java.lang.Object,com.al.ecs.validator.Field"
+			depends="isJson" msg="" />
+		<!--验证数字范围，字符串是长度范围 -->
+		<validator name="range" classname="com.al.ecs.validator.JsonValidator"
+			method="validateRange" methodParams="java.lang.Object,com.al.ecs.validator.Field"
+			depends="isJson" msg="" />
+		<!--验证字符串最大长度 max var -->
+		<validator name="maxLength" classname="com.al.ecs.validator.JsonValidator"
+			method="validateMaxLength" methodParams="java.lang.Object,com.al.ecs.validator.Field"
+			depends="isJson" msg="" />
+		<!--验证字符串最小长度 min var -->
+		<validator name="minLength" classname="com.al.ecs.validator.JsonValidator"
+			method="validateMinLength" methodParams="java.lang.Object,com.al.ecs.validator.Field"
+			depends="isJson" msg="" />
+		<!--验证正则表达式 mask var -->
+		<validator name="mask" classname="com.al.ecs.validator.JsonValidator"
+			method="validateMask" methodParams="java.lang.Object,com.al.ecs.validator.Field"
+			depends="isJson" msg="" />
+		<!--验证是否是日期 pattern var -->
+		<validator name="isDate" classname="com.al.ecs.validator.JsonValidator"
+			method="validateIsDate" methodParams="java.lang.Object,com.al.ecs.validator.Field"
+			depends="isJson" msg="" />
+		<!--验证与某个值相等 equals var -->
+		<validator name="equals" classname="com.al.ecs.validator.JsonValidator"
+			method="validateEquals" methodParams="java.lang.Object,com.al.ecs.validator.Field"
+			depends="isJson" msg="" />
+		<!--验证与某个值在指定表值范围内 contians var ，逗号隔开 -->
+		<validator name="contians" classname="com.al.ecs.validator.JsonValidator"
+			method="validateContians" methodParams="java.lang.Object,com.al.ecs.validator.Field"
+			depends="isJson" msg="" />
+		<!--验证字符串长度 length var -->
+		<validator name="length" classname="com.al.ecs.validator.JsonValidator"
+			method="validateLength" methodParams="java.lang.Object,com.al.ecs.validator.Field"
+			depends="isJson" msg="" />
+		<!--验证日期范围内 pattern before after var -->
+		<validator name="dateRange" classname="com.al.ecs.validator.JsonValidator"
+			method="validateDateRange" methodParams="java.lang.Object,com.al.ecs.validator.Field"
+			depends="isJson" msg="" />
+	</global>
+</form-validation>

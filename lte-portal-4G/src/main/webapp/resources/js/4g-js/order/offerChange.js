@@ -154,7 +154,7 @@ offerChange = (function() {
                                 }
                           }
 							max = this.maxQty<0?"不限制":this.maxQty-membernum;
-							min = this.minQty-membernum;
+							min = this.minQty;
 							if(max<0){
 								max = 0;
 							}

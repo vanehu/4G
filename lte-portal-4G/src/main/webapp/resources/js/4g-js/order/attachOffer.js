@@ -2005,9 +2005,6 @@ AttachOffer = (function() {
 	};
 	
 	var _addOfferSpecFunction = function(prodId, newSpec){
-		$.each(OrderInfo.attach2Coupons,function(){
-			this.attachSepcId = newSpec.offerSpecId;
-		});
 		var content = CacheData.getOfferProdStr(prodId,newSpec,0);
 		$.confirm("信息确认",content,{ 
 			yes:function(){
@@ -2979,6 +2976,9 @@ AttachOffer = (function() {
 					var $li4 = $('<li id="terminalDesc" style="display:none;white-space:nowrap;"><label> 终端规格：</label><label id="terminalName"></label></li>');
 					$ul.append($li1).append($li2).append($li3).append($li4).appendTo($div);
 					$div.show();
+					$.each(OrderInfo.attach2Coupons,function(){
+						this.attachSepcId = newSpec.offerSpecId;
+					});
 					$("#if_reserveCode").change(function(){
 						if($("#if_reserveCode").attr("checked")){
 							$("#hyreserveCode").css("background-color","white").attr("disabled", false) ;

@@ -1,0 +1,183 @@
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>山东电信</title>
+<link rel="stylesheet" href="../../../resources/css/pad-css/jquery.mobile-1.4.2.css">
+<link rel="stylesheet" href="../../../resources/css/pad-css/pad.css">
+<script src="../../../resources/js/pad-js/third-js/jquery-1.9.1.min.js"></script>
+<script src="../../../resources/js/pad-js/third-js/jquery.mobile-1.4.2.min.js"></script>
+<script src="../../../resources/js/pad-js/our-js/layout.js"></script>
+<script type="text/javascript">
+	//$.get("top.html",function(data){
+	//$("#top").html(data);
+	//});
+$(document).ready(function(){
+	$("#logobar").on("tap",function(){
+		$("#navbar").slideToggle(400);
+	});
+	$(".phonelist .phone").on("tap",function(){
+		$(this).addClass("choose").parents().siblings().find(".phone").removeClass("choose");
+	});
+	$("#searchmore").on("tap",function(){
+		$("#moresearch").slideToggle(400);
+		$(this).toggleClass("ui-icon-plus");
+		$(this).toggleClass("ui-icon-minus");
+	});
+});
+
+</script>
+</head>
+<body>
+<div data-role="page" class="index">
+  <div data-role="header" data-position="fixed" data-tap-toggle="false" data-theme="i" id="top"> <span class="logo4g"></span>
+    <form method="post" action="demoform.asp" class="usersearch">
+      <label>客户定位</label>
+      <select name="user" id="user" data-native-menu="false" class="searchselect"  data-icon="select">
+        <option value=”京” selected=”selected”>北京</option>
+        <option value=”沪”>上海</option>
+        <option value=”津”>天津</option>
+        <option value=”渝”>重庆</option>
+        <option value=”冀”>河北</option>
+        <option value=”豫”>河南</option>
+        <option value=”鄂”>湖北</option>
+        <option value=”湘”>湖南</option>
+        <option value=”苏”>江苏</option>
+        <option value=”赣”>江西</option>
+        <option value=”辽”>辽宁</option>
+        <option value=”吉”>吉林</option>
+        <option value=”黑”>黑龙江</option>
+        <option value=”陕”>陕西</option>
+        <option value=”鲁”>山东</option>
+        <option value=”晋”>山西</option>
+        <option value=”川”>四川</option>
+        <option value=”青”>青海</option>
+        <option value=”皖”>安徽</option>
+        <option value=”琼”>海南</option>
+        <option value=”粤”>广东</option>
+        <option value=”桂”>广西</option>
+        <option value=”贵”>贵州</option>
+        <option value=”浙”>浙江</option>
+        <option value=”闽”>福建</option>
+        <option value=”甘”>甘肃</option>
+        <option value=”云”>云南</option>
+        <option value=”蒙”>内蒙古</option>
+        <option value=”宁”>宁夏</option>
+        <option value=”新”>新疆</option>
+        <option value=”藏”>西藏</option>
+        <option value=”港澳台”>港澳台</option>
+      </select>
+      <select name="usertype" id="usertype" data-native-menu="false" class="searchselect" data-icon="select">
+        <option value="mon">接入号码</option>
+      </select>
+      <select name="numonoff" id="numonoff" data-role="slider" class="numonoff">
+        <option value="numon">指定号码</option>
+        <option value="numoff">不指定号码</option>
+      </select>
+      <input type="text" name="usernum" id="usernum" placeholder="请输入接入号码" class="searchtext">
+      <a href="#userresult" data-role="button" data-icon="search" data-theme="g">查询</a> <a href="#" data-role="button" data-icon="plus" data-theme="g">新建客户</a>
+    </form>
+  </div>
+  <div data-role="content">
+    	<div class="ui-grid-a phonedetails">
+        	<div class="ui-block-a">
+           	<span><img src="../../../resources/image/pad-image/phone/phone01.png"></span> 
+            	<ul>
+                	<li><img src="../../../resources/image/pad-image/phone/phone01.png"></li>
+                  <li><img src="../../../resources/image/pad-image/phone/phone01.png"></li>
+                  <li><img src="../../../resources/image/pad-image/phone/phone01.png"></li>
+                  <li><img src="../../../resources/image/pad-image/phone/phone01.png"></li>
+              </ul>
+           </div>
+           <div class="ui-block-b">
+           	<div class="phonename">苹果 iPhone 4S 电信版 16G</div>
+            <h2 class="phonemoney">￥4480.00</h2>
+            <fieldset data-role="controlgroup" data-type="horizontal">
+          <legend>颜色：</legend>
+            <label for="color01">黑色</label>
+            <input type="radio" name="gender" id="color01" value="color01">
+            <label for="color02">白色</label>
+            <input type="radio" name="gender" id="color02" value="color02">	
+            <label for="color03">红色</label>
+            <input type="radio" name="gender" id="color03" value="color03">
+            <label for="color04">土豪金</label>
+            <input type="radio" name="gender" id="color04" value="color04">	
+          </fieldset>
+          <fieldset data-role="controlgroup" data-type="horizontal">
+          <legend>购机方式：</legend>
+            <label for="buy01">合约套餐</label>
+            <input type="radio" name="buyphone" id="buy01" value="buy01" checked>
+            <label for="buy02">购买裸机</label>
+            <input type="radio" name="buyphone" id="buy02" value="buy02">	
+          </fieldset>
+          <fieldset data-role="controlgroup" data-type="horizontal">
+          <legend>合约套餐：</legend>
+            <label for="package01">存费送机</label>
+            <input type="radio" name="phonepackage" id="package01" value="package01">
+            <label for="package02">购机送费</label>
+            <input type="radio" name="phonepackage" id="package02" value="package02">	
+          </fieldset>
+          <label for="phonecode">终端串号：</label>
+          <div class="ui-grid-a phonecode">
+          	<div class="ui-block-a">
+        	<input type="text" name="phonecode" id="phonecode" class="orderinput"> 
+            </div>
+            <div class="ui-block-b">
+            <button data-role="button" data-mini="ture">校验</button>
+            </div>
+           </div>
+           <dl class="devetitle phonedevetitle">
+        <dt>发展人类型</dt>
+        <dt>发展人</dt>
+      </dl>
+      <ul data-role="listview" class="develist phonedeve">
+        <li>
+          <dl>
+            <dd>
+              <fieldset data-role="fieldcontain">
+                <select name="deve" id="deve" data-mini="true" data-native-menu="false" data-icon="select">
+                  <option value="1">第一发展人</option>
+                  <option value="2">第二发展人</option>
+                </select>
+              </fieldset>
+            </dd>
+            <dd>
+              <input type="text" name="Recommend" id="Recommend" data-mini="true">
+            </dd>
+            <dd>
+              <div class="ui-grid-a">
+                <div class="ui-block-a">
+                  <button data-mini="ture">选择</button>
+                </div>
+                <div class="ui-block-b">
+                  <button data-mini="ture">添加</button>
+                </div>
+              </div>
+            </dd>
+          </dl>
+        </li>
+      </ul>
+        </div>
+        </div>
+  </div>
+  <a class="logo" id="logobar"></a>
+  <div id="navbar" data-role="footer" data-position="fixed" data-tap-toggle="false" data-theme="i">
+    <div data-role="navbar">
+      <ul class="navbar4g">
+        <li><a href="#" data-icon="bar01">营业受理</a></li>
+        <li><a href="#" data-icon="bar02">批量受理</a></li>
+        <li><a href="#" data-icon="bar03">费用管理</a></li>
+        <li><a href="#" data-icon="bar04">综合查询</a></li>
+        <li><a href="#" data-icon="bar05">营业报表</a></li>
+        <li><a href="#" data-icon="bar06">工作支持</a></li>
+      </ul>
+    </div>
+  </div>
+  <div data-role="footer" data-position="fixed" data-tap-toggle="false" data-theme="n">
+    <button data-inline="true" data-icon="next">下一步</button> <button data-inline="true" data-icon="prev">重选</button>
+  </div>
+  <div data-role="panel" data-position="right" id="userresult">
+  </div>
+</div>
+</body>
+</html>

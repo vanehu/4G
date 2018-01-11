@@ -1,0 +1,187 @@
+<!-- 成员变更--新装场景 -->
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="panel panel-default paneltop"> 
+      <!-- Default panel contents -->
+      <div class="panel-heading" id="head"></div>
+      <div class="panel panel-default panelcon"> 
+              <!-- Default panel contents -->
+              <div class="panel-heading">订单信息</div>
+              <!-- <div class="panel-body">
+              	<button class="btn btn-default btn-block">添加发展人</button>
+              </div> -->
+              <ul class="list-group"  id="dealerTbody">
+ <!--   <li href="#" class="list-group-item">
+    <h5 class="list-group-item-heading text-warning">18953113212</h5>
+    <p class="list-group-item-text">积木套餐-语音套餐-29元200分钟</p>
+    <p>
+    <div class="row">
+    	<div class="col-xs-6">
+        <select id="idtype" class="selectpicker show-tick form-control" >
+                  <option>第一发展人</option>
+                  <option>第二发展人</option>
+                </select>
+        </div>
+        <div class="col-xs-6">
+        <input type="text" class="form-control" placeholder="发展人" data-toggle="modal" data-target="#developModal">
+        </div>
+    </div>
+    </p>
+  </li>
+  <li href="#" class="list-group-item">
+    <h5 class="list-group-item-heading text-warning">18953113212</h5>
+    <p class="list-group-item-text">积木套餐-语音套餐-29元200分钟</p>
+    <p>
+    <div class="row">
+    	<div class="col-xs-6">
+        <select id="idtype" class="selectpicker show-tick form-control" >
+                  <option>第一发展人</option>
+                  <option>第二发展人</option>
+                </select>
+        </div>
+        <div class="col-xs-6">
+        <input type="text" class="form-control" placeholder="发展人">
+        </div>
+    </div>
+    </p>
+  </li>
+  <li href="#" class="list-group-item">
+    <h5 class="list-group-item-heading text-warning">18953113212</h5>
+    <p class="list-group-item-text">积木套餐-语音套餐-29元200分钟</p>
+    <p>
+    <div class="row">
+    	<div class="col-xs-6">
+        <select id="idtype" class="selectpicker show-tick form-control" >
+                  <option>第一发展人</option>
+                  <option>第二发展人</option>
+                </select>
+        </div>
+        <div class="col-xs-6">
+        <input type="text" class="form-control" placeholder="发展人">
+        </div>
+    </div>
+    </p>
+  </li>-->
+</ul>
+<div class="form-group panel-body">
+<label>备注</label>
+<textarea class="form-control" id="order_remark"></textarea>
+</div>
+
+
+            </div>
+    </div>
+  </div>
+</div>
+<nav class="navbar navbar-default navbar-fixed-bottom" id="nextNav">
+	<div class="container-fluid">
+		<div class="btn-group btn-group-justified navbar-btn" role="group"
+			aria-label="...">
+			<!-- <div class="btn-group" role="group">	
+				<button type="button" class="btn btn-primary btn-lg" onclick="order.service.btnBack()">
+					<span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+					返回
+				</button>
+			</div> -->
+			<div class="btn-group" role="group">
+				<button type="button" id="fillNextStepSub" class="btn btn-info btn-lg">
+					<span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>
+					下一步
+				</button>
+			</div>
+		</div>
+	</div>
+</nav>
+<!-- 发展人弹出框 -->
+<div class="modal fade" id="dealer_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal_wrapper">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="panel panel-default">
+          <div class="panel-body">
+            <table class="table table-head">
+				<thead>
+					<tr><td>操作</td><td>号码</td><td>发展业务</td></tr>
+				</thead>
+				<tbody class="panel-group" id="attach_tbody">
+				</tbody>
+			</table>
+          </div>
+          <div class="modal-footer">
+          <button type="button" class="btn btn-default" id="btn_modal" onclick="order.dealer.addAttachDealer()"><span class="glyphicon" aria-hidden="true"></span> 确定</button>
+          <button type="button" class="btn btn-default" data-toggle="modal" data-target="#vice_modal"><span class="glyphicon" aria-hidden="true"></span> 取消</button>
+          </div>
+        </div>
+    </div>
+  </div>
+</div>
+</div>
+<!-- 发展人弹出框 -->
+<div class="modal fade" id="developModal" tabindex="-2" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal_wrapper">
+  	<div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">添加发展人</h4>
+      </div>
+      <div class="modal-body">
+        <form>
+		  <div class="form-group">
+		    <label for="exampleInputEmail1">选择地区</label>
+		    <div class="row">
+		    </div>
+		    <div class="input-group">
+		               <div class="input-group-btn" id="sel">
+		               		
+		               </div>
+		               <div class="input-group-btn">
+		               <div class="input-group">
+		               		<select id="diqu" class="selectpicker show-tick form-control" >
+		                                         
+		                    </select>
+			            <span class="input-group-addon select-span"><span class="glyphicon glyphicon-triangle-bottom" ></span></span>
+		         		</div>
+		               </div>
+		               </div>
+		  </div>
+		  
+		  
+		  <div class="form-group">
+		    <label for="exampleInputPassword1">工号</label>
+		    <input type="datetime" class="form-control" id="staffCode" placeholder="请输入工号">
+		  </div>
+		  <div class="form-group">
+		    <label for="exampleInputEmail1">姓名</label>
+		    <input type="text" class="form-control" id="staffName" placeholder="请输入姓名">
+		  </div>
+       </form>
+      </div>
+      <div class="modal-footer">
+      	<button type="button" id="queryStaff" class="btn btn-primary btn-lg btn-block" data-toggle="modal">查询</button>
+      </div>
+    </div>
+  </div>
+  </div>
+</div>
+  
+  <!-- 发展人弹出框 -->
+		<div class="modal fade" id="addModal" tabindex="-2" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		  <div class="modal_wrapper">
+		  	<div class="modal-dialog">
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		        <h4 class="modal-title" id="myModalLabel">添加发展人</h4>
+		      </div>
+		      <div class="modal-body">
+		        <div id="addBody"></div>
+              </div>
+      <div class="modal-footer">
+      	<button type="button" id="queryStaff" class="btn btn-primary btn-lg btn-block" data-toggle="modal" data-target="#developModalOK">查询</button>
+      </div>
+    </div>
+  </div>
+  </div>
+</div>

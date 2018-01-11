@@ -1,0 +1,83 @@
+<#if (code)?? && (code == 0)>
+	<#if (list)?? && ((list)?size>0)>
+		<table class="numberList">
+			<thead>
+				<tr>
+					<td width="30%">经办人证件照片</td>
+					<td width="10%">&nbsp;</td>
+					<td width="60%">经办人人像照片</td>
+				</tr>
+			</thead>
+			<tbody id="handleCustCertificateTbody">
+				<tr>
+					<#list list as element>
+						<#if element.picFlag == "C">
+							<td>
+								<img title="经办人证件照片" alt="经办人证件照片" id="handleCustCertificateImg" height="189px" width="153px" src="data:image/jpeg;base64,${element.photograph}"/>
+							</td>
+							<td>&nbsp;</td>
+						</#if>
+						<#if element.picFlag == "noC">
+							<td>
+								<img title="经办人证件照片" alt="经办人证件照片" id="handleCustCertificateImg" height="189px" width="153px"/>
+							</td>
+							<td>&nbsp;</td>
+						</#if>
+					</#list>
+					<#list list as element>
+						<#if element.picFlag == "D">
+							<td>
+								<img title="经办人人像照片" alt="经办人人像照片" id="handleCustPhotograph" height="360px" width="640px" src="data:image/jpeg;base64,${element.photograph}"/>
+							</td>
+						</#if>
+						<#if element.picFlag == "noD">
+							<td>
+								<img title="经办人人像照片" alt="经办人人像照片" id="handleCustPhotograph" height="360px" width="640px"/>
+							</td>
+						</#if>
+					</#list>
+				</tr>
+			</tbody>
+		</table>
+	<#else>
+		<table class="numberList">
+			<thead>
+				<tr>
+					<td width="30%">经办人证件照片</td>
+					<td width="10%">&nbsp;</td>
+					<td width="60%">经办人人像照片</td>
+				</tr>
+			</thead>
+			<tbody id="handleCustCertificateTbody"></tbody>
+		</table>
+		<span>
+			<div id="handleCustCertificateNoList">
+				<div class="no_search">
+					<div class="h1">
+						<img style="vertical-align:middle" src="${contextPath}/image/common/query_search.gif" />&nbsp;&nbsp;抱歉，没有找到相关的记录，请准确输入查询条件。
+					</div>
+				</div>
+			</div>
+		</span>
+	</#if>
+<#else>
+	<table class="numberList">
+		<thead>
+			<tr>
+				<td width="30%">经办人证件照片</td>
+				<td width="10%">&nbsp;</td>
+				<td width="60%">经办人人像照片</td>
+			</tr>
+		</thead>
+		<tbody id="handleCustCertificateTbody"></tbody>
+	</table>
+	<span>
+		<div id="handleCustCertificateError">
+			<div class="no_search">
+				<div class="h1">
+					<img style="vertical-align:middle" src="${contextPath}/image/common/query_search.gif" />&nbsp;&nbsp;${msg}
+				</div>
+			</div>
+		</div>
+	</span>
+</#if>

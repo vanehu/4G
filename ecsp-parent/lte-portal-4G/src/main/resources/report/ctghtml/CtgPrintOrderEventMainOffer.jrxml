@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="CtgPrintOrderEventMainOffer" language="groovy" pageWidth="480" pageHeight="802" columnWidth="480" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="styleNorm" mode="Transparent" fill="Solid" fontName="黑体" fontSize="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+	<style name="styleBold" fill="Solid" fontName="黑体" fontSize="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<field name="mainOfferTitle" class="java.util.List"/>
+	<field name="acceNbrNewList" class="java.util.List"/>
+	<field name="osBaseInfoList" class="java.util.List"/>
+	<field name="osOutInfoList" class="java.util.List"/>
+	<field name="osOrderInfoList" class="java.util.List"/>
+	<field name="osOtherInfoList" class="java.util.List"/>
+	<field name="osPrompInfoList" class="java.util.List"/>
+	<field name="osAttachOfferList" class="java.util.List"/>
+	<group name="groupMainOfferTitle">
+		<groupExpression><![CDATA[$F{mainOfferTitle}]]></groupExpression>
+		<groupHeader>
+			<band height="15">
+				<subreport>
+					<reportElement x="0" y="0" width="480" height="15" isRemoveLineWhenBlank="true">
+						<printWhenExpression><![CDATA[$F{mainOfferTitle}!=null]]></printWhenExpression>
+					</reportElement>
+					<subreportParameter name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{mainOfferTitle})]]></dataSourceExpression>
+					<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "CtgPrintBaseStringBold.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<group name="groupAcceNbr">
+		<groupExpression><![CDATA[$F{acceNbrNewList}]]></groupExpression>
+		<groupHeader>
+			<band height="15">
+				<subreport>
+					<reportElement x="15" y="0" width="465" height="15" isRemoveLineWhenBlank="true">
+						<printWhenExpression><![CDATA[$F{acceNbrNewList}!=null]]></printWhenExpression>
+					</reportElement>
+					<subreportParameter name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{acceNbrNewList})]]></dataSourceExpression>
+					<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "CtgPrintOrderEventMainOfferAcceNbr.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<group name="groupBaseInfo">
+		<groupExpression><![CDATA[$F{osBaseInfoList}]]></groupExpression>
+		<groupHeader>
+			<band height="15">
+				<subreport>
+					<reportElement x="15" y="0" width="465" height="15" isRemoveLineWhenBlank="true">
+						<printWhenExpression><![CDATA[$F{osBaseInfoList}!=null]]></printWhenExpression>
+					</reportElement>
+					<subreportParameter name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{osBaseInfoList})]]></dataSourceExpression>
+					<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "CtgPrintOrderEventMainOfferBaseInfo.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<group name="groupOutInfo">
+		<groupExpression><![CDATA[$F{osOutInfoList}]]></groupExpression>
+		<groupHeader>
+			<band height="15">
+				<subreport>
+					<reportElement x="15" y="0" width="465" height="15" isRemoveLineWhenBlank="true">
+						<printWhenExpression><![CDATA[$F{osOutInfoList}!=null]]></printWhenExpression>
+					</reportElement>
+					<subreportParameter name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{osOutInfoList})]]></dataSourceExpression>
+					<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "CtgPrintOrderEventMainOfferBaseInfo.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<group name="groupOrderInfo">
+		<groupExpression><![CDATA[$F{osOrderInfoList}]]></groupExpression>
+		<groupHeader>
+			<band height="15">
+				<subreport>
+					<reportElement x="15" y="0" width="465" height="15" isRemoveLineWhenBlank="true">
+						<printWhenExpression><![CDATA[$F{osOrderInfoList}!=null]]></printWhenExpression>
+					</reportElement>
+					<subreportParameter name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{osOrderInfoList})]]></dataSourceExpression>
+					<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "CtgPrintOrderEventMainOfferOrderInfo.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<group name="groupOtherInfo">
+		<groupExpression><![CDATA[$F{osOtherInfoList}]]></groupExpression>
+		<groupHeader>
+			<band height="15">
+				<subreport>
+					<reportElement x="15" y="0" width="465" height="15" isRemoveLineWhenBlank="true">
+						<printWhenExpression><![CDATA[$F{osOtherInfoList}!=null]]></printWhenExpression>
+					</reportElement>
+					<subreportParameter name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{osOtherInfoList})]]></dataSourceExpression>
+					<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "CtgPrintOrderEventMainOfferOtherInfo.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<group name="groupPromInfo">
+		<groupExpression><![CDATA[$F{osPrompInfoList}]]></groupExpression>
+		<groupHeader>
+			<band height="15">
+				<subreport>
+					<reportElement x="0" y="0" width="480" height="15" isRemoveLineWhenBlank="true">
+						<printWhenExpression><![CDATA[$F{osPrompInfoList}!=null]]></printWhenExpression>
+					</reportElement>
+					<subreportParameter name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{osPrompInfoList})]]></dataSourceExpression>
+					<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "CtgPrintOrderEventMainOfferPrompInfo.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<group name="groupAttachOffer">
+		<groupExpression><![CDATA[$F{osAttachOfferList}]]></groupExpression>
+		<groupHeader>
+			<band height="15">
+				<subreport>
+					<reportElement x="0" y="0" width="480" height="15" isRemoveLineWhenBlank="true">
+						<printWhenExpression><![CDATA[$F{osAttachOfferList}!=null]]></printWhenExpression>
+					</reportElement>
+					<subreportParameter name="SUBREPORT_DIR">
+						<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+					</subreportParameter>
+					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{osAttachOfferList})]]></dataSourceExpression>
+					<subreportExpression class="java.lang.String"><![CDATA[$P{SUBREPORT_DIR} + "CtgPrintOrderEventMainOfferAttachOffer.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

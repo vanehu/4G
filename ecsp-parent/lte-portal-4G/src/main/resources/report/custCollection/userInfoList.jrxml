@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="invoiceChargeItems" language="groovy" pageWidth="471" pageHeight="141" columnWidth="471" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="styleSong" fontName="宋体" fontSize="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+	<style name="styleBlackBold10_5" fontName="宋体" fontSize="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+	<field name="no" class="java.lang.String"/>
+	<field name="custName" class="java.lang.String"/>
+	<field name="telNumber" class="java.lang.String"/>
+	<field name="addressStr" class="java.lang.String"/>
+	<field name="certTypeName" class="java.lang.String"/>
+	<field name="certNumber" class="java.lang.String"/>
+	<field name="maxQuantity" class="java.lang.String"/>
+	<field name="remark" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="50" splitType="Stretch">
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement mode="Transparent" x="85" y="15" width="100" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="宋体" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{certTypeName}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement mode="Transparent" x="258" y="15" width="213" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="宋体" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{certNumber}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="styleBlackBold10_5" x="25" y="0" width="35" height="15"/>
+				<textElement>
+					<font isBold="false"/>
+				</textElement>
+				<text><![CDATA[姓名：]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="0" y="0" width="15" height="15"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="宋体" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{no}]]></textFieldExpression>
+			</textField>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement mode="Transparent" x="65" y="0" width="71" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="宋体" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{custName}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="styleBlackBold10_5" x="25" y="15" width="60" height="15"/>
+				<textElement>
+					<font isBold="false"/>
+				</textElement>
+				<text><![CDATA[证件类型：]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="styleBlackBold10_5" x="198" y="15" width="60" height="15"/>
+				<textElement>
+					<font isBold="false"/>
+				</textElement>
+				<text><![CDATA[证件号码：]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="false">
+				<reportElement mode="Transparent" x="85" y="30" width="386" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="宋体" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{remark}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="styleBlackBold10_5" x="198" y="0" width="80" height="15"/>
+				<textElement>
+					<font isBold="false"/>
+				</textElement>
+				<text><![CDATA[办理卡号数量：]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="styleBlackBold10_5" x="25" y="30" width="60" height="15"/>
+				<textElement>
+					<font isBold="false"/>
+				</textElement>
+				<text><![CDATA[其他说明：]]></text>
+			</staticText>
+			<textField pattern="" isBlankWhenNull="false">
+				<reportElement mode="Transparent" x="278" y="0" width="20" height="15" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" markup="none">
+					<font fontName="宋体" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="STSong-Light" pdfEncoding="UniGB-UCS2-H" isPdfEmbedded="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{maxQuantity}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement style="styleBlackBold10_5" x="298" y="0" width="20" height="15"/>
+				<textElement>
+					<font isBold="false"/>
+				</textElement>
+				<text><![CDATA[张]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="styleBlackBold10_5" x="15" y="0" width="10" height="15"/>
+				<textElement>
+					<font isBold="false"/>
+				</textElement>
+				<text><![CDATA[、]]></text>
+			</staticText>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

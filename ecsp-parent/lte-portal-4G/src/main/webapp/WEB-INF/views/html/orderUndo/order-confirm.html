@@ -1,0 +1,108 @@
+<div class="order_confirmation">
+	<h2 id="tital" class="h2_title"> </h2>
+    <div class="main_body">
+    	<h2 class="s_title">撤单确认</h2>
+    	<#if resMap.resultCode==0>	
+    		<#assign result=resMap.result />
+	    	<table id="orderTable" olNbr="${result.olNbr}" olId="${result.olId}" class="table_txt">
+				<tbody id="orderTbody">    
+					<tr>
+	                	<td >购物车流水号：</td>
+	                    <td>${result.olNbr}</td>
+	              	</tr>    
+	              	<!-- <tr>
+	                    <td >套餐名称：</td>
+	                    <td id="confirmOfferName"></td>
+	              	</tr>      
+	              	<tr id="orderTr">
+	                	<td >手机号码：</td>
+	                    <td id="confirmNumber"></td>
+	              	</tr>  -->                                                
+	          	</tbody>
+	        </table>                
+	    	<div class="height18"></div>
+	    	
+	    	<table id="ruleTable" class="com_table" style="display: none;">
+	    		<thead>
+	    			<tr>
+		                <th width="20%">规则编码</th>
+		                <th width="20%">规则限制等级</th>
+		                <th>规则限制原因</th>
+	              	</tr>
+	    		</thead>
+	            <tbody id="ruleTbody">
+	            	<#if result.ruleInfos?? &&(result.ruleInfos?size>0)>
+		            	<#list result.ruleInfos as item>
+		            		<#if item.ruleLevel==4>
+		            		<tr ruleLevel="4">
+				                <td width="50%">${item.ruleCode}</td>
+				                	<td >限制级别</td>
+				                <td>${item.ruleDesc}</td>
+			              	</tr>
+		            		<#else>
+			            	<tr ruleLevel="1">
+				                <td width="50%">${item.ruleCode}</td>
+				                	<td >提示级别</td>
+				                <td>${item.ruleDesc}</td>
+			              	</tr>
+			              	</#if>
+		            	</#list>
+	            	</#if>     	
+	            </tbody>
+	        </table>
+	        
+	        <table id="chooseTable" class="com_table" style="display: none;">
+	        	<thead>
+	    			<tr>
+		                <th width="50%">业务名称(撤单)</th>
+		                <th>业务动作</th>
+	              	</tr>
+	    		</thead>
+	            <tbody>  	
+	            </tbody>
+	        </table>
+	        
+	        <table id="resTable" class="com_table" style="display: none;">
+	        	<thead>
+	    			<tr>
+		                <th width="50%">业务名称(动作链带出)</th>
+		                <th>业务动作</th>
+	              	</tr>
+	    		</thead>
+	            <tbody id="resTbody">
+	            	<#if result.autoBoInfos?? &&(result.autoBoInfos?size>0)>
+		            	<#list result.autoBoInfos as item>
+			            	<tr>
+			            		<#if item.boActionTypeCd == 3 >
+			            			<td width="50%">${item.specName} - ${item.instAccessNumber}</td>
+			            		<#else>
+			            			<td width="50%">${item.specName}</td>
+			            		</#if>
+				                <td>${item.boActionTypeName}</td>
+			              	</tr>
+		            	</#list>
+	            	</#if>     	
+	            </tbody>
+	        </table>
+		            	
+	        <div align="right" style="margin: 20px auto;">
+			    <a class="btna_o" href="javascript:order.undo.orderBack()"><span >取消撤单</span></a>
+			    <a style=" margin-left:20px;" class="btna_o" id="orderConfirmBtn" href="javascript:order.undo.tochargeInit('${result.olId}','${result.olNbr}') "><span>撤单确认</span></a>
+			</div>
+    	<#else>
+    		<table class="table_txt">
+				<tbody>           
+	              	<tr>
+	                	<td >失败原因：</td>
+	                   <td>${resMap.resultMsg}</td>
+	              	</tr>                                                
+	          	</tbody>
+	        </table>     
+	        <div align="right" style="margin: 20px auto;">
+		    <a class="btna_o" href="javascript:order.undo.orderBack()"><span >返回修改</span></a>
+		</div>  
+    	</#if>
+	</div>
+</div>
+
+

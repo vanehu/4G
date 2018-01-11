@@ -347,7 +347,9 @@ order.cust = (function(){
 	//创建客户证件类型选择事件
 	var _identidiesTypeCdChoose = function(scope,id) {
 		var identidiesTypeCd=$(scope).val();//OrderInfo.cust.identityCd;
-		if(identidiesTypeCd==1){
+		//判断外国人的分省开关是否读卡
+		var foreginLiveKey = query.common.queryPropertiesStatus("FOREGIN_LIVE_FLAG_" + String(OrderInfo.staff.areaId).substr(0, 3));
+		if(identidiesTypeCd==1 || (foreginLiveKey == true && identidiesTypeCd == 50)){
 			$("#"+id).attr("placeHolder","请输入合法身份证号码");
 			$("#"+id).attr("data-validate","validate(idCardCheck18:请输入合法身份证号码) on(blur)");
 			if (id == "orderAttrIdCard") {// 填单页面经办人读卡
@@ -2536,7 +2538,7 @@ order.cust = (function(){
 	};
 	// 填单页面经办人读卡
 	var _readCertWhenOrder = function() {
-		var man = cert.readCert(CONST.CERT_READER_HANDLE_CUST);
+		var man = cert.readCert(CONST.CERT_READER_HANDLE_CUST + "+" + $("#orderIdentidiesTypeCd").val());
 		if (man.resultFlag != 0){
 			$.alert("提示", man.errorMsg);
 			return;

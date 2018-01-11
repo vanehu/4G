@@ -238,7 +238,6 @@ oneFive.certNumberHandle = (function () {
                 $.unecOverlay();
             },
             "done": function (response) {
-            	console.log(response);
             	if (response.code == 0) {
 					// $.alert("提示", "提交成功");
 					// _queryUserInfo();
