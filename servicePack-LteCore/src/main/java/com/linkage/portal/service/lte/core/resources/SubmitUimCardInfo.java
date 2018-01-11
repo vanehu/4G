@@ -94,9 +94,9 @@ public class SubmitUimCardInfo extends Service {
 		config.setInParams(inMap);
 		
 		try{
+			dataMap.put("inIntParam", inXML);
 			Map<String, Object> resMap = WSClient.getInstance().callWS(config);
 			//记录接口日志
-			dataMap.put("inIntParam", inXML);
 			dataMap.put("outIntParam", MapUtils.getString(resMap, "resultParam"));
 
 			Map<String, Object> returnMap = new HashMap<String, Object>();
