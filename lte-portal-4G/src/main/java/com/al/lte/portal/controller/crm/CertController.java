@@ -233,11 +233,15 @@ public class CertController extends BaseController {
     		String partyName = MapUtils.getString(param, "partyName", "");// 姓名
     		String identityPic = MapUtils.getString(param, "identityPic");// 照片
       		String createFlag = MapUtils.getString(param, "createFlag");
-      		String certType = MapUtils.getString(param, "certType");//获取读卡的证件类型
+      		boolean isExitCertType = param.containsKey("certType");
+      		String certType = "";
+      		if(isExitCertType == true){
+      			certType = MapUtils.getString(param, "certType");//获取读卡的证件类型
+      		}
       		boolean isExit = param.containsKey("servCodeIdType");
       		if(isExit == true){
 	      		String servCodeIdType = MapUtils.getString(param, "servCodeIdType");//获取营业员选择的证件类型
-	      		if(!servCodeIdType.equals(certType)){
+	      		if(isExitCertType == true && !servCodeIdType.equals(certType)){
 	      			return super.failed("读卡的返回证件类型和已选择的证件类型不一致", -1);
 	      		}
       		}

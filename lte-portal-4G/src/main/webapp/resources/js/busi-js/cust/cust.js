@@ -321,6 +321,14 @@ order.cust = (function(){
 		}else{
 			$("#readCertBtn").hide();
 		}
+		//开关打开的情况下，外国人定位必须要求读卡
+		var isForeginLive = query.common.queryPropertiesStatus("FOREGIN_LIVE_FLAG_" + String(OrderInfo.staff.areaId).substr(0, 3));
+		if(isForeginLive == true && p_cust_identityCdIsExit == "50"){
+			$("#p_cust_identityNum").attr("disabled","true");
+		}else{
+			$("#p_cust_identityNum").removeAttr("disabled");
+		}
+		
 		// 非接入号隐藏产品类别选择
 		$("#prodTypeCd").hide();
 		$("#"+id).val("");

@@ -97,7 +97,7 @@ cert = (function() {
 		//判断传递过来的数据是否包含证件类型
 		var regNumber = /\d+/; //验证0-9的任意数字最少出现1次
 		var servCodeIdType = "";
-		if(regNumber.test(servCode)){
+		if(ec.util.isObj(servCode) && regNumber.test(servCode)){
 			servCodeIdType = servCode.split("+")[1];
 			servCode = servCode.split("+")[0];
 		}
