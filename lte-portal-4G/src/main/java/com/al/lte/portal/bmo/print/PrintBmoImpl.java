@@ -27,8 +27,6 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.sf.jasperreports.engine.util.BigDecimalUtils;
-
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
@@ -197,7 +195,9 @@ public class PrintBmoImpl implements PrintBmo {
 
 		} else if (SysConstant.BUSI_TYPE_TERMINAL_ORDER.equals(busiType)) {
 			printData = paramMap;
-		} else {
+		} else if ("customerAgreementPrint".equals(printType)) {
+			printData = paramMap;
+		}else {
 
 		}
 
@@ -5339,6 +5339,8 @@ public class PrintBmoImpl implements PrintBmo {
 		if("ctgpdf/CtgTerminalOrderInfo".equals(printType)){
 			strJasperFileName = SysConstant.P_MOD_BASE_DIR + printType
 			+ SysConstant.P_MOD_FILE_SUBFIX;
+		}else if ("customerAgreementPrint".equals(printType)) {
+			strJasperFileName = SysConstant.P_MOD_BASE_DIR + printTypeDir + "CtgPrintCustomerAgreement.jasper";
 		}else{
 			strJasperFileName = SysConstant.P_MOD_BASE_DIR + strJasperFileName
 			+ SysConstant.P_MOD_FILE_SUBFIX;

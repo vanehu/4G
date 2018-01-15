@@ -191,9 +191,6 @@ common.print = (function($){
 	}
 		
 	var _printVoucher=function(voucherInfo){
-		if(ec.util.isObj(voucherInfo)){
-			voucherInfo["busitypeFlag"] = OrderInfo.busitypeflag;
-		}
 	 $("#voucherForm").remove();
 		if(_getCookie('_session_pad_flag')=='1'){
 			var arr=new Array(3);
@@ -1313,6 +1310,25 @@ common.print = (function($){
 			})).appendTo("body").submit();
 		}
 	};
+	
+	var _customerAgreementPrint = function(){
+		var voucherInfo = {
+			"busitypeFlag": OrderInfo.busitypeflag,
+			"printType":"customerAgreementPrint"
+		};
+		$("<form>", {
+	    	id: "voucherForm",
+	    	style: "display:none;",
+			target: "_blank",
+			method: "POST",
+			action: contextPath + "/print/customerAgreementPrint"
+	    }).append($("<input>", {
+	    	id : "voucherInfo",
+	    	name : "voucherInfo",
+	    	type: "hidden",
+	    	value: JSON.stringify(voucherInfo)
+	    })).appendTo("body").submit();
+	};
 
 	return {
 		preVoucher:_preVoucher,
@@ -1332,7 +1348,8 @@ common.print = (function($){
 		queryElInvoice:_queryElInvoice,
 		preVoucherLoc:_preVoucherLoc,
 		queryConstConfig:_queryConstConfig,
-		openELPDF:_openELPDF
+		openELPDF:_openELPDF,
+		customerAgreementPrint:_customerAgreementPrint
 	};
 })(jQuery);
 

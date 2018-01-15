@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="myReport1" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="b47a5b81-9f7e-43fc-bbea-d896f8642aa8">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="myReport1" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="3207"/>
@@ -23,7 +23,7 @@
 			<pen lineWidth="0.5" lineColor="#000000"/>
 		</box>
 	</style>
-	<subDataset name="Table Dataset 1" uuid="82a5b733-80b2-46d3-b5a5-7ff9779eaf96"/>
+	<subDataset name="Table Dataset 1" />
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["D:\\Work_AI\\EclipseWorkspace\\Neon\\EC\\Git-LTE-Portal\\Src\\lte-portal-4G\\src\\main\\resources\\report\\ctgpdf\\"]]></defaultValueExpression>
 	</parameter>
@@ -40,22 +40,22 @@
 	<detail>
 		<band height="802" splitType="Stretch">
 			<staticText>
-				<reportElement x="29" y="170" width="525" height="29" uuid="b39a4e3e-a1f4-4e80-b08b-dd71abb65d92"/>
+				<reportElement x="29" y="170" width="525" height="29" />
 				<textElement>
 					<font fontName="宋体" size="9" isBold="false"/>
 				</textElement>
 				<text><![CDATA[根据《中华人民共和国合同法》《中华人民共和国网络安全法》《中华人民共和国电信条例》及其他有关法律、法规的规定，甲乙双方在自愿、平等、公平、诚实信用的基础上，就电信服务的相关事宜，达成如下协议：]]></text>
 			</staticText>
 			<componentElement>
-				<reportElement key="table 1" x="29" y="87" width="526" height="83" uuid="6d09512e-ff3e-41da-b2c3-7e86d23f7b14"/>
+				<reportElement key="table 1" x="29" y="87" width="526" height="83" />
 				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
-					<datasetRun subDataset="Table Dataset 1" uuid="a29ee788-9e24-4043-b9db-99a1e9a05abd">
+					<datasetRun subDataset="Table Dataset 1" >
 						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.JREmptyDataSource(1)]]></dataSourceExpression>
 					</datasetRun>
-					<jr:column width="555" uuid="330bc49f-5f9a-4584-a8b2-2dbd3aa98558">
+					<jr:column width="555" >
 						<jr:tableHeader height="10" rowSpan="1">
 							<staticText>
-								<reportElement x="0" y="0" width="555" height="10" uuid="0d15e15a-386d-4808-8657-dce2cb518bf5"/>
+								<reportElement x="0" y="0" width="555" height="10" />
 								<textElement>
 									<font fontName="宋体" size="7" isBold="true"/>
 								</textElement>
@@ -64,11 +64,11 @@
 						</jr:tableHeader>
 						<jr:tableFooter height="12" rowSpan="1">
 							<staticText>
-								<reportElement x="0" y="0" width="555" height="2" uuid="0b58107a-d2de-41ff-b24f-6fa9137aed44"/>
+								<reportElement x="0" y="0" width="555" height="2"/>
 								<text><![CDATA[]]></text>
 							</staticText>
 							<staticText>
-								<reportElement x="20" y="2" width="535" height="10" uuid="1248022d-2a71-4186-8d3a-883d39a2e43e"/>
+								<reportElement x="20" y="2" width="535" height="10"/>
 								<textElement>
 									<font fontName="宋体" size="7" isBold="true"/>
 								</textElement>
@@ -77,14 +77,14 @@
 						</jr:tableFooter>
 						<jr:columnHeader height="22" rowSpan="1">
 							<staticText>
-								<reportElement x="0" y="0" width="555" height="2" uuid="500097e1-a294-4f9f-83e1-e2474de3260e"/>
+								<reportElement x="0" y="0" width="555" height="2"/>
 								<textElement>
 									<font fontName="宋体" size="7" isBold="true"/>
 								</textElement>
 								<text><![CDATA[]]></text>
 							</staticText>
 							<staticText>
-								<reportElement x="20" y="2" width="535" height="20" uuid="aa8caeca-b3f3-4ded-a937-5a446f6c9339"/>
+								<reportElement x="20" y="2" width="535" height="20"/>
 								<textElement>
 									<font fontName="宋体" size="7" isBold="true"/>
 								</textElement>
@@ -93,14 +93,14 @@
 						</jr:columnHeader>
 						<jr:columnFooter height="12" rowSpan="1">
 							<staticText>
-								<reportElement x="0" y="0" width="555" height="2" uuid="8ef4ab2f-87c0-46d8-96bc-67599b4359c0"/>
+								<reportElement x="0" y="0" width="555" height="2"/>
 								<textElement>
 									<font fontName="宋体" isBold="true"/>
 								</textElement>
 								<text><![CDATA[]]></text>
 							</staticText>
 							<staticText>
-								<reportElement x="20" y="2" width="535" height="10" uuid="480776b0-0674-4c44-bb5b-fbb9986aea49"/>
+								<reportElement x="20" y="2" width="535" height="10"/>
 								<textElement>
 									<font fontName="宋体" size="7" isBold="true"/>
 								</textElement>
@@ -109,14 +109,14 @@
 						</jr:columnFooter>
 						<jr:detailCell height="12" rowSpan="1">
 							<staticText>
-								<reportElement x="0" y="0" width="555" height="2" uuid="d0b7c1ab-d39c-44b5-b460-29938d5f6df9"/>
+								<reportElement x="0" y="0" width="555" height="2"/>
 								<textElement>
 									<font fontName="宋体" size="7"/>
 								</textElement>
 								<text><![CDATA[]]></text>
 							</staticText>
 							<staticText>
-								<reportElement x="20" y="2" width="535" height="10" uuid="89050483-203c-4e97-a497-6f3c72a57f1a"/>
+								<reportElement x="20" y="2" width="535" height="10"/>
 								<textElement>
 									<font fontName="宋体" size="7" isBold="true"/>
 								</textElement>
@@ -127,48 +127,48 @@
 				</jr:table>
 			</componentElement>
 			<staticText>
-				<reportElement x="65" y="56" width="157" height="13" uuid="87ac0aa6-b65c-4248-8c71-4e49f266ec71"/>
+				<reportElement x="65" y="56" width="157" height="13"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="宋体" size="9" isBold="true"/>
 				</textElement>
 				<text><![CDATA[中国电信股份有限公司海南分公司]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="30" y="56" width="35" height="13" uuid="8a510852-4d05-49e5-8ced-f1b3617a72ce"/>
+				<reportElement x="30" y="56" width="35" height="13"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="宋体" size="9" isBold="false"/>
 				</textElement>
 				<text><![CDATA[乙方：]]></text>
 			</staticText>
 			<line>
-				<reportElement x="29" y="44" width="1" height="25" forecolor="#FFFFFF" uuid="012b313f-68b5-4d9d-8e61-b2a1455b02af"/>
+				<reportElement x="29" y="44" width="1" height="25" forecolor="#FFFFFF"/>
 			</line>
 			<line>
-				<reportElement x="75" y="44" width="1" height="26" forecolor="#FFFFFF" uuid="65ca82ae-e8d1-4b33-b03d-e657702925eb"/>
+				<reportElement x="75" y="44" width="1" height="26" forecolor="#FFFFFF"/>
 			</line>
 			<staticText>
-				<reportElement x="30" y="43" width="35" height="11" uuid="24f2204e-b846-4ed3-822e-d26e34e201e0"/>
+				<reportElement x="30" y="43" width="35" height="11"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="宋体" size="9"/>
 				</textElement>
 				<text><![CDATA[甲方：]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="202" y="0" width="150" height="20" uuid="cfe5a797-9163-4b00-b7ab-24c6b2e2978f"/>
+				<reportElement x="202" y="0" width="150" height="20"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="宋体" size="14" isBold="true"/>
 				</textElement>
 				<text><![CDATA[中国电信用户入网协议]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="49" y="199" width="505" height="20" uuid="feb3ea4e-8825-46ec-a140-f0a323237cec"/>
+				<reportElement x="49" y="199" width="505" height="20"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="宋体" size="9" isBold="true"/>
 				</textElement>
 				<text><![CDATA[一、用户真实身份信息登记要求]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="29" y="219" width="525" height="186" uuid="d9a1402f-7fc1-439c-bc20-ada6334db807"/>
+				<reportElement x="29" y="219" width="525" height="186"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="宋体" size="9"/>
 				</textElement>
@@ -181,14 +181,14 @@
     7.乙方要求甲方提供担保的，甲方应当按照乙方要求办理相应担保手续。]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="49" y="405" width="505" height="20" uuid="6703d272-aff7-49a6-a797-8db8e6108344"/>
+				<reportElement x="49" y="405" width="505" height="20"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="宋体" size="9" isBold="true"/>
 				</textElement>
 				<text><![CDATA[二、甲方的权利和义务]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="29" y="425" width="525" height="377" uuid="40e3b9e1-c194-4541-8b68-49bab26d1d5b"/>
+				<reportElement x="29" y="425" width="525" height="377"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="宋体" size="9"/>
 				</textElement>
@@ -216,7 +216,7 @@
     （3）利用乙方网络从事窃取或破坏他人信息、损害他人合法权益的活动，制作、传播、使用网络改号软件以及对他人进行骚扰的恶意软件；]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="227" y="787" width="100" height="15" uuid="9fa80cea-8800-4a56-ae9a-ae370654cc57"/>
+				<reportElement x="227" y="787" width="100" height="15"/>
 				<textElement textAlignment="Center">
 					<font fontName="宋体" size="9"/>
 				</textElement>
@@ -225,14 +225,14 @@
 		</band>
 		<band height="802">
 			<staticText>
-				<reportElement x="50" y="164" width="505" height="20" uuid="0dee92c6-783f-4eb8-843b-d7d476ed3756"/>
+				<reportElement x="50" y="164" width="505" height="20"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="宋体" size="9" isBold="true"/>
 				</textElement>
 				<text><![CDATA[三、乙方的权利和义务]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="29" y="0" width="525" height="164" uuid="726cea5b-e413-4d68-98c9-f9dd7f886fbf"/>
+				<reportElement x="29" y="0" width="525" height="164"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="宋体" size="9"/>
 				</textElement>
@@ -245,7 +245,7 @@
     13.为保护公共利益、优化电信服务质量、保障甲方电信服务知情权、及时警示通讯信息诈骗、创新电信服务体验，甲方同意乙方使用甲方个人信息通过营业网点、网站、短信、互联网媒体、电子邮件、语音外呼等方式，向甲方告知社会公益、电信服务、业务使用、诈骗风险警示等信息。]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="29" y="184" width="526" height="366" uuid="79f83a28-acc9-4d93-a4a6-66cac09dc95e"/>
+				<reportElement x="29" y="184" width="526" height="366"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="宋体" size="9"/>
 				</textElement>
@@ -269,14 +269,14 @@
 ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="50" y="550" width="506" height="25" uuid="9019c774-8672-4fa5-a14a-68c9a25e652a"/>
+				<reportElement x="50" y="550" width="506" height="25"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="宋体" size="9" isBold="true"/>
 				</textElement>
 				<text><![CDATA[四、特殊情况的责任承担]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="30" y="575" width="525" height="190" uuid="28eb3061-8c04-4fa9-9c62-9c55403d58c6"/>
+				<reportElement x="30" y="575" width="525" height="190"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="宋体"/>
 				</textElement>
@@ -291,7 +291,7 @@
 ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="227" y="782" width="100" height="20" uuid="55ffaa55-8db3-4ed2-ada1-59665c3f1d0e"/>
+				<reportElement x="227" y="782" width="100" height="20"/>
 				<textElement textAlignment="Center">
 					<font fontName="宋体" size="9"/>
 				</textElement>
@@ -300,14 +300,14 @@
 		</band>
 		<band height="802">
 			<staticText>
-				<reportElement x="49" y="0" width="506" height="20" uuid="43c61827-c61b-4126-88ec-f4ef898c4d30"/>
+				<reportElement x="49" y="0" width="506" height="20"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="宋体" size="9" isBold="true"/>
 				</textElement>
 				<text><![CDATA[五、协议的变更、终止和解除]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="29" y="20" width="526" height="284" uuid="6075fc28-d7a9-4d83-8261-63ef772360d6"/>
+				<reportElement x="29" y="20" width="526" height="284"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="宋体" size="9"/>
 				</textElement>
@@ -331,14 +331,14 @@
 ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="49" y="304" width="507" height="20" uuid="37a45df0-bd20-4e1e-a3d6-802d1cc36b13"/>
+				<reportElement x="49" y="304" width="507" height="20"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="宋体" size="9" isBold="true"/>
 				</textElement>
 				<text><![CDATA[六、其他约定]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="29" y="324" width="527" height="86" uuid="f73849c2-60b6-4e43-a43e-2ec64374ee4d"/>
+				<reportElement x="29" y="324" width="527" height="86"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="宋体" size="9" isBold="false"/>
 				</textElement>
@@ -348,7 +348,7 @@
 ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="49" y="431" width="126" height="56" uuid="f7cb5f0a-bf3b-4ff3-847c-b5171d8f4f4b"/>
+				<reportElement x="49" y="431" width="126" height="56"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="宋体" size="9"/>
 				</textElement>
@@ -358,7 +358,7 @@
 签署日期：    年   月   日]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="304" y="431" width="210" height="56" uuid="573131f7-a902-43e0-966f-f5b7a6d6e477"/>
+				<reportElement x="304" y="431" width="210" height="56"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="宋体" size="9"/>
 				</textElement>
@@ -367,7 +367,7 @@
 签署日期：    年   月   日]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="50" y="512" width="126" height="56" uuid="3d8d6ccd-4e7e-48a3-b6e0-969803594c69"/>
+				<reportElement x="50" y="512" width="126" height="56"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="宋体" size="9"/>
 				</textElement>
@@ -377,7 +377,7 @@
 签署日期：    年   月   日]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="227" y="782" width="100" height="20" uuid="aa060bc0-3423-4f45-9a7d-df6bf45d2658"/>
+				<reportElement x="227" y="782" width="100" height="20"/>
 				<textElement textAlignment="Center">
 					<font fontName="宋体" size="9"/>
 				</textElement>
