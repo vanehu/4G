@@ -1084,7 +1084,8 @@ order.calcharge = (function(){
 			"olNbr":OrderInfo.orderResult.olNbr,
 			"soNbr" : OrderInfo.order.soNbr,
 			"refundType":refundType,
-			"checkResult":JSON.stringify(OrderInfo.checkresult)
+			"checkResult":JSON.stringify(OrderInfo.checkresult),
+			"busitypeFlag": OrderInfo.busitypeflag
 		};
 		$.callServiceAsHtmlGet(contextPath+"/token/pc/order/getChargeList?token="+OrderInfo.order.token,params,{
 			"before":function(){

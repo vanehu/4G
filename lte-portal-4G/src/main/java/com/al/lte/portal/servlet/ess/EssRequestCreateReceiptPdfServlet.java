@@ -190,7 +190,7 @@ public class EssRequestCreateReceiptPdfServlet extends HttpServlet implements
 			PdfPrintHelper vPdfPrintHelper = PrintHelperMgnt.getPrintHelper(strJasperFileName, 0, 0);
 
 			// 生成pdf文件
-			byte[] bytes = vPdfPrintHelper.getPdfStreamWithParametersAndFields(reportParams, inFields);
+			byte[] bytes = vPdfPrintHelper.getPdfStreamWithParametersAndFields(reportParams, inFields, null, null);
 			// 快销卡需要上传PDF文件
 			Map<String, Object> printDataMap = new HashMap<String, Object>();
 			Iterator<Map<String, Object>> it = inFields.iterator();

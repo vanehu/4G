@@ -816,4 +816,55 @@ public class PrintController extends BaseController {
 			return super.failed(ErrorCode.QUERY_CONST_CONFIG, e, paramMap);
 		}
     }
+    
+    /**
+     * 入网协议打印，目前仅有海南使用
+     * @param voucherInfo
+     * @param flowNum
+     * @param request
+     * @param response
+     */
+    @RequestMapping(value = "/customerAgreementPrint", method = RequestMethod.POST)
+	public void customerAgreementPrint(@RequestParam("voucherInfo") String voucherInfo, @LogOperatorAnn String flowNum, HttpServletRequest request, HttpServletResponse response) {
+		Map<String, Object> paramMap = new HashMap<String, Object>();
+		
+		try {
+			paramMap = JsonUtil.toObject(voucherInfo, Map.class);
+			printBmo.printVoucher(paramMap, flowNum, request, response);
+		} catch (BusinessException e) {
+			this.log.error("打印入网协议异常", e);
+			try {
+				request.getRequestDispatcher("/error/500.jsp").forward(request, response);
+			} catch (Exception e1) {
+			}
+		} catch (InterfaceException ie) {
+			log.error("打印入网协议异常", ie);
+			try {
+				JsonResponse jsonResponse = failed(ie, paramMap, ErrorCode.PRINT_VOUCHER);
+				Map<String, Object> errorMap = new HashMap<String, Object>();
+				errorMap.put("code", "-2");
+				errorMap.put("data", jsonResponse.getData());
+				String errorJson = JsonUtil.toString(errorMap);
+				request.setAttribute("errorJson", errorJson);
+				request.getRequestDispatcher("/error/500.jsp").forward(request, response);
+			} catch (Exception e1) {
+				
+			}
+		} catch (Exception e) {
+			log.error("打印入网协议异常", e);
+			DataBus db = new DataBus();
+			db.setParammap(paramMap);
+			try {
+				JsonResponse jsonResponse = failed(ErrorCode.PRINT_VOUCHER, e, paramMap);
+				Map<String, Object> errorMap = new HashMap<String, Object>();
+				errorMap.put("code", "-2");
+				errorMap.put("data", jsonResponse.getData());
+				String errorJson = JsonUtil.toString(errorMap);
+				request.setAttribute("errorJson", errorJson);
+				request.getRequestDispatcher("/error/500.jsp").forward(request, response);
+			} catch (Exception e1) {
+				
+			}
+		}
+	}
 }
