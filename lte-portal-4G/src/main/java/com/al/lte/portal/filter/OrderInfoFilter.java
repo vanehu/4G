@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.al.ecs.common.util.MDA;
 import com.al.ecs.spring.annotation.log.LogOperatorAnn;
 import com.al.lte.portal.bmo.crm.MktResBmo;
+import com.al.lte.portal.bmo.crm.MktResBmoImpl;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
@@ -42,9 +43,7 @@ import com.al.lte.portal.model.SessionStaff;
  */
 public class OrderInfoFilter extends OncePerRequestFilter {
 
-	@Autowired
-	@Qualifier("com.al.lte.portal.bmo.crm.MktResBmo")
-	private MktResBmo mktResBmo;
+	private MktResBmo mktResBmo = new MktResBmoImpl();
 
 	private static Log log = Log.getLog(OrderInfoFilter.class);
 	 
