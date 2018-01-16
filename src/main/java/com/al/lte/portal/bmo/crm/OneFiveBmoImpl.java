@@ -36,7 +36,6 @@ public class OneFiveBmoImpl implements OneFiveBmo {
      * @param sessionStaff 当前登录的工号
      * @return 上传结果
      */
-    @Override
     public Map<String, Object> uploadFile(Map<String, Object> param, SessionStaff sessionStaff) throws Exception {
         Map<String, Object> resultMap = new HashMap<String, Object>();
         DataBus db = InterfaceClient.callService(param, PortalServiceCode.INTF_UPLOAD_IMAGE, null, sessionStaff);
@@ -62,7 +61,6 @@ public class OneFiveBmoImpl implements OneFiveBmo {
      * @param sessionStaff 当前登录的工号
      * @return 下载结果
      */
-    @Override
     public Map<String, Object> downFile(Map<String, Object> param, SessionStaff sessionStaff) throws Exception {
         Map<String, Object> resultMap = new HashMap<String, Object>();
         DataBus db = InterfaceClient.callService(param, PortalServiceCode.INTF_DOWNLOAD_IMAGE, null, sessionStaff);

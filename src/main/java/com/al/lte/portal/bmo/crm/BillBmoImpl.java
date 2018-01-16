@@ -493,7 +493,6 @@ public class BillBmoImpl implements BillBmo {
 		return resultMap;
 	}
 
-	@Override
 	public Map<String, Object> arrears(Map<String, Object> paramMap,
 			String flowNum, SessionStaff sessionStaff) throws Exception {
 		DataBus db = ServiceClient.callService(paramMap, PortalServiceCode.APP_ARREARS, flowNum, sessionStaff);
@@ -524,7 +523,6 @@ public class BillBmoImpl implements BillBmo {
 		return resultMap;
 	}
 
-	@Override
 	public Map<String, Object> paymentQuery(Map<String, Object> paramMap,
 			String flowNum, SessionStaff sessionStaff) throws Exception {
 		DataBus db = ServiceClient.callService(paramMap, PortalServiceCode.APP_PAYMENT_QUERY, flowNum, sessionStaff);
@@ -555,7 +553,6 @@ public class BillBmoImpl implements BillBmo {
 		return resultMap;
 	}
 
-	@Override
 	public String getTranId(Map<String, Object> paramMap,
 			String flowNum, SessionStaff sessionStaff) throws Exception {
 		DataBus db = ServiceClient.callService(new HashMap<String, Object>(), PortalServiceCode.SERVICE_GET_TRANID, null, sessionStaff);

@@ -4416,14 +4416,14 @@ public class OrderController extends BaseController {
             orderBmo.insertCertInfo(param, null, sessionStaff);
             
             //二代证校验
-            Map<String, Object> verifyResult = orderBmo.certReaderVerify(param, request, sessionStaff);
-            if(MapUtils.getIntValue(verifyResult, SysConstant.RESULT_CODE) == ResultCode.FAIL_ON){
-            	return super.failed(MapUtils.getString(verifyResult, SysConstant.RESULT_MSG, ""), ResultCode.FAIL_ON);
-            } else if(MapUtils.getIntValue(verifyResult, SysConstant.RESULT_CODE) == ResultCode.FAIL_TW){
-            	return super.failed(MapUtils.getString(verifyResult, SysConstant.RESULT_MSG, ""), ResultCode.FAIL_TW);
-            } else if(MapUtils.getIntValue(verifyResult, SysConstant.RESULT_CODE) == ResultCode.FAIL_TH){
-            	return super.failed(param, ResultCode.FAIL_TH);
-            }
+//            Map<String, Object> verifyResult = orderBmo.certReaderVerify(param, request, sessionStaff);
+//            if(MapUtils.getIntValue(verifyResult, SysConstant.RESULT_CODE) == ResultCode.FAIL_ON){
+//            	return super.failed(MapUtils.getString(verifyResult, SysConstant.RESULT_MSG, ""), ResultCode.FAIL_ON);
+//            } else if(MapUtils.getIntValue(verifyResult, SysConstant.RESULT_CODE) == ResultCode.FAIL_TW){
+//            	return super.failed(MapUtils.getString(verifyResult, SysConstant.RESULT_MSG, ""), ResultCode.FAIL_TW);
+//            } else if(MapUtils.getIntValue(verifyResult, SysConstant.RESULT_CODE) == ResultCode.FAIL_TH){
+//            	return super.failed(param, ResultCode.FAIL_TH);
+//            }
             
             //二代证读卡session缓存
             String appSecret1 = propertiesUtils.getMessage("APP_SECRET"); //appId对应的加密密钥

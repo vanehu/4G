@@ -16,7 +16,6 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import org.apache.commons.lang.StringUtils;
-import org.jfree.util.Log;
 
 public class RunShellUtil {
 	
@@ -28,18 +27,17 @@ public class RunShellUtil {
             ps.waitFor();  
         	shpath = dir+"wlt2bmp "+dir+name+".wlt "+dir+name+".bmp"; 
             ps = Runtime.getRuntime().exec(shpath);  
-            ps.waitFor();
+            ps.waitFor();  
             BufferedReader br = new BufferedReader(new InputStreamReader(ps.getInputStream()));  
             StringBuffer sb = new StringBuffer();  
             String line;  
             while ((line = br.readLine()) != null) {  
                 sb.append(line).append("\n");  
             }  
-            br.close();
             result = sb.toString();   
             }   
         	catch (Exception e) {  
-        		Log.error(e); 
+        		e.printStackTrace();  
             }  
     	return result;
     }
@@ -52,16 +50,32 @@ public class RunShellUtil {
      */
     public  File getFileFromBytes(final byte[] content, final String outputFile)
     {
-    	File file = new File(outputFile);
-        try(
-            final FileOutputStream fstream = new FileOutputStream(file);
-        		BufferedOutputStream stream = new BufferedOutputStream(fstream))
+        BufferedOutputStream stream = null;
+        File file = null;
+        try
         {
+            file = new File(outputFile);
+            final FileOutputStream fstream = new FileOutputStream(file);
+            stream = new BufferedOutputStream(fstream);
             stream.write(content);//调试到文件已经生成这里
         }
         catch (final Exception e)
         {
-        	Log.error(e);
+            e.printStackTrace();
+        }
+        finally
+        {
+            if (stream != null)
+            {
+                try
+                {
+                    stream.close();
+                }
+                catch (final IOException e)
+                {
+                    e.printStackTrace();
+                }
+            }
         }
         return file;
     }
@@ -76,19 +90,16 @@ public class RunShellUtil {
     	File srcFile = new File(dri);
 		if (srcFile.isDirectory() )
 			return null;// 判断是否是文件
-		try(FileInputStream fis = new FileInputStream(srcFile)){
-			ByteArrayOutputStream out = new ByteArrayOutputStream(1024);
-			int readLen = 0;
-			byte[] buf = new byte[1024];
-			while ((readLen = fis.read(buf)) != -1) {
-				out.write(buf, 0, readLen);
-			}
-			return out.toByteArray();
-		}catch(Exception e){
-			Log.error(e);
-		}		
-
-		return null;
+		FileInputStream fis = new FileInputStream(srcFile);
+		ByteArrayOutputStream out = new ByteArrayOutputStream(1024);
+		int readLen = 0;
+		byte[] buf = new byte[1024];
+		while ((readLen = fis.read(buf)) != -1) {
+			out.write(buf, 0, readLen);
+		}
+		fis.close();
+		out.close();
+		return out.toByteArray();
 	}
 
     /** 
@@ -120,6 +131,7 @@ public class RunShellUtil {
     {  
         File file = null;  
         BufferedImage src = null;  
+        FileOutputStream out = null;  
         ImageWriter imgWrier;  
         ImageWriteParam imgWriteParams;  
   
@@ -135,8 +147,9 @@ public class RunShellUtil {
         // 指定压缩时使用的色彩模式  
         imgWriteParams.setDestinationType(new javax.imageio.ImageTypeSpecifier(colorModel, colorModel  
                 .createCompatibleSampleModel(16, 16)));  
-   
-        try{  
+  
+        try  
+        {  
             if(StringUtils.isBlank(srcFilePath))  
             {  
                 return false;  
@@ -144,16 +157,16 @@ public class RunShellUtil {
             else  
             {  
                 file = new File(srcFilePath);  
-                src = ImageIO.read(file); 
-                try(FileOutputStream out = new FileOutputStream(descFilePath); ){
-                	imgWrier.reset();  
-                    // 必须先指定 out值，才能调用write方法, ImageOutputStream可以通过任何 OutputStream构造  
-                    imgWrier.setOutput(ImageIO.createImageOutputStream(out));  
-                    // 调用write方法，就可以向输入流写图片  
-                    imgWrier.write(null, new IIOImage(src, null, null), imgWriteParams);  
-                }catch(Exception e1){
-                	throw e1;
-                }                
+                src = ImageIO.read(file);  
+                out = new FileOutputStream(descFilePath);  
+  
+                imgWrier.reset();  
+                // 必须先指定 out值，才能调用write方法, ImageOutputStream可以通过任何 OutputStream构造  
+                imgWrier.setOutput(ImageIO.createImageOutputStream(out));  
+                // 调用write方法，就可以向输入流写图片  
+                imgWrier.write(null, new IIOImage(src, null, null), imgWriteParams);  
+                out.flush();  
+                out.close();  
             }  
         }  
         catch(Exception e)  
@@ -203,7 +216,7 @@ public class RunShellUtil {
         }  
         catch(Exception e)  
         {  
-        	Log.error(e);
+            e.printStackTrace();  
         }
 		return data;  
     }

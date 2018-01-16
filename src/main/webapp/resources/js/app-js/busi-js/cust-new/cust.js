@@ -1437,8 +1437,16 @@ cust = (function(){
 	var _getGenerationInfos=function(name,idcard,address,identityPic){
 		if(cust.isKhjq == "1" || cust.isKhjq == "2"){
 			if(OrderInfo.actionFlag!=9){//返档需查客户
-				if((OrderInfo.cust.custId != "-1" && OrderInfo.cust.idCardNumber == idcard) || (OrderInfo.cust.custId == "-1" && OrderInfo.cust.identityNum == idcard)){
+				var tm_idCardNumber = "";
+				var read_idCardNumber = idcard.substring(0,6) + idcard.substring(idcard.length-4,idcard.length);
+				if(OrderInfo.cust.custId != "-1" && OrderInfo.cust.idCardNumber != undefined && OrderInfo.cust.idCardNumber.length >= 18){
+					tm_idCardNumber = OrderInfo.cust.idCardNumber.substring(0,6) + OrderInfo.cust.idCardNumber.substring(OrderInfo.cust.idCardNumber.length-4,OrderInfo.cust.idCardNumber.length);
+				}else if(OrderInfo.cust.custId == "-1" && OrderInfo.cust.identityNum != undefined && OrderInfo.cust.identityNum.length >= 18){
+					tm_idCardNumber = OrderInfo.cust.identityNum.substring(0,6) + OrderInfo.cust.identityNum.substring(OrderInfo.cust.identityNum.length-4,OrderInfo.cust.identityNum.length);
+				}
+				if(tm_idCardNumber == read_idCardNumber){
 					OrderInfo.cust.identityPic = identityPic;//证件照片
+					OrderInfo.jbr.identityPic = identityPic;
 				}else{
 					$.alert("提示","证件号码与客户身份证号码不一致！");
 					return;

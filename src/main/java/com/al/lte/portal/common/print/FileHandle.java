@@ -27,7 +27,6 @@ import com.al.ecs.log.Log;
  */
 public class FileHandle {
 	private static Log log = Log.getLog(FileHandle.class);
-	private static String EXCEPTION=")Exception,";
 
 	/**
 	 * 读配置文件 此方法可以重新载入配置文件，而且不会被缓存,可以在weblogic和tomcat下使用，但bes捕获错误说文件路径找不到
@@ -41,7 +40,7 @@ public class FileHandle {
 			String file = FileHandle.class.getResource(propFile).getFile();
 			properties.load(new FileInputStream(correctFilePathForBes(file, propFile)));
 		} catch (Exception exp) {
-			log.error("call readProperties(" + propFile + EXCEPTION
+			log.error("call readProperties(" + propFile + ")Exception,"
 					+ exp.getMessage());
 			properties = null;
 		}
@@ -63,7 +62,7 @@ public class FileHandle {
 			properties.load(in);
 
 		} catch (Exception exp) {
-			log.error("call readProperties2(" + propFile + EXCEPTION
+			log.error("call readProperties2(" + propFile + ")Exception,"
 					+ exp.getMessage());
 			properties = null;
 		}
@@ -86,7 +85,7 @@ public class FileHandle {
 			document = documentBuilderFactory.newDocumentBuilder().parse(
 					correctFilePathForBes(url.getFile(), xmlFile));
 		} catch (Exception exp) {
-			log.error("call readXML(" + xmlFile + EXCEPTION
+			log.error("call readXML(" + xmlFile + ")Exception,"
 					+ exp.getMessage());
 			document = null;
 		}
@@ -103,7 +102,7 @@ public class FileHandle {
 					.getResourceAsStream(xmlFile);
 			document = documentBuilderFactory.newDocumentBuilder().parse(in);
 		} catch (Exception exp) {
-			log.error("call readXML2(" + xmlFile + EXCEPTION
+			log.error("call readXML2(" + xmlFile + ")Exception,"
 					+ exp.getMessage());
 			document = null;
 		}
@@ -115,10 +114,13 @@ public class FileHandle {
 		String file = FileHandle.class.getResource("/SysConfig.properties")
 				.getFile();
 		file = correctFilePathForBes(file, "/SysConfig.properties");
-		try(InputStream is = new FileInputStream(file);
-			OutputStream os = new FileOutputStream(file);
-			BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-				PrintWriter writer = new PrintWriter(new OutputStreamWriter(os))){
+		InputStream is = null;
+		OutputStream os = null;
+		try {
+			is = new FileInputStream(file);
+			BufferedReader reader = new BufferedReader(
+					new InputStreamReader(is));
+
 			StringBuffer buffer = new StringBuffer();
 			boolean isFound = false;
 			String line = reader.readLine(); // 读取第一行
@@ -130,13 +132,22 @@ public class FileHandle {
 				buffer.append(line + '\n');
 				line = reader.readLine();
 			}
+
+			if (is != null)
+				is.close();
 			if (!isFound) {// 之前没有定义，那么文件末尾要加上
 				buffer.append(parameterName + "=" + parameterValue + '\n');
-			} 
+			}
+
+			os = new FileOutputStream(file);
+			PrintWriter writer = new PrintWriter(new OutputStreamWriter(os));
 			writer.write(buffer.toString());
 			writer.flush();
+			if (os != null)
+				os.close();
 		} catch (Exception exp) {
 			log.info("修改SysConfig.sys的缓存页面版本失败:" + exp.getMessage());
+		} finally {
 		}
 	}
 
@@ -192,13 +203,9 @@ public class FileHandle {
 		}
 		long length = fileJapser.length();// 获得文件的字节数
 		byte[] buffer = new byte[(int) length];
-		try(InputStream image = new FileInputStream(fileJapser);){
-			int count = 0;
-		    while ((count = image.read(buffer)) > 0) {
-		    }
-		}catch(Exception e){
-			log.error(e);
-		}
+		InputStream image = new FileInputStream(fileJapser);
+
+		image.read(buffer);
 		return buffer;
 	}
 }

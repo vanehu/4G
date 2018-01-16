@@ -41,8 +41,6 @@ public class XmlSendClient {
 	public static final String CDATA_END = "]]>";
 	public static final String CDATA_END_REPLACEMENT = "]]&gt;";
 	private static PropertiesUtils propertiesUtils = null;
-	
-	private static String SERVICE_CODE="serviceCode";
 	static {
 		getPropertiesUtils();
 	}
@@ -110,11 +108,7 @@ public class XmlSendClient {
 				throw new InterfaceException(ErrType.ECSP, PortalServiceCode.SERVICE_GET_TRANID, String.valueOf(db.getResultMsg()), JsonUtil.toString(dataBusMap));
 			}
 		}catch (Exception e) {
-			String resultMsg="请求发生异常";
-			if(db!=null && db.getResultMsg()!=null){
-				resultMsg=db.getResultMsg();
-			}
-			throw new InterfaceException(ErrType.ECSP, PortalServiceCode.SERVICE_GET_TRANID, resultMsg, JsonUtil.toString(dataBusMap));
+			throw new InterfaceException(ErrType.ECSP, PortalServiceCode.SERVICE_GET_TRANID, String.valueOf(db.getResultMsg()), JsonUtil.toString(dataBusMap));
         }
 		if(StringUtils.isNotBlank(tranid)) {
 			str = tranid;
@@ -133,13 +127,13 @@ public class XmlSendClient {
 		srcSysID = SysConstant.CSB_SRC_SYS_ID_APP;
 		
 		//使用CDATA封装svc
-//		if(false){
-//			//将报文中的]]>转义
-//			if(paramString != null && paramString.indexOf(CDATA_END) != -1){
-//				paramString = paramString.replaceAll(CDATA_END, CDATA_END_REPLACEMENT);
-//			}
-//			paramString = CDATA_BEGIN + paramString + CDATA_END;
-//		}
+		if(false){
+			//将报文中的]]>转义
+			if(paramString != null && paramString.indexOf(CDATA_END) != -1){
+				paramString = paramString.replaceAll(CDATA_END, CDATA_END_REPLACEMENT);
+			}
+			paramString = CDATA_BEGIN + paramString + CDATA_END;
+		}
 		cdm.setSvcCont(paramString);
 		
 		return cdm.getXml();
@@ -179,7 +173,7 @@ public class XmlSendClient {
 				paramMap.put("paramString", paramString);
 				db.setParammap(paramMap);
 				msg = reqUrl + "\n" + msg + "\n" + retnJson;
-				throw new InterfaceException(ErrType.OPPOSITE, SERVICE_CODE, msg, paramString);
+				throw new InterfaceException(ErrType.OPPOSITE, "serviceCode", msg, paramString);
 			}
 		} catch (IOException ioe) {
 			log.error("HTTP调用异常", ioe);
@@ -190,23 +184,21 @@ public class XmlSendClient {
 				String msg = ioe.getMessage();
 				if ("Read timed out".equals(msg)) {
 					msg = reqUrl + "\n" + msg;
-					throw new InterfaceException(ErrType.OPPOSITE, SERVICE_CODE, msg, paramString);
+					throw new InterfaceException(ErrType.OPPOSITE, "serviceCode", msg, paramString);
 				}
 			} else if (ioe.getCause() != null) {
 				String msg = ioe.getCause().getMessage();
 				if ("Connection timed out: connect".equals(msg)) {
 					msg = reqUrl + "\n" + msg + "\n" + ioe.getMessage();
-					throw new InterfaceException(ErrType.OPPOSITE, SERVICE_CODE, msg, paramString);
+					throw new InterfaceException(ErrType.OPPOSITE, "serviceCode", msg, paramString);
 				}
 			}
 			
-			throw new InterfaceException(ErrType.PORTAL, SERVICE_CODE, paramString, ioe);
+			throw new InterfaceException(ErrType.PORTAL, "serviceCode", paramString, ioe);
 		} catch (InterfaceException ie) {
 			throw ie;
 		} finally {
-			if(post!=null){
-				post.abort();// 连接停止，释放资源
-			}
+			post.abort();// 连接停止，释放资源
 			try {
 				if (null != entity) {
 					EntityUtils.consume(entity);
@@ -230,36 +222,51 @@ public class XmlSendClient {
      * @return 所代表远程资源的响应结果
      */
     public static String sendPost(String url, String param) {
+        PrintWriter out = null;
+        BufferedReader in = null;
         String result = "";
-        try{
-        URL realUrl = new URL(url);
-        // 打开和URL之间的连接
-        URLConnection conn = realUrl.openConnection();
-        // 设置通用的请求属性
-        conn.setRequestProperty("accept", "*/*");
-        conn.setRequestProperty("connection", "Keep-Alive");
-        conn.setRequestProperty("user-agent",
-                "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
-        // 发送POST请求必须设置如下两行
-        conn.setDoOutput(true);
-        conn.setDoInput(true);
-        try(PrintWriter out = new PrintWriter(conn.getOutputStream());
-        		BufferedReader in = new BufferedReader(
-                        new InputStreamReader(conn.getInputStream()))) {
+        try {
+            URL realUrl = new URL(url);
+            // 打开和URL之间的连接
+            URLConnection conn = realUrl.openConnection();
+            // 设置通用的请求属性
+            conn.setRequestProperty("accept", "*/*");
+            conn.setRequestProperty("connection", "Keep-Alive");
+            conn.setRequestProperty("user-agent",
+                    "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
+            // 发送POST请求必须设置如下两行
+            conn.setDoOutput(true);
+            conn.setDoInput(true);
+            // 获取URLConnection对象对应的输出流
+            out = new PrintWriter(conn.getOutputStream());
             // 发送请求参数
             out.print(param);
             // flush输出流的缓冲
             out.flush();
+            // 定义BufferedReader输入流来读取URL的响应
+            in = new BufferedReader(
+                    new InputStreamReader(conn.getInputStream()));
             String line;
             while ((line = in.readLine()) != null) {
                 result += line;
             }
         } catch (Exception e) {
             System.out.println("发送 POST 请求出现异常！"+e);
-            log.error(e);
+            e.printStackTrace();
         }
-        }catch(Exception e){
-        	log.error(e);
+        //使用finally块来关闭输出流、输入流
+        finally{
+            try{
+                if(out!=null){
+                    out.close();
+                }
+                if(in!=null){
+                    in.close();
+                }
+            }
+            catch(IOException ex){
+                ex.printStackTrace();
+            }
         }
         return result;
     }    

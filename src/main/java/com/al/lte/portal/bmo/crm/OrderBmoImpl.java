@@ -3453,7 +3453,7 @@ public class OrderBmoImpl implements OrderBmo {
 		log.debug("二代证读卡校验-开始，staffId={}， paramStr={}", sessionStaff.getStaffId(), JsonUtil.toString(param));
 		
 		Map<String, Object> returnMap = new HashMap<String, Object>();
-		returnMap.put(SysConstant.RESULT_CODE, ResultCode.SUCCESS);
+//		returnMap.put(SysConstant.RESULT_CODE, ResultCode.SUCCESS);
 		
 		String venderId = MapUtils.getString(param, "venderId", "");// 厂商标识
 		String signature = MapUtils.getString(param, "signature", "");// 数字签名
@@ -3477,21 +3477,21 @@ public class OrderBmoImpl implements OrderBmo {
 		if (isValidate) {
 			//分省开关开启
 			if (StringUtils.isBlank(venderId)) {
-				returnMap.put(SysConstant.RESULT_CODE, ResultCode.FAIL_ON);
+//				returnMap.put(SysConstant.RESULT_CODE, ResultCode.FAIL_ON);
 				returnMap.put(SysConstant.RESULT_MSG, MapUtils.getString(noticeInfos, "venderIdInvalid", "读卡器控件版本过低，请联系厂商升级驱动版本"));
 			} else {
 				Map<String, Object> vendors = MapUtils.getMap(certConfigsOfTheProv, "VENDORS");
 				Map<String, Object> vendorConfigs = MapUtils.getMap(vendors, venderId);
 				if (vendorConfigs == null) {
 					//未在集约 CRM 许可范围内
-					returnMap.put(SysConstant.RESULT_CODE, ResultCode.FAIL_ON);
+//					returnMap.put(SysConstant.RESULT_CODE, ResultCode.FAIL_ON);
 					returnMap.put(SysConstant.RESULT_MSG, MapUtils.getString(noticeInfos, "venderInvalid", "读卡器未在集约 CRM 许可范围内，请联系厂商升级驱动"));
 				} else {
 					if ("ON".equals(MapUtils.getString(vendorConfigs, "isOpen", ""))){
 						// 启用新规范控件校验
 						String mdaVersion = MapUtils.getString(vendorConfigs, "version", "");
 						if (StringUtils.isBlank(signature) || StringUtils.isBlank(versionSerial)){
-							returnMap.put(SysConstant.RESULT_CODE, ResultCode.FAIL_ON);
+//							returnMap.put(SysConstant.RESULT_CODE, ResultCode.FAIL_ON);
 							returnMap.put(SysConstant.RESULT_MSG, MapUtils.getString(noticeInfos, "versionInvalid", "读卡器控件版本过低，请联系厂商升级驱动版本"));
 						} else {
 							if (versionSerial.equals(mdaVersion)) {// 校验版本号
@@ -3511,7 +3511,7 @@ public class OrderBmoImpl implements OrderBmo {
 								String sha1Str = DigestUtils.sha1ToHex(this.strBuffer.toString());
 								if (!signature.equals(sha1Str)) {
 									// 信息被篡改
-									returnMap.put(SysConstant.RESULT_CODE, ResultCode.FAIL_TW);
+//									returnMap.put(SysConstant.RESULT_CODE, ResultCode.FAIL_TW);
 									returnMap.put(SysConstant.RESULT_MSG, MapUtils.getString(noticeInfos, "signatureInvalid", "证件信息被篡改，请确认按照正确流程操作"));
 								}
 							} else {
@@ -3520,7 +3520,7 @@ public class OrderBmoImpl implements OrderBmo {
 								param.put("mdaVersion", mdaVersion);
 								param.put("fileName", MapUtils.getString(vendorConfigs, "name", ""));
 
-								returnMap.put(SysConstant.RESULT_CODE,ResultCode.FAIL_TH);
+//								returnMap.put(SysConstant.RESULT_CODE,ResultCode.FAIL_TH);
 							}
 						}
 					} else {
@@ -3530,7 +3530,7 @@ public class OrderBmoImpl implements OrderBmo {
 						} else {
 							noticeInfoStr = StringUtils.replace(noticeInfoStr, "%", MapUtils.getString(vendorConfigs, "name", ""));
 						}
-						returnMap.put(SysConstant.RESULT_CODE, ResultCode.FAIL_ON);
+//						returnMap.put(SysConstant.RESULT_CODE, ResultCode.FAIL_ON);
 						returnMap.put(SysConstant.RESULT_MSG, noticeInfoStr);
 					}
 				}

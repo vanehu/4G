@@ -653,6 +653,7 @@ order.phone = (function(){
 	
 //选择合约主套餐
 	var _selectPlan=function(selected){
+		order.phone.isSelect="N"
 		var offerSpecId = $(selected).attr("offerSpecId");
 		var inParam = {
 				"price":$(selected).attr("price"),

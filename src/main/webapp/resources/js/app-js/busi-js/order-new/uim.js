@@ -22,7 +22,7 @@ product.uim = (function() {
     			return false;
     		}
     		//短信校验
-    		_msgCheck();
+    		_msgCheck(prodId);
 		}else{
 			_checkUimFunction(prodId);
 		}
@@ -66,7 +66,7 @@ product.uim = (function() {
 		window.setInterval(smsInvalidTime,1000);
 	};
 	
-	var _msgCheck = function(){
+	var _msgCheck = function(prodId){
 		//任务（小组） #1223398 营业门户 ---- 4G系统换卡增加单独短信验证的需求
 		var param = {
 		   "munber":order.prodModify.choosedProdInfo.accNbr,
