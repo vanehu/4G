@@ -335,6 +335,7 @@ custQuery = (function(){
 			}
 			
 		}else{
+			OrderInfo.cust = _choosedCustInfo;
 			_showCustAuthNext(scope);
 		}
 		
@@ -1433,7 +1434,7 @@ custQuery = (function(){
 		getChooseProdInfo	:	_getChooseProdInfo,
 		goOrder	    : _goOrder,
 		govSwitch	: _govSwitch,
-		custPic     : _custPic,
-		identityTypeAuthSub		: _identityTypeAuthSub
+		custPic			: _custPic,
+		identityTypeAuthSub	: _identityTypeAuthSub
 	};	
 })();

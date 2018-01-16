@@ -37,8 +37,6 @@ public class PdfPrintHelper {
     int pageWidth = 0;  //打印模板宽度
     int pageHeigth = 0; //打印模板高度
     
-    private String errorMsg="异常：请先传入[pdf模板路径名称]来初始化本PdfPrintHelper类!";
-    
     /**
      * 构造Helper类
      * 
@@ -70,24 +68,32 @@ public class PdfPrintHelper {
     public byte[] getPdfStreamWithOnlyParameters(Map<String, Object> hasParameters) throws Exception {
         String strMsg = "";
         if(m_vJasperFileName == null || "".equals(m_vJasperFileName)){
-            throw new Exception(errorMsg);
+            throw new Exception("异常：请先传入[pdf模板路径名称]来初始化本PdfPrintHelper类!");
         }
         
         byte[] bytes = null;
         boolean bConvertOK = false;
         boolean bAppend = false;
-        try(ByteArrayInputStream inputStream = new ByteArrayInputStream(byteJasperFile);) {
-            //InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(m_vJasperFileName);           
+        
+        ByteArrayInputStream inputStream = null;
+        try {
+            //InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(m_vJasperFileName);
+            inputStream = new ByteArrayInputStream(byteJasperFile);
+            
             bytes = runReportToPdf(inputStream, hasParameters, new JREmptyDataSource(), pageWidth, pageHeigth);
             bConvertOK = true;//转换成功
             
             bytes = appendPrintControlScript(bytes);
             bAppend = true;//追加打印控制脚步成功
         } catch (Exception exp) {
-        	log.error(exp);
+        	exp.printStackTrace();
             strMsg = exp.getMessage();
-            log.error(exp);
+            exp.printStackTrace();
         }finally{
+            if(inputStream != null){
+                inputStream.close();
+            }
+            
             if(bConvertOK == false){
                 throw new Exception("异常：转换Parameters到Pdf数据流错误，请检查转换参数是否正确！" + strMsg);
             }
@@ -110,28 +116,33 @@ public class PdfPrintHelper {
     public byte[] getPdfStreamWithParametersAndFields(Map<String, Object> hasParameters, Collection<Map<String, Object>> lstFields) throws Exception {
     	String strMsg = "";
         if(m_vJasperFileName == null || "".equals(m_vJasperFileName)){
-            throw new Exception(errorMsg);
+            throw new Exception("异常：请先传入[pdf模板路径名称]来初始化本PdfPrintHelper类!");
         }
         
         byte[] bytes = null;
         boolean bConvertOK = false;
         boolean bAppend = false;
-        try(ByteArrayInputStream inputStream = new ByteArrayInputStream(byteJasperFile);) {           
+        ByteArrayInputStream inputStream = null;
+        try {
+            inputStream = new ByteArrayInputStream(byteJasperFile);
+            
             bytes = runReportToPdf(inputStream, hasParameters, new ListDataSource(lstFields), pageWidth, pageHeigth);
             bConvertOK = true;//转换成功
             
             bytes = appendPrintControlScript(bytes);
             bAppend = true;//追加打印控制脚步成功
         } catch (Exception exp) {
-        	log.error(exp);
+        	exp.printStackTrace();
             strMsg = exp.getMessage();
-        } 
-//        catch (Throwable t) {
-//        	this.log.debug("java heap space size={}", Runtime.getRuntime().maxMemory()/(1024*1024)+"M");
-//        	t.printStackTrace();
-//        	strMsg = t.getMessage();
-//        }
-        finally{
+        } catch (Throwable t) {
+        	this.log.debug("java heap space size={}", Runtime.getRuntime().maxMemory()/(1024*1024)+"M");
+        	t.printStackTrace();
+        	strMsg = t.getMessage();
+        }finally{
+            if(inputStream != null){
+                inputStream.close();
+            }
+            
             if(bConvertOK == false){
                 throw new Exception("异常：转换Parameters和Fields到Pdf数据流错误，请检查转换参数是否正确！" + strMsg);
             }
@@ -154,25 +165,30 @@ public class PdfPrintHelper {
     public byte[] getPdfStreamWithParametersAndFieldsByNoScript(Map<String, Object> hasParameters, Collection<Map<String, Object>> lstFields) throws Exception {
     	String strMsg = "";
         if(m_vJasperFileName == null || "".equals(m_vJasperFileName)){
-            throw new Exception(errorMsg);
+            throw new Exception("异常：请先传入[pdf模板路径名称]来初始化本PdfPrintHelper类!");
         }
         
         byte[] bytes = null;
         boolean bConvertOK = false;
-        try(ByteArrayInputStream inputStream = new ByteArrayInputStream(byteJasperFile);){           
+        ByteArrayInputStream inputStream = null;
+        try {
+            inputStream = new ByteArrayInputStream(byteJasperFile);
+            
             bytes = runReportToPdf(inputStream, hasParameters, new ListDataSource(lstFields), pageWidth, pageHeigth);
             bConvertOK = true;//转换成功
             
         } catch (Exception exp) {
-        	log.error(exp);
+        	exp.printStackTrace();
             strMsg = exp.getMessage();
-        } 
-//        catch (Throwable t) {
-//        	this.log.debug("java heap space size={}", Runtime.getRuntime().maxMemory()/(1024*1024)+"M");
-//        	l
-//        	strMsg = t.getMessage();
-//        }
-        finally{
+        } catch (Throwable t) {
+        	this.log.debug("java heap space size={}", Runtime.getRuntime().maxMemory()/(1024*1024)+"M");
+        	t.printStackTrace();
+        	strMsg = t.getMessage();
+        }finally{
+            if(inputStream != null){
+                inputStream.close();
+            }
+            
             if(bConvertOK == false){
                 throw new Exception("异常：转换Parameters和Fields到Pdf数据流错误，请检查转换参数是否正确！" + strMsg);
             }
@@ -183,13 +199,16 @@ public class PdfPrintHelper {
     public String getHtmlStrWithParametersAndFields(Map<String, Object> hasParameters, Collection<Map<String, Object>> lstFields) throws Exception {
         String strMsg = "";
         if(m_vJasperFileName == null || "".equals(m_vJasperFileName)){
-            throw new Exception(errorMsg);
+            throw new Exception("异常：请先传入[pdf模板路径名称]来初始化本PdfPrintHelper类!");
         }
         
         boolean bConvertOK = false;
         boolean bAppend = false;
+        ByteArrayInputStream inputStream = null;
         String returnStr="";
-        try(ByteArrayInputStream inputStream = new ByteArrayInputStream(byteJasperFile)){            
+        try {
+            inputStream = new ByteArrayInputStream(byteJasperFile);
+            
             JasperPrint jasperPrint = JasperFillManager.fillReport(inputStream,hasParameters, new ListDataSource(lstFields));
             ByteArrayOutputStream ouputStream = new ByteArrayOutputStream(); 
             JRHtmlExporter htmlExporter = new JRHtmlExporter();
@@ -209,9 +228,13 @@ public class PdfPrintHelper {
             bAppend = true;//追加打印控制脚步成功
         } catch (Exception exp) {
             strMsg = exp.getMessage();
-            log.error(exp);
+            exp.printStackTrace();
             returnStr="";
         }finally{
+            if(inputStream != null){
+                inputStream.close();
+            }
+            
             if(bConvertOK == false){
             	returnStr="";
                 throw new Exception("异常：转换Parameters和Fields到Html数据流错误，请检查转换参数是否正确！" + strMsg);
@@ -226,12 +249,15 @@ public class PdfPrintHelper {
     public void getHtmlStreamWithParametersAndFields(HttpServletResponse response,Map<String, Object> hasParameters, Collection<Map<String, Object>> lstFields) throws Exception {
         String strMsg = "";
         if(m_vJasperFileName == null || "".equals(m_vJasperFileName)){
-            throw new Exception(errorMsg);
+            throw new Exception("异常：请先传入[pdf模板路径名称]来初始化本PdfPrintHelper类!");
         }
         
         boolean bConvertOK = false;
         boolean bAppend = false;
-        try(ByteArrayInputStream inputStream = new ByteArrayInputStream(byteJasperFile);){          
+        ByteArrayInputStream inputStream = null;
+        try {
+            inputStream = new ByteArrayInputStream(byteJasperFile);
+            
             JasperPrint jasperPrint = JasperFillManager.fillReport(inputStream,hasParameters, new ListDataSource(lstFields));
             //jasperPrint.setPageWidth(1024);
             //jasperPrint.setPageHeight(768);
@@ -255,15 +281,18 @@ public class PdfPrintHelper {
             bAppend = true;//追加打印控制脚步成功
         } catch (Exception exp) {
             strMsg = exp.getMessage();
-            log.error(exp);
+            exp.printStackTrace();
         }finally{
-        	 if(bConvertOK == false){
-                 throw new Exception("异常：转换Parameters和Fields到Html数据流错误，请检查转换参数是否正确！" + strMsg);
-             }
-             else if(bAppend == false){
-                 throw new Exception("异常：为Html数据流[Parameters和Fields]追加打印控制参数错误，请检查转换参数是否正确！" + strMsg);
-             }
-           
+            if(inputStream != null){
+                inputStream.close();
+            }
+            
+            if(bConvertOK == false){
+                throw new Exception("异常：转换Parameters和Fields到Html数据流错误，请检查转换参数是否正确！" + strMsg);
+            }
+            else if(bAppend == false){
+                throw new Exception("异常：为Html数据流[Parameters和Fields]追加打印控制参数错误，请检查转换参数是否正确！" + strMsg);
+            }
         }
     }
     /**

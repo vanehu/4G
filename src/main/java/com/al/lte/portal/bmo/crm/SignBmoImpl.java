@@ -365,7 +365,7 @@ public class SignBmoImpl implements SignBmo{
 									agreement_htmlStr=ParseFreemark.parseTemplate(param2,templet);
 								}
 							}else if("ydrw".equals(agreementName)){//移动入网
-								if("1".equals(actionFlag) || "14".equals(actionFlag)){
+								if("1".equals(actionFlag) || "6".equals(actionFlag) || "9".equals(actionFlag) || "14".equals(actionFlag)){
 									agreement_htmlStr=ParseFreemark.parseTemplate(param1,templet);
 								}
 							}else{
@@ -380,6 +380,11 @@ public class SignBmoImpl implements SignBmo{
 									spList.add(agreementName);
 									agreement=Base64.encodeBase64String(agreement_pdf).replaceAll("\n|\r", "");
 									list.add(agreement);
+									
+									byte[] file=Base64.decodeBase64(agreement);
+									PdfReader reader = new PdfReader(file);
+									int n = reader.getNumberOfPages();
+									
 									reObject.put(agreementName+"htmlFlag", "ON");
 									reObject.put(agreementName+"htmlStr", agreement_htmlStr);
 									j++;

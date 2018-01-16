@@ -48,7 +48,7 @@ public class MenuBmoImpl implements MenuBmo {
 				Map resultMap = db.getReturnlmap();
 				result.put("code", 1);
 				result.put("mess", resultMap.get("resultMsg"));
-				if(resultMap.get("resultCode").equals(ResultCode.R_SUCC)){
+				if(ResultCode.R_SUCC.equals(resultMap.get("resultCode"))){
 		        	if(resultMap.get("result")!=null){
 		        		List<Map> list1 = (List<Map>)resultMap.get("result");
 		        		if(list1!=null&&list1.size()>0){
@@ -66,7 +66,7 @@ public class MenuBmoImpl implements MenuBmo {
 		     	 					if(list2!=null&&list2.size()>0){
 		     	 						for(Map rowTemp2:list2){
 		     	 	 						_menu2 = rowTemp2 ;
-		     	 	 						if(_menu2.get("isMainMenu").equals("Y")){
+		     	 	 						if("Y".equals(_menu2.get("isMainMenu"))){
 		     	 	 							if(showson1==0){
 		     	 	 								showson1 = 1 ;
 		     	 	 							}
@@ -80,7 +80,7 @@ public class MenuBmoImpl implements MenuBmo {
 		     	 	 	 	 					if(list3!=null&&list3.size()>0){
 		     	 	 	 	 						for(Map rowTemp3:list3){
 		     	 	 	 	 	 						_menu3 = rowTemp3 ;
-		     	 	 	 	 	 						if(_menu3.get("isMainMenu").equals("Y")){
+		     	 	 	 	 	 						if("Y".equals(_menu3.get("isMainMenu"))){
 		     	 	 	 	 	 							showson2 = 1 ;
 		     	 	 	 	 	 						}
 		     	 	 	 	 	 						_list3.add(_menu3);

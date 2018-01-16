@@ -1033,7 +1033,6 @@ public class StaffBmoImpl implements StaffBmo {
 		
 		return returnMap;
 	}
-	@Override
 	public Map<String, Object> checkStaffMessage(
 			Map<String, Object> dataBusMap, String optFlowNum,
 			SessionStaff sessionStaff) throws Exception {
@@ -1051,7 +1050,6 @@ public class StaffBmoImpl implements StaffBmo {
 		return retnMap;
 	}
 
-	@Override
 	public Map<String, Object> updatePassword(Map<String, Object> param, String optFlowNum,
 			SessionStaff sessionStaff)throws Exception {
 		// TODO Auto-generated method stub

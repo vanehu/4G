@@ -111,7 +111,6 @@ order.calcharge = (function(){
 					if(OrderInfo.actionFlag==112){
 						order.amalgamation.getPrtInfo(voucherInfo);
 					}else{
-						voucherInfo.chargeItems = "";
 						if(!_submitParam()){
 							return ;
 						 }

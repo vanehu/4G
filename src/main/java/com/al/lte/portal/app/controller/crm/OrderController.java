@@ -1,5 +1,6 @@
 package com.al.lte.portal.app.controller.crm;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -59,6 +60,7 @@ import com.al.lte.portal.bmo.crm.MktResBmo;
 import com.al.lte.portal.bmo.crm.OrderBmo;
 import com.al.lte.portal.bmo.print.PrintBmo;
 import com.al.lte.portal.bmo.staff.StaffBmo;
+import com.al.lte.portal.common.AESUtils;
 import com.al.lte.portal.common.CommonMethods;
 import com.al.lte.portal.common.Const;
 import com.al.lte.portal.common.EhcacheUtil;
@@ -135,7 +137,11 @@ public class OrderController extends BaseController {
 					}
 				}else{
 					log.error("省校验失败");
-		            return jsonResponse;
+					Map<String, Object> resultMap = new HashMap<String, Object>();
+					resultMap.put("code", "123456");
+					resultMap.put("msg", db.getResultMsg());
+					jsonResponse = super.failed(resultMap,ResultConstant.FAILD.getCode());
+					return jsonResponse;
 				}
 	        }  catch (BusinessException be) {
 				this.log.error("订单一点提交失败", be);
@@ -3075,6 +3081,25 @@ public class OrderController extends BaseController {
 		model.addAttribute("currentCT", sessionStaff.getCurrentChannelType());
 		String app_version=(String) ServletUtils.getSessionAttribute(request,SysConstant.SESSION_KEY_APP_VERSION);
 		model.addAttribute("app_version",app_version);//客户端版本号
+		boolean isHandleCustNeeded = true;
+		try {
+			isHandleCustNeeded = !"0".equals(staffBmo.checkOperatBySpecCd(SysConstant.TGJBRBTQX , sessionStaff));
+			sessionStaff.setHandleCustNeeded(isHandleCustNeeded);
+		} catch (BusinessException be) {
+			log.error("系管权限查询接口sys-checkOperatSpec异常：", be);
+			return super.failedStr(model, be);
+		} catch (InterfaceException ie) {
+			log.error("系管权限查询接口sys-checkOperatSpec异常：", ie);
+			return super.failedStr(model, ie, null, ErrorCode.CHECKOPERATSPEC);
+		} catch (IOException ioe) {
+			log.error("系管权限查询接口sys-checkOperatSpec异常：", ioe);
+			return super.failedStr(model, ErrorCode.CHECKOPERATSPEC, ioe, null);
+		} catch (Exception e) {
+			log.error("系管权限查询接口sys-checkOperatSpec异常：", e);
+			return super.failedStr(model, ErrorCode.CHECKOPERATSPEC, e, null);
+		}
+		model.addAttribute("isHandleCustNeeded", String.valueOf(isHandleCustNeeded));
+		model.addAttribute("MD5_tgjbr", AESUtils.getMD5Str("tgjbr"+String.valueOf(sessionStaff.isHandleCustNeeded())+"tgjbr"));
        return "/app/order/order-broadband-address";
     }
 	
