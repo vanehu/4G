@@ -1329,6 +1329,43 @@ common.print = (function($){
 	    	value: JSON.stringify(voucherInfo)
 	    })).appendTo("body").submit();
 	};
+	
+	var _showCustomerAgreementPrint = function(){
+		var isShowPrint = false;
+		//1.看开关
+		const provConfig = query.common.queryPropertiesMapValue("PDF_PRINT_CONFIG" ,"PDF_PRINT_CONFIG_" + String(OrderInfo.staff.areaId).substr(0, 3));
+		if(ec.util.isObj(provConfig)){
+			//2.取配置
+			const actionFlagList = provConfig["actionFlagList"];//业务动作配置
+			const auxiliaryFunctions = provConfig["auxiliaryFunctions"];//辅助函数
+			const jasperNameList = provConfig["jasperNames"];//模板配置
+			if(ec.util.isArray(jasperNameList) && ec.util.isArray(actionFlagList)){
+				//3.业务动作
+				if($.inArray(String(OrderInfo.actionFlag), actionFlagList) >= 0){
+					//4.辅助函数
+					if(ec.util.isObj(auxiliaryFunctions)){
+						const auxiliaryFunctionList = auxiliaryFunctions[String(OrderInfo.actionFlag)];
+						if(ec.util.isArray(auxiliaryFunctionList)){
+							var isSuccess = false;
+							$.each(auxiliaryFunctionList,function(){
+								isSuccess = !!eval(this);
+							});
+							if(isSuccess){
+								isShowPrint = true;
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		if(isShowPrint){
+			$("#customerAgreementPrint").attr("class","btna_o");
+			$("#customerAgreementPrint").show();
+		} else{
+			$("#customerAgreementPrint").hide();
+		}
+	};
 
 	return {
 		preVoucher:_preVoucher,
@@ -1349,7 +1386,8 @@ common.print = (function($){
 		preVoucherLoc:_preVoucherLoc,
 		queryConstConfig:_queryConstConfig,
 		openELPDF:_openELPDF,
-		customerAgreementPrint:_customerAgreementPrint
+		customerAgreementPrint:_customerAgreementPrint,
+		showCustomerAgreementPrint:_showCustomerAgreementPrint
 	};
 })(jQuery);
 

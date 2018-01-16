@@ -5340,7 +5340,9 @@ public class PrintBmoImpl implements PrintBmo {
 			strJasperFileName = SysConstant.P_MOD_BASE_DIR + printType
 			+ SysConstant.P_MOD_FILE_SUBFIX;
 		}else if ("customerAgreementPrint".equals(printType)) {
-			strJasperFileName = SysConstant.P_MOD_BASE_DIR + printTypeDir + "CtgPrintCustomerAgreement.jasper";
+			Map<String, Object> provConfig = (Map<String, Object>) MapUtils.getObject(MDA.PDF_PRINT_CONFIG, "PDF_PRINT_CONFIG_" + currentAreaId.substring(0, 3));
+			List<String> jasterNameList = (List<String>) MapUtils.getObject(provConfig, "jasperNames");
+			strJasperFileName = SysConstant.P_MOD_BASE_DIR + printTypeDir + jasterNameList.get(0);
 		}else{
 			strJasperFileName = SysConstant.P_MOD_BASE_DIR + strJasperFileName
 			+ SysConstant.P_MOD_FILE_SUBFIX;

@@ -829,18 +829,4 @@ public class CommonMethods {
 			}
 		}
 	}
-	
-	public static void setPdfPrintConfigIntoSession(HttpServletRequest request, String busiTypeFlag) {
-		Object ifCustomerAgreementPrint = ServletUtils.getSessionAttribute(request, "customerAgreementPrint");
-		if (!("ON".equals(ifCustomerAgreementPrint) || "OFF".equals(ifCustomerAgreementPrint))) {
-			SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(request, SysConstant.SESSION_KEY_LOGIN_STAFF);
-			Map<String, String> provConfig = MapUtils.getMap(MDA.PDF_PRINT_CONFIG, "PDF_PRINT_CONFIG_" + sessionStaff.getCurrentAreaId().substring(0, 3));
-			String jasperName = MapUtils.getString(provConfig, busiTypeFlag, "");
-			if (StringUtils.isNotBlank(jasperName)) {
-				ServletUtils.setSessionAttribute(request, "customerAgreementPrint", "ON");
-			} else{
-				ServletUtils.setSessionAttribute(request, "customerAgreementPrint", "OFF");
-			}
-		}
-	}
 }

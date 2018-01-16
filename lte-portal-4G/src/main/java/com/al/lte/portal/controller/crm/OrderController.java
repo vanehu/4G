@@ -1494,9 +1494,6 @@ public class OrderController extends BaseController {
             HttpServletResponse response, HttpServletRequest request) {
         SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
                 SysConstant.SESSION_KEY_LOGIN_STAFF);
-        
-        CommonMethods.setPdfPrintConfigIntoSession(request, MapUtils.getString(param, "busitypeFlag", ""));
-
         try {
         	Map<String, Object> orderData =sessionStaff.getOrderData();
         	if(orderData!=null){

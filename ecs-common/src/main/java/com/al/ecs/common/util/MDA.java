@@ -705,5 +705,5 @@ public class MDA {
 	public static final String WRITE_FILTER_LOG_FLAG = new String("");
 	
 	/**回执打印分省配置*/
-	public static final Map<String, Map<String,	String>> PDF_PRINT_CONFIG = new HashMap<String, Map<String,	String>>();
+	public static final Map<String, Object> PDF_PRINT_CONFIG = new HashMap<String, Object>();
 }
