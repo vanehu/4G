@@ -116,6 +116,17 @@ essOrder.main = (function() {
 			$.alert("提示", "请选择'结束时间' 再查询");
 			return;
 		};
+		if(extCustOrderId == "" && transactionId == "" && accNbr == ""){
+			try {
+				var startDate_temp = new Date(startDate);
+				var endDate_temp = new Date(endDate);
+				if((endDate_temp.getTime() - startDate_temp.getTime())/1000/60/60/24 > 31){
+					$.alert("提示","请将查询时间段缩小至一个月以内！");
+					return;
+				}
+			} catch (e) {
+			}
+		}
 		var param = {
 			extCustOrderId : extCustOrderId,
 			orderType : orderType,
@@ -246,6 +257,29 @@ essOrder.main = (function() {
 		var accNbr = ec.util.defaultStr($("#p_accNbr").val());
 		var accNbrSellChannel = ec.util.defaultStr($("#p_accNbrSellChannel").val());
 		var termSellChannel = ec.util.defaultStr($("#p_termSellChannel").val());
+		if(extCustOrderId == "" && orderType == "" && commonRegionId == "" && transactionId == "" && orderStatus == "" && channelId == "" && accNbr == "" && accNbrSellChannel == "" && termSellChannel == "" && startDate == "" && endDate == ""){
+			$.alert("提示","请输入导出条件！");
+			return;
+		}
+		if(extCustOrderId == "" && (startDate != "" || endDate != "")){
+			if(startDate == ""){
+				$.alert("提示","请选择 开始时间！");
+				return;
+			}
+			if(endDate == ""){
+				var nowDate = Date.now();
+				endDate = DateUtil.Format('yyyy-MM-dd', nowDate);
+			}
+			try {
+				var startDate_temp = new Date(startDate);
+				var endDate_temp = new Date(endDate);
+				if((endDate_temp.getTime() - startDate_temp.getTime())/1000/60/60/24 > 31){
+					$.alert("提示","请将导出时间段缩小至一个月以内！");
+					return;
+				}
+			} catch (e) {
+			}
+		}
 		var url = contextPath + "/ess/order/exportExcel?transactionId="
 				+ transactionId + "&orderType=" + orderType
 				+ "&commonRegionId=" + commonRegionId + "&orderStatus=" + orderStatus

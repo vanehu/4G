@@ -310,9 +310,12 @@
 		       <a class="btna_o" href="javascript:void(0)" id="orderSave" style="display:none" onclick="SoOrder.saveOrderSubmit()"><span>暂存</span></a>
 			   <a class="btna_o" href="javascript:void(0)" id="orderCancel" stepOrderParam="${showCancelBtn}"><span>订单取消</span></a>
 		       <#if Session["_loginUrl"]?? && openPrint=="ON">
-		       	<a class="btna_o" id="printVoucherLoc"><span>本地打印回执</span></a>
+		       		<a class="btna_o" id="printVoucherLoc"><span>本地打印回执</span></a>
 		       </#if>
 			    <a class="btna_o" id="printVoucherA"><span>打印回执</span></a>
+			    <#if Session["customerAgreementPrint"]?? && Session["customerAgreementPrint"]=="ON">
+			    	<a class="btna_o" href="javascript:common.print.customerAgreementPrint()">入网协议</a>
+			    </#if>
 		       <input type="hidden" value="${Session._loginUrl}" id="cookies"/>
 		       <!-- <a class="btna_g" id="printInvoiceA"><span>打印发票</span></a> -->
 		       <a class="btna_g" href="javascript:void(0)" id="toCharge"><span>收费</span></a>

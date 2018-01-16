@@ -1592,7 +1592,7 @@ OrderInfo = (function() {
 		if(OrderInfo.actionFlag==41 || OrderInfo.actionFlag==42){//ess远程写卡、二次写卡
 			return OrderInfo.essOrderInfo.essOrder.zoneNumber;
 		}
-		if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==6 || OrderInfo.actionFlag==14){
+		if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==2 || OrderInfo.actionFlag==6 || OrderInfo.actionFlag==14){
 			for (var i = 0; i < OrderInfo.boProdAns.length; i++) {
 				var an = OrderInfo.boProdAns[i];
 				if(an.prodId == prodId){

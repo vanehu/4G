@@ -1,3 +1,18 @@
+<head>
+<style type="text/css">
+	textarea{
+		width:100%;
+		text-align:center;
+		color:#595959;
+		font-family:"微软雅黑","宋体",Arial,Tahoma;
+		font-size:12px;
+		margin-top:0px;
+		resize:none;
+		border: 1px solid #dcdcdc;
+		line-height: 18px;
+	}
+</style>
+</head>
 <div class="order_confirmation">
 	<h2 id="tital" class="h2_title"> </h2>
 
@@ -21,12 +36,8 @@
 			                <th>校验失败</th>
 		              	</tr>
 		    		</thead>
-		    		<tbody id="ruleTbody">		            	
-		            	<tr>				            
-				        	<td id="provCheckErrorMsg" title='${resMap.provCheckErrorData}'>${resMap.provCheckErrorMsg}</td>
-			          	</tr>
-		            </tbody>
 	    		</table>
+	    		<textarea readonly="readonly">${resMap.provCheckErrorMsg}</textarea>
 	    		<div align="right" style="margin: 20px auto;">
 					<a class="btna_o" href="javascript:SoOrder.orderBack()"><span >返回修改</span></a>
 				</div>				

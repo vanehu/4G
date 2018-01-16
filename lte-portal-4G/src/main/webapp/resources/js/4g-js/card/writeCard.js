@@ -1081,6 +1081,14 @@ order.writeCard = (function(){
 					areaCode:areaCode,//归属地区号
 					fromAreaCode:OrderInfo.staff.areaCode//漫游地区号
 				};
+				if(OrderInfo.actionFlag != null && (OrderInfo.actionFlag == 41 || OrderInfo.actionFlag == 42)){
+					param.essWriteCard = 'Y';//标志ESS页面的操作
+					param.iccserial = _cardInfoJson.serialNumber;
+					param.iccid = $("#resultCardNo").val();
+					param.serviceCode = OrderInfo.busitypeflag;//新增一个动作表示，用于记日志update by huangjj
+					param.remark = _cardDllInfoJson.remark;
+					param.extCustOrderId = OrderInfo.essOrderInfo.essOrder.extCustOrderId;
+				}
 				var resourceDataJson;
 				var response = $.callServiceAsJson(serviceName, param);
 				if(response.code == 0){
@@ -1302,7 +1310,8 @@ order.writeCard = (function(){
 				remark:_cardDllInfoJson.remark,
 				"srInParam":srInParam
 			};
-			if(OrderInfo.actionFlag == 41){
+			if(OrderInfo.actionFlag != null && (OrderInfo.actionFlag == 41 || OrderInfo.actionFlag == 42)){
+				param.essWriteCard = 'Y';//标志ESS页面的操作
 				param.extCustOrderId = OrderInfo.essOrderInfo.essOrder.extCustOrderId;
 			}
 			try {
@@ -2101,6 +2110,7 @@ order.writeCard = (function(){
 	};
 	
 	var _essMNWriteCard=function(phoneNumber,extCustOrderId,orderNeedAction,commonRegionId,zoneNumber){
+		OrderInfo.actionFlag = 41 ;
 		var orderItemGroupId = $("#"+phoneNumber).val();
 		var essOrder = {
 				phoneNumber : phoneNumber,
@@ -2282,6 +2292,14 @@ order.writeCard = (function(){
 					areaCode:'0731',//归属地区号
 					fromAreaCode:'0731'//漫游地区号
 				};
+				if(OrderInfo.actionFlag != null && (OrderInfo.actionFlag == 41 || OrderInfo.actionFlag == 42)){
+					param.essWriteCard = 'Y';//标志ESS页面的操作
+					param.iccserial = _cardInfoJson.serialNumber;
+					param.iccid = $("#resultCardNo").val();
+					param.serviceCode = OrderInfo.busitypeflag;//新增一个动作表示，用于记日志update by huangjj
+					param.remark = _cardDllInfoJson.remark;
+					param.extCustOrderId = OrderInfo.essOrderInfo.essOrder.extCustOrderId;
+				}
 				var resourceDataJson;
 				var response = $.callServiceAsJson(serviceName, param);
 				if(response.code == 0){
@@ -2466,6 +2484,10 @@ order.writeCard = (function(){
 					remark:"测试",
 					"srInParam":srInParam
 				};
+				if(OrderInfo.actionFlag != null && (OrderInfo.actionFlag == 41 || OrderInfo.actionFlag == 42)){
+					param.essWriteCard = 'Y';//标志ESS页面的操作
+					param.extCustOrderId = OrderInfo.essOrderInfo.essOrder.extCustOrderId;
+				}
 				try {
 					
 					var eventJson;

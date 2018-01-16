@@ -3669,5 +3669,41 @@
 		["1", "51", "52"]
 		</const>
 		<const type="String" name="WRITE_FILTER_LOG_FLAG" value="ON" description="是否进行开启订单过滤器"></const>
+		<const type="Map" name="PDF_PRINT_CONFIG" description="回执打印分省配置">
+		{
+			"PDF_PRINT_CONFIG_854": {},<!-- 西藏 -->
+			"PDF_PRINT_CONFIG_863": {},<!-- 青海 -->
+			"PDF_PRINT_CONFIG_815": {},<!-- 内蒙古 -->
+			"PDF_PRINT_CONFIG_823": {},<!-- 黑龙江 -->
+			"PDF_PRINT_CONFIG_845": {},<!-- 广西 -->
+			"PDF_PRINT_CONFIG_850": {},<!-- 重庆 -->
+			"PDF_PRINT_CONFIG_861": {},<!-- 陕西 -->
+			"PDF_PRINT_CONFIG_842": {},<!-- 湖北 -->
+			"PDF_PRINT_CONFIG_835": {},<!-- 福建 -->
+			"PDF_PRINT_CONFIG_832": {},<!-- 江苏 -->
+			"PDF_PRINT_CONFIG_846": {"1":"CtgPrintCustomerAgreement.jasper"},<!-- 海南 -->
+			"PDF_PRINT_CONFIG_864": {},<!-- 宁夏 -->
+			"PDF_PRINT_CONFIG_814": {},<!-- 山西 -->
+			"PDF_PRINT_CONFIG_853": {},<!-- 云南 -->
+			"PDF_PRINT_CONFIG_836": {},<!-- 江西 -->
+			"PDF_PRINT_CONFIG_837": {},<!-- 山东 -->
+			"PDF_PRINT_CONFIG_811": {},<!-- 北京 -->
+			"PDF_PRINT_CONFIG_843": {},<!-- 湖南 -->
+			"PDF_PRINT_CONFIG_851": {},<!-- 四川 -->
+			"PDF_PRINT_CONFIG_844": {},<!-- 广东 -->
+			"PDF_PRINT_CONFIG_831": {},<!-- 上海 -->
+			"PDF_PRINT_CONFIG_812": {},<!-- 天津 -->
+			"PDF_PRINT_CONFIG_813": {},<!-- 河北 -->
+			"PDF_PRINT_CONFIG_841": {},<!-- 河南 -->
+			"PDF_PRINT_CONFIG_821": {},<!-- 辽宁 -->
+			"PDF_PRINT_CONFIG_822": {},<!-- 吉林 -->
+			"PDF_PRINT_CONFIG_834": {},<!-- 安徽 -->
+			"PDF_PRINT_CONFIG_833": {},<!-- 浙江 -->
+			"PDF_PRINT_CONFIG_852": {},<!-- 贵州 -->
+			"PDF_PRINT_CONFIG_862": {},<!-- 甘肃 -->
+			"PDF_PRINT_CONFIG_865": {},<!-- 新疆 -->
+			"PDF_PRINT_CONFIG_899": {}<!-- 虚拟省 -->
+		}
+		</const>
 	</mda>
 </mdas>
