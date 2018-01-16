@@ -290,11 +290,6 @@ order.service = (function(){
 						_newAddList.push(objInstId);
 					}
 					
-					if(offerRole.minQty == 0){ //加装角色
-						this.minQty = 0;
-						this.dfQty = 0;
-					}
-					
 					var max = this.maxQty<0?"不限制":this.maxQty;//主卡的最大数量
 					maxNum = max;
 					var min = this.minQty;
