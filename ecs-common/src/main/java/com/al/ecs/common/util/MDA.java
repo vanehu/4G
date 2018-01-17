@@ -61,6 +61,11 @@ public class MDA {
 	public static final String FOREGIN_LIVE = new String("");
 	
 	/**
+	 * 新控件，外国人居住证分省级开关
+	 */
+	public static final Map<String,String> FOREGIN_LIVE_FLAG = new HashMap<String,String>();
+	
+	/**
 	 * 宽带甩单过csb的http地址
 	 */
 	public static final String CSB_HTTP_MIDDLE_URL=new String("");
