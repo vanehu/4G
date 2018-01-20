@@ -255,34 +255,11 @@ public class PrintBmoImpl implements PrintBmo {
 	    				login_area_id = cl.get("areaId").toString();
 	    			}
 	    		}
-//	    		login_area_id=sessionStaff.getAreaId();
 	    	}
-//			InputStream is2 =request.getSession().getServletContext().getResourceAsStream("/resources/image/gongz/"+login_area_id+".png");
-//			if(is2==null){
-//				byte[] sealBytes = DataSignTool.creatImageToByte(paramMap.get("sealInfo").toString());
-//				is2 = new ByteArrayInputStream(sealBytes);
-//			}
-//			printData.put("companyseal", is2);
-//			is2.close();
 	    	Map<String,Object> obj=savePdfApp(params,sessionStaff);
 	    	if(ResultCode.R_SUCCESS.equals(obj.get("code").toString())){
 		    	String orderInfo=obj.get("pdfStr").toString();
-	    	/*Map<String,Object> obj=new HashMap<String,Object>();
-	    	Map<String,Object> order=(Map<String,Object>)params.get("orderInfo");
-	    	String orderInfo=order.get("mgrPdf").toString();*/
-			//log.debug("yewPdf={}", orderInfo.get("mgrPdf").toString());
-			//PdfUtils.byte2File(Base64.decodeBase64(orderInfo.get("mgrPdf").toString().replaceAll("\n|\r", "")),"D:/temp/","test2.pdf");
-	//	    	int height =Integer.valueOf(params.get("height").toString());
-	//	    	int imgHeigh =Integer.valueOf(params.get("imgHeigh").toString());
-
-	//	    	Map<String, Object> retPdf=getGZPdf(orderInfo,sessionStaff.getOrgId(),"1",300,540,400,640,optFlowNum,sessionStaff);
-	//	    	if(ResultCode.R_SUCCESS.equals(retPdf.get("code"))){
-	//	    		orderInfo=retPdf.get("resultParam").toString();
-	//	    	}else{
-	//	    		return null;
-	//	    	}
 		    	Map<String, Object> ret=new HashMap<String, Object>();
-	//			Map<String, Object> ret=runVoucherPrint(printData, response, printType, needAgreement,signFlag);
 				ret.put("olId", params.get("olId"));
 				ret.put("areaId", sessionStaff.getAreaId());
 				ret.put("action", "ADD");
@@ -5331,28 +5308,26 @@ public class PrintBmoImpl implements PrintBmo {
 			printTypeDir = SysConstant.PRINT_TYPE_HTML;
 		}
 		String strJasperFileName = printTypeDir + SysConstant.P_MOD_FILE_CRM_COMMON;
-//		String strJasperFileName = printTypeDir + "CtgPrintCustInfo";
-//		String strJasperFileName = printTypeDir + "CtgPrintItemInfoBold";
-		if (strJasperFileName == null || "".equals(strJasperFileName)) {
-			throw new RuntimeException("获取回执打印模板异常，请联系系统人员!");
-		}
+		
 		if("ctgpdf/CtgTerminalOrderInfo".equals(printType)){
 			strJasperFileName = SysConstant.P_MOD_BASE_DIR + printType
 			+ SysConstant.P_MOD_FILE_SUBFIX;
 		}else if ("customerAgreementPrint".equals(printType)) {
 			Map<String, Object> provConfig = (Map<String, Object>) MapUtils.getObject(MDA.PDF_PRINT_CONFIG, "PDF_PRINT_CONFIG_" + currentAreaId.substring(0, 3));
-			List<String> jasterNameList = (List<String>) MapUtils.getObject(provConfig, "jasperNames");
-			strJasperFileName = SysConstant.P_MOD_BASE_DIR + printTypeDir + jasterNameList.get(0);
+			HashMap<String, String> jasterNames = (HashMap<String, String>) MapUtils.getMap(provConfig, "jasperNames");
+			String jasterName = MapUtils.getString(jasterNames, busitypeFlag);
+			if(StringUtils.isBlank(jasterName)){
+				strJasperFileName = SysConstant.P_MOD_BASE_DIR + printTypeDir + SysConstant.P_MOD_FILE_CRM_COMMON + SysConstant.P_MOD_FILE_SUBFIX;
+			} else {
+				strJasperFileName = SysConstant.P_MOD_BASE_DIR + printTypeDir + jasterName;
+			}
 		}else{
-			strJasperFileName = SysConstant.P_MOD_BASE_DIR + strJasperFileName
-			+ SysConstant.P_MOD_FILE_SUBFIX;
+			strJasperFileName = SysConstant.P_MOD_BASE_DIR + strJasperFileName + SysConstant.P_MOD_FILE_SUBFIX;
 		}
 		log.info(" 回执模板名称： " + strJasperFileName);
 
 		try {
 			Collection<Map<String, Object>> inFields = new ArrayList<Map<String, Object>>();
-//			List tmpList = (List) printData.get("custInfos");
-//			CustInfoSet custInfoSet = (CustInfoSet) tmpList.get(0);
 			if(signflag.equals(SysConstant.PREVIEW_SIGN)){
 				printData.put("isShowSign", "false");
 				printData.put("isShowReplaceStr", "true");
@@ -5364,21 +5339,6 @@ public class PrintBmoImpl implements PrintBmo {
 				printData.put("isShowReplaceStr", "false");
 			}
 			inFields.add(printData);
-//			Collection inFields = new ArrayList();
-//			ItemInfoSet itemInfoSet = new ItemInfoSet();
-//			itemInfoSet.setItemName("testName");
-//			itemInfoSet.setItemValue("showValue");
-//			Map<String, Object> tmpMap = new HashMap<String, Object>();
-//			tmpMap.put("itemName", "tEsTnAmEOne");
-//			tmpMap.put("itemValue", "tEsTvAlUeOne");
-//			inFields.add(tmpMap);
-//			tmpMap = new HashMap<String, Object>();
-//			tmpMap.put("itemName", "tEsTnAmETwo");
-//			tmpMap.put("itemValue", "tEsTvAlUeTwo");
-//			inFields.add(tmpMap);
-//			tmpMap.put("itemInfo", itemInfoSet);
-////			inFields.add(itemInfoSet);
-//			inFields.add(tmpMap);
 			Map<String, Object> reportParams = new HashMap<String, Object>();
 			reportParams.put("SUBREPORT_DIR", SysConstant.P_MOD_SUB_BASE_DIR
 					+ printTypeDir);
@@ -5468,6 +5428,7 @@ public class PrintBmoImpl implements PrintBmo {
 
             //生成pdf文件
             byte[] bytes = vPdfPrintHelper.getPdfStreamWithParametersAndFields(hasParameters, lstFields, busitypeFlag, currentAreadId);
+
             //快销卡需要上传PDF文件
             Map<String, Object> printData  = new HashMap<String, Object>();
             Iterator it =lstFields.iterator();

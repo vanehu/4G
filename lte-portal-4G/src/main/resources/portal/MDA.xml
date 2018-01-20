@@ -3718,24 +3718,30 @@
 			"PDF_PRINT_CONFIG_842": {},<!-- 湖北 -->
 			"PDF_PRINT_CONFIG_835": {},<!-- 福建 -->
 			"PDF_PRINT_CONFIG_832": {
-				"actionFlagList":["1","2","6","14", "43"],
+				"actionFlagList":["1","2","6","14"],
 				"auxiliaryFunctions":{
 					"1": ["!order.prepare.isPreInstall()", "!check.order.isAllPreInstall()"],
 					"2": ["ec.util.isArray(OrderInfo.boProd2Tds)", "!order.prepare.isPreInstall()", "!check.order.isAllPreInstall()"],
-					"6": ["ec.util.isArray(OrderInfo.boProd2Tds)", "!order.prepare.isPreInstall()", "!check.order.isAllPreInstall()"],
-					"43":[]
+					"6": ["ec.util.isArray(OrderInfo.boProd2Tds)", "!order.prepare.isPreInstall()", "!check.order.isAllPreInstall()"]
 				},
-				"jasperNames":["CtgPrintCustomerAgreement.jasper"]
+				"jasperNames":{
+					"1": "CtgPrintCommonModWithCustomerAgreement_846.jasper",
+					"2": "CtgPrintCommonModWithCustomerAgreement_846.jasper",
+					"6": "CtgPrintCommonModWithCustomerAgreement_846.jasper"
+				}
 			},<!-- 江苏 -->
 			"PDF_PRINT_CONFIG_846": {
-				"actionFlagList":["1","2","6","14", "43"],
+				"actionFlagList":["1","2","6","14"],
 				"auxiliaryFunctions":{
 					"1": ["!order.prepare.isPreInstall()", "!check.order.isAllPreInstall()"],
 					"2": ["ec.util.isArray(OrderInfo.boProd2Tds)", "!order.prepare.isPreInstall()", "!check.order.isAllPreInstall()"],
-					"6": ["ec.util.isArray(OrderInfo.boProd2Tds)", "!order.prepare.isPreInstall()", "!check.order.isAllPreInstall()"],
-					"43":[]
+					"6": ["ec.util.isArray(OrderInfo.boProd2Tds)", "!order.prepare.isPreInstall()", "!check.order.isAllPreInstall()"]
 				},
-				"jasperNames":["CtgPrintCustomerAgreement.jasper"]
+				"jasperNames":{
+					"1": "CtgPrintCommonModWithCustomerAgreement_846.jasper",
+					"2": "CtgPrintCommonModWithCustomerAgreement_846.jasper",
+					"6": "CtgPrintCommonModWithCustomerAgreement_846.jasper"
+				}
 			},<!-- 海南 -->
 			"PDF_PRINT_CONFIG_864": {},<!-- 宁夏 -->
 			"PDF_PRINT_CONFIG_814": {},<!-- 山西 -->
@@ -3753,16 +3759,7 @@
 			"PDF_PRINT_CONFIG_821": {},<!-- 辽宁 -->
 			"PDF_PRINT_CONFIG_822": {},<!-- 吉林 -->
 			"PDF_PRINT_CONFIG_834": {},<!-- 安徽 -->
-			"PDF_PRINT_CONFIG_833": {
-				"actionFlagList":["1","2","6","14", "43"],
-				"auxiliaryFunctions":{
-					"1": ["!order.prepare.isPreInstall()", "!check.order.isAllPreInstall()"],
-					"2": ["ec.util.isArray(OrderInfo.boProd2Tds)", "!order.prepare.isPreInstall()", "!check.order.isAllPreInstall()"],
-					"6": ["ec.util.isArray(OrderInfo.boProd2Tds)", "!order.prepare.isPreInstall()", "!check.order.isAllPreInstall()"],
-					"43":[]
-				},
-				"jasperNames":["CtgPrintCustomerAgreement.jasper"]
-			},<!-- 浙江 -->
+			"PDF_PRINT_CONFIG_833": {},<!-- 浙江 -->
 			"PDF_PRINT_CONFIG_852": {},<!-- 贵州 -->
 			"PDF_PRINT_CONFIG_862": {},<!-- 甘肃 -->
 			"PDF_PRINT_CONFIG_865": {},<!-- 新疆 -->
