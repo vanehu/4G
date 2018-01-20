@@ -3706,7 +3706,7 @@
 		["1", "51", "52"]
 		</const>
 		<const type="String" name="WRITE_FILTER_LOG_FLAG" value="ON" description="是否进行开启订单过滤器"></const>
-		<const type="Map" name="PDF_PRINT_CONFIG" description="回执打印分省配置">
+		<const type="Map" name="PDF_PRINT_CONFIG" description="回执打印（入网协议）分省配置">
 		{
 			"PDF_PRINT_CONFIG_854": {},<!-- 西藏 -->
 			"PDF_PRINT_CONFIG_863": {},<!-- 青海 -->
