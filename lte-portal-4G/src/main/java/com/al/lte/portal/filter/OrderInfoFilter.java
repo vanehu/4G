@@ -137,14 +137,6 @@ public class OrderInfoFilter extends OncePerRequestFilter {
 				//(String) ServletUtils.getSessionAttribute(request, SysConstant.SESSION_KEY_CHANNEL+"_"+sessionStaff.getStaffId());
 				if(StringUtils.isNotBlank(areaId_value) && StringUtils.isNotBlank(channelId_value))
 				{
-					for(RegexAndReplacement regexAndReplacement : regexAndReplacements2){
-	                     newJson = regexAndReplacement.getPattern().matcher(newJson).replaceAll(regexAndReplacement.getReplacement().replaceAll(CUR_CHANNEL_ID_EXPR, channelId_value));
-					}
-					int index = newJson.indexOf("custOrderList");
-					for(RegexAndReplacement regexAndReplacement : regexAndReplacements){
-	                    newJson = newJson.substring(0,index) + regexAndReplacement.getPattern().matcher(newJson.substring(index, newJson.length()))
-	                    		.replaceAll(regexAndReplacement.getReplacement().replaceAll(CUR_AREA_ID_EXPR, areaId_value));
-					}
                     List<String> list = (List<String>) ServletUtils.getSessionAttribute(request, SysConstant.SESSION_KEY_AGREEMENT+"_"+sessionStaff.getStaffId());
 					List<String> list2 = (List<String>) ServletUtils.getSessionAttribute(request, SysConstant.SESSION_KEY_NUMBER+"_"+sessionStaff.getStaffId());
 					List<String> list3 = (List<String>) ServletUtils.getSessionAttribute(request, SysConstant.SESSION_KEY_TERMINAL+"_"+sessionStaff.getStaffId());

@@ -989,7 +989,7 @@ order.writeCard = (function(){
 				};
 			$.callServiceAsJson(serviceName, param);
 		} catch(e) {
-			$("#cardupdate").attr("href","https://ct.crm.189.cn/phoneimg/card/"+ _cardDllInfoJson.dllName+".dll");
+			$("#cardupdate").attr("href","https://ct.crm.189.cn/phoneimg/card/"+ _cardDllInfoJson.dllName+".DLL");
 			$("#writeTitle").html("写卡组件更新");
 			$("#rcard").hide();
 			$("#dllName").html(_cardDllInfoJson.dllName+".DLL");
