@@ -3706,7 +3706,7 @@
 		["1", "51", "52"]
 		</const>
 		<const type="String" name="WRITE_FILTER_LOG_FLAG" value="ON" description="是否进行开启订单过滤器"></const>
-		<const type="Map" name="PDF_PRINT_CONFIG" description="回执打印分省配置">
+		<const type="Map" name="PDF_PRINT_CONFIG" description="回执打印（入网协议）分省配置">
 		{
 			"PDF_PRINT_CONFIG_854": {},<!-- 西藏 -->
 			"PDF_PRINT_CONFIG_863": {},<!-- 青海 -->
@@ -3717,8 +3717,32 @@
 			"PDF_PRINT_CONFIG_861": {},<!-- 陕西 -->
 			"PDF_PRINT_CONFIG_842": {},<!-- 湖北 -->
 			"PDF_PRINT_CONFIG_835": {},<!-- 福建 -->
-			"PDF_PRINT_CONFIG_832": {},<!-- 江苏 -->
-			"PDF_PRINT_CONFIG_846": {"1":"CtgPrintCustomerAgreement.jasper"},<!-- 海南 -->
+			"PDF_PRINT_CONFIG_832": {
+				"actionFlagList":["1","2","6","14"],
+				"auxiliaryFunctions":{
+					"1": ["!order.prepare.isPreInstall()", "!check.order.isAllPreInstall()"],
+					"2": ["ec.util.isArray(OrderInfo.boProd2Tds)", "!order.prepare.isPreInstall()", "!check.order.isAllPreInstall()"],
+					"6": ["ec.util.isArray(OrderInfo.boProd2Tds)", "!order.prepare.isPreInstall()", "!check.order.isAllPreInstall()"]
+				},
+				"jasperNames":{
+					"1": "CtgPrintCommonModWithCustomerAgreement_846.jasper",
+					"2": "CtgPrintCommonModWithCustomerAgreement_846.jasper",
+					"6": "CtgPrintCommonModWithCustomerAgreement_846.jasper"
+				}
+			},<!-- 江苏 -->
+			"PDF_PRINT_CONFIG_846": {
+				"actionFlagList":["1","2","6","14"],
+				"auxiliaryFunctions":{
+					"1": ["!order.prepare.isPreInstall()", "!check.order.isAllPreInstall()"],
+					"2": ["ec.util.isArray(OrderInfo.boProd2Tds)", "!order.prepare.isPreInstall()", "!check.order.isAllPreInstall()"],
+					"6": ["ec.util.isArray(OrderInfo.boProd2Tds)", "!order.prepare.isPreInstall()", "!check.order.isAllPreInstall()"]
+				},
+				"jasperNames":{
+					"1": "CtgPrintCommonModWithCustomerAgreement_846.jasper",
+					"2": "CtgPrintCommonModWithCustomerAgreement_846.jasper",
+					"6": "CtgPrintCommonModWithCustomerAgreement_846.jasper"
+				}
+			},<!-- 海南 -->
 			"PDF_PRINT_CONFIG_864": {},<!-- 宁夏 -->
 			"PDF_PRINT_CONFIG_814": {},<!-- 山西 -->
 			"PDF_PRINT_CONFIG_853": {},<!-- 云南 -->

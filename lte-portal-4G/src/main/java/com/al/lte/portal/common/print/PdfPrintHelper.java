@@ -3,7 +3,6 @@ package com.al.lte.portal.common.print;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -14,13 +13,9 @@ import java.util.Map;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang3.StringUtils;
-
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JREmptyDataSource;
 import net.sf.jasperreports.engine.JRExporterParameter;
-import net.sf.jasperreports.engine.JRPrintPage;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
@@ -28,11 +23,7 @@ import net.sf.jasperreports.engine.export.JRHtmlExporter;
 import net.sf.jasperreports.engine.export.JRHtmlExporterParameter;
 
 import com.al.ecs.common.util.DateUtil;
-import com.al.ecs.common.util.MDA;
 import com.al.ecs.log.Log;
-import com.al.lte.portal.common.SysConstant;
-import com.lowagie.text.Document;
-import com.lowagie.text.pdf.PdfCopy;
 import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.PdfStamper;
 import com.lowagie.text.pdf.PdfWriter;
@@ -331,9 +322,7 @@ public class PdfPrintHelper {
         //script.append("    this.closeDoc();\r\n");//导出的pdf文件：支持自动打印，但是不要关闭自己
  
         ByteArrayOutputStream bos = new ByteArrayOutputStream(pdfStream.length);
-        
-//        bos = (ByteArrayOutputStream) this.appendPdf2(bos, busitypeFlag, currentAreaId);
-        
+
         PdfStamper stamp = new PdfStamper(reader, bos);
         
         if(m_vAutoPrint){//如果自动打印，则不要显示pdf控制栏，提高页面展示速度
@@ -354,9 +343,7 @@ public class PdfPrintHelper {
     		Map<String, Object> parameters, JRDataSource jrDataSource, int pageWidth, int pageHeigth, String busiTypeFlag, String currentAreaId) throws Exception  {
     	JasperPrint jasperPrint ;
         jasperPrint = JasperFillManager.fillReport(inputStream, parameters, jrDataSource);
-        
-//        jasperPrint = PdfPrintHelper.appendPdf(jasperPrint, busiTypeFlag, currentAreaId);
-        
+
         if(pageWidth>0){
             jasperPrint.setPageWidth(pageWidth);
         }
@@ -368,64 +355,6 @@ public class PdfPrintHelper {
         
 		return JasperExportManager.exportReportToPdf(jasperPrint);
     }
-    
-    /**
-     * 针对海南新装增加入网协议打印
-     * @param jasperPrint
-     * @param busiTypeFlag
-     * @return
-     * @throws Exception
-     */
-	@SuppressWarnings({ "unchecked", "unused" })
-	private static JasperPrint appendPdf(JasperPrint jasperPrint, String busiTypeFlag, String currentAreaId) throws Exception {
-		if (StringUtils.isNotBlank(busiTypeFlag) && StringUtils.isNotBlank(currentAreaId)) {
-			Map<String, String> provConfig = MapUtils.getMap(MDA.PDF_PRINT_CONFIG, "PDF_PRINT_CONFIG_" + currentAreaId.substring(0, 3));
-			String jasperName = MapUtils.getString(provConfig, busiTypeFlag, "");
-			if (StringUtils.isNotBlank(jasperName)) {
-				String jasperFile = SysConstant.P_MOD_BASE_DIR + SysConstant.P_MOD_SUB_CTG_PDF + jasperName;
-				byte[] appendJasper = FileHandle.readJasper(jasperFile);
-				InputStream inputStream = new ByteArrayInputStream(appendJasper);
-				JasperPrint appendJasperPrint = JasperFillManager.fillReport(inputStream, null);
-				List<JRPrintPage> jrPrintPages = appendJasperPrint.getPages();
-				for (JRPrintPage page : jrPrintPages) {
-					jasperPrint.addPage(page);
-				}
-			}
-		}
-
-		return jasperPrint;
-	}
-	
-	@SuppressWarnings({ "unchecked", "unused" })
-	private static OutputStream appendPdf2(OutputStream outputStream, String busiTypeFlag, String currentAreaId) throws Exception {
-		Document document = null;
-		if (StringUtils.isNotBlank(busiTypeFlag) && StringUtils.isNotBlank(currentAreaId)) {
-			Map<String, String> provConfig = MapUtils.getMap(MDA.PDF_PRINT_CONFIG, "PDF_PRINT_CONFIG_" + currentAreaId.substring(0, 3));
-			String jasperName = MapUtils.getString(provConfig, busiTypeFlag, "");
-			if (StringUtils.isNotBlank(jasperName)) {
-				String jasperFile = SysConstant.P_MOD_BASE_DIR + SysConstant.P_MOD_SUB_CTG_PDF + jasperName;
-				document = new Document();
-//				document.open();
-//				String file = "D:\\Work_AI\\EclipseWorkspace\\Neon\\EC\\Git-LTE-Portal\\Src\\lte-portal-4G\\src\\main\\resources\\report\\ctgpdf\\CtgPrintCustomerAgreement.pdf";
-				PdfCopy copy = new PdfCopy(document, outputStream);
-				PdfReader appendPdfReader = new PdfReader(jasperFile);
-//				PdfReader appendPdfReader = new PdfReader(file);
-//				byte[] appendJasper = FileHandle.readJasper(jasperFile);
-//				PdfReader appendPdfReader = new PdfReader(appendJasper); 
-				int i = 0;  
-	            while(i < appendPdfReader.getNumberOfPages()){  
-	                i++;  
-	                copy.addPage(copy.getImportedPage(appendPdfReader, i));  
-	            }
-			}
-		}
-		
-		if (document != null && document.isOpen()) {
-			document.close();
-		}
-		
-		return outputStream;
-	}
     
     public static void main(String[] args) throws Exception {
     	

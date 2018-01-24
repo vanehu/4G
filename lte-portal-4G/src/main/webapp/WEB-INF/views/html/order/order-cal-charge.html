@@ -313,9 +313,7 @@
 		       		<a class="btna_o" id="printVoucherLoc"><span>本地打印回执</span></a>
 		       </#if>
 			    <a class="btna_o" id="printVoucherA"><span>打印回执</span></a>
-			    <#if Session["customerAgreementPrint"]?? && Session["customerAgreementPrint"]=="ON">
-			    	<a class="btna_o" href="javascript:common.print.customerAgreementPrint()">入网协议</a>
-			    </#if>
+			    <a style="display:none" id="customerAgreementPrint" href="javascript:common.print.customerAgreementPrint()"><span>入网协议</span></a>
 		       <input type="hidden" value="${Session._loginUrl}" id="cookies"/>
 		       <!-- <a class="btna_g" id="printInvoiceA"><span>打印发票</span></a> -->
 		       <a class="btna_g" href="javascript:void(0)" id="toCharge"><span>收费</span></a>
