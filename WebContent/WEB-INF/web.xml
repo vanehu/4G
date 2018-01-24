@@ -9,6 +9,26 @@
     <welcome-file>default.htm</welcome-file>
     <welcome-file>default.jsp</welcome-file>
   </welcome-file-list>
+  <error-page>
+		<error-code>400</error-code>
+		<location>/error/400.jsp</location>
+	</error-page>
+	<error-page>
+		<error-code>404</error-code>
+		<location>/error/404.jsp</location>
+	</error-page>
+	<error-page>
+		<error-code>405</error-code>
+		<location>/error/405.jsp</location>
+	</error-page>
+	<error-page>
+		<error-code>403</error-code>
+		<location>/error/403.jsp</location>
+	</error-page>
+	<error-page>
+		<error-code>500</error-code>
+		<location>/error/500.jsp</location>
+	</error-page>
   <servlet>
     <servlet-name>LoginServlet</servlet-name>
     <servlet-class>com.al.lte.portal.servlet.LoginServlet</servlet-class>
@@ -110,6 +130,16 @@
   <servlet-mapping>
     <servlet-name>ModeAppServlet</servlet-name>
     <url-pattern>/mode/app</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>AesServlet</display-name>
+    <servlet-name>AesServlet</servlet-name>
+    <servlet-class>com.al.lte.portal.servlet.AesServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>AesServlet</servlet-name>
+    <url-pattern>/aes</url-pattern>
   </servlet-mapping>
   <servlet>
     <description></description>
