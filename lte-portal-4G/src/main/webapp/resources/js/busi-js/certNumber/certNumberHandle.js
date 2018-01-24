@@ -178,7 +178,10 @@ oneFive.certNumberHandle = (function () {
         $("#d_detailInfo").hide();
         $("#d_query").show();
     };
-
+    var _showCurrent = function(){
+    	 $("#d_query").hide();
+    	 $("#d_detailInfo").show();
+    };
     /**
      * 查询订单详情
      * @param scope 当前详情按钮对象
@@ -406,7 +409,34 @@ oneFive.certNumberHandle = (function () {
                     $.confirm("确认", "一证五卡业务单[" + param.orderId + "]已经受理成功，是否继续受理？", {
                         names: ["是", "否"],
                         yesdo: function () {
-                            _showMain();
+                        	 var param = {
+                        	            "areaId": $("#p_areaId").val(),
+                        	            "ifFilterAreaId": "Y",
+                        	            "staffId": OrderInfo.staff.staffId,
+                        	            "ifFilterOwnAccNbr": $("#onlyMe").val()
+                        	        };
+                        	        $.callServiceAsHtmlGet(contextPath + "/certNumber/queryOneFiveOrderItemDetail", param, {
+                        	            "before": function () {
+                        	                $.ecOverlay("详情查询中，请稍等...");
+                        	            },
+                        	            "always": function () {
+                        	                $.unecOverlay();
+                        	            },
+                        	            "done": function (response) {
+                        	                if (response && response.code == -2) {
+                        	                    return;
+                        	                } else if (response.data && response.data.substring(0, 4) != "<div") {
+                        	                    $.alert("提示", response.data);
+                        	                } else {
+                        	                    $("#d_query").hide();
+                        	                    $("#d_detailInfo").html(response.data).show();
+                        	                }
+                        	            },
+                        	            fail: function () {
+                        	                $.unecOverlay();
+                        	                $.alert("提示", "请求可能发生异常，请稍后再试！");
+                        	            }
+                        	        });
                         },
                         no: function () {
                         }
@@ -449,6 +479,7 @@ oneFive.certNumberHandle = (function () {
         chooseArea: _chooseArea,
         queryOneFiveList: _queryOneFiveList,
         showMain: _showMain,
+        showCurrent:_showCurrent,
         queryDetail: _queryDetail,
         queryAttachment: _queryAttachment,
         orderSubmit: _orderSubmit,

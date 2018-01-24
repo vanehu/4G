@@ -230,7 +230,7 @@ public class OneCertFiveNumberController extends BaseController {
                 model.addAttribute("code", resMap.get("resultCode"));
                 model.addAttribute("mess", resMap.get("resultMsg"));
             }
-            if (SysConstant.ONE_FIVE_NUMBER_STATUS_INIT.equals(MapUtils.getString(param, "statusCd", ""))) {
+            if (ifFilterOwnAccNbr != null && ifFilterOwnAccNbr != "") {
                 return "/certNumber/certNumber-handle-list";
             } else {
                 return "/certNumber/certNumber-query-list";

@@ -78,8 +78,8 @@ oneFive.certNumberQuery = (function () {
         var param = {};
         var noDateParam = {};
 
-        if(DateUtil.differDays(new Date(Date.parse($("#p_startDt").val())),new Date(Date.parse($("#p_endDt").val())))>31){
-            $.alert("提示","日期跨度太长，超过一个月，请重新选择");
+        if(DateUtil.differDays(new Date(Date.parse($("#p_startDt").val())),new Date(Date.parse($("#p_endDt").val())))>92){
+            $.alert("提示","日期跨度太长，超过三个月，请重新选择");
             return;
         }
 
@@ -174,7 +174,7 @@ oneFive.certNumberQuery = (function () {
         }else{
         	param.ifQryHandle = "Y";
         }
-        
+        param.statusCd = $("#dealOrder").val();
         param.ifFilterItem = "N";
         $.callServiceAsHtmlGet(contextPath + "/certNumber/queryOneFiveOrderList", param, {
             "before": function () {
