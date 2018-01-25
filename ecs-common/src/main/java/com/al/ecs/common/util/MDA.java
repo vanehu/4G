@@ -66,6 +66,11 @@ public class MDA {
 	public static final Map<String,String> FOREGIN_LIVE_FLAG = new HashMap<String,String>();
 	
 	/**
+	 * 销售品互斥弹出框是否展示开关
+	 */
+	public static final Map<String, String> EXCLUDEDEPEND_FLAG = new HashMap<String, String>();
+	
+	/**
 	 * 宽带甩单过csb的http地址
 	 */
 	public static final String CSB_HTTP_MIDDLE_URL=new String("");

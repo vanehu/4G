@@ -611,6 +611,12 @@ offerChange = (function() {
 			}
 		}
 		
+		//返回互斥的校验结果
+		var isExcludeDepend = query.common.queryPropertiesStatus("EXCLUDEDEPEND_FLAG_" + String(OrderInfo.staff.areaId).substr(0, 3));
+		if(isExcludeDepend == true){
+			check.offer.getExcludeDependData();
+		}
+		
 		//初始化 付费类型 和 是否信控 变更规则
 		_initChangeProdAttrs();
 	};
