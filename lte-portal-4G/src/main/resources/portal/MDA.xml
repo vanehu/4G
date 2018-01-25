@@ -168,6 +168,43 @@
 			'FOREGIN_LIVE_FLAG_899':'OFF'<!-- 虚拟省 -->
 			}
 		</const>
+		
+		<const type="Map" name="EXCLUDEDEPEND_FLAG" description="销售品互斥弹出框是否展示开关">
+			{
+			'EXCLUDEDEPEND_FLAG_854':'OFF',<!-- 西藏 -->
+			'EXCLUDEDEPEND_FLAG_863':'OFF',<!-- 青海 -->
+			'EXCLUDEDEPEND_FLAG_815':'OFF',<!-- 内蒙古 -->
+			'EXCLUDEDEPEND_FLAG_823':'OFF',<!-- 黑龙江 -->
+			'EXCLUDEDEPEND_FLAG_845':'OFF',<!-- 广西 -->
+			'EXCLUDEDEPEND_FLAG_850':'OFF',<!-- 重庆 -->
+			'EXCLUDEDEPEND_FLAG_861':'OFF',<!-- 陕西 -->
+			'EXCLUDEDEPEND_FLAG_842':'OFF',<!-- 湖北 -->
+			'EXCLUDEDEPEND_FLAG_835':'OFF',<!-- 福建 -->
+			'EXCLUDEDEPEND_FLAG_832':'ON',<!-- 江苏 -->
+			'EXCLUDEDEPEND_FLAG_846':'OFF',<!-- 海南 -->
+			'EXCLUDEDEPEND_FLAG_864':'OFF',<!-- 宁夏 -->
+			'EXCLUDEDEPEND_FLAG_814':'OFF',<!-- 山西 -->
+			'EXCLUDEDEPEND_FLAG_853':'OFF',<!-- 云南 -->
+			'EXCLUDEDEPEND_FLAG_836':'OFF',<!-- 江西 -->
+			'EXCLUDEDEPEND_FLAG_837':'OFF',<!-- 山东 -->
+			'EXCLUDEDEPEND_FLAG_811':'OFF',<!-- 北京 -->
+			'EXCLUDEDEPEND_FLAG_843':'OFF',<!-- 湖南 -->
+			'EXCLUDEDEPEND_FLAG_851':'OFF',<!-- 四川 -->
+			'EXCLUDEDEPEND_FLAG_844':'OFF',<!-- 广东 -->
+			'EXCLUDEDEPEND_FLAG_831':'OFF',<!-- 上海 -->
+			'EXCLUDEDEPEND_FLAG_812':'OFF',<!-- 天津 -->
+			'EXCLUDEDEPEND_FLAG_813':'OFF',<!-- 河北 -->
+			'EXCLUDEDEPEND_FLAG_841':'OFF',<!-- 河南 -->
+			'EXCLUDEDEPEND_FLAG_821':'OFF',<!-- 辽宁 -->
+			'EXCLUDEDEPEND_FLAG_822':'OFF',<!-- 吉林 -->
+			'EXCLUDEDEPEND_FLAG_834':'OFF',<!-- 安徽 -->
+			'EXCLUDEDEPEND_FLAG_833':'OFF',<!-- 浙江 -->
+			'EXCLUDEDEPEND_FLAG_852':'OFF',<!-- 贵州 -->
+			'EXCLUDEDEPEND_FLAG_862':'OFF',<!-- 甘肃 -->
+			'EXCLUDEDEPEND_FLAG_865':'OFF',<!-- 新疆 -->
+			'EXCLUDEDEPEND_FLAG_899':'OFF'<!-- 虚拟省 -->
+			}
+		</const>
 
 		<const type="String" name="ASYNC_FLAG" value="OFF" />
 		<const type="String" name="DEF_HTTP_FLAG" value="ON" />

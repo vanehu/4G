@@ -553,6 +553,39 @@ query.offer = (function() {
 			$.alert("提示","数据查询异常，请稍后重试！");
 		}
 	};
+	
+	//销售品互斥依赖查询门户弹框查询
+	var _queryExcludeDependBomb = function(openMap, prodId){
+		//通过cookie传递拿到订购套餐的specId
+		var mainSpecId = OrderInfo.offerSpec.offerSpecId;
+		var needDelOfferLists = openMap.result.offerLists;
+		//拼接orderedOfferSpecIds数组，为已定可选包的offerSpecId
+		//var orderedOfferSpecIds = [];
+		var saveOrderedOfferSpecIds = OrderInfo.saveOrderedOfferSpecIds;
+		if(needDelOfferLists.length > 0){
+			var nowDate = new Date().getFullYear() + (new Date().getMonth() + 1 < 10 ? "0"+(new Date().getMonth() + 1):new Date().getMonth() + 1);
+			for(var i = 0;i < needDelOfferLists.length;i++){
+				//调后台互斥查询接口前，通过已订购返回的数据判断互斥可选包是否当月失效，若是当月失效则不需要判断互斥
+				if((needDelOfferLists[i].expDate).substr(0,6) - nowDate <= 0){
+					//遍历拿到所有的offerSpecId
+					var offerSpecId = needDelOfferLists[i].offerSpecId;
+					saveOrderedOfferSpecIds.push(offerSpecId);
+				}
+			}
+			
+		}
+		//遍历去除空字符串
+		for(var i = 0;i<saveOrderedOfferSpecIds.length;i++){
+		    if(saveOrderedOfferSpecIds[i]==''||saveOrderedOfferSpecIds[i]==null){
+		    	saveOrderedOfferSpecIds.splice(i,1);
+		        i=i-1;
+		    }
+		}
+		var param = CacheData.getExcDepOfferParam(prodId, mainSpecId);
+		param.orderedOfferSpecIds = saveOrderedOfferSpecIds;
+		var data = query.offer.queryExcludeDepend(param);//查询规则校验
+		OrderInfo.queryExcludeDependData = data;
+	}
 		
 	//功能产品互斥依赖查询
 	var _queryServExcludeDepend = function(param){
@@ -1098,6 +1131,7 @@ query.offer = (function() {
 		addMyfavorite           : _addMyfavorite,
 		delMyfavorite           : _delMyfavorite,
 		queryMainCartAttachOffer: _queryMainCartAttachOffer,
-		queryOfferOrderedTimes	:_queryOfferOrderedTimes
+		queryOfferOrderedTimes	:_queryOfferOrderedTimes,
+		queryExcludeDependBomb  :_queryExcludeDependBomb
 	};
 })();

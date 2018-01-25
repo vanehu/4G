@@ -103,6 +103,10 @@ OrderInfo = (function() {
 		
 	var _offerSpec = {}; //主销售品构成
 	
+	//互斥数据缓存
+	var _saveOrderedOfferSpecIds = [];
+	var _queryExcludeDependData = {};
+	
 	var _offer = { //主销售品实例构成
 		offerId : "",
 		offerSpecId : "",
@@ -2063,6 +2067,8 @@ OrderInfo = (function() {
         pushCertInfoKeys		:_pushCertInfoKeys,
         needCheckFlag           :_needCheckFlag,
         handleCustCertReadInfos	:_handleCustCertReadInfos,
-        getCustAgeByCheck       :_getCustAgeByCheck
+        getCustAgeByCheck       :_getCustAgeByCheck,
+        saveOrderedOfferSpecIds :_saveOrderedOfferSpecIds,
+        queryExcludeDependData  :_queryExcludeDependData
 	};
 })();
