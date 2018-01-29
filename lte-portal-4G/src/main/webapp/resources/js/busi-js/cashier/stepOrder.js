@@ -216,7 +216,7 @@ stepOrder.main = (function(){
 						}
 					});
 				} 
-				if(!checkedUimInfo){ //没有已校验的UIM卡,产品或补换卡动作没有ADD动作的UIM信息
+				if(!checkedUimInfo && this.busiObj.objId !=13410447){ //没有已校验的UIM卡,产品或补换卡动作没有ADD动作的UIM信息
 					var _uimInfo = {
 							"accessNumber" : this.busiObj.accessNumber,
 							"roleName" : this.busiObj.name,
@@ -668,7 +668,7 @@ stepOrder.main = (function(){
 				return false;
 			}
 			for(var i=0;i<_ooRoles.length;i++){
-				if(_ooRoles[i].objType == CONST.OBJ_TYPE.PROD){ //接入类产品
+				if(_ooRoles[i].objType == CONST.OBJ_TYPE.PROD && _ooRoles[i].objId != 13410447 ){ //接入类产品
 					var $li = $('<li id="tab_'+_ooRoles[i].accessNumber+'" onclick="stepOrder.main.changeLabel('+_ooRoles[i].accessNumber+')">'+_ooRoles[i].roleName+_ooRoles[i].accessNumber+'</li>');
 					if(i == 0){
 						$li.addClass("setcon");
