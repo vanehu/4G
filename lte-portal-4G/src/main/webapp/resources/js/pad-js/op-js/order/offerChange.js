@@ -492,6 +492,11 @@ offerChange = (function() {
 				}
 			}
 		}
+		//返回互斥的校验结果
+		var isExcludeDepend = query.common.queryPropertiesStatus("EXCLUDEDEPEND_FLAG_" + String(OrderInfo.staff.areaId).substr(0, 3));
+		if(isExcludeDepend == true){
+			check.offer.getExcludeDependData();
+		}
 	};
 	
 	

@@ -915,6 +915,28 @@ common = (function($) {
             }
 		);
 	};
+	/*
+	 * 查询开关配置，返回boolean，开关为ON，返回true；开关查询失败或关闭，返回false
+	 * 注：使用此函数查询开关配置，其开关必须为ON或者OFF状态，其他状态不支持使用此函数，建议使用_queryPropertiesValue
+	 */
+	var _queryPropertiesStatus = function(key){
+		
+		var resultFlag = false;
+		
+		if(key == null || key == undefined || key == ""){
+			resultFlag = false;
+			$.alert("提示","入参key为空");
+		} else{
+			var response = $.callServiceAsJson(contextPath + "/properties/getValue", {"key": key});
+			if (response.code == "0") {
+				if ("ON" == response.data) {
+					resultFlag = true;
+				}
+			}
+		}
+		
+		return resultFlag;
+	};
 	return {
 		relocationCust		:	_relocationCust,
 		setCalendar			:	_setCalendar,
@@ -937,6 +959,7 @@ common = (function($) {
 		callOpenPay         :   _callOpenPay,
 		callCustLocation	:	_callCustLocation,
 		getMobileIp			: 	_getMobileIp,
-		callPhotos2         :   _callPhotos2
+		callPhotos2         :   _callPhotos2,
+		queryPropertiesStatus:_queryPropertiesStatus
 	};
 })(jQuery);
