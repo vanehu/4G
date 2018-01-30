@@ -729,6 +729,11 @@ offerChange = (function() {
 				}
 			}
 		}
+		//返回互斥的校验结果
+		var isExcludeDepend = common.queryPropertiesStatus("EXCLUDEDEPEND_FLAG_" + String(OrderInfo.staff.areaId).substr(0, 3));
+		if(isExcludeDepend == true){
+			check.offer.getExcludeDependData();
+		}
 	};
 	
 	//#1476473 营业厅翼支付开户IT流程优化 增加翼支付功能产品订购限制，不判断满足订购条件就退订

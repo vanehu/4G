@@ -906,6 +906,85 @@ AttachOffer = (function() {
 		}
 	};
 	
+	//删除附属销售品实例PC端弹框
+	var _delOfferBomb = function(prodId, offerId, reflag) {
+		var $span = $("#li_" + prodId + "_" + offerId).find("span"); //定位删除的附属
+		//退订
+		var offer = CacheData.getOffer(prodId, offerId);
+		if (!ec.util.isArray(offer.offerMemberInfos)) {
+		    var param = {
+		        prodId: prodId,
+		        areaId: OrderInfo.getProdAreaId(prodId),
+		        offerId: offerId
+		    };
+		    if (ec.util.isArray(OrderInfo.oldprodInstInfos) && OrderInfo.actionFlag == 6) {
+		        var flag = false;
+		        for (var j = 0; j < OrderInfo.oldoffer.length; j++) {
+		            var oldOffer = OrderInfo.oldoffer[j];
+		            for (var i = 0; i < oldOffer.offerMemberInfos.length; i++) {
+		                var oldOfferMember = oldOffer.offerMemberInfos[i];
+		                if (oldOfferMember.objInstId == prodId) {
+		                    param.acctNbr = oldOfferMember.accessNumber;
+		                    flag = true;
+		                    break;
+		                }
+		            }
+		            if (flag) {
+		                for (var i = 0; i < OrderInfo.oldprodInstInfos.length; i++) {
+		                    if (offer.accNbr == OrderInfo.oldprodInstInfos[i].accNbr) {
+		                        param.areaId = OrderInfo.oldprodInstInfos[i].areaId;
+		                    }
+		                }
+		            }
+		        }
+		    } else {
+		        param.acctNbr = OrderInfo.getAccessNumber(prodId);
+		    }
+		    var data = query.offer.queryOfferInst(param);
+		    if (data == undefined) {
+		        return;
+		    }
+		    //遍历附属的构成要和主套餐的构成实例要一致（兼容融合套餐）
+		    var offerMemberInfos = [];
+		    $.each(data.offerMemberInfos,
+		    function() {
+		        var prodInstId = this.objInstId;
+		        var flag = false;
+		        $.each(OrderInfo.offer.offerMemberInfos,
+		        function() {
+		            if (this.objInstId == prodInstId) {
+		                flag = true;
+		                return false;
+		            }
+		        });
+		        if (flag) {
+		            offerMemberInfos.push(this);
+		        }
+		    });
+
+		    offer.offerMemberInfos = data.offerMemberInfos = offerMemberInfos;
+		    offer.offerSpec = data.offerSpec;
+		}
+		if (reflag != undefined && reflag == "reload") { //暂存单二次加载
+		    offer.isdel = "Y";
+		    $span.addClass("del");
+		    delServByOffer(prodId, offer);
+		} else {
+		    var content = "";
+		    if (offer.offerSpec != undefined) {
+		        content = CacheData.getOfferProdStr(prodId, offer, 1);
+		    } else {
+		        content = '退订【' + $span.text() + '】可选包';
+		    }
+
+		    offer.isdel = "Y";
+		    $span.addClass("del");
+		    delServByOffer(prodId, offer);
+
+		}
+		
+	};
+	
 	//关闭服务规格
 	var _closeServSpec = function(prodId,servSpecId,specName,ifParams,ifConfirm){
 		var $span = $("#li_"+prodId+"_"+servSpecId).find("span"); //定位删除的附属
@@ -5387,6 +5466,7 @@ AttachOffer = (function() {
 		myFavoriteList:_myFavoriteList,
 		qryPreliminaryInfo : _qryPreliminaryInfo,
 		terminCheckShow: _terminCheckShow,
-		setParam4RepeatOrder:_setParam4RepeatOrder
+		setParam4RepeatOrder:_setParam4RepeatOrder,
+		delOfferBomb:_delOfferBomb
 	};
 })();

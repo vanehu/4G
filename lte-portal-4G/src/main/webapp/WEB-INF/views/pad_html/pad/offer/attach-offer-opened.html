@@ -96,4 +96,12 @@
 			AttachOffer.openedServList.push(servOpen);
 		}
 	}
+	//页面加载完之后执行js是否有互斥的销售品
+	$(function(){
+		var isExcludeDepend = query.common.queryPropertiesStatus("EXCLUDEDEPEND_FLAG_" + String(OrderInfo.staff.areaId).substr(0, 3));
+		if(isExcludeDepend == true){
+			query.offer.queryExcludeDependBomb(openMap, prodId);
+		}
+		
+	})
 </script>		

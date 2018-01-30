@@ -566,7 +566,7 @@ query.offer = (function() {
 			var nowDate = new Date().getFullYear() + (new Date().getMonth() + 1 < 10 ? "0"+(new Date().getMonth() + 1):new Date().getMonth() + 1);
 			for(var i = 0;i < needDelOfferLists.length;i++){
 				//调后台互斥查询接口前，通过已订购返回的数据判断互斥可选包是否当月失效，若是当月失效则不需要判断互斥
-				if((needDelOfferLists[i].expDate).substr(0,6) - nowDate <= 0){
+				if((ec.util.isObj(needDelOfferLists[i].expDate) && (needDelOfferLists[i].expDate).substr(0,6) - nowDate >= 0) || (!ec.util.isObj(needDelOfferLists[i].expDate))){
 					//遍历拿到所有的offerSpecId
 					var offerSpecId = needDelOfferLists[i].offerSpecId;
 					saveOrderedOfferSpecIds.push(offerSpecId);
