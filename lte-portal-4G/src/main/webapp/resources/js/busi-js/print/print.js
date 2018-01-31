@@ -1335,7 +1335,7 @@ common.print = (function($){
 							if(ec.util.isArray(auxiliaryFunctionList)){
 								var isSuccess = false;
 								$.each(auxiliaryFunctionList,function(){
-									isSuccess = !!eval(this);
+									isSuccess = (!!eval(this.toString())) && isSuccess;
 								});
 								if(isSuccess){
 									isPrint = true;
