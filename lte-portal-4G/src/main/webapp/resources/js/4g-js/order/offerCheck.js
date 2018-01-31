@@ -150,11 +150,49 @@ check.offer = (function() {
 
 		return orderedTimes;
 	};
+	
+	/**
+	 * 获取互斥依赖关系的结果
+	 */
+	var _getExcludeDependData = function(){
+		var queryExcludeDependData = OrderInfo.queryExcludeDependData;
+		OrderInfo.queryExcludeDependData = {};//缓存值data清空
+		OrderInfo.saveOrderedOfferSpecIds = []; //缓存OfferSpecId数据清除
+		var excludeMessageList = queryExcludeDependData.result.offerSpec.exclude;
+		var info = "";
+		var offerSpecIds = ""; 
+		if(excludeMessageList.length > 0){
+			for(var i = 0;i < excludeMessageList.length; i++){
+				info += excludeMessageList[i].offerSpecName + ",";
+				offerSpecIds += excludeMessageList[i].offerSpecId + ",";
+			}
+			info = info.substr(0, info.length-1);
+			offerSpecIds = offerSpecIds.substr(0, offerSpecIds.length-1);
+			info = info + "的销售品与新套餐存在互斥关系，请确认是否退订";
+			var offerSpecIdArray = offerSpecIds.split(",");
+			$.confirm("信息确认",info,{
+			    yesdo:function(){
+			    	for(var i=0;i<offerSpecIdArray.length;i++){
+			    		nowId = $("dd[offerspecid ='"+offerSpecIdArray[i]+"']").attr("id");
+			    		for(var j = 0;j<nowId.length;j++){
+			    			var needIds = nowId.split("_");
+			    			AttachOffer.delOfferBomb(needIds[1], needIds[2]);
+			    		}
+			    	}
+			    },
+			    no:function(){
+				   
+			    }
+		    });
+			
+		}
+	}
 
 	return {
 		feeType					:_feeType,
 		orderTimes				:_orderTimes,
-		getOrderedTimesInPeriod	:_getOrderedTimesInPeriod
+		getOrderedTimesInPeriod	:_getOrderedTimesInPeriod,
+		getExcludeDependData    :_getExcludeDependData
 	};
 })();
 $(function() {});

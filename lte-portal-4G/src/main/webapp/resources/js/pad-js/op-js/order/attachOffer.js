@@ -1738,6 +1738,36 @@ AttachOffer = (function() {
 		}
 	};
 	
+	//删除附属销售品实例PC端弹框
+	var _delOfferBomb = function(prodId, offerId) {
+		var $div = $("#li_span_" + prodId + "_" + offerId).parent(); //定位删除的附属
+		//退订
+		var offer = CacheData.getOffer(prodId, offerId);
+		if (!ec.util.isArray(offer.offerMemberInfos)) {
+		    var param = {
+		        prodId: prodId,
+		        areaId: OrderInfo.getProdAreaId(prodId),
+		        offerId: offerId
+		    };
+		    param.acctNbr = OrderInfo.getAccessNumber(prodId);
+		    var data = query.offer.queryOfferInst(param);
+		    if (data == undefined) {
+		        return;
+		    }
+		    offer.offerMemberInfos = data.offerMemberInfos;
+		    offer.offerSpec = data.offerSpec;
+		}
+		var content = "";
+		if (offer.offerSpec != undefined) {
+		    content = CacheData.getOfferProdStr(prodId, offer, 1);
+		} else {
+		    content = '退订【' + $div.text() + '】可选包';
+		}
+		offer.isdel = "Y";
+		$div.addClass("deldiv");
+		delServByOffer(prodId, offer);
+	};
+	
 	//关闭服务规格
 	var _closeServSpec = function(prodId,servSpecId,specName,ifParams){
 		var $div = $("#li_span_"+prodId+"_"+servSpecId).parent(); //定位删除的附属
@@ -4571,6 +4601,7 @@ AttachOffer = (function() {
 		addSearchOfferSpec	:_addSearchOfferSpec,
 		dbClickAttachType :_dbClickAttachType,
 		changereserveCode:_changereserveCode,
-		delServSpec             : _delServSpec
+		delServSpec             : _delServSpec,
+		delOfferBomb:_delOfferBomb
 	};
 })();
