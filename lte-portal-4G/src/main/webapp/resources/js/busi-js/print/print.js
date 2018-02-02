@@ -1333,9 +1333,9 @@ common.print = (function($){
 						if(ec.util.isObj(auxiliaryFunctions)){
 							const auxiliaryFunctionList = auxiliaryFunctions[String(OrderInfo.actionFlag)];
 							if(ec.util.isArray(auxiliaryFunctionList)){
-								var isSuccess = false;
+								var isSuccess = true;
 								$.each(auxiliaryFunctionList,function(){
-									isSuccess = !!eval(this);
+									isSuccess = (!!eval(this.toString())) && isSuccess;
 								});
 								if(isSuccess){
 									isPrint = true;
