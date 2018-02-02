@@ -5,5 +5,4 @@ target/
 bin/
 RemoteSystemsTempFiles/
 Servers/
-.settings/
 unifyLogin/build/
