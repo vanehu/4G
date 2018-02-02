@@ -1,5 +1,8 @@
 package com.al.lte.portal.bmo.crm;
 
+import java.io.ByteArrayInputStream;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -10,7 +13,16 @@ import java.util.regex.Pattern;
 
 import com.al.ecs.common.util.CryptoUtils;
 import com.al.ecs.common.util.MD5Utils;
+import com.al.lte.portal.common.print.FileHandle;
 import com.ibm.icu.text.SimpleDateFormat;
+import com.lowagie.text.Document;
+import com.lowagie.text.pdf.PdfCopy;
+import com.lowagie.text.pdf.PdfImportedPage;
+import com.lowagie.text.pdf.PdfReader;
+
+import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
 
 public class Testxx {
 
@@ -20,14 +32,72 @@ public class Testxx {
 			22, -63 };
 
 	public static void main(String[] args) {
-		//test4();
-//		String xxx = "����ͻ�";
-//		toConvert(xxx);
+		testMergepdf2();
+	}
+	
+	public static void testMergepdf2() {
+		String file0 = "D:/qwerty/CtgPrintCustomerAgreement.jasper";
+		String file1 = "D:/qwerty/CtgPrintCustomerAgreement-2.jasper";
+		String newFile = "D:/qwerty/newFile.pdf";
+		String[] files = {file0, file1};
+		
+		try {
+			Document document = new Document();
+			OutputStream os = new FileOutputStream(newFile);
+			PdfCopy pdfcopy = new PdfCopy(document, os);
+			document.open();
+			
+			for(int i = 0, length = files.length; i < length; i++){
+				byte[] appendJasper = FileHandle.readJasper(files[i]);
+				ByteArrayInputStream inputStream = new ByteArrayInputStream(appendJasper);
+				JasperPrint jasperPrint = JasperFillManager.fillReport(inputStream, null);
+				byte[] newJasperBytes = JasperExportManager.exportReportToPdf(jasperPrint);
+				PdfReader pdfReader = new PdfReader(newJasperBytes);
+				for(int j = 1, pages = pdfReader.getNumberOfPages(); j <= pages; j++){
+//					document.newPage();
+					PdfImportedPage pdfImportedPage = pdfcopy.getImportedPage(pdfReader, j);
+					pdfcopy.addPage(pdfImportedPage);
+				}
+			}
+			document.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	public static void testMergepdf() {
+		String file0 = "D:/qwerty/voucher.pdf";
+		String file1 = "D:/qwerty/voucher-Copy.pdf";
+//		String file2 = "D:/qwerty/CtgPrintCustomerAgreement.pdf";
+		String newFile = "D:/qwerty/newFile.pdf";
+		String[] files = {file0, file1};
+		
+		try {
+			Document document = new Document();
+			OutputStream os = new FileOutputStream(newFile);
+			PdfCopy pdfcopy = new PdfCopy(document, os);
+			document.open();
+			
+			for(int i = 0, length = files.length; i < length; i++){
+				PdfReader pdfReader = new PdfReader(files[i]);
+				for(int j = 1, pages = pdfReader.getNumberOfPages(); j <= pages; j++){
+//					document.newPage();
+					PdfImportedPage pdfImportedPage = pdfcopy.getImportedPage(pdfReader, j);
+					pdfcopy.addPage(pdfImportedPage);
+				}
+			}
+			document.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void test0() {
 		String str  = "171025-094715-2683{\"orderList\":{\"orderListInfo\":{\"isTemplateOrder\":\"N\",\"templateType\":1,\"shareArea\":\"\",\"staffId\":\"5176843\",\"channelId\":\"1385688\",\"areaId\":\"8320400\",\"partyId\":\"700000644752\",\"olTypeCd\":11,\"actionFlag\":3,\"custOrderAttrs\":[{\"itemSpecId\":\"800000036\",\"value\":\"1300\"},{\"itemSpecId\":\"8000066\",\"value\":\"1508896031257677\"},{\"itemSpecId\":\"111111199\",\"value\":\"N\"},{\"itemSpecId\":\"111111113\",\"value\":\"2017-10-25 09:46:46\"},{\"itemSpecId\":\"800000046\",\"value\":\"Firefox:49.0\"},{\"itemSpecId\":\"800000047\",\"value\":\"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:49.0) Gecko/20100101 Firefox/49.0\"},{\"itemSpecId\":\"800000048\",\"value\":130000061102},{\"itemSpecId\":\"30010024\",\"value\":14},{\"itemSpecId\":\"30010050\",\"value\":\"2017-10-25 09:46:24\"},{\"itemSpecId\":\"111111196\",\"value\":\"1508896031233826\"}],\"soNbr\":\"1508896031233826\"},\"custOrderList\":[{\"busiOrder\":[{\"areaId\":\"8320400\",\"busiOrderInfo\":{\"seq\":-3},\"busiObj\":{\"instId\":-3,\"objId\":83032,\"offerTypeCd\":2,\"objName\":\"4G包月流量包201504 100元\",\"accessNumber\":\"17712755267\"},\"boActionType\":{\"actionClassCd\":1200,\"boActionTypeCd\":\"S1\"},\"data\":{\"ooOwners\":[{\"partyId\":\"700000644752\",\"state\":\"ADD\"}],\"ooRoles\":[{\"prodId\":700022219734,\"offerRoleId\":34157,\"objId\":235010000,\"objType\":2,\"relaType\":\"1000\",\"state\":\"ADD\",\"objInstId\":700022219734},{\"prodId\":700022219734,\"offerRoleId\":34157,\"objId\":235010008,\"objType\":4,\"relaType\":\"1001\",\"state\":\"ADD\",\"objInstId\":\"700022220148\"},{\"prodId\":700022219734,\"offerRoleId\":34157,\"objId\":235010003,\"objType\":4,\"relaType\":\"1001\",\"state\":\"ADD\",\"objInstId\":\"700022220138\"}]}},{\"areaId\":\"8320400\",\"busiOrderInfo\":{\"seq\":-4},\"busiObj\":{\"instId\":-4,\"objId\":83129,\"offerTypeCd\":2,\"objName\":\"买一赠一流量包促销2015年5月-促销\",\"accessNumber\":\"17712755267\"},\"boActionType\":{\"actionClassCd\":1200,\"boActionTypeCd\":\"S1\"},\"data\":{\"ooOwners\":[{\"partyId\":\"700000644752\",\"state\":\"ADD\"}],\"ooRoles\":[{\"prodId\":700022219734,\"offerRoleId\":34296,\"objId\":235010000,\"objType\":2,\"relaType\":\"1000\",\"state\":\"ADD\",\"objInstId\":700022219734},{\"prodId\":700022219734,\"offerRoleId\":34296,\"objId\":235010008,\"objType\":4,\"relaType\":\"1001\",\"state\":\"ADD\",\"objInstId\":\"700022220148\"},{\"prodId\":700022219734,\"offerRoleId\":34296,\"objId\":235010003,\"objType\":4,\"relaType\":\"1001\",\"state\":\"ADD\",\"objInstId\":\"700022220138\"}]}}]}]},\"token\":\"\",\"sign\":\"\"}";
 		String s = "1@!@!@!@e3ewdsd3\"{\":设计大赛";
 		String strs = MD5Utils.encode(str);
 		System.out.println(strs.toUpperCase());
-		//regTest();
 	}
 
 	public static void test1() {

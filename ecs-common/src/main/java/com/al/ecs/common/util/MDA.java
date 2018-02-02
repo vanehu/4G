@@ -61,6 +61,11 @@ public class MDA {
 	public static final String FOREGIN_LIVE = new String("");
 	
 	/**
+	 * 新控件，外国人居住证分省级开关
+	 */
+	public static final Map<String,String> FOREGIN_LIVE_FLAG = new HashMap<String,String>();
+	
+	/**
 	 * 宽带甩单过csb的http地址
 	 */
 	public static final String CSB_HTTP_MIDDLE_URL=new String("");
@@ -700,5 +705,5 @@ public class MDA {
 	public static final String WRITE_FILTER_LOG_FLAG = new String("");
 	
 	/**回执打印分省配置*/
-	public static final Map<String, Map<String,	String>> PDF_PRINT_CONFIG = new HashMap<String, Map<String,	String>>();
+	public static final Map<String, Object> PDF_PRINT_CONFIG = new HashMap<String, Object>();
 }

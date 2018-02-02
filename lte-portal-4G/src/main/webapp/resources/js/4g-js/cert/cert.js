@@ -94,6 +94,13 @@ cert = (function() {
 	 * 读取二代证
 	 */
 	var _readCert = function(servCode) {
+		//判断传递过来的数据是否包含证件类型
+		var regNumber = /\d+/; //验证0-9的任意数字最少出现1次
+		var servCodeIdType = "";
+		if(ec.util.isObj(servCode) && regNumber.test(servCode)){
+			servCodeIdType = servCode.split("+")[1];
+			servCode = servCode.split("+")[0];
+		}
 	    if (CertCtl == null || CertCtl == undefined) {
 	    	return {"resultFlag": -1, "errorMsg": "浏览器不支持读卡器"};
 	    }
@@ -179,6 +186,10 @@ cert = (function() {
 				    if(OrderInfo.order.portalId!=null&&OrderInfo.order.portalId!=undefined&&OrderInfo.order.portalId!=""){
 				    	certInfo.portalId=OrderInfo.order.portalId;
 			    	}
+				    //把营业员选择的证件类型作为参数传递过去
+				    if(servCodeIdType != ""){
+				    	certInfo.servCodeIdType = servCodeIdType;
+				    }
 	    		    url = contextPath + "/cert/certInfo";
 				    var response = $.callServiceAsJson(url,JSON.stringify(certInfo));
 				    if (response.code == 0) {

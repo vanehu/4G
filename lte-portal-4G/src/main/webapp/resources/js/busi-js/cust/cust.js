@@ -314,6 +314,21 @@ order.cust = (function(){
 	};
 	//客户定位证件类型选择事件
 	var _custidentidiesTypeCdChoose = function(scope,id) {
+		var p_cust_identityCdIsExit = $("#p_cust_identityCd").val();
+		//加入客户定位的时候是否展示读卡按钮
+		if(p_cust_identityCdIsExit == "1" || p_cust_identityCdIsExit == "50" || p_cust_identityCdIsExit == "51" || p_cust_identityCdIsExit == "52"){
+			$("#readCertBtn").show();
+		}else{
+			$("#readCertBtn").hide();
+		}
+		//开关打开的情况下，外国人定位必须要求读卡
+		var isForeginLive = query.common.queryPropertiesStatus("FOREGIN_LIVE_FLAG_" + String(OrderInfo.staff.areaId).substr(0, 3));
+		if(isForeginLive == true && p_cust_identityCdIsExit == "50"){
+			$("#p_cust_identityNum").attr("disabled","true");
+		}else{
+			$("#p_cust_identityNum").removeAttr("disabled");
+		}
+		
 		// 非接入号隐藏产品类别选择
 		$("#prodTypeCd").hide();
 		$("#"+id).val("");
@@ -512,7 +527,9 @@ order.cust = (function(){
 		}
 		//判断经办人证件类型是否在显示读卡按钮的配置中
 		var ifHandleReadButton = _ifHandleReadButton(identidiesTypeCd);
-		if (ifHandleReadButton || (identidiesTypeCd == 50 && cookieLessFOR == "ON")) {
+		//判断外国人的分省开关是否读卡
+		var foreginLiveKey = query.common.queryPropertiesStatus("FOREGIN_LIVE_FLAG_" + String(OrderInfo.staff.areaId).substr(0, 3));
+		if (ifHandleReadButton || (identidiesTypeCd == 50 && cookieLessFOR == "ON") || foreginLiveKey == true && identidiesTypeCd == 50) {
 			/*$("#"+id).attr("placeHolder","请输入合法身份证号码");
 			$("#"+id).attr("data-validate","validate(idCardCheck18:请输入合法身份证号码) on(blur)");*/
 			// 新建客户身份证读卡，隐藏表单
@@ -2631,7 +2648,7 @@ order.cust = (function(){
 	};
 	//定位客户时读卡
 	var _readCert = function() {
-		var man = cert.readCert(CONST.CERT_READER_QUERY_CUST);
+		var man = cert.readCert(CONST.CERT_READER_QUERY_CUST + "+" + $("#p_cust_identityCd").val());
 		if (man.resultFlag != 0){
 			if(man.resultFlag==-3){
 				//版本需要更新特殊处理 不需要提示errorMsg
@@ -2661,7 +2678,7 @@ order.cust = (function(){
 		$('#td_custIdCard').data("flag", "1");
 		$inputFlag = $("<input type='hidden' id='createFlag' value='1'/>");
 		$("#createUserbtn").append($inputFlag);
-		var man = cert.readCert(CONST.CERT_READER_CREATE_CUST);
+		var man = cert.readCert(CONST.CERT_READER_CREATE_CUST + "+" + $("#identidiesTypeCd").val());
 		$("#createFlag").remove();
 		//var man=cert.test();
 		if (man.resultFlag != 0){
@@ -2761,7 +2778,7 @@ order.cust = (function(){
 	// 新建客户经办人读卡
 	var _readCertWhenCustCAttr = function() {
 		var servCode="经办人";
-		man = cert.readCert(servCode);
+		man = cert.readCert(servCode + "+" + $("#custCAttrIdentidiesTypeCd").val());
 		if (man.resultFlag != 0){
 			if(man.resultFlag==-3){
 					//版本需要更新特殊处理 不需要提示errorMsg
@@ -3499,7 +3516,7 @@ order.cust = (function(){
 
 	// 填单页面经办人读卡
 	var _readCertWhenOrder = function() {
-		man = cert.readCert(CONST.CERT_READER_HANDLE_CUST);
+		man = cert.readCert(CONST.CERT_READER_HANDLE_CUST + "+" + $("#orderIdentidiesTypeCd").val());
 		if (man.resultFlag != 0){
 			if(man.resultFlag==-3){
 					//版本需要更新特殊处理 不需要提示errorMsg

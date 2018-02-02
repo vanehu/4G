@@ -157,6 +157,10 @@ common.print = (function($){
 		common.print.printVoucher(voucherInfo);
 	};
 	var _printVoucher=function(voucherInfo){
+		if (common.print.isPrintCustomerAgreement()) {
+	        voucherInfo["printType"] = "customerAgreementPrint";
+	        voucherInfo["busitypeFlag"] = OrderInfo.actionFlag;
+	    }
 		$("#voucherForm").remove();
 		if(_getCookie('_session_pad_flag')=='1'){
 			var arr=new Array(3);
@@ -1068,6 +1072,46 @@ common.print = (function($){
 		    })).appendTo("body").submit();
 		}
 	};
+
+	var _isPrintCustomerAgreement = function(){
+		var isPrint = false;
+		//1.看开关
+		const provConfig = query.common.queryPropertiesMapValue("PDF_PRINT_CONFIG" ,"PDF_PRINT_CONFIG_" + String(OrderInfo.staff.areaId).substr(0, 3));
+		if(ec.util.isObj(provConfig)){
+			//2.取配置
+			const actionFlagList = provConfig["actionFlagList"];//业务动作配置
+			const auxiliaryFunctions = provConfig["auxiliaryFunctions"];//辅助函数
+			const jasperNames = provConfig["jasperNames"];//模板配置
+			if(ec.util.isObj(jasperNames) && ec.util.isArray(actionFlagList)){
+				//3.业务动作
+				if($.inArray(String(OrderInfo.actionFlag), actionFlagList) >= 0){
+					const jasperName = jasperNames[String(OrderInfo.actionFlag)];
+					if(ec.util.isObj(jasperName)){
+						//4.辅助函数
+						if(ec.util.isObj(auxiliaryFunctions)){
+							const auxiliaryFunctionList = auxiliaryFunctions[String(OrderInfo.actionFlag)];
+							if(ec.util.isArray(auxiliaryFunctionList)){
+								var isSuccess = true;
+								$.each(auxiliaryFunctionList,function(){
+									isSuccess = (!!eval(this.toString())) && isSuccess;
+								});
+								if(isSuccess){
+									isPrint = true;
+								}
+							} else{
+								isPrint = true;
+							}
+						} else{
+							isPrint = true;
+						}
+					}
+				}
+			}
+		}
+		
+		return isPrint;
+	};
+
 	return {
 		preVoucher:_preVoucher,
 		printVoucher:_printVoucher,
@@ -1079,7 +1123,8 @@ common.print = (function($){
 		chkInput : _chkInput,
 		printInvoice : _printInvoice,
 		preSign:_preSign,
-		signVoucher:_signVoucher
+		signVoucher:_signVoucher,
+		isPrintCustomerAgreement:_isPrintCustomerAgreement
 	};
 })(jQuery);
 

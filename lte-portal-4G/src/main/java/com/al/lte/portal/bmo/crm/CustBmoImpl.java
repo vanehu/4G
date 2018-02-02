@@ -506,9 +506,10 @@ public class CustBmoImpl implements CustBmo {
 		String partyTypeCd=paramMap.get("partyTypeCd")!=null ? String.valueOf(paramMap.get("partyTypeCd")):"";//客户类型
 		
 		List<Map<String,Object>> cardTypeList=null;
-		
-		if(idCardType!=null && idCardType instanceof List && partyTypeCd!=null && !"".equals(partyTypeCd)){
-			cardTypeList=(List<Map<String, Object>>)idCardType;
+		Map<String,Object> cardTypeListMap = new HashMap<String,Object>();
+		if(idCardType!=null && partyTypeCd!=null && !"".equals(partyTypeCd)){
+			cardTypeListMap = (Map<String, Object>) idCardType;
+			cardTypeList = (List<Map<String, Object>>) cardTypeListMap.get(sessionStaff.getAreaId().substring(0,3));
 			
 			if(cardTypeList!=null && cardTypeList.size()!=0){
 				for(Map<String, Object> cardTypeInfo:cardTypeList){
@@ -545,8 +546,8 @@ public class CustBmoImpl implements CustBmo {
 					cardTypeList=new ArrayList<Map<String,Object>>();
 					cardTypeList.add(cardMap);
 				}
-				
-				Const.ID_CARD_TYPE=cardTypeList;
+				cardTypeListMap.put(sessionStaff.getAreaId().substring(0,3), cardTypeList);
+				Const.ID_CARD_TYPE=cardTypeListMap;
 				//将数据信息保存到缓存-end
 			} else {
 				result.put("code", ResultCode.R_FAIL);

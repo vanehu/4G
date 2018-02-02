@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.al.ecs.common.util.MDA;
 import com.al.ecs.spring.annotation.log.LogOperatorAnn;
 import com.al.lte.portal.bmo.crm.MktResBmo;
+import com.al.lte.portal.bmo.crm.MktResBmoImpl;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
@@ -42,9 +43,7 @@ import com.al.lte.portal.model.SessionStaff;
  */
 public class OrderInfoFilter extends OncePerRequestFilter {
 
-	@Autowired
-	@Qualifier("com.al.lte.portal.bmo.crm.MktResBmo")
-	private MktResBmo mktResBmo;
+	private MktResBmo mktResBmo = new MktResBmoImpl();
 
 	private static Log log = Log.getLog(OrderInfoFilter.class);
 	 
@@ -138,14 +137,6 @@ public class OrderInfoFilter extends OncePerRequestFilter {
 				//(String) ServletUtils.getSessionAttribute(request, SysConstant.SESSION_KEY_CHANNEL+"_"+sessionStaff.getStaffId());
 				if(StringUtils.isNotBlank(areaId_value) && StringUtils.isNotBlank(channelId_value))
 				{
-					for(RegexAndReplacement regexAndReplacement : regexAndReplacements2){
-	                     newJson = regexAndReplacement.getPattern().matcher(newJson).replaceAll(regexAndReplacement.getReplacement().replaceAll(CUR_CHANNEL_ID_EXPR, channelId_value));
-					}
-					int index = newJson.indexOf("custOrderList");
-					for(RegexAndReplacement regexAndReplacement : regexAndReplacements){
-	                    newJson = newJson.substring(0,index) + regexAndReplacement.getPattern().matcher(newJson.substring(index, newJson.length()))
-	                    		.replaceAll(regexAndReplacement.getReplacement().replaceAll(CUR_AREA_ID_EXPR, areaId_value));
-					}
                     List<String> list = (List<String>) ServletUtils.getSessionAttribute(request, SysConstant.SESSION_KEY_AGREEMENT+"_"+sessionStaff.getStaffId());
 					List<String> list2 = (List<String>) ServletUtils.getSessionAttribute(request, SysConstant.SESSION_KEY_NUMBER+"_"+sessionStaff.getStaffId());
 					List<String> list3 = (List<String>) ServletUtils.getSessionAttribute(request, SysConstant.SESSION_KEY_TERMINAL+"_"+sessionStaff.getStaffId());
