@@ -12,7 +12,7 @@ git update-index --assume-unchanged ./ecsp-core/.settings/org.eclipse.wst.common
 git update-index --assume-unchanged ./ecsp-parent/.settings/org.eclipse.core.resources.prefs
 git update-index --assume-unchanged ./ecsp-parent/.settings/org.eclipse.jdt.core.prefs
 git update-index --assume-unchanged ./ecsp-parent/.settings/org.eclipse.m2e.core.prefs
-git update-index --assume-unchanged ./ecsp-web/.externalToolBuilders/org.eclipse.wst.jsdt.core.javascriptValidator \(1\).launch
+git update-index --assume-unchanged ./ecsp-web/.externalToolBuilders/org.eclipse.wst.jsdt.core.javascriptValidator
 git update-index --assume-unchanged ./ecsp-web/.settings/org.eclipse.core.resources.prefs
 git update-index --assume-unchanged ./ecsp-web/.settings/org.eclipse.jdt.core.prefs
 git update-index --assume-unchanged ./ecsp-web/.settings/org.eclipse.m2e.core.prefs
@@ -50,3 +50,12 @@ git update-index --assume-unchanged ./lte-parent/.classpath
 git update-index --assume-unchanged ./lte-portal-4G/.classpath
 git update-index --assume-unchanged ./lte-service-client/.classpath
 git update-index --assume-unchanged ./servicePack-LteCore/.classpath
+
+git update-index --assume-unchanged ./unifyLogin/.settings/.jsdtscope
+git update-index --assume-unchanged ./unifyLogin/.settings/org.eclipse.core.resources.prefs
+git update-index --assume-unchanged ./unifyLogin/.settings/org.eclipse.jdt.core.prefs
+git update-index --assume-unchanged ./unifyLogin/.settings/org.eclipse.wst.common.component
+git update-index --assume-unchanged ./unifyLogin/.settings/org.eclipse.wst.common.project.facet.core.xml
+git update-index --assume-unchanged ./unifyLogin/.settings/org.eclipse.wst.jsdt.ui.superType.container
+git update-index --assume-unchanged ./unifyLogin/.settings/org.eclipse.wst.jsdt.ui.superType.name
+
