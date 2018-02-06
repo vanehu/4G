@@ -919,6 +919,7 @@ prod.transferModify = (function(){
 			"before":function(){
 				$.ecOverlay("<strong>正在查询中,请稍等...</strong>");
 			},"done" : function(response){
+				$.unecOverlay();
 				if(response.code != 0) {
 					$.alert("提示","客户鉴权失败,稍后重试");
 					return;
