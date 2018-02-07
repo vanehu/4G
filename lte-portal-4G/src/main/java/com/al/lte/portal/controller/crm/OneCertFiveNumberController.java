@@ -21,6 +21,7 @@ import com.al.lte.portal.bmo.crm.OrderBmo;
 import com.al.lte.portal.bmo.staff.StaffBmo;
 import com.al.lte.portal.common.Base64;
 import com.al.lte.portal.common.CommonMethods;
+import com.al.lte.portal.common.ExcelUtil;
 import com.al.lte.portal.common.SysConstant;
 import com.al.lte.portal.model.SessionStaff;
 import org.apache.commons.collections.MapUtils;
@@ -195,6 +196,9 @@ public class OneCertFiveNumberController extends BaseController {
                     list = (List<Map<String, Object>>) map.get("collectionOrderLists");
                     totalSize = MapUtils.getInteger(map, "totalCnt", 1);
                 }
+                model.addAttribute("totalResultNum", list.size());
+              //查询成功后，缓存当前的param，以便导出时查询所有数据
+                cartBmo.cacheParamsInSession(super.getRequest(), param, SysConstant.ONEFIVE_LIST);
                 PageModel<Map<String, Object>> pm = PageUtil.buildPageModel(nowPage, 10, totalSize < 1 ? 1
                         : totalSize, list);
                 if(nowPageModel != null){
@@ -243,6 +247,65 @@ public class OneCertFiveNumberController extends BaseController {
             log.error("采集单查询/order/queryCustCollectionList方法异常", e);
             return super.failedStr(model, ErrorCode.CLTORDER_LIST, e, param);
         }
+    }
+    /**
+     * 导出Excel
+     */
+   @SuppressWarnings("unchecked")
+   @RequestMapping(value = "/queryOneFiveListExport", method = {RequestMethod.POST, RequestMethod.GET})
+   @ResponseBody
+   public JsonResponse queryOneFiveListExport(@RequestParam Map<String, Object> param, Model model, HttpServletResponse response) {
+        SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_KEY_LOGIN_STAFF);
+        Map<String, Object> resultMap = null;
+        Map<String, Object> cachedParams = null;
+        String excelTitle = null;
+        String[][] headers = null;
+        String errorMsg = null;
+        String ifFilterOwnAccNbr = MapUtils.getString(param, "ifFilterOwnAccNbr", "");
+        if (SysConstant.STR_Y.equals(ifFilterOwnAccNbr)) {
+        	param.put("handleStaffId", sessionStaff.getStaffId());
+        }
+        cachedParams = cartBmo.getCachedParamsInSession(super.getRequest(), param, SysConstant.ONEFIVE_LIST);
+		if(cachedParams != null){
+			param = cachedParams;
+		}
+		param.put("nowPage", "1");
+		param.put("pageSize", "9999");
+        try {
+            List<Map<String,Object>> resultList = new ArrayList<Map<String,Object>>();
+            resultMap = cartBmo.queryCltCarts(param, null, sessionStaff);
+            if (resultMap != null && ResultCode.R_SUCC.equals(resultMap.get("resultCode").toString())){
+            	if(ifFilterOwnAccNbr != null && ifFilterOwnAccNbr != ""){
+            		 excelTitle = "OneFiveHandleList";
+                     String[][] tempHeaders = {
+                         {"orderNbr","areaName","channelName","staffName","staffCode","soDate","accept_date","telNbr"},
+                         {"流水号","受理地区","受理渠道","受理人","受理工号","受理时间","处理时限","联系方式"}
+                     };
+                     headers = tempHeaders;
+            	}else{
+            		excelTitle = "OneFiveQueryList";
+            		String[][] tempHeaders = {
+            				{"orderNbr","provFlag","areaName","channelName","staffName","staffCode","soDate","telNbr"},
+                            {"流水号","查询类型","受理地区","受理渠道","受理人","受理工号","受理时间","联系方式"}	
+            		};
+            		headers = tempHeaders;
+            	}
+                 Map<String, Object> map = (Map<String, Object>) resultMap.get("result");
+                 resultList = (List<Map<String, Object>>) map.get("collectionOrderLists");
+                 //resultList = (List<Map<String, Object>>) MapUtils.getMap(MapUtils.getMap(resultMap, "result"), "collectionOrderLists");
+                 if(resultList != null && resultList.size() > 0){
+                      ExcelUtil.exportExcelXls(excelTitle, headers, resultList, response, null);
+                 }
+            }else{
+            	errorMsg = resultMap.get("resultMsg").toString();
+				return super.failed(ErrorCode.CLTORDER_LIST, new Exception(errorMsg), param);
+            }
+        }catch (InterfaceException ie) {
+			return super.failed(ie, param, ErrorCode.CLTORDER_LIST);
+		} catch (Exception e) {
+        	return super.failed(ErrorCode.CLTORDER_LIST, e.getStackTrace().toString(), param);
+        }
+        return super.successed("导出成功！");
     }
 
     /**

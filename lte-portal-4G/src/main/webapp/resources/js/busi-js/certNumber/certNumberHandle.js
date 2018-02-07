@@ -169,6 +169,28 @@ oneFive.certNumberHandle = (function () {
             }
         });
     };
+    /**
+     * 导出Excel
+     */
+    var _queryOneFiveListExport = function(){
+    	var totalListNum = $("#queryOneFiveListTotalSize").val();
+    	if(totalListNum == null || totalListNum == "" || totalListNum == undefined || totalListNum <= 0){
+    		$.alert("提示信息","没有数据可导出，请先查询符合条件的数据");
+    		return ;
+    	}
+        var areaId = $("#p_areaId").val();
+        var startDt = $("#p_startDt").val().replace(/-/g, '');
+        var endDt = $("#p_endDt").val().replace(/-/g, '');
+        var statusCd = $("#dealOrder").val();
+        var ifFilterOwnAccNbr = $("#onlyMe").val();
+        var url = contextPath+"/certNumber/queryOneFiveListExport?areaId=" + areaId
+        + "&statusCd=" + statusCd
+        + "&ifFilterOwnAccNbr=" + ifFilterOwnAccNbr
+        + "&startDt=" + startDt
+        + "&endDt="   + endDt;
+        $("#queryOneFiveListExport").attr("action", url);
+        $("#queryOneFiveListExport").submit();
+    }
 
     /**
      * 返回主页面
@@ -487,6 +509,7 @@ oneFive.certNumberHandle = (function () {
         orderReceive: _orderReceive,
         orderReset: _orderReset,
         orderCancel: _orderCancel,
+        queryOneFiveListExport:_queryOneFiveListExport,
         queryAllDetail:_queryAllDetail
     }
 })();

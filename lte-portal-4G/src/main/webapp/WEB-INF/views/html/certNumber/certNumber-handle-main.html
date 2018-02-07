@@ -68,6 +68,9 @@
                             <dd>
                                 <input type="button" value="查询" class="numberSearch" id="bt_15handleQry"/>
                             </dd>
+                            <dd>
+                            	<input type="button" value="导出Excel" class="numberSearch" onclick="oneFive.certNumberHandle.queryOneFiveListExport()" />
+                            </dd>
                         </dl>
                     </div>
                     <!--订单列表-->
@@ -92,6 +95,7 @@
                     </div>
                 </div>
             </div>
+            <form method="post" id="queryOneFiveListExport"></form>
         </div>
         <!--订单准备 end-->
     </div>
