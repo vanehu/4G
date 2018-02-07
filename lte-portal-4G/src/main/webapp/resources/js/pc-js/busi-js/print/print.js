@@ -1076,20 +1076,20 @@ common.print = (function($){
 	var _isPrintCustomerAgreement = function(){
 		var isPrint = false;
 		//1.看开关
-		const provConfig = query.common.queryPropertiesMapValue("PDF_PRINT_CONFIG" ,"PDF_PRINT_CONFIG_" + String(OrderInfo.staff.areaId).substr(0, 3));
+		var provConfig = query.common.queryPropertiesMapValue("PDF_PRINT_CONFIG" ,"PDF_PRINT_CONFIG_" + String(OrderInfo.staff.areaId).substr(0, 3));
 		if(ec.util.isObj(provConfig)){
 			//2.取配置
-			const actionFlagList = provConfig["actionFlagList"];//业务动作配置
-			const auxiliaryFunctions = provConfig["auxiliaryFunctions"];//辅助函数
-			const jasperNames = provConfig["jasperNames"];//模板配置
+			var actionFlagList = provConfig["actionFlagList"];//业务动作配置
+			var auxiliaryFunctions = provConfig["auxiliaryFunctions"];//辅助函数
+			var jasperNames = provConfig["jasperNames"];//模板配置
 			if(ec.util.isObj(jasperNames) && ec.util.isArray(actionFlagList)){
 				//3.业务动作
 				if($.inArray(String(OrderInfo.actionFlag), actionFlagList) >= 0){
-					const jasperName = jasperNames[String(OrderInfo.actionFlag)];
+					var jasperName = jasperNames[String(OrderInfo.actionFlag)];
 					if(ec.util.isObj(jasperName)){
 						//4.辅助函数
 						if(ec.util.isObj(auxiliaryFunctions)){
-							const auxiliaryFunctionList = auxiliaryFunctions[String(OrderInfo.actionFlag)];
+							var auxiliaryFunctionList = auxiliaryFunctions[String(OrderInfo.actionFlag)];
 							if(ec.util.isArray(auxiliaryFunctionList)){
 								var isSuccess = true;
 								$.each(auxiliaryFunctionList,function(){
