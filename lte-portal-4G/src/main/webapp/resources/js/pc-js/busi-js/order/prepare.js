@@ -521,6 +521,14 @@ order.prepare = (function(){
 		}
 	};
 	
+	var _isPreInstall = function () {
+		if (CONST.USER_PRE_INSTALLED == $("#iPreInstall").val()) {
+            return true;
+        } else {
+            return false;
+        }
+    };
+	
 	return {
 		tabChange:_tabChange,
 		phoneNumDialog:_phoneNumDialog,
@@ -531,7 +539,8 @@ order.prepare = (function(){
 		hideOrderTitle : _hideOrderTitle,
 		backToInit:_backToInit,
 		releaseUIM:_releaseUIM,
-		createorderlonger:_createorderlonger
+		createorderlonger:_createorderlonger,
+		isPreInstall:_isPreInstall
 	};
 })();
 //初始化

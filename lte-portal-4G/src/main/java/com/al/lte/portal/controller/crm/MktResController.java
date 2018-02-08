@@ -40,6 +40,7 @@ import com.al.ecs.common.util.JsonUtil;
 import com.al.ecs.common.util.MapUtil;
 import com.al.ecs.common.util.PageUtil;
 import com.al.ecs.common.util.PropertiesUtils;
+import com.al.ecs.common.util.XmlUtil;
 import com.al.ecs.common.web.HttpUtils;
 import com.al.ecs.common.web.ServletUtils;
 import com.al.ecs.exception.AuthorityException;
@@ -57,7 +58,6 @@ import com.al.lte.portal.bmo.crm.OrderBmo;
 import com.al.lte.portal.bmo.staff.StaffBmo;
 import com.al.lte.portal.bmo.staff.StaffChannelBmo;
 import com.al.lte.portal.common.CommonMethods;
-import com.al.lte.portal.common.CommonUtils;
 import com.al.lte.portal.common.EhcacheUtil;
 import com.al.lte.portal.common.ExcelUtil;
 import com.al.lte.portal.common.IDCard;
@@ -1628,6 +1628,13 @@ public class MktResController extends BaseController {
 				param.put("areaId", areaId.substring(0, 5) + "00"); 
 			}
 			
+			//ESS页面操作，获取下ip
+			String essWriteCard = (String)param.get("essWriteCard");
+			if(StringUtils.isNotBlank(essWriteCard) && essWriteCard.equals("Y")){
+				String ip = ServletUtils.getIpAddr(super.getRequest());
+				param.put("ip", ip);
+			}
+			
 			rMap = mktResBmo.getCardInfo(param, flowNum, sessionStaff);
 			if (rMap != null&& ResultConstant.R_POR_SUCCESS.getCode().equals(MapUtils.getString(rMap, "code"))) {
 				jsonResponse=super.successed(rMap, ResultConstant.SUCCESS.getCode());
@@ -1650,12 +1657,15 @@ public class MktResController extends BaseController {
 		Map<String, Object> rMap = null;
 		JsonResponse jsonResponse = null;
 		Map<String, Object> logparam =  new HashMap<String, Object>();
+		String essWriteCard = null;
+		String cardInputTransId = null;
 		try {
 			String couponInstanceCode =  (String) (param.get("iccserial")==null?"":param.get("iccserial"));
 			String iccId = (String) (param.get("iccid")==null?"":param.get("iccid"));
 			int serviceCode = (Integer) (param.get("serviceCode")==null?"":param.get("serviceCode"));
 			String TransactionID = (String) (param.get("TransactionID")==null?"":param.get("TransactionID"));
 			String remark = (String) (param.get("remark")==null?"":param.get("remark"));
+			essWriteCard = (String)param.get("essWriteCard");
 			param.remove("serviceCode");
 			param.remove("TransactionID");
 			param.remove("remark");
@@ -1677,6 +1687,9 @@ public class MktResController extends BaseController {
 			logparam.put("extCustOrderId", extCustOrderId);
 			logparam.put("accNbr", accNbr);
 			param.put("StaffId", sessionStaff.getStaffId());
+			if(StringUtils.isNotBlank(essWriteCard) && essWriteCard.equals("Y")){
+				param.put("logparam", logparam);
+			}
 			rMap = mktResBmo.submitUimCardInfo(param, flowNum, sessionStaff);
 			if (rMap != null&& ResultCode.R_SUCC.equals(MapUtils.getString(rMap, "code"))) {
 				jsonResponse=super.successed(rMap, ResultConstant.SUCCESS.getCode());
@@ -1697,6 +1710,23 @@ public class MktResController extends BaseController {
 		}catch (InterfaceException ie) {
 			logparam.put("errDesc", ie.getErrStack());
 			logparam.put("result", ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+			//ESS页面操作的写卡，接口异常时需要获取白卡入库流水号
+			if(StringUtils.isNotBlank(essWriteCard) && essWriteCard.equals("Y")){
+				//处理尖括号，以免json解析报错
+				//logparam.put("errDesc", ie.getErrStack().replaceAll("<", "&lt;").replaceAll(">", "&gt;"));
+				String responseXmlStr = ie.getParamString();
+				if(StringUtils.isNotBlank(responseXmlStr)){
+					cardInputTransId = XmlUtil.getXMLNodeValue(responseXmlStr, "TransactionID", false);
+				}
+				String errStack = ie.getErrStack();
+				String errDesc = null;
+				if(StringUtils.isNotBlank(errStack)){
+					errDesc = XmlUtil.getXMLNodeValue(errStack, "SvcCont", false);
+				}
+				logparam.put("errDesc", errDesc);
+				logparam.put("contactRecord", cardInputTransId);
+				logparam.put("methodName", "cardInput");//记录白卡入库流水
+			}
 			return super.failed(ie, param, ErrorCode.QUERY_COUPON);
 		}catch (Exception e) {
 			this.log.error("写卡上报", e);
@@ -1705,6 +1735,13 @@ public class MktResController extends BaseController {
 			return super.failed(ErrorCode.COMPLETE_WRITE_CARD, e, param);
 		}finally{
 			try {
+				//ESS页面操作的写卡，需要处理区分下流水类型
+				if(StringUtils.isNotBlank(essWriteCard) && essWriteCard.equals("Y") && StringUtils.isBlank(cardInputTransId)){
+					if(MapUtils.isNotEmpty(rMap)){
+						logparam.put("contactRecord", rMap.get("cardInputTransId"));
+					}
+					logparam.put("methodName", "cardInput");//记录白卡入库流水
+				}
 				mktResBmo.intcardNubInfoLog(logparam, flowNum, sessionStaff);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block

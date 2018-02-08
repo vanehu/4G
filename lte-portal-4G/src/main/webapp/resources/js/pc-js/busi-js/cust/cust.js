@@ -3354,7 +3354,7 @@ order.cust = (function(){
     
     // 使用人读卡
 	var _readCertWhenUser = function() {
-		var man = cert.readCert(CONST.CERT_READER_USER);
+		var man = cert.readCert(CONST.CERT_READER_USER + "+" + $("#orderIdentidiesTypeCdB").val());
 		if (man.resultFlag != 0){
 			$.alert("提示", man.errorMsg);
 			return;

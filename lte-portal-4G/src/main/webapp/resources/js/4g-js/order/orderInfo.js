@@ -103,6 +103,10 @@ OrderInfo = (function() {
 		
 	var _offerSpec = {}; //主销售品构成
 	
+	//互斥数据缓存
+	var _saveOrderedOfferSpecIds = [];
+	var _queryExcludeDependData = {};
+	
 	var _offer = { //主销售品实例构成
 		offerId : "",
 		offerSpecId : "",
@@ -1592,7 +1596,7 @@ OrderInfo = (function() {
 		if(OrderInfo.actionFlag==41 || OrderInfo.actionFlag==42){//ess远程写卡、二次写卡
 			return OrderInfo.essOrderInfo.essOrder.zoneNumber;
 		}
-		if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==6 || OrderInfo.actionFlag==14){
+		if(OrderInfo.actionFlag==1 || OrderInfo.actionFlag==2 || OrderInfo.actionFlag==6 || OrderInfo.actionFlag==14){
 			for (var i = 0; i < OrderInfo.boProdAns.length; i++) {
 				var an = OrderInfo.boProdAns[i];
 				if(an.prodId == prodId){
@@ -2063,6 +2067,8 @@ OrderInfo = (function() {
         pushCertInfoKeys		:_pushCertInfoKeys,
         needCheckFlag           :_needCheckFlag,
         handleCustCertReadInfos	:_handleCustCertReadInfos,
-        getCustAgeByCheck       :_getCustAgeByCheck
+        getCustAgeByCheck       :_getCustAgeByCheck,
+        saveOrderedOfferSpecIds :_saveOrderedOfferSpecIds,
+        queryExcludeDependData  :_queryExcludeDependData
 	};
 })();

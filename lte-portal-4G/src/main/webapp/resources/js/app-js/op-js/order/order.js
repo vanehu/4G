@@ -342,12 +342,7 @@ order.service = (function(){
 						if(offerRole.memberRoleCd=="401"){
 							_newAddList.push(objInstId);
 						}
-						
-						if(offerRole.minQty == 0){ //加装角色
-							this.minQty = 0;
-							this.dfQty = 0;
-						}			
-						
+
 						//新装二次加载，副卡数量
 						if(OrderInfo.provinceInfo.reloadFlag&&OrderInfo.provinceInfo.reloadFlag=="N"){
 							this.dfQty = OrderInfo.reloadProdInfo.cardNum;
@@ -366,10 +361,10 @@ order.service = (function(){
 							max = nums;
 						}
 						
-						if(OrderInfo.newOrderNumInfo.mainPhoneNum!=""&&OrderInfo.newOrderNumInfo.newSubPhoneNum==""&&offerRole.memberRoleCd=="401"){
+						/*if(OrderInfo.newOrderNumInfo.mainPhoneNum!=""&&OrderInfo.newOrderNumInfo.newSubPhoneNum==""&&offerRole.memberRoleCd=="401"){
 							this.maxQty = 0;
 							max = 0;
-						}
+						}*/
 						
 						str+="<div class='form-group'>"
 							+"<label for='"+objInstId+"'>副卡数量:"+this.minQty+"-"+max+"(张)</label>"

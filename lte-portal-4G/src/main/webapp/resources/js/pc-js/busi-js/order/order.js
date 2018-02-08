@@ -290,11 +290,6 @@ order.service = (function(){
 						_newAddList.push(objInstId);
 					}
 					
-					if(offerRole.minQty == 0){ //加装角色
-						this.minQty = 0;
-						this.dfQty = 0;
-					}
-					
 					var max = this.maxQty<0?"不限制":this.maxQty;//主卡的最大数量
 					maxNum = max;
 					var min = this.minQty;
@@ -309,10 +304,10 @@ order.service = (function(){
 						max = nums;
 					}
 					
-					if(OrderInfo.newOrderNumInfo.mainPhoneNum!=""&&OrderInfo.newOrderNumInfo.newSubPhoneNum==""&&offerRole.memberRoleCd=="401"){
+					/*if(OrderInfo.newOrderNumInfo.mainPhoneNum!=""&&OrderInfo.newOrderNumInfo.newSubPhoneNum==""&&offerRole.memberRoleCd=="401"){
 						this.maxQty = 0;
 						max = 0;
-					}
+					}*/
 					
 					$tr.append("<td align='left' colspan='3'>"+this.objName+" :<i id='plan_no' style='margin-top: 3px; display: inline-block; vertical-align: middle;'>"+
 							"<a class='add' href='javascript:order.service.subNum(\""+objInstId+"\","+this.minQty+");'></a>"+

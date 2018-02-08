@@ -80,10 +80,10 @@ public class PdfPrintHelper {
             //InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(m_vJasperFileName);
             inputStream = new ByteArrayInputStream(byteJasperFile);
             
-            bytes = runReportToPdf(inputStream, hasParameters, new JREmptyDataSource(), pageWidth, pageHeigth);
+            bytes = runReportToPdf(inputStream, hasParameters, new JREmptyDataSource(), pageWidth, pageHeigth, null, null);
             bConvertOK = true;//转换成功
             
-            bytes = appendPrintControlScript(bytes);
+            bytes = appendPrintControlScript(bytes, null, null);
             bAppend = true;//追加打印控制脚步成功
         } catch (Exception exp) {
         	exp.printStackTrace();
@@ -113,7 +113,7 @@ public class PdfPrintHelper {
      * @return
      * @throws Exception
      */
-    public byte[] getPdfStreamWithParametersAndFields(Map<String, Object> hasParameters, Collection<Map<String, Object>> lstFields) throws Exception {
+    public byte[] getPdfStreamWithParametersAndFields(Map<String, Object> hasParameters, Collection<Map<String, Object>> lstFields, String busitypeFlag, String currentAreaId) throws Exception {
     	String strMsg = "";
         if(m_vJasperFileName == null || "".equals(m_vJasperFileName)){
             throw new Exception("异常：请先传入[pdf模板路径名称]来初始化本PdfPrintHelper类!");
@@ -126,10 +126,10 @@ public class PdfPrintHelper {
         try {
             inputStream = new ByteArrayInputStream(byteJasperFile);
             
-            bytes = runReportToPdf(inputStream, hasParameters, new ListDataSource(lstFields), pageWidth, pageHeigth);
+            bytes = runReportToPdf(inputStream, hasParameters, new ListDataSource(lstFields), pageWidth, pageHeigth, busitypeFlag, currentAreaId);
             bConvertOK = true;//转换成功
             
-            bytes = appendPrintControlScript(bytes);
+            bytes = appendPrintControlScript(bytes, busitypeFlag, currentAreaId);
             bAppend = true;//追加打印控制脚步成功
         } catch (Exception exp) {
         	exp.printStackTrace();
@@ -174,7 +174,7 @@ public class PdfPrintHelper {
         try {
             inputStream = new ByteArrayInputStream(byteJasperFile);
             
-            bytes = runReportToPdf(inputStream, hasParameters, new ListDataSource(lstFields), pageWidth, pageHeigth);
+            bytes = runReportToPdf(inputStream, hasParameters, new ListDataSource(lstFields), pageWidth, pageHeigth, null, null);
             bConvertOK = true;//转换成功
             
         } catch (Exception exp) {
@@ -303,7 +303,7 @@ public class PdfPrintHelper {
      * @return
      * @throws Exception
      */
-    public byte[] appendPrintControlScript(byte[] pdfStream) throws Exception {
+    public byte[] appendPrintControlScript(byte[] pdfStream, String busitypeFlag, String currentAreaId) throws Exception {
         
         PdfReader reader = new PdfReader(pdfStream);
  
@@ -322,6 +322,7 @@ public class PdfPrintHelper {
         //script.append("    this.closeDoc();\r\n");//导出的pdf文件：支持自动打印，但是不要关闭自己
  
         ByteArrayOutputStream bos = new ByteArrayOutputStream(pdfStream.length);
+
         PdfStamper stamp = new PdfStamper(reader, bos);
         
         if(m_vAutoPrint){//如果自动打印，则不要显示pdf控制栏，提高页面展示速度
@@ -339,16 +340,17 @@ public class PdfPrintHelper {
      * <p>接管Jasper工具类，自定义高度和宽度 这样就可以针对那种卡孔的发票进行连打了，即一个pdf中有多张发票或回执，可以连打出来。
      */
     public static byte[] runReportToPdf(InputStream inputStream,
-    		Map<String, Object> parameters, JRDataSource jrDataSource, int pageWidth, int pageHeigth) throws Exception  {
+    		Map<String, Object> parameters, JRDataSource jrDataSource, int pageWidth, int pageHeigth, String busiTypeFlag, String currentAreaId) throws Exception  {
     	JasperPrint jasperPrint ;
         jasperPrint = JasperFillManager.fillReport(inputStream, parameters, jrDataSource);
+
         if(pageWidth>0){
             jasperPrint.setPageWidth(pageWidth);
         }
         if(pageHeigth>0){
             jasperPrint.setPageHeight(pageHeigth);
         }
-        
+                
         //JasperExportManager.exportReportToPdfFile(jasperPrint,"e:\\NewTestPrint.pdf");
         
 		return JasperExportManager.exportReportToPdf(jasperPrint);

@@ -1494,7 +1494,6 @@ public class OrderController extends BaseController {
             HttpServletResponse response, HttpServletRequest request) {
         SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
                 SysConstant.SESSION_KEY_LOGIN_STAFF);
-
         try {
         	Map<String, Object> orderData =sessionStaff.getOrderData();
         	if(orderData!=null){
@@ -1792,6 +1791,7 @@ public class OrderController extends BaseController {
            openPrint = propertiesUtils.getMessage("OPENPRINTFLAG_"+sessionStaff.getAreaId().substring(0,3));
         }
         model.addAttribute("openPrint",openPrint);
+
         return "/order/order-cal-charge";
     }
 

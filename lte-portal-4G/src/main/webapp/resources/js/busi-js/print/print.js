@@ -190,37 +190,41 @@ common.print = (function($){
 		}
 	}
 		
-	var _printVoucher=function(voucherInfo){
-	 $("#voucherForm").remove();
-		if(_getCookie('_session_pad_flag')=='1'){
-			var arr=new Array(3);
-			if(ec.util.browser.versions.android){
-				arr[0]='print/voucher';				
-			}else{
-				arr[0]='print/iosVoucher';				
-			}
-			arr[1]='voucherInfo';
-			arr[2]=JSON.stringify(voucherInfo);
-			MyPlugin.printShow(arr,
-                function(result) {
-                },
-                function(error) {
-                }
-			);
-		}else{
-		    $("<form>", {
-		    	id: "voucherForm",
-		    	style: "display:none;",
-				target: "_blank",
-				method: "POST",
-				action: contextPath + "/print/voucher"
-		    }).append($("<input>", {
-		    	id : "voucherInfo",
-		    	name : "voucherInfo",
-		    	type: "hidden",
-		    	value: JSON.stringify(voucherInfo)
-		    })).appendTo("body").submit();
-		}
+	var _printVoucher = function (voucherInfo) {
+	    if (common.print.isPrintCustomerAgreement()) {
+	        voucherInfo["printType"] = "customerAgreementPrint";
+	        voucherInfo["busitypeFlag"] = OrderInfo.actionFlag;
+	    }
+	    $("#voucherForm").remove();
+	    if (_getCookie('_session_pad_flag') == '1') {
+	        var arr = new Array(3);
+	        if (ec.util.browser.versions.android) {
+	            arr[0] = 'print/voucher';
+	        } else {
+	            arr[0] = 'print/iosVoucher';
+	        }
+	        arr[1] = 'voucherInfo';
+	        arr[2] = JSON.stringify(voucherInfo);
+	        MyPlugin.printShow(arr,
+	            function (result) {
+	            },
+	            function (error) {
+	            }
+	        );
+	    } else {
+	        $("<form>", {
+	            id: "voucherForm",
+	            style: "display:none;",
+	            target: "_blank",
+	            method: "POST",
+	            action: contextPath + "/print/voucher"
+	        }).append($("<input>", {
+	            id: "voucherInfo",
+	            name: "voucherInfo",
+	            type: "hidden",
+	            value: JSON.stringify(voucherInfo)
+	        })).appendTo("body").submit();
+	    }
 	};
 	
 	var _preInvoice=function(olId,olNbr, printFlag){
@@ -1310,6 +1314,45 @@ common.print = (function($){
 			})).appendTo("body").submit();
 		}
 	};
+	
+	var _isPrintCustomerAgreement = function(){
+		var isPrint = false;
+		//1.看开关
+		var provConfig = query.common.queryPropertiesMapValue("PDF_PRINT_CONFIG" ,"PDF_PRINT_CONFIG_" + String(OrderInfo.staff.areaId).substr(0, 3));
+		if(ec.util.isObj(provConfig)){
+			//2.取配置
+			var actionFlagList = provConfig["actionFlagList"];//业务动作配置
+			var auxiliaryFunctions = provConfig["auxiliaryFunctions"];//辅助函数
+			var jasperNames = provConfig["jasperNames"];//模板配置
+			if(ec.util.isObj(jasperNames) && ec.util.isArray(actionFlagList)){
+				//3.业务动作
+				if($.inArray(String(OrderInfo.actionFlag), actionFlagList) >= 0){
+					var jasperName = jasperNames[String(OrderInfo.actionFlag)];
+					if(ec.util.isObj(jasperName)){
+						//4.辅助函数
+						if(ec.util.isObj(auxiliaryFunctions)){
+							var auxiliaryFunctionList = auxiliaryFunctions[String(OrderInfo.actionFlag)];
+							if(ec.util.isArray(auxiliaryFunctionList)){
+								var isSuccess = true;
+								$.each(auxiliaryFunctionList,function(){
+									isSuccess = (!!eval(this.toString())) && isSuccess;
+								});
+								if(isSuccess){
+									isPrint = true;
+								}
+							} else{
+								isPrint = true;
+							}
+						} else{
+							isPrint = true;
+						}
+					}
+				}
+			}
+		}
+		
+		return isPrint;
+	};
 
 	return {
 		preVoucher:_preVoucher,
@@ -1329,7 +1372,8 @@ common.print = (function($){
 		queryElInvoice:_queryElInvoice,
 		preVoucherLoc:_preVoucherLoc,
 		queryConstConfig:_queryConstConfig,
-		openELPDF:_openELPDF
+		openELPDF:_openELPDF,
+		isPrintCustomerAgreement:_isPrintCustomerAgreement
 	};
 })(jQuery);
 
