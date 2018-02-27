@@ -52,7 +52,13 @@ oneFive.certNumberHandle = (function () {
 
         // 查询按钮事件绑定
         $("#bt_15handleQry").off("click").on("click", function () {
-            oneFive.certNumberHandle.queryOneFiveList(1);
+            oneFive.certNumberHandle.queryOneFiveList(1,"desc");
+        });
+        $("#bt_15handleSortAsc").off("click").on("click", function () {
+            oneFive.certNumberHandle.queryOneFiveList(1,"asc");
+        });
+        $("#bt_15handleSortDesc").off("click").on("click", function () {
+            oneFive.certNumberHandle.queryOneFiveList(1,"desc");
         });
     };
 
@@ -70,7 +76,7 @@ oneFive.certNumberHandle = (function () {
      * @param pageIndex
      * @private
      */
-    var _queryOneFiveList = function (pageIndex) {
+    var _queryOneFiveList = function (pageIndex,sort) {
         var curPage = 1;
         if (pageIndex > 0) {
             curPage = pageIndex;
@@ -101,7 +107,8 @@ oneFive.certNumberHandle = (function () {
                 "areaId": $("#p_areaId").val(),
                 "orderNbr": $("#p_olNbr").val(),
                 "nowPage": curPage,
-                "pageSize": 10
+                "pageSize": 10,
+                "sort":sort
             };
         } else {
             var areaId = $("#p_areaId").val();
@@ -134,7 +141,8 @@ oneFive.certNumberHandle = (function () {
                 "startDt": startDt,
                 "endDt": endDt,
                 "nowPage": curPage,
-                "pageSize": 10
+                "pageSize": 10,
+                "sort":sort
             };
         }
         param.statusCd = $("#dealOrder").val();//CONST.CERT_NUMBER_ORDER_STATUS.INIT;
@@ -199,10 +207,6 @@ oneFive.certNumberHandle = (function () {
     var _showMain = function () {
         $("#d_detailInfo").hide();
         $("#d_query").show();
-    };
-    var _showCurrent = function(){
-    	 $("#d_query").hide();
-    	 $("#d_detailInfo").show();
     };
     /**
      * 查询订单详情
@@ -431,34 +435,7 @@ oneFive.certNumberHandle = (function () {
                     $.confirm("确认", "一证五卡业务单[" + param.orderId + "]已经受理成功，是否继续受理？", {
                         names: ["是", "否"],
                         yesdo: function () {
-                        	 var param = {
-                        	            "areaId": $("#p_areaId").val(),
-                        	            "ifFilterAreaId": "Y",
-                        	            "staffId": OrderInfo.staff.staffId,
-                        	            "ifFilterOwnAccNbr": $("#onlyMe").val()
-                        	        };
-                        	        $.callServiceAsHtmlGet(contextPath + "/certNumber/queryOneFiveOrderItemDetail", param, {
-                        	            "before": function () {
-                        	                $.ecOverlay("详情查询中，请稍等...");
-                        	            },
-                        	            "always": function () {
-                        	                $.unecOverlay();
-                        	            },
-                        	            "done": function (response) {
-                        	                if (response && response.code == -2) {
-                        	                    return;
-                        	                } else if (response.data && response.data.substring(0, 4) != "<div") {
-                        	                    $.alert("提示", response.data);
-                        	                } else {
-                        	                    $("#d_query").hide();
-                        	                    $("#d_detailInfo").html(response.data).show();
-                        	                }
-                        	            },
-                        	            fail: function () {
-                        	                $.unecOverlay();
-                        	                $.alert("提示", "请求可能发生异常，请稍后再试！");
-                        	            }
-                        	        });
+                        	_queryDetail(orderId);
                         },
                         no: function () {
                         }
@@ -501,7 +478,6 @@ oneFive.certNumberHandle = (function () {
         chooseArea: _chooseArea,
         queryOneFiveList: _queryOneFiveList,
         showMain: _showMain,
-        showCurrent:_showCurrent,
         queryDetail: _queryDetail,
         queryAttachment: _queryAttachment,
         orderSubmit: _orderSubmit,

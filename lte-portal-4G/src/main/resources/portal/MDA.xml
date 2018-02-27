@@ -50,7 +50,7 @@
 			value="http://10.128.90.194:10901/LTE-CSB/HttpDEPService" />
 		<const type="String" name="FACE_VERIFY_APP_ID" value="crm"
 			description="人证平台配置：应用ID" />
-		<const type="String" name="SecretKey" value="JTPTCMPTESTMY"
+		<const type="String" name="SecretKey" value="DJKF34ER35D58D"
 			description="EOP协议加密钥" />
 		<const type="String" name="FACE_VERIFY_APP_ID_SECRET" value="FACEKEY_20170308"
 			description="人证平台配置：APP_ID对应的加密密钥" />

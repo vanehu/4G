@@ -52,7 +52,13 @@ oneFive.certNumberQuery = (function () {
 
         // 查询按钮事件绑定
         $("#bt_15handleQry").off("click").on("click", function () {
-            oneFive.certNumberQuery.queryOneFiveList(1);
+            oneFive.certNumberQuery.queryOneFiveList(1,"desc");
+        });
+        $("#bt_15handleSortAsc").off("click").on("click", function () {
+            oneFive.certNumberQuery.queryOneFiveList(1,"asc");
+        });
+        $("#bt_15handleSortDesc").off("click").on("click", function () {
+            oneFive.certNumberQuery.queryOneFiveList(1,"desc");
         });
     };
 
@@ -70,7 +76,7 @@ oneFive.certNumberQuery = (function () {
      * @param pageIndex
      * @private
      */
-    var _queryOneFiveList = function (pageIndex) {
+    var _queryOneFiveList = function (pageIndex,sort) {
         var curPage = 1;
         if (pageIndex > 0) {
             curPage = pageIndex;
@@ -102,7 +108,8 @@ oneFive.certNumberQuery = (function () {
                 "areaId": $("#p_areaId").val(),
                 "orderNbr": $("#p_olNbr").val(),
                 "nowPage": curPage,
-                "pageSize": 10
+                "pageSize": 10,
+                "sort":sort
             };
             
         } else {
@@ -137,13 +144,15 @@ oneFive.certNumberQuery = (function () {
                 "startDt": startDt,
                 "endDt": endDt,
                 "nowPage": curPage,
-                "pageSize": 10
+                "pageSize": 10,
+                "sort":sort
             };
             noDateParam = {
             	"collectType": "2",
                 "areaId": areaId,
                 "nowPage": curPage,
-                "pageSize": 10
+                "pageSize": 10,
+                "sort":sort
             };
         }
         if (ec.util.isObj(telNumber) || ec.util.isObj(certNumber)) {
