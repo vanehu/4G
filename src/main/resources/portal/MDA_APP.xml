@@ -51,15 +51,17 @@
 		<const type="String" name="CSB_HTTP_CMP_URL" value="http://10.128.90.194:8201/LTE-CSB/HttpAPIService" description="一证五号地址"/>
 		<const type="String" name="CSB_HTTP_QUERCHEN_URL" value="http://10.128.90.2:8888/channel-mobile-web/" description="宽带融合-定位渠道"/>
 		<const type="String" name="ZHIMA_URL" value="http://4gpay.asiainfo.org/pay_web/credit/queryCreditState" description="芝麻信用值查询地址"/>
+		<const type="String" name="BROWSER_FINGERPRINT_URL" value="http://10.128.21.66:8020/fingerprint/browser" description="浏览器指纹地址"/>
 		<const type="String" name="WORD_FONT" value="F:\\打版本\\2017-3-29\\font\\" description="字体文件目录"/>
-		<const type="String" name="CSB_FLAG" value="ON" />
+		<const type="String" name="CSB_FLAG" value="OFF" />
 		<const type="String" name="PAY_TOKEN_URL" value="http://10.128.90.195:7001/payconf/" />
 		<const type="String" name="PAY_URL" value="http://42.99.16.141:7001/upay/platpay/index?" />
 		<const type="String" name="SecretKey" value="DJKF34ER35D58D" description="EOP协议加密钥"/>
-		<const type="String" name="gKey" value="305c300d06092a864886f70d0101010500034b003048024100e738c688e669084e9a523c31b179748db82426ca3295b4797bcf9537de62273c417f5e8f69e305f17e77d1943fdea949345474cecd1b5c63c7ed84ea9bcbef0b0203010001" description="支付平台RSA加密钥"/>	
-		<const type="String" name="OneFiveSecretKey" value="JTPTCMPTESTMY" description="一五协议加密钥,测试环境为JTPTCMPTESTMY"/>	
+		<const type="String" name="gKey" value="305c300d06092a864886f70d0101010500034b003048024100e738c688e669084e9a523c31b179748db82426ca3295b4797bcf9537de62273c417f5e8f69e305f17e77d1943fdea949345474cecd1b5c63c7ed84ea9bcbef0b0203010001" description="支付平台RSA加密钥"/>
+		<const type="String" name="OneFiveSecretKey" value="JTPTCMPTESTMY" description="一五协议加密钥,测试环境为JTPTCMPTESTMY"/>
 		<const type="String" name="ASYNC_FLAG" value="OFF" />
 		<const type="String" name="DEF_HTTP_FLAG" value="ON" />
+		<const type="String" name="READ_UIM" value="ON" description="读取UIM卡"/>
 		<const type="String" name="OFFER_CHANGE_CHECK" value="ON" description="#1619064套餐变更校验副卡数量是否满足目的套餐规则(翼销售)，默认OFF不校验，ON校验"/>
 		<const type="Map" name="PROVORDERATTR_FLAG" description="是否显示省内订单属性 0-打开，1-关闭">
 		{
@@ -652,7 +654,7 @@
 			'SPECIAL_AGREEMENT_861':<!-- 陕西 -->[],
 			'SPECIAL_AGREEMENT_842':<!-- 湖北 -->[],
 			'SPECIAL_AGREEMENT_835':<!-- 福建 -->[],
-			'SPECIAL_AGREEMENT_832':<!-- 江苏 -->[{'mark':'特号入网协议','provinceisopen':'ON','opencity':'8320400','page':'1','templet':'rw8210000'},{'mark':'移动入网协议','provinceisopen':'ON','opencity':'8320400','page':'3','templet':'ydrw8210000'},{'mark':'流量壕协议','provinceisopen':'ON','opencity':'8320900','page':'1','templet':'llh8210000'}],
+			'SPECIAL_AGREEMENT_832':<!-- 江苏 -->[{'mark':'特号入网协议','provinceisopen':'ON','opencity':'8320400','page':'1','templet':'rw8210000'},{'mark':'移动入网协议','provinceisopen':'ON','opencity':'8320400','page':'4','templet':'ydrw8210000'},{'mark':'流量壕协议','provinceisopen':'ON','opencity':'8320900','page':'1','templet':'llh8210000'}],
 			'SPECIAL_AGREEMENT_846':<!-- 海南 -->[{'mark':'服务协议','provinceisopen':'ON','opencity':'all','page':'3','templet':'fw8460000'},{'mark':'靓号协议','provinceisopen':'ON','opencity':'all','page':'1','templet':'lh8460000'}],
 			'SPECIAL_AGREEMENT_864':<!-- 宁夏 -->[],
 			'SPECIAL_AGREEMENT_814':<!-- 山西 -->[],
@@ -666,8 +668,8 @@
 			'SPECIAL_AGREEMENT_831':<!-- 上海 -->[],
 			'SPECIAL_AGREEMENT_812':<!-- 天津 -->[],
 			'SPECIAL_AGREEMENT_813':<!-- 河北 -->[],
-			'SPECIAL_AGREEMENT_841':<!-- 河南 -->[{'mark':'流量壕协议','provinceisopen':'ON','opencity':'all','page':'1','templet':'llh8210000'},{'mark':'特号入网协议','provinceisopen':'ON','opencity':'all','page':'1','templet':'rw8210000'},{'mark':'移动入网协议','provinceisopen':'ON','opencity':'8320400','page':'3','templet':'ydrw8210000'}],
-			'SPECIAL_AGREEMENT_821':<!-- 辽宁 -->[{'mark':'流量壕协议','provinceisopen':'ON','opencity':'8210200','page':'1','templet':'llh8210000'},{'mark':'特号入网协议','provinceisopen':'ON','opencity':'8210200','page':'1','templet':'rw8210000'},{'mark':'移动入网协议','provinceisopen':'ON','opencity':'8210200','page':'3','templet':'ydrw8210000'},{'mark':'翼支付红包通用协议','provinceisopen':'ON','opencity':'8210200','page':'1','templet':'hb8210000'}],
+			'SPECIAL_AGREEMENT_841':<!-- 河南 -->[{'mark':'流量壕协议','provinceisopen':'ON','opencity':'all','page':'1','templet':'llh8210000'},{'mark':'特号入网协议','provinceisopen':'ON','opencity':'all','page':'1','templet':'rw8210000'},{'mark':'移动入网协议','provinceisopen':'ON','opencity':'8320400','page':'4','templet':'ydrw8210000'}],
+			'SPECIAL_AGREEMENT_821':<!-- 辽宁 -->[{'mark':'流量壕协议','provinceisopen':'ON','opencity':'8210200','page':'1','templet':'llh8210000'},{'mark':'特号入网协议','provinceisopen':'ON','opencity':'8210200','page':'1','templet':'rw8210000'},{'mark':'移动入网协议','provinceisopen':'ON','opencity':'8210200','page':'4','templet':'ydrw8210000'},{'mark':'翼支付红包通用协议','provinceisopen':'ON','opencity':'8210200','page':'1','templet':'hb8210000'}],
 			'SPECIAL_AGREEMENT_822':<!-- 吉林 -->[],
 			'SPECIAL_AGREEMENT_834':<!-- 安徽 -->[],
 			'SPECIAL_AGREEMENT_833':<!-- 浙江 -->[],
@@ -701,11 +703,11 @@
 			'PROVENCE_MENU_851':<!-- 四川 -->{},
 			'PROVENCE_MENU_844':<!-- 广东 -->{},
 			'PROVENCE_MENU_831':<!-- 上海 -->{},
-			'PROVENCE_MENU_812':<!-- 天津 http://123.150.141.129:8906-->{'provinceisopen':'ON','opencity':'all','needQueryMenu':'N','serverAddress':'http://192.168.254.7:8080/yxs_service/service/','secretKey':'81267b6a345d66f983c3245f324e325a7820b421da677a42','appList':[{'appId':'11111','appSecret':'11111'}],'menuList':[{'menulId':'3991','menuName':'单宽新装','isSecond':'N','needCust':'Y'},{'menulId':'02202','menuName':'商机库','isSecond':'N','needCust':'N'},{'menulId':'02203','menuName':'我的商机库','isSecond':'N','needCust':'N'},{'menulId':'02204','menuName':'融合受理','isSecond':'N','needCust':'Y'},{'menulId':'02205','menuName':'极速开卡','isSecond':'N','needCust':'Y'},{'menulId':'02206','menuName':'固话新装','isSecond':'N','needCust':'Y'},{'menulId':'02207','menuName':'天翼高清新装','isSecond':'N','needCust':'Y'},{'menulId':'02208','menuName':'省内资源释放','isSecond':'N','needCust':'Y'},{'menulId':'02209','menuName':'无纸化签名','isSecond':'N','needCust':'N'}]},
+			'PROVENCE_MENU_812':<!-- 天津 http://123.150.141.129:8906-->{'provinceisopen':'ON','opencity':'all','needQueryMenu':'N','serverAddress':'http://192.168.254.7:8080/yxs_service/service/','secretKey':'81267b6a345d66f983c3245f324e325a7820b421da677a42','appList':[{'appId':'11111','appSecret':'11111'}],'menuList':[{'menulId':'3991','menuName':'单宽新装','isSecond':'N','needCust':'Y'},{'menulId':'02202','menuName':'商机库','isSecond':'N','needCust':'N'},{'menulId':'02203','menuName':'我的商机库','isSecond':'N','needCust':'N'},{'menulId':'02204','menuName':'融合受理','isSecond':'N','needCust':'Y'},{'menulId':'02205','menuName':'极速开卡','isSecond':'N','needCust':'Y'},{'menulId':'02206','menuName':'固话新装','isSecond':'N','needCust':'Y'},{'menulId':'02207','menuName':'天翼高清新装','isSecond':'N','needCust':'Y'},{'menulId':'02208','menuName':'省内资源释放','isSecond':'N','needCust':'Y'},{'menulId':'02209','menuName':'无纸化签名','isSecond':'N','needCust':'N'},{'menulId':'02210','menuName':'甩单','isSecond':'N','needCust':'N'},{'menulId':'02211','menuName':'甩单查询','isSecond':'N','needCust':'N'},{'menulId':'02212','menuName':'回执重打','isSecond':'N','needCust':'N'}]},
 			'PROVENCE_MENU_813':<!-- 河北 -->{},
 			'PROVENCE_MENU_841':<!-- 河南 -->{},
 			'PROVENCE_MENU_821':<!-- 辽宁 -->{},
-			'PROVENCE_MENU_822':<!-- 吉林 (生产http://123.173.127.63:9112)-->{'provinceisopen':'ON','opencity':'all','needQueryMenu':'N','serverAddress':'http://123.173.127.63:9112/yxs_service/service/','secretKey':'822bac132b23a1320e3213625152aedb0912cbd09b17c012','appList':[{'appId':'11111','appSecret':'11111'}],'menuList':[{'menulId':'jl001','menuName':'ITV新装','isSecond':'N','needCust':'Y'},{'menulId':'jl002','menuName':'拍照甩单','isSecond':'N','needCust':'Y'}]},
+			'PROVENCE_MENU_822':<!-- 吉林 (生产http://123.173.127.63:9112)-->{'provinceisopen':'ON','opencity':'all','needQueryMenu':'N','serverAddress':'http://123.173.127.63:9112/yxs_service/service/','secretKey':'822bac132b23a1320e3213625152aedb0912cbd09b17c012','appList':[{'appId':'11111','appSecret':'11111'}],'menuList':[{'menulId':'jl001','menuName':'IPTV新装','isSecond':'N','needCust':'Y'},{'menulId':'jl002','menuName':'拍照甩单','isSecond':'N','needCust':'N'},{'menulId':'jl003','menuName':'甩单查询','isSecond':'N','needCust':'N'}]},
 			'PROVENCE_MENU_834':<!-- 安徽 -->{},
 			'PROVENCE_MENU_833':<!-- 浙江 -->{},
 			'PROVENCE_MENU_852':<!-- 贵州 -->{},
@@ -1121,127 +1123,127 @@
 			},
 			'811':<!-- 北京省 -->
 			{ 
-				'QRCODE_LOGIN_SWITCH':'OFF','PIC_VERIFY':'OFF','FZ':'60'
+				'QRCODE_LOGIN_SWITCH':'OFF','PIC_VERIFY':'OFF','FZ':'60','LIVE_NESS':'OFF','ROTATE':'OFF'
 			},
 			'812':<!-- 天津 -->
 			{
-				'QRCODE_LOGIN_SWITCH':'OFF','PIC_VERIFY':'OFF','FZ':'60'
+				'QRCODE_LOGIN_SWITCH':'OFF','PIC_VERIFY':'OFF','FZ':'60','LIVE_NESS':'OFF','ROTATE':'OFF'
 			},
 			'814':<!-- 山西 -->
 			{
-				'QRCODE_LOGIN_SWITCH':'OFF','PIC_VERIFY':'OFF','FZ':'60'
+				'QRCODE_LOGIN_SWITCH':'OFF','PIC_VERIFY':'OFF','FZ':'60','LIVE_NESS':'OFF','ROTATE':'OFF'
 			},
 			'815':<!-- 内蒙古 -->
 			{
-				'QRCODE_LOGIN_SWITCH':'OFF','PIC_VERIFY':'OFF','FZ':'60'
+				'QRCODE_LOGIN_SWITCH':'OFF','PIC_VERIFY':'OFF','FZ':'60','LIVE_NESS':'OFF','ROTATE':'OFF'
 			},
 			'821':<!-- 辽宁 -->
 			{
-				'QRCODE_LOGIN_SWITCH':'OFF','PIC_VERIFY':'OFF','FZ':'60'
+				'QRCODE_LOGIN_SWITCH':'ON','PIC_VERIFY':'OFF','FZ':'60','LIVE_NESS':'OFF','ROTATE':'OFF'
 			},
 			'822':<!-- 吉林 -->
 			{
-				'QRCODE_LOGIN_SWITCH':'OFF','PIC_VERIFY':'OFF','FZ':'60'
+				'QRCODE_LOGIN_SWITCH':'OFF','PIC_VERIFY':'OFF','FZ':'60','LIVE_NESS':'OFF','ROTATE':'OFF'
 			},
 			'835':<!-- 福建 -->
 			{
-				'QRCODE_LOGIN_SWITCH':'OFF','PIC_VERIFY':'OFF','FZ':'60'
+				'QRCODE_LOGIN_SWITCH':'OFF','PIC_VERIFY':'OFF','FZ':'60','LIVE_NESS':'OFF','ROTATE':'OFF'
 			},
 			'843':<!-- 湖南 -->
 			{
-				'QRCODE_LOGIN_SWITCH':'OFF','PIC_VERIFY':'OFF','FZ':'60'
+				'QRCODE_LOGIN_SWITCH':'OFF','PIC_VERIFY':'OFF','FZ':'60','LIVE_NESS':'OFF','ROTATE':'OFF'
 			},
 			'850':<!-- 重庆 -->
 			{
-				'QRCODE_LOGIN_SWITCH':'OFF','PIC_VERIFY':'OFF','FZ':'60'
+				'QRCODE_LOGIN_SWITCH':'OFF','PIC_VERIFY':'ON','FZ':'60','LIVE_NESS':'OFF','ROTATE':'OFF'
 			},
 			'852':<!-- 贵州 -->
 			{
-				'QRCODE_LOGIN_SWITCH':'OFF','PIC_VERIFY':'OFF','FZ':'60'
+				'QRCODE_LOGIN_SWITCH':'OFF','PIC_VERIFY':'OFF','FZ':'60','LIVE_NESS':'OFF','ROTATE':'OFF'
 			},
 			'853':<!-- 云南 -->
 			{
-				'QRCODE_LOGIN_SWITCH':'OFF','PIC_VERIFY':'OFF','FZ':'60'
+				'QRCODE_LOGIN_SWITCH':'OFF','PIC_VERIFY':'OFF','FZ':'60','LIVE_NESS':'OFF','ROTATE':'OFF'
 			},
 			'854':<!-- 西藏 -->
 			{
-				'QRCODE_LOGIN_SWITCH':'OFF','PIC_VERIFY':'OFF','FZ':'60'
+				'QRCODE_LOGIN_SWITCH':'OFF','PIC_VERIFY':'OFF','FZ':'60','LIVE_NESS':'OFF','ROTATE':'OFF'
 			},
 			'863':<!-- 青海 -->
 			{
-				'QRCODE_LOGIN_SWITCH':'OFF','PIC_VERIFY':'OFF','FZ':'60'
+				'QRCODE_LOGIN_SWITCH':'OFF','PIC_VERIFY':'OFF','FZ':'60','LIVE_NESS':'OFF','ROTATE':'OFF'
 			},
 			'864':<!-- 宁夏 -->
 			{
-				'QRCODE_LOGIN_SWITCH':'OFF','PIC_VERIFY':'OFF','FZ':'60'
+				'QRCODE_LOGIN_SWITCH':'OFF','PIC_VERIFY':'OFF','FZ':'60','LIVE_NESS':'OFF','ROTATE':'OFF'
 			},
 			'865':<!-- 新疆 -->
 			{
-				'QRCODE_LOGIN_SWITCH':'OFF','PIC_VERIFY':'OFF','FZ':'60'
+				'QRCODE_LOGIN_SWITCH':'OFF','PIC_VERIFY':'OFF','FZ':'60','LIVE_NESS':'OFF','ROTATE':'OFF'
 			},
 			'844':<!-- 广东 -->
 			{
-				'QRCODE_LOGIN_SWITCH':'OFF','PIC_VERIFY':'OFF','FZ':'60'
+				'QRCODE_LOGIN_SWITCH':'OFF','PIC_VERIFY':'OFF','FZ':'60','LIVE_NESS':'OFF','ROTATE':'OFF'
 			},
 			'832':<!-- 江苏 -->
 			{
-				'QRCODE_LOGIN_SWITCH':'ON','PIC_VERIFY':'ON','FZ':'60'
+				'QRCODE_LOGIN_SWITCH':'ON','PIC_VERIFY':'OFF','FZ':'60','LIVE_NESS':'OFF','ROTATE':'OFF'
 			},
 			'851':<!-- 四川 -->
 			{
-				'QRCODE_LOGIN_SWITCH':'OFF','PIC_VERIFY':'OFF','FZ':'60'
+				'QRCODE_LOGIN_SWITCH':'OFF','PIC_VERIFY':'OFF','FZ':'60','LIVE_NESS':'OFF','ROTATE':'OFF'
 			},
 			'833':<!-- 浙江 -->
 			{
-				'QRCODE_LOGIN_SWITCH':'OFF','PIC_VERIFY':'OFF','FZ':'60'
+				'QRCODE_LOGIN_SWITCH':'OFF','PIC_VERIFY':'OFF','FZ':'60','LIVE_NESS':'OFF','ROTATE':'OFF'
 			},
 			'834':<!-- 安徽 -->
 			{
-				'QRCODE_LOGIN_SWITCH':'OFF','PIC_VERIFY':'OFF','FZ':'60'
+				'QRCODE_LOGIN_SWITCH':'OFF','PIC_VERIFY':'OFF','FZ':'60','LIVE_NESS':'OFF','ROTATE':'OFF'
 			},
 			'861':<!-- 陕西 -->
 			{
-				'QRCODE_LOGIN_SWITCH':'OFF','PIC_VERIFY':'OFF','FZ':'60'
+				'QRCODE_LOGIN_SWITCH':'OFF','PIC_VERIFY':'OFF','FZ':'60','LIVE_NESS':'OFF','ROTATE':'OFF'
 			},
 			'842':<!-- 湖北 -->
 			{
-				'QRCODE_LOGIN_SWITCH':'OFF','PIC_VERIFY':'OFF','FZ':'60'
+				'QRCODE_LOGIN_SWITCH':'OFF','PIC_VERIFY':'OFF','FZ':'60','LIVE_NESS':'OFF','ROTATE':'OFF'
 			},
 			'831':<!-- 上海 -->
 			{
-				'QRCODE_LOGIN_SWITCH':'OFF','PIC_VERIFY':'OFF','FZ':'60'
+				'QRCODE_LOGIN_SWITCH':'OFF','PIC_VERIFY':'OFF','FZ':'60','LIVE_NESS':'OFF','ROTATE':'OFF'
 			},
 			'813':<!-- 河北 -->
 			{
-				'QRCODE_LOGIN_SWITCH':'OFF','PIC_VERIFY':'OFF','FZ':'60'
+				'QRCODE_LOGIN_SWITCH':'OFF','PIC_VERIFY':'OFF','FZ':'60','LIVE_NESS':'OFF','ROTATE':'OFF'
 			},
 			'837':<!-- 山东 -->
 			{
-				'QRCODE_LOGIN_SWITCH':'OFF','PIC_VERIFY':'OFF','FZ':'60'
+				'QRCODE_LOGIN_SWITCH':'OFF','PIC_VERIFY':'OFF','FZ':'60','LIVE_NESS':'OFF','ROTATE':'OFF'
 			},
 			'845':<!-- 广西 -->
 			{
-				'QRCODE_LOGIN_SWITCH':'OFF','PIC_VERIFY':'OFF','FZ':'60'
+				'QRCODE_LOGIN_SWITCH':'OFF','PIC_VERIFY':'OFF','FZ':'60','LIVE_NESS':'OFF','ROTATE':'OFF'
 			},
 			'841':<!-- 河南 -->
 			{
-				'QRCODE_LOGIN_SWITCH':'OFF','PIC_VERIFY':'OFF','FZ':'60'
+				'QRCODE_LOGIN_SWITCH':'OFF','PIC_VERIFY':'OFF','FZ':'60','LIVE_NESS':'OFF','ROTATE':'OFF'
 			},
 			'862':<!-- 甘肃 -->
 			{
-				'QRCODE_LOGIN_SWITCH':'OFF','PIC_VERIFY':'OFF','FZ':'60'
+				'QRCODE_LOGIN_SWITCH':'OFF','PIC_VERIFY':'OFF','FZ':'60','LIVE_NESS':'OFF','ROTATE':'OFF'
 			},
 			'836':<!-- 江西 -->
 			{
-				'QRCODE_LOGIN_SWITCH':'OFF','PIC_VERIFY':'OFF','FZ':'60'
+				'QRCODE_LOGIN_SWITCH':'OFF','PIC_VERIFY':'OFF','FZ':'60','LIVE_NESS':'OFF','ROTATE':'OFF'
 			},
 			'846':<!-- 海南 -->
 			{
-				'QRCODE_LOGIN_SWITCH':'OFF','PIC_VERIFY':'OFF','FZ':'60'
+				'QRCODE_LOGIN_SWITCH':'OFF','PIC_VERIFY':'OFF','FZ':'60','LIVE_NESS':'OFF','ROTATE':'OFF'
 			},
 			'823':<!-- 黑龙江 -->
 			{
-				'QRCODE_LOGIN_SWITCH':'OFF','PIC_VERIFY':'OFF','FZ':'60'
+				'QRCODE_LOGIN_SWITCH':'OFF','PIC_VERIFY':'OFF','FZ':'60','LIVE_NESS':'OFF','ROTATE':'OFF'
 			}
 		}
 		</const>
@@ -1475,14 +1477,14 @@
 			'NEWPAYFLAG_861':'OFF',<!-- 陕西 -->
 			'NEWPAYFLAG_842':'OFF',<!-- 湖北 -->
 			'NEWPAYFLAG_835':'OFF',<!-- 福建 -->
-			'NEWPAYFLAG_832':'ON',<!-- 江苏 -->
+			'NEWPAYFLAG_832':'OFF',<!-- 江苏 -->
 			'NEWPAYFLAG_846':'OFF',<!-- 海南 -->
 			'NEWPAYFLAG_864':'OFF',<!-- 宁夏 -->
 			'NEWPAYFLAG_814':'OFF',<!-- 山西 -->
 			'NEWPAYFLAG_853':'OFF',<!-- 云南 -->
 			'NEWPAYFLAG_836':'OFF',<!-- 江西 -->
 			'NEWPAYFLAG_837':'OFF',<!-- 山东 -->
-			'NEWPAYFLAG_811':'ON',<!-- 北京 -->
+			'NEWPAYFLAG_811':'OFF',<!-- 北京 -->
 			'NEWPAYFLAG_843':'OFF',<!-- 湖南 -->
 			'NEWPAYFLAG_851':'ON',<!-- 四川 -->
 			'NEWPAYFLAG_844':'OFF',<!-- 广东 -->
@@ -1657,10 +1659,10 @@
 		<const type="String" name="msgCodeFlag" value="1" description="是否发送校验短信标识,1不发送,其他发送并验证(注:表中的配置须与sp_sys_param中的保持同步且一致)"/>
 		<const type="String" name="PORTAL_SERVICE_LOG_P" description="永久保存日志的接口列表" value="service/intf.soService/saveResourceData,service/intf.soService/updateChargeInfoForCheck,service/intf.soService/checkRuleToProv,service/intf.chargeService/invoiceInfoQuery,service/intf.soService/queryIfCanRepealCustOrder,queryStaffByStaffCode4Login,service/intf.couponService/queryBo2CouponInfoStringByCouponInstanceNumber,service/intf.pullingDataService/groupShortNbrQuery,service/intf.chargeService/saveInvoiceInfo,service/intf.chargeService/queryComputeChargeJson,service/intf.soService/queryOrderListInfoForPrint,service/intf.soService/queryOfferCouponById,service/intf.prodOfferInstSerivce/queryBoAccountRelasByProdId,service/intf.prodInstService/queryCompProdInstByProdId,service/intf.prodOfferService/queryOfferExcludeDepend,service/intf.soService/commitOrderListAndBusOrder,service/intf.pullingDataService/queryProdInfoFromProv,service/intf.prodInstService/queryOfferParam,service/intf.prodOfferInstSerivce/queryAttachOfferByProdId,service/intf.prodOfferService/queryCanBuyAttachOfferSpec,service/intf.productService/queryDefaultAndRequireServSpec,service/intf.prodOfferService/queryDefaultAndRequiredOfferSpec,service/intf.soService/updateOrderInfoForCheckByChange,service/intf.acctService/queryAcctDetailInfo,service/intf.prodInstService/queryProdInfo,service/intf.prodInstService/queryProdAndOfferByConditions,service/intf.custService/queryCust,PnPiReserveService,service/intf.batchOrderService/saveBatchOrderImport,service/intf.chargeService/updateForAddOrReturn,service/intf.soService/updateCompleteOrderList,service/intf.acctService/queryExistAcctByCond,service/intf.acctService/queryAcctTypeForObj,service/intf.chargeService/saveComputeChargeJson,UIMCardInputService/cardInput,PnReserveQryService,UIMReserveService,UIMReleaseService,PnReserveService,PnQueryService,service/intf.prodOfferService/queryMainOfferSpecList,service/intf.prodOfferService/queryOfferSpecParamsBySpec,service/intf.productService/queryCompPspecGrpsBySpecId,service/intf.prodOfferInstSerivce/queryOfferMemberById,service/intf.prodInstService/queryProdInstItemsById,service/intf.productService/queryProdAndCompProdItemsById,service/intf.prodOfferService/queryAgreementActivtyAttachOfferSpec,TermValidateService,TermQueryService,service/intf.soService/querySeq,staffLogin,PhoneNumberQryService,service/intf.prodInstService/queryProdInstAccNbr,com.linkage.portal.service.lte.core.system.CheckLogin,com.linkage.portal.service.lte.core.resources.SubmitUimCardInfo,com.linkage.portal.service.lte.core.resources.GetUimCardInfo,com.linkage.portal.service.lte.core.resources.GetAuthCode,com.linkage.portal.service.lte.core.resources.GetCardDllInfo,com.linkage.portal.service.lte.core.charge.QueryChargeRecord,com.linkage.portal.service.lte.core.charge.PrintCustomizeBill,com.linkage.portal.service.lte.core.charge.DoDerateDue,com.linkage.portal.service.lte.core.charge.DoAdjustAccount,com.linkage.portal.service.lte.core.charge.DoBadDebts,com.linkage.portal.service.lte.core.charge.InvoiceReverse,com.linkage.portal.service.lte.core.charge.InvoiceNotice,com.linkage.portal.service.lte.core.charge.NewPrintInvoice,com.linkage.portal.service.lte.core.charge.PrintInvoice,com.linkage.portal.service.lte.core.charge.ReverseWriteOffCash,com.linkage.portal.service.lte.core.charge.QueryWriteOffCashDetail,com.linkage.portal.service.lte.core.charge.QueryCustomizeBillDetail,com.linkage.portal.service.lte.core.charge.QueryCustomizeBill,com.linkage.portal.service.lte.core.charge.PayBalance,com.linkage.portal.service.lte.core.charge.GetBalance,com.linkage.portal.service.lte.core.charge.WriteOffCash,com.linkage.portal.service.lte.core.charge.GetOweAccountCharge,com.linkage.portal.service.lte.core.charge.GetOweCharge,com.linkage.portal.service.lte.core.charge.DoCash,com.linkage.portal.service.lte.core.charge.QueryOfferUsageNew,com.linkage.portal.service.lte.core.charge.QueryOfferUsage,com.linkage.portal.service.lte.core.system.SendMsgInfo"></const>
 		<const type="String" name="PORTAL_SERVICE_LOG_Y" description="保存一年日志的接口列表" value="service/intf.fileOperateService/downLoadPicturesFileFromFtp,service/intf.fileOperateService/upLoadPicturesFileToFtp,service/intf.detailService/queryOrderItemDetailForResale,PnOrderService,pnBookReleaseByBatchService,PnBookService,service/so.rule.ruleSMO/check4GRuleSoPrepare,service/intf.chargeService/queryAvilablePayMethodCdByAcctItemTypeCd,service/intf.prodInstService/queryBoProdPasswordsByCond,service/intf.chargeService/updateBank,service/intf.chargeService/saveBank,service/intf.pullingDataService/queryOrderListInfoByCustomerOrderId,service/intf.custService/queryParty2ProduRole,service/intf.detailService/queryCustOrderLinkInfo,service/intf.detailService/queryOrderItemDetail,service/intf.detailService/queryCustemerOrderDetail,service/intf.pullingDataService/workOrderQuery,service/intf.detailService/queryCustomerOrders,service/intf.soService/queryOrderListInfoForPageSoQuery,service/intf.batchOrderService/queryBatchOrderTemplageList,service/intf.batchOrderService/queryBatchOrderList,service/intf.custService/queryCustExInfo,service/intf.saDealRecordService/querySaDealRecordsForZs,service/intf.soService/updateArchivedAuto,service/intf.chargeService/saveBamObjForegift,service/intf.chargeService/updateBamObjForegiftForReturn,service/intf.prodInstService/queryProdAccessNumByUim,service/intf.prodInstService/queryDetailInfoServe,service/intf.prodInstService/queryBasicGroupDetail,service/intf.soService/queryAttrSpecValueByAttrId,service/intf.custService/queryPartyProfileSpecList,portalOrderLog,readCert"></const>
-		<const type="String" name="PORTAL_SERVICE_LOG_W" description="保存一周日志的接口列表" value="service/intf.pullingDataService/cardProgressQuery,TermQueryService/termOrderQueryService,queryAllModularAndFuncs,com.linkage.portal.service.lte.core.system.QueryParentAreaInfo,com.linkage.portal.service.lte.core.resources.GetOLpos,queryAuthenticDataRange,com.linkage.portal.service.lte.core.system.InsertLoginSession,service/intf.soService/querySoConstConfigByConditions,com.linkage.portal.service.lte.core.system.Createorderlonger,com.linkage.portal.service.lte.protocols.GetProtocolNbrSeq,com.linkage.portal.service.lte.core.system.GetTranId,com.linkage.portal.service.lte.core.resources.QueryOrderZDYYinfo,com.linkage.portal.service.lte.core.resources.UpdateOrderZDYYinfo,com.linkage.portal.service.lte.core.resources.QueryOrderYSLinfo,com.linkage.portal.service.lte.core.resources.SubOrderYSLinfo,com.linkage.portal.service.lte.core.resources.QueryBusiactiontype,com.linkage.portal.service.lte.core.resources.QueryBusitype,staffLoginOut,locateCustInfo,login4OtherSys,service/intf.chargeService/updateInvoiceInvalid,service/intf.soService/queryCTGMainData,service/intf.businessDispatchService/queryVirtualInfo,service/intf.businessDispatchService/exchange,service/intf.businessDispatchService/queryBusiDispatchOrderProcessInfos,queryOperatAreaRange,service/intf.chargeService/queryForegiftOperDetail,service/intf.chargeService/queryBamObjForegitfItems,hotProd,com.linkage.portal.service.lte.core.resources.QueryInvoiceTemplate,service/intf.fileOperateService/downLoadPrintFileFromFtp,service/intf.fileOperateService/upLoadPrintFileToFtp,service/intf.prodInstService/queryNewInfo,checkOperatSpec,modifyShortcutMenu,service/interact/synStaffBean/qryChannelByRelaStaff,com.linkage.portal.service.lte.core.resources.ModifyAccNbrToRelease,service/intf.soService/updateOrderListForCustOrderDel,service/intf.prodOfferService/queryLabelByAreaId,service/intf.custService/queryCertTypeByPartyTypeCd,service/intf.chargeService/queryBankInfo,updatePassword,service/intf.batchOrderService/updateOrderListForCustOrderDel,queryStaffInfo,service/intf.prodInstService/queryProdInstMemberInfo,service/intf.detailService/saveProtocol,service/intf.prodInstService/queryOffersByAttrId,service/intf.prodOfferService/query,service/intf.prodInstService/queryProtocolServiceByConditions,service/intf.prodInstService/queryCompProdMemberByAn,queryShortcutMenu,queryMenuInfo,queryBulletinInfo,com.linkage.portal.service.lte.core.resources.QueryAccNbrToRelease,com.linkage.portal.service.lte.core.system.GetSysParam,com.linkage.portal.service.lte.core.resources.QueryAgentPortalConfig,com.linkage.portal.service.lte.core.system.QueryAreaTreeByParentAreaId,service/intf.prodInstService/queryMktResInfoByAccessNum,service/intf.soService/queryCommProduct,com.linkage.portal.service.lte.core.resources.InsertBusirecord,com.linkage.portal.service.lte.core.charge.QueryPayment"></const>
+		<const type="String" name="PORTAL_SERVICE_LOG_W" description="保存一周日志的接口列表" value="service/intf.pullingDataService/cardProgressQuery,TermQueryService/termOrderQueryService,queryAllModularAndFuncs,com.linkage.portal.service.lte.core.system.QueryParentAreaInfo,com.linkage.portal.service.lte.core.resources.GetOLpos,queryAuthenticDataRange,com.linkage.portal.service.lte.core.system.InsertLoginSession,service/intf.soService/querySoConstConfigByConditions,com.linkage.portal.service.lte.core.system.Createorderlonger,com.linkage.portal.service.lte.protocols.GetProtocolNbrSeq,com.linkage.portal.service.lte.core.system.GetTranId,com.linkage.portal.service.lte.core.resources.QueryOrderZDYYinfo,com.linkage.portal.service.lte.core.resources.UpdateOrderZDYYinfo,com.linkage.portal.service.lte.core.resources.QueryOrderYSLinfo,com.linkage.portal.service.lte.core.resources.SubOrderYSLinfo,com.linkage.portal.service.lte.core.resources.QueryBusiactiontype,com.linkage.portal.service.lte.core.resources.QueryBusitype,staffLoginOut,locateCustInfo,login4OtherSys,service/intf.chargeService/updateInvoiceInvalid,service/intf.soService/queryCTGMainData,service/intf.businessDispatchService/queryVirtualInfo,service/intf.businessDispatchService/exchange,service/intf.businessDispatchService/queryBusiDispatchOrderProcessInfos,queryOperatAreaRange,service/intf.chargeService/queryForegiftOperDetail,service/intf.chargeService/queryBamObjForegitfItems,hotProd,com.linkage.portal.service.lte.core.resources.QueryInvoiceTemplate,service/intf.fileOperateService/downLoadPrintFileFromFtp,service/intf.fileOperateService/upLoadPrintFileToFtp,service/intf.prodInstService/queryNewInfo,checkOperatSpec,modifyShortcutMenu,service/interact/synStaffBean/qryChannelByRelaStaff,com.linkage.portal.service.lte.core.resources.ModifyAccNbrToRelease,service/intf.soService/updateOrderListForCustOrderDel,service/intf.prodOfferService/queryLabelByAreaId,service/intf.custService/queryCertTypeByPartyTypeCd,service/intf.chargeService/queryBankInfo,updatePassword,service/intf.batchOrderService/updateOrderListForCustOrderDel,queryStaffInfo,service/intf.prodInstService/queryProdInstMemberInfo,service/intf.detailService/saveProtocol,service/intf.prodInstService/queryOffersByAttrId,service/intf.prodOfferService/query,service/intf.prodInstService/queryProtocolServiceByConditions,service/intf.prodInstService/queryCompProdMemberByAn,queryShortcutMenu,queryMenuInfo,sendMessageCommonService,queryBulletinInfo,com.linkage.portal.service.lte.core.resources.QueryAccNbrToRelease,com.linkage.portal.service.lte.core.system.GetSysParam,com.linkage.portal.service.lte.core.resources.QueryAgentPortalConfig,com.linkage.portal.service.lte.core.system.QueryAreaTreeByParentAreaId,service/intf.prodInstService/queryMktResInfoByAccessNum,service/intf.soService/queryCommProduct,com.linkage.portal.service.lte.core.resources.InsertBusirecord,com.linkage.portal.service.lte.core.charge.QueryPayment"></const>
 		
 		<const type="String" name="UNIFY_LOGIN_URI" value="https://crm.189.cn/ltePortal" description="统一登录地址(一般生产使用)"/>
-		<const type="String" name="PUSH_HOST_PORT" value="http://allen1707.xicp.net:80" description="双屏互动服务端地址端口"/>
+		<const type="String" name="PUSH_HOST_PORT" value="https://wiki.asiainfo.org:443" description="http://allen1707.xicp.net:80双屏互动服务端地址端口"/>
 		<const type="String" name="SECURITY_OFFICE_FLAG" value="OFF" description="安全办公业务是否启用开关"/>
 		<const type="String" name="RETURN_ACCOUNT_FLAG" value="OFF" description="返档改造生效开关"/>
 		<const type="String" name="AREA_CTRL_FLAG" value="ON" description="受理地区为省级地区(二级地区)时是否加载为登录地区(三级地区),OFF:否；ON:是(默认)"/>
@@ -1726,7 +1728,7 @@
 				'REAL_NAME_PHOTO_861':'OFF',<!-- 陕西 -->
 				'REAL_NAME_PHOTO_842':'OFF',<!-- 湖北 -->
 				'REAL_NAME_PHOTO_835':'OFF',<!-- 福建 -->
-				'REAL_NAME_PHOTO_832':'OFF',<!-- 江苏 -->
+				'REAL_NAME_PHOTO_832':'ON',<!-- 江苏 -->
 				'REAL_NAME_PHOTO_846':'OFF',<!-- 海南 -->
 				'REAL_NAME_PHOTO_864':'OFF',<!-- 宁夏 -->
 				'REAL_NAME_PHOTO_814':'OFF',<!-- 山西 -->
@@ -1741,7 +1743,7 @@
 				'REAL_NAME_PHOTO_812':'OFF',<!-- 天津 -->
 				'REAL_NAME_PHOTO_813':'OFF',<!-- 河北 -->
 				'REAL_NAME_PHOTO_841':'ON',<!-- 河南 -->
-				'REAL_NAME_PHOTO_821':'OFF',<!-- 辽宁 -->
+				'REAL_NAME_PHOTO_821':'ON',<!-- 辽宁 -->
 				'REAL_NAME_PHOTO_822':'OFF',<!-- 吉林 -->
 				'REAL_NAME_PHOTO_834':'OFF',<!-- 安徽 -->
 				'REAL_NAME_PHOTO_833':'ON',<!-- 浙江 -->
@@ -3205,7 +3207,7 @@
             'PRO_PAY_KEY_8120000':'PRO_PAY_8120000',<!-- 天津 -->
             'PRO_PAY_KEY_8130000':'PRO_PAY_8130000',<!-- 河北 -->
             'PRO_PAY_KEY_8410000':'PRO_PAY_8410000',<!-- 河南 -->
-            'PRO_PAY_KEY_8210000':'PRO_UPP_2016JH#77',<!-- 辽宁 -->
+            'PRO_PAY_KEY_8210000':'PRO_PAY_8210000',<!-- 辽宁 -->
             'PRO_PAY_KEY_8220000':'PRO_PAY_8220000',<!-- 吉林 -->
             'PRO_PAY_KEY_8340000':'PRO_PAY_8340000',<!-- 安徽 -->
             'PRO_PAY_KEY_8330000':'PRO_PAY_8330000',<!-- 浙江 -->
