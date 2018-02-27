@@ -164,12 +164,15 @@ order.amalgamation = (function(){
 							$("#yd_min").text(obj_list[i].minQty);
 							$("#yd_max").text(obj_list[i].maxQty);
 						}else if(ctcd=="10200001"){
+							$("#kd_role").show();
 							$("#kd_min").text(obj_list[i].minQty);
 							$("#kd_max").text(obj_list[i].maxQty);
 						}else if(ctcd=="10100001"){
+							$("#gh_role").show();
 							$("#gh_min").text(obj_list[i].minQty);
 							$("#gh_max").text(obj_list[i].maxQty);
 						}else if(ctcd=="10300001"){
+							$("#gc_role").show();
 							$("#gc_min").text(obj_list[i].minQty);
 							$("#gc_max").text(obj_list[i].maxQty);
 						}
@@ -186,6 +189,15 @@ order.amalgamation = (function(){
 //			$("#main_RoleCd").val($(obj).attr("RoleCd"));
 //			$("#main_compTypeCd").val($(obj).attr("compTypeCd"));
 			
+			order.phoneNumber.queryPhoneNbrPool();//查询号池
+			$("#phonenumber").show();
+			$("#offer_a").hide();
+			$("#phoneNumber_a").show();
+		    order.phoneNumber.queryApConfig();//查询号码段和号码类型 
+			if(order.phoneNumber.initPhonenumber()){
+				$("#offer").hide();
+				$("#offer-list").empty();
+			}
 			_buyService($(obj).attr("id"),price);
 			
 		}else{
@@ -614,15 +626,15 @@ order.amalgamation = (function(){
 	}
 	
 	var _goChuXiao = function(){
-		if(kd_flag == false){
+		if(kd_flag == false && $("#kd_role").css("display") != "none"){
 			$.alert("提示","请完成宽带信息填写！");
 			return;
 		}
-		if(gh_flag == false){
+		if(gh_flag == false && $("#gh_role").css("display") != "none"){
 			$.alert("提示","请完成固话信息填写！");
 			return;
 		}
-		if(gc_flag == false){
+		if(gc_flag == false  && $("#gc_role").css("display") != "none"){
 			$.alert("提示","请完成天翼高清信息填写！");
 			return;
 		}
@@ -1113,11 +1125,22 @@ var _saveHtml2Pdf=function(){
 					$("#printVoucherA").attr("disabled","disabled");//回执保存成功后  回执按钮改为灰色不可操作
 //					$("#showPdf").show();
 //					OrderInfo.order.step=3;
-				}else if (response.code == -2) {
-					$.alertM(response.data);
 				}else{
-					var error=response.data.errData!=null?response.data.errData:"保存回执失败!";
-					$.alert("提示",error);
+//					$.alertM(response.data);
+					//回执保存失败，弹出提示：“电子回执在拼命处理中，是否先跳过继续办理”，点击确定后，允许业务先继续往下办理
+					$.confirm("保存电子回执","电子回执在拼命处理中，是否先跳过保存回执继续办理业务？",{
+						yes:function(){
+							$(".item_fee").each(function(){
+		                    	$(this).attr("onclick","");
+		                    });
+							OrderInfo.returnFlag = "";
+							$("#nav-tab-6").addClass("active in");
+							$("#order-print").hide();
+							$("#printVoucherA").attr("disabled","disabled");//回执保存成功后  回执按钮改为灰色不可操作
+							return;
+						},no:function(){
+						return;
+					}},"question");
 				}
 			}
 		});

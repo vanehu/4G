@@ -147,15 +147,27 @@ verify = (function(){
         	}else{
         		cert_number = OrderInfo.jbr.identityNum;
         	}
-        	var param = {
+        	var param = {};
+        	if(OrderInfo.cust.isGov=="Y" && cust.isSameOne && (OrderInfo.actionFlag == 1 || OrderInfo.actionFlag == 14)){
+        		param = {
+            			"cert_address":cust.mainuserCatsh.address,
+            			"cert_number":cust.mainuserCatsh.idcard,
+            			"cust_id":OrderInfo.cust.custId,
+            			"party_name":OrderInfo.jbr.partyName,
+            			"image_best":image_best,
+            			"image_idcard":cust.mainuserCatsh.identityPic
+            		}
+        	}else{
+        		param = {
         			"cert_address":OrderInfo.jbr.addressStr,
         			"cert_number":cert_number,
         			"cust_id":OrderInfo.cust.custId,
         			"party_name":OrderInfo.jbr.partyName,
         			"image_best":image_best,
         			"image_idcard":OrderInfo.jbr.identityPic
-        			
+        		}
         	}
+        	
         	$.callServiceAsJson(contextPath + "/appInterfince/pic/verify", param, {
                 "before": function () {
                     $.ecOverlay("<strong>正在进行人证比对,请稍等...</strong>");

@@ -22,6 +22,8 @@ cust = (function(){
 	var _readIdCardUser={};//客户返档读卡客户信息
 	var _checkResult=true;//一证五号校验失败标志
 	var _custCatsh = {};//读卡的客户缓存
+	var _userCatsh = {};//读卡的使用人缓存
+	var _mainuserCatsh = {};//主卡卡的使用人缓存
 	var _isRealCust=true;//定位客户是否实名
 	var _custCernum = [];//客户证件使用数缓存
 	var _jbrAge;//客户证件使用数缓存
@@ -986,14 +988,25 @@ cust = (function(){
 								if(OrderInfo.cust.custId =="-1"){
 									cust.isOldCust = false;
 								}
-								OrderInfo.jbr.custId = OrderInfo.cust.custId;
-								OrderInfo.jbr.partyName = OrderInfo.cust.partyName;
-								OrderInfo.jbr.telNumber = OrderInfo.cust.telNumber;
-								OrderInfo.jbr.addressStr = OrderInfo.cust.addressStr;
-								OrderInfo.jbr.identityCd = OrderInfo.cust.identityCd;
-								OrderInfo.jbr.mailAddressStr = OrderInfo.cust.mailAddressStr;
-								OrderInfo.jbr.identityPic = OrderInfo.cust.identityPic;
-								OrderInfo.jbr.identityNum = OrderInfo.cust.idCardNumber;
+								if (OrderInfo.cust.isGov=="Y") {
+									OrderInfo.jbr.custId = OrderInfo.cust.userCustId;
+									OrderInfo.jbr.partyName = OrderInfo.cust.userName;
+									OrderInfo.jbr.telNumber = "";
+									OrderInfo.jbr.addressStr = OrderInfo.cust.usercertAddress;
+									OrderInfo.jbr.identityCd = OrderInfo.cust.userIdentityCd;
+									OrderInfo.jbr.mailAddressStr = "";
+									OrderInfo.jbr.identityPic = OrderInfo.cust.identityPic;
+									OrderInfo.jbr.identityNum = OrderInfo.cust.userIdentityNum;
+								}else{
+									OrderInfo.jbr.custId = OrderInfo.cust.custId;
+									OrderInfo.jbr.partyName = OrderInfo.cust.partyName;
+									OrderInfo.jbr.telNumber = OrderInfo.cust.telNumber;
+									OrderInfo.jbr.addressStr = OrderInfo.cust.addressStr;
+									OrderInfo.jbr.identityCd = OrderInfo.cust.identityCd;
+									OrderInfo.jbr.mailAddressStr = OrderInfo.cust.mailAddressStr;
+									OrderInfo.jbr.identityPic = OrderInfo.cust.identityPic;
+									OrderInfo.jbr.identityNum = OrderInfo.cust.idCardNumber;
+								}
 //						}
 						
 						//jquery mobile 需要刷新才能生效
@@ -2202,7 +2215,7 @@ cust = (function(){
 	};
 
 	//使用人展示客户鉴权
-	var _showCustAuth = function(scope,type) {
+	var _showCustAuth = function(scope,type,identityPic) {
 		_custFlag = type;
 		var a=$(scope).attr("custId");
 		var idCardNum=$("#sfzorderAttrIdCard").val();
@@ -2210,6 +2223,7 @@ cust = (function(){
 		_choosedCustInfo = {
 			custId : $(scope).attr("custId"), //$(scope).find("td:eq(3)").text(),
 			partyName : $(scope).attr("partyName"), //$(scope).find("td:eq(0)").text(),
+			"identityPic" : identityPic,//使用人证件照片
 			CN : $(scope).attr("CN"),
 			address : $(scope).attr("address"),
 			certNum : $(scope).attr("certNum"),
@@ -3411,6 +3425,8 @@ cust = (function(){
 		accountQuery				:  _accountQuery,
 		OneCertNumFlag              :       _OneCertNumFlag,
 		custCatsh					:		_custCatsh,
+		userCatsh					:		_userCatsh,
+		mainuserCatsh				:		_mainuserCatsh,
 		custCernum					:		_custCernum,
 		checkRealCust				:		_checkRealCust,
 		isRealCust					:		_isRealCust,

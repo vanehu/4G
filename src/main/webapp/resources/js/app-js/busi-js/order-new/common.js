@@ -368,6 +368,11 @@ common = (function($) {
 	var _callCloseWebview=function(){
 		OrderInfo.order.soNbr = "";
 		cust.custCatsh = {};
+		cust.userCatsh = {};
+		cust.mainuserCatsh = {};
+		if(order.phoneNumber.mainFlag != undefined){
+			order.phoneNumber.mainFlag = "true";
+		}
 		if($("#alert-modal").length>0){
 			$("#alert-modal").modal("hide");
 		}
@@ -1478,6 +1483,14 @@ common = (function($) {
 				_callCloseWebview();
 				return;
 			}else if(OrderInfo.order.step==2){
+				if($("#phonenumber-list2").length>0 && $("#phonenumber-list2").css("display")!="none"){
+					$("#phonenumber-list2").hide();
+					$("#phoneNumber_a").hide();
+					$("#all_prod").show();
+					$("#secondaryPhoneNumUl").show();
+					$("#fk_phonenumber_next").show();
+					return;
+				}
 				if(OrderInfo.returnFlag=="add"){
 					$("#all_prod").show();
 					$("#page_kd").hide();

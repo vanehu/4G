@@ -24,6 +24,9 @@ public interface StaffBmo {
 	Map<String, Object> sendMsgInfo(Map<String, Object> dataBusMap, String optFlowNum, SessionStaff sessionStaff)
             throws Exception;
 	
+	Map<String, Object> sendMessageCommonService(Map<String, Object> dataBusMap, String optFlowNum, SessionStaff sessionStaff)
+            throws Exception;
+	
 	Map<String,Object> updateStaffStatus(Map<String, Object> dataBusMap, String optFlowNum, SessionStaff sessionStaff)
             throws Exception;
 	

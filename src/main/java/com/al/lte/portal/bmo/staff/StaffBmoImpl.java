@@ -95,6 +95,45 @@ public class StaffBmoImpl implements StaffBmo {
 		}
 		return returnMap;
 	}
+	
+	/**
+	 * 调用系管短信发送公共服务
+	 * 
+	 * @param dataBusMap
+	 * @param optFlowNum
+	 * @return
+	 * @throws Exception
+	 */
+	public Map<String, Object> sendMessageCommonService(Map<String, Object> dataBusMap,
+			String optFlowNum, SessionStaff sessionStaff)
+			throws Exception {
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		System.out.println("++++++++++++调用系管短信发送公共服务reqMap="+JsonUtil.toString(dataBusMap));
+		DataBus db = InterfaceClient.callService(dataBusMap, PortalServiceCode.SEND_MESSAGE, optFlowNum, sessionStaff);
+		System.out.println("++++++++++++调用系管短信发送公共服务returnMap="+JsonUtil.toString(db.getReturnlmap()));
+		if (ResultCode.R_SUCCESS.equals(db.getResultCode())) {
+			returnMap = db.getReturnlmap();
+			String code = MapUtils.getString(returnMap, "code", "");
+			String message = MapUtils.getString(returnMap, "message", "短信发送异常！");
+			if (ResultCode.R_SUCCESS.equals(code)) {
+				returnMap.put("resultCode", "0");
+			} else {
+				returnMap.put("resultCode", "1");
+				returnMap.put("resultMsg", message);
+			}
+		} else {
+			if(StringUtils.isBlank(db.getResultMsg())){
+				returnMap = db.getReturnlmap();
+				if(returnMap != null){
+					returnMap.put("resultMsg", MapUtils.getString(returnMap, "resultMsg", "短信发送发生未知异常！"));
+				}
+			} else{
+				returnMap.put("resultMsg", "调用失败，" + db.getResultMsg());
+			}
+			returnMap.put("resultCode", "1");
+		}
+		return returnMap;
+	}
 
 	/**
 	 * 密码修改

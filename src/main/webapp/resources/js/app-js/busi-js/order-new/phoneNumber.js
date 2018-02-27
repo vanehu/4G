@@ -9,7 +9,7 @@ CommonUtils.regNamespace("order", "phoneNumber");
  */
 order.phoneNumber = (function(){
 	var _step=1;//页面步骤，默认1
-	var mainFlag="true";//是否主卡选号码
+	var _mainFlag="true";//是否主卡选号码
 	var _secondaryCarNum=0;//副卡数目
 	var selectedObj=null;//密码预占查询选中号码对象
 	var _boProdAn = {
@@ -241,9 +241,9 @@ order.phoneNumber = (function(){
 //		}
 		//是否主卡号码查询
 		if(ifMain==undefined){
-			ifMain = mainFlag;
+			ifMain = order.phoneNumber.mainFlag;
 		}else{
-			mainFlag = ifMain;
+			order.phoneNumber.mainFlag = ifMain;
 		}
 		var idcode=$.trim($("#idCode").val());
 		if(idcode!=''){
@@ -327,6 +327,9 @@ order.phoneNumber = (function(){
 				if(scroller && $.isFunction(scroller)) scroller.apply(this,[]);
 				$("#phonenumber-list_scroller").css("transform","translate(0px, -40px) translateZ(0px)");
 				if(OrderInfo.actionFlag == 112){
+					if(ifMain=="false"){
+						$("#all_prod").hide();
+					}
 					$("#offer").hide();
 					$("#offer-list").empty();
 				}
@@ -342,7 +345,7 @@ order.phoneNumber = (function(){
 	
 	//副卡号码列表查询
 	var _btnQueryPhoneNumber2=function(){
-		mainFlag="false";
+		order.phoneNumber.mainFlag="false";
 		var idcode=$.trim($("#idCode").val());
 		if(idcode!=''){
 		    _btnIBydentityQuery();
@@ -427,7 +430,7 @@ order.phoneNumber = (function(){
 	};
 	
 	var _clickPhoneNum=function(obj,purchas) {
-		if(mainFlag=="true"){//主卡号码选择
+		if(order.phoneNumber.mainFlag=="true"){//主卡号码选择
 			_clickMainCardPhone(obj,purchas);
 		}else{//副卡号码选择
 			_clickSecondaryCardPhone(obj,purchas);
@@ -456,7 +459,7 @@ order.phoneNumber = (function(){
 	};
 	//号卡新装选择号码（主卡和副卡通用）
 	var _chooseCardPhoneNum = function(obj,purchas,memberRoleCd,needPsw) {
-		if(mainFlag=="true"){
+		if(order.phoneNumber.mainFlag=="true"){
 			memberRoleCd = CONST.MEMBER_ROLE_CD.MAIN_CARD;
 		}else{
 			memberRoleCd = CONST.MEMBER_ROLE_CD.VICE_CARD;
@@ -665,6 +668,7 @@ order.phoneNumber = (function(){
 												   $("#addSecondaryCard").removeClass("font-default").addClass("font-secondary");
 												   $("#addSecondaryCard").attr("onclick","");
 											   }
+											   $("#all_prod").show();
 											}else{
 												var $div =$('<li><span class="list-title"><span class="title-lg">'+phoneNumber+'</span><span class="subtitle font-secondary">移动电话</span></span></li>');
 												if(OrderInfo.actionFlag==6){//主副卡成员变更加装副卡
@@ -734,7 +738,7 @@ order.phoneNumber = (function(){
 										$("#phonenumber-list").empty();
 										$("#phonenumber-list2").empty();
 										$("#phonenumber-list2").hide();
-										if(mainFlag=="false"){
+										if(order.phoneNumber.mainFlag=="false"){
 											$("#secondaryPhoneNumUl").show();
 											$("#fk_phonenumber_next").show();
 										}
@@ -804,7 +808,7 @@ order.phoneNumber = (function(){
 		$("#idCode").val("");
 		//_queryPhoneNbrPool2();
 //		_btnQueryPhoneNumber2();
-		mainFlag = "false";//副卡选号时 主卡标识为false
+		order.phoneNumber.mainFlag = "false";//副卡选号时 主卡标识为false
 		$("#secondaryPhoneNumUl").hide();
 		$("#fk_phonenumber_next").hide();
 		if(OrderInfo.actionFlag==6){//加装副卡
@@ -863,7 +867,7 @@ order.phoneNumber = (function(){
 					 response.data='查询失败,稍后重试';
 				}
 				var content$ = $("#phonenumber-list");
-				if(mainFlag=="false"){//副卡
+				if(order.phoneNumber.mainFlag=="false"){//副卡
 					content$ = $("#phonenumber-list2");
 				}
 				$.unecOverlay();
@@ -969,14 +973,14 @@ order.phoneNumber = (function(){
 	};	
 
  var _setMainFlag=function(){
-	 mainFlag="true";
+	 order.phoneNumber.mainFlag="true";
 	 $('#phoneNumber_a').hide();
  };
  
 //滚动页面入口
 	var _scroll = function(scrollObj){
 		if(scrollObj && scrollObj.page && scrollObj.page >= 1){
-			order.phoneNumber.btnQueryPhoneNumber("",scrollObj.scroll,mainFlag);
+			order.phoneNumber.btnQueryPhoneNumber("",scrollObj.scroll,order.phoneNumber.mainFlag);
 //			_initPhonenumber($("#subPage").val(),scrollObj.scroll);
 		}
 	};
@@ -1091,7 +1095,8 @@ order.phoneNumber = (function(){
 	    showPhoneNumSearchModal:_showPhoneNumSearchModal,
 	    setMainFlag            :_setMainFlag,
 	    scroll	: _scroll,
-	    getVirtualNum  :_getVirtualNum
+	    getVirtualNum  :_getVirtualNum,
+	    mainFlag	:_mainFlag
 	};
 })();
 

@@ -1306,7 +1306,7 @@ var _saveHtml2Pdf=function(){
 		SvcCont.CustOrderInfo = CustOrderInfo;
 		var ProdInfo = [];
 		if(OrderInfo.actionFlag == 112){
-			if($("#addressName_kd").val().length>0){
+			if($("#addressName_kd").length>0 && $("#addressName_kd").val().length>0){
 				ProdInfo.push(
 							{
 //									"AccNum":"02589978980",
@@ -1323,7 +1323,7 @@ var _saveHtml2Pdf=function(){
 							}
 						);
 			}
-			if($("#addressName_gh").val().length>0){
+			if($("#addressName_gh").length>0 && $("#addressName_gh").val().length>0){
 				ProdInfo.push(
 							{
 //									"AccNum":"02589978980",
@@ -1340,7 +1340,7 @@ var _saveHtml2Pdf=function(){
 							}
 						);
 			}
-			if($("#addressName_gc").val().length>0){
+			if($("#addressName_gc").length>0 && $("#addressName_gc").val().length>0){
 				ProdInfo.push(
 							{
 //									"AccNum":"02589978980",
@@ -1377,7 +1377,7 @@ var _saveHtml2Pdf=function(){
 		}
 		var AttrInfos_prod = new Array();
 		if(OrderInfo.actionFlag == 112){
-			if($("#prodName_kd").val().length>0){
+			if($("#prodName_kd").length>0 && $("#prodName_kd").val().length>0){
 				if($("#upslList_kd").val()!="" && $("#upslList_kd").val()!=null){
 					var up = {
 							"AttrSpecId":"10010130",
@@ -1393,7 +1393,7 @@ var _saveHtml2Pdf=function(){
 					AttrInfos_prod.push(dw);
 				}
 			}
-			if($("#prodName_gh").val().length>0){
+			if($("#prodName_gh").length>0 && $("#prodName_gh").val().length>0){
 				if($("#upslList_gh").val()!="" && $("#upslList_gh").val()!=null){
 					var up = {
 							"AttrSpecId":"10010130",
@@ -1409,7 +1409,7 @@ var _saveHtml2Pdf=function(){
 					AttrInfos_prod.push(dw);
 				}
 			}
-			if($("#prodName_gc").val().length>0){
+			if($("#prodName_gc").length>0 && $("#prodName_gc").val().length>0){
 				if($("#upslList_gc").val()!="" && $("#upslList_gc").val()!=null){
 					var up = {
 							"AttrSpecId":"10010130",
@@ -1447,22 +1447,32 @@ var _saveHtml2Pdf=function(){
 		SvcCont.ProdInfo = ProdInfo;
 		
 		if(OrderInfo.actionFlag == 112){
+			var p_index = -1;
 			order.broadband.ProdOfferInfo = [];
-			order.broadband.ProdOfferInfo.push({
-				"OfferProdRelInfo":[{"ProdInstId":"-1","RoleCd":$("#compTypeCd_kd").val(),"RoleName":""}],
-				"ProdOfferInstId":"-1",
+			if($("#kd_role").css("display") != "none"){
+				order.broadband.ProdOfferInfo.push({
+				"OfferProdRelInfo":[{"ProdInstId":p_index+"","RoleCd":$("#compTypeCd_kd").val(),"RoleName":""}],
+				"ProdOfferInstId":p_index+"",
 				"ProdOfferNbr":$("#offerNbr_kd").val()
 				});
-			order.broadband.ProdOfferInfo.push({
-				"OfferProdRelInfo":[{"ProdInstId":"-2","RoleCd":$("#compTypeCd_gh").val(),"RoleName":""}],
-				"ProdOfferInstId":"-2",
+				p_index--;
+			}
+			if($("#gh_role").css("display") != "none"){
+				order.broadband.ProdOfferInfo.push({
+				"OfferProdRelInfo":[{"ProdInstId":p_index+"","RoleCd":$("#compTypeCd_gh").val(),"RoleName":""}],
+				"ProdOfferInstId":p_index+"",
 				"ProdOfferNbr":$("#offerNbr_gh").val()
 				});
-			order.broadband.ProdOfferInfo.push({
-				"OfferProdRelInfo":[{"ProdInstId":"-2","RoleCd":$("#compTypeCd_gc").val(),"RoleName":""}],
-				"ProdOfferInstId":"-3",
+				p_index--;
+			}
+			if($("#gc_role").css("display") != "none"){
+				order.broadband.ProdOfferInfo.push({
+				"OfferProdRelInfo":[{"ProdInstId":p_index+"","RoleCd":$("#compTypeCd_gc").val(),"RoleName":""}],
+				"ProdOfferInstId":p_index+"",
 				"ProdOfferNbr":$("#offerNbr_gc").val()
 				});
+			}
+			
 		}
 		SvcCont.ProdOfferInfo = order.broadband.ProdOfferInfo;
 		

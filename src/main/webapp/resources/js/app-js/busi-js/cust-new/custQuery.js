@@ -76,6 +76,8 @@ custQuery = (function(){
 	
 	//客户定位证件类型选择事件
 	var _custidentidiesTypeCdChoose = function(scope,id) {
+		OrderInfo.cust = {};
+		OrderInfo.jbr = {};
 		// 非接入号隐藏产品类别选择
 //		$("#prodTypeCd").hide();
 		$("#"+id).val("");
@@ -310,6 +312,8 @@ custQuery = (function(){
 	        accountName: $(scope).attr("accountName"),//账户名
 	        userName: $(scope).attr("userName"),//使用人名
 	        userCustId: $(scope).attr("userCustId"),//使用人客户id
+	        usercertAddress: $(scope).attr("usercertAddress"),//使用人证件地址
+	        ifEncoded: $(scope).attr("ifEncoded"),//使用人证件地址
 	        isSame: $(scope).attr("isSame"),//使用人名称与账户名称是否一致
 	        age: userAge//客户年龄
 			
