@@ -1107,6 +1107,18 @@ order.main = (function(){
 				OrderInfo.updateChooseUserInfos(prodId, cust.tmpChooseUserInfo);
 				$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId+'_name').val(cust.tmpChooseUserInfo.partyName);
 				$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId).val(cust.tmpChooseUserInfo.custId);
+				if((OrderInfo.actionFlag == 1 || OrderInfo.actionFlag == 14) && prodId+"" == "-1"){
+					cust.mainuserCatsh = cust.userCatsh;
+					OrderInfo.jbr.custId = cust.tmpChooseUserInfo.custId;
+					OrderInfo.jbr.partyName = cust.tmpChooseUserInfo.partyName;//经办人名称
+					OrderInfo.jbr.addressStr = cust.tmpChooseUserInfo.addressStr;//经办人地址
+					OrderInfo.jbr.identityCd = cust.tmpChooseUserInfo.identityCd;//证件类型
+					OrderInfo.jbr.identityNum = cust.tmpChooseUserInfo.idCardNumber;//证件号码
+					OrderInfo.jbr.identityPic = cust.tmpChooseUserInfo.identityPic;//证件照片
+					OrderInfo.jbr.telNumber = "";
+					OrderInfo.jbr.mailAddressStr = "";
+					$("#jbrName").html(OrderInfo.jbr.partyName);
+				}
 				cust.tmpChooseUserInfo = {};
 				$("#userModal").modal("hide");
 			});
@@ -1114,7 +1126,7 @@ order.main = (function(){
 			$("#user_create").show();
 			$("#user_select").hide();
 			_showUserFlag = "create";
-			cust.tmpChooseUserInfo = {};
+//			cust.tmpChooseUserInfo = {};
 			cust.clearUserForm();
 //			$('#user_otg').off('click').on('click',function(){
 //				_queryUser("1","210281198109190536","picturechenzheng陈真","asdasd","陈真");
@@ -1139,7 +1151,19 @@ order.main = (function(){
 					OrderInfo.updateChooseUserInfos(prodId, cust.tmpChooseUserInfo);
 					$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId+'_name').val(cust.tmpChooseUserInfo.partyName);
 					$('#'+CONST.PROD_ATTR.PROD_USER+'_'+prodId).val(cust.tmpChooseUserInfo.custId);
-					cust.tmpChooseUserInfo = {};
+					if((OrderInfo.actionFlag == 1 || OrderInfo.actionFlag == 14) && prodId+"" == "-1"){
+						cust.mainuserCatsh = cust.userCatsh;
+						OrderInfo.jbr.custId = cust.tmpChooseUserInfo.custId;
+						OrderInfo.jbr.partyName = cust.tmpChooseUserInfo.partyName;//经办人名称
+						OrderInfo.jbr.addressStr = cust.tmpChooseUserInfo.addressStr;//经办人地址
+						OrderInfo.jbr.identityCd = cust.tmpChooseUserInfo.identityCd;//证件类型
+						OrderInfo.jbr.identityNum = cust.tmpChooseUserInfo.idCardNumber;//证件号码
+						OrderInfo.jbr.identityPic = cust.tmpChooseUserInfo.identityPic;//证件照片
+						OrderInfo.jbr.telNumber = "";
+						OrderInfo.jbr.mailAddressStr = "";
+						$("#jbrName").html(OrderInfo.jbr.partyName);
+					}
+//					cust.tmpChooseUserInfo = {};
 					cust.clearUserForm();
 					$("#userModal").modal("hide");
 				} else {
@@ -1244,6 +1268,11 @@ order.main = (function(){
 	 * identityPic 证件照片
 	 */
 	var _queryUser = function(identityCd,idcard,identityPic,address,name){
+		cust.userCatsh.identityCd = identityCd;
+		cust.userCatsh.name = name;
+		cust.userCatsh.idcard = idcard;
+		cust.userCatsh.address = address;
+		cust.userCatsh.identityPic = identityPic;
 		cust.isOldCust = false;
 		var identityCd=identityCd;
 		var diffPlace="";
@@ -1322,7 +1351,7 @@ order.main = (function(){
 					// 使用人定位时，存在多客户的情况
 					if(custInfoSize > 0){
 						var custInfos = $(response.data).find('#custInfos');
-						cust.showCustAuth(custInfos,"user");
+						cust.showCustAuth(custInfos,"user",identityPic);
 					} else {
 						$("#user-result").hide();
 						$("#userModal-result").show();
@@ -1363,6 +1392,7 @@ order.main = (function(){
 	 * 使用人填充返回信息
 	 */
 	function _showUserInfo(custInfo){
+		cust.tmpChooseUserInfo = {};
 		custInfo.custId = _getUserId(custInfo);
 		if(custInfo != null && custInfo.custId){
 			//将客户信息作为使用人tmpChooseUserInfo，确认后保存到OrderInfo.choosedUserInfos

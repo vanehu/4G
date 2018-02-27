@@ -83,35 +83,21 @@
 											<i id="addSecondaryCard" onclick="order.phoneNumber.showSecondaryCardModalData()" data-toggle="modal" class="iconfont absolute-right font-default">&#xe670;</i>
 										</li>
 									</ul>
-									<ul class="choice-list-box">
+									<ul class="choice-list-box" id="kd_role" style="display:none;">
 										<li>
 											<i class="iconfont pull-left">&#xe66c;</i>
 											<span class="list-title font-secondary">宽带(<span id="kd_min"></span>-<span id="kd_max"></span>)</span>
 											<i onclick="javascript:order.amalgamation.page_kd('kd');" data-toggle="modal" class="iconfont absolute-right font-default">&#xe670;</i>
 										</li>
-										<!-- <li>
-											<span class="list-title">
-			                            				<span class="title-lg">18953116792</span>
-											<span class="subtitle font-secondary">移动电话</span>
-											</span>
-											<i class="iconfont absolute-right">&#xe624;</i>
-										</li> -->
 									</ul>
-									<ul class="choice-list-box">
+									<ul class="choice-list-box" id="gh_role" style="display:none;">
 										<li>
 											<i class="iconfont pull-left">&#xe66c;</i>
 											<span class="list-title font-secondary">固话(<span id="gh_min"></span>-<span id="gh_max"></span>)</span>
 											<i onclick="javascript:order.amalgamation.page_kd('gh');" data-toggle="modal" class="iconfont absolute-right font-default">&#xe670;</i>
 										</li>
-										<!-- <li>
-											<span class="list-title">
-			                            				<span class="title-lg">18953116792</span>
-											<span class="subtitle font-secondary">移动电话</span>
-											</span>
-											<i class="iconfont absolute-right">&#xe624;</i>
-										</li> -->
 									</ul>
-									<ul class="choice-list-box">
+									<ul class="choice-list-box" id="gc_role" style="display:none;">
 										<li>
 											<i class="iconfont pull-left">&#xe66c;</i>
 											<span class="list-title font-secondary">天翼高清(<span id="gc_min"></span>-<span id="gc_max"></span>)</span>
@@ -123,21 +109,8 @@
 									<button class="sun-btn done" onclick="order.amalgamation.goChuXiao();">下一步</button>
 								</div>
 							</div>
-							<div class="modal modal-message fade modal-top" id="secondaryCardModal">
-									<div class="modal-dialog">
-										<div class="modal-content">
-											<div class="modal-header">
-												<button type="button" class="close" onclick="$('#phoneNumber_a').hide();" aria-hidden="true" data-dismiss="modal">×</button>
-												<h4 class="modal-title">副卡号码选择</h4>
-                                             
-											</div>
-										<div class="choice-box" id="nbrPoolDiv2">
-										</div>
-										<div class="list-box p-5" id="phonenumber-list2">
+							<div class="list-box p-5" id="phonenumber-list2" style="display:none;">
 								
-							            </div>
-								</div>
-							</div>
 							</div>
 							<!-- 选地址 -->
 							<div id="page_kd">

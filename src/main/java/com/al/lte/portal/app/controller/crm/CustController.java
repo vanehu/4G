@@ -2333,6 +2333,7 @@ public class CustController extends BaseController {
 			newCustInfoMap.put("userIdentityCd", MapUtils.getString(iMap, "identityTypeCd"));
 			newCustInfoMap.put("userIdentityName", MapUtils.getString(iMap, "identityName"));
 			newCustInfoMap.put("userIdentityNum", MapUtils.getString(iMap, "identityNum"));
+			newCustInfoMap.put("usercertAddress", MapUtils.getString(iMap, "certAddress"));
 			newCustInfoMap.put("accountName", MapUtils.getString(aMap, "accountName"));
 			newCustInfoMap.put("userName", MapUtils.getString(auMap, "useCustName"));
 			newCustInfoMap.put("userCustId", MapUtils.getString(auMap, "useCustId"));

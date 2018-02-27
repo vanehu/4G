@@ -39,8 +39,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ThemeResolver;
 
-import com.al.common.Constant;
-import com.al.common.utils.MD5Helper;
 import com.al.common.utils.StringUtil;
 import com.al.ec.serviceplatform.client.DataBus;
 import com.al.ec.serviceplatform.client.ResultCode;
@@ -162,6 +160,14 @@ public class LoginController extends BaseController {
     private String RESULT_MSG="resultMsg";
     
     private String ERROR_MSG="发送短信异常";
+    
+    private Map<String, Object> starMap = null;
+    
+    private String starNum = null;
+    
+    private SessionStaff starStaff= null;
+    //翼销售内网外网登录标识
+    private String app_login_flag = "o";
     
 	/**
 	 * consumes="text/plain",produces="application/json 接受的请求的header中的
@@ -493,11 +499,18 @@ public class LoginController extends BaseController {
 			} catch (Exception e) {
 				log.error("门户/staff/login/applogindo服务获取ip异常", e);
 			}
+			StringBuffer reqUrl = request.getRequestURL();
 			//获取app登录标识app_login_flag, o:打头 说明是公网登录    i:打头 说明是内网登录
 			Properties properties = MySimulateData.getProperties("/portal/portal.properties");
-			String app_login_flag = properties.getProperty(SysConstant.APP_LOGIN_FLAG);
+			app_login_flag = properties.getProperty(SysConstant.APP_LOGIN_FLAG);
+			if("https://ct.crm.189.cn:86/provPortal/staff/login/applogindo".equals(reqUrl)){
+				app_login_flag = "o";
+			}else{
+				app_login_flag = "i";
+			}
 			paramMap.put("wanIp", app_login_flag+ip);
 			paramMap.put(InterfaceClient.DATABUS_DBKEYWORD,(String) ServletUtils.getSessionAttribute(super.getRequest(),SysConstant.SESSION_DATASOURCE_KEY));
+			Date now = new Date();
 			map = staffBmo.loginCheck(paramMap, flowNum, staffSession);
 			map.put("ifSend", paramMap.get("ifSend"));  //是否发送短信
 			String resultCode = MapUtils.getString(map, "resultCode");
@@ -511,7 +524,15 @@ public class LoginController extends BaseController {
 				String msgnumber = MySimulateData.getInstance().getParam((String) request.getSession().getAttribute(SysConstant.SESSION_DATASOURCE_KEY),SysConstant.MSG_NUMBERS);
 				Map<String, Object> resMap = new HashMap<String, Object>();
 				resMap.put("staff", map);
-				
+				staffSession.setStaffId(String.valueOf(map.get("staffId")));
+				staffSession.setAreaId(String.valueOf(map.get("areaId")));
+//				String ifPass = staffBmo.checkOperatBySpecCd(SysConstant.SMS_PASS_OPSCD , staffSession);
+				//非生产环境公网登录，且工号有免校验短信权限   登录可免校验短信
+				if("i".equals(app_login_flag) && "N".equals(smsPassFlag)){
+					smsPassFlag = "N";
+				}else{
+					smsPassFlag = "Y";
+				}
 				//如果全局开关设定为不发送，或者员工信息表明不发送，或者当前是重新登录不发送短信
 				if ("1".equals(msgCodeFlag) || "N".equals(smsPassFlag) || "N".equals(loginValid) || "true".equals(isHand)) {
 					resMap.put("ifSend", "N");
@@ -534,6 +555,13 @@ public class LoginController extends BaseController {
 				}
 			}else{
 				String message = (String) map.get("resultMsg");
+				if("密码错误".equals(message)){
+					Map<String, Object> msgData = new HashMap<String, Object>();
+					msgData.put("staffCode", paramMap.get("staffCode"));
+					msgData.put("areaId", paramMap.get("areaId"));
+					msgData.put("messageContent", "登录翼销售失败，请确认是否本人操作！");
+					sendMessageCommonService(request, msgData, flowNum, staffSession);
+				}
 				return super.failed(message,-1);
 			}
 		} catch (BusinessException be) {
@@ -1019,7 +1047,11 @@ public class LoginController extends BaseController {
 			String smsPassFlag = MapUtils.getString(mapSession, "smsPassFlag", "Y");
 			// 系统参数表中的是否发送校验短信标识，1不发送不验证， 其他发送并验证
 			String msgCodeFlag = MySimulateData.getInstance().getParam((String) request.getSession().getAttribute(SysConstant.SESSION_DATASOURCE_KEY),SysConstant.MSG_CODE_FLAG);
-
+			if("i".equals(app_login_flag) && "N".equals(smsPassFlag)){
+				smsPassFlag = "N";
+			}else{
+				smsPassFlag = "Y";
+			}
 			if (!"1".equals(msgCodeFlag) && !"N".equals(smsPassFlag)) {
 				SessionStaff sessionStaff = SessionStaff.setStaffInfoFromMap(mapSession);
 				Map<String, Object> msgMap = new HashMap<String, Object>();
@@ -1059,6 +1091,24 @@ public class LoginController extends BaseController {
 		return retnMap;
 	}
 	
+		//调用系管短信发送公共服务
+		public void sendMessageCommonService(HttpServletRequest request, Map<String, Object> paramMap, String flowNum, SessionStaff sessionStaff)
+		{
+			starMap = paramMap;
+			starNum = flowNum;
+			starStaff = sessionStaff;
+			new Thread(){
+				public void run(){
+					try {
+						staffBmo.sendMessageCommonService(starMap, starNum, starStaff);
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+//						e.printStackTrace();
+					}
+				}
+			}.start();
+		}
+		
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/login/smsValid", method = RequestMethod.POST)
 	@ResponseBody
@@ -1077,6 +1127,12 @@ public class LoginController extends BaseController {
 		// 登陆后，服务层返回的认证后用户信息
 		Map<String, Object> mapSession = (Map<String, Object>) ServletUtils.getSessionAttribute(request, SESSION_KEY_TEMP_LOGIN_STAFF);
 		String smsPassFlag = MapUtils.getString(mapSession, "smsPassFlag", "Y");
+		if("i".equals(app_login_flag) && "N".equals(smsPassFlag)){
+			smsPassFlag = "N";
+		}else{
+			smsPassFlag = "Y";
+		}
+		SessionStaff sessionStaff = SessionStaff.setStaffInfoFromMap(mapSession);
 		long l_start = Calendar.getInstance().getTimeInMillis();	
 		// 验证码内容
 		String smsPwdSession = (String) ServletUtils.getSessionAttribute(request, SysConstant.SESSION_KEY_LOGIN_SMS);
@@ -1085,8 +1141,8 @@ public class LoginController extends BaseController {
 			return super.failed("短信过期失效，请重新发送!", ResultConstant.FAILD.getCode());
 		}
 		ServletUtils.removeSessionAttribute(request, SysConstant.SESSION_KEY_LOGIN_SMS);
+		//非生产环境公网登录，且工号有免校验短信权限   登录可免校验短信
 		if ("1".equals(msgCodeFlag) || "N".equals(smsPassFlag) || smsPwdSession.equals(smsPwd) || "true".equals(isHand)) {
-			SessionStaff sessionStaff = SessionStaff.setStaffInfoFromMap(mapSession);
 			
 			JsonResponse channelResp = queryChannel(sessionStaff, "", mapSession);
 			//如果查询渠道失败
@@ -1264,10 +1320,22 @@ public class LoginController extends BaseController {
 				session.setAttribute(SysConstant.SESSION_KEY_APP_FLAG, appFlag);
 				ServletUtils.addCookie(response,"/",ServletUtils.ONE_WEEK_SECONDS,SysConstant.SESSION_KEY_APP_FLAG,"1");
 			}
+			
+			Map<String, Object> msgData = new HashMap<String, Object>();
+			msgData.put("staffCode", sessionStaff.getStaffCode());
+			msgData.put("areaId", sessionStaff.getCurrentAreaId());
+			msgData.put("messageContent", "登录翼销售成功，请确认是否本人操作！");
+			sendMessageCommonService(request, msgData, null, sessionStaff);
+			
 			return super.successed(resData);
 		} else if (smsPwdSession == null||mapSession==null) { // 已过期,需要重新校验登录
 			return super.failed("短信过期失败!", ResultConstant.ACCESS_NOT_NORMAL.getCode());
 		}else {
+			Map<String, Object> msgData = new HashMap<String, Object>();
+			msgData.put("staffCode", sessionStaff.getStaffCode());
+			msgData.put("areaId", sessionStaff.getCurrentAreaId());
+			msgData.put("messageContent", "登录翼销售失败，请确认是否本人操作！");
+			sendMessageCommonService(request, msgData, null, sessionStaff);
 			return super.failed("短信验证码出错!", ResultConstant.FAILD.getCode());
 		}
 	}

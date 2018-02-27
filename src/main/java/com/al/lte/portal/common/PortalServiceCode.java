@@ -463,7 +463,9 @@ public final class PortalServiceCode {
    public static final String QRY_PHONENBRLEVELINFO_LIST="res-PhoneNumberQryService";
     
     
-    
+   /** 系管短信发送公共服务 */
+   public static final String SEND_MESSAGE = "sys-sendMessageCommonService"; 
+   
     /** bianxw 公告列表 */
     public static final String NOTICE_QUERY = "sys-queryBulletinInfo";
     

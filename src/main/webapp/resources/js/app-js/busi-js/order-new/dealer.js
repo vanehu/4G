@@ -95,13 +95,24 @@ order.dealer = (function() {
 						} else {
 							cust.isOldCust = false;
 						}
-						OrderInfo.jbr.partyName = OrderInfo.cust.partyName;
-						OrderInfo.jbr.telNumber = OrderInfo.cust.telNumber;
-						OrderInfo.jbr.addressStr = OrderInfo.cust.addressStr;
-						OrderInfo.jbr.identityCd = OrderInfo.cust.identityCd;
-						OrderInfo.jbr.mailAddressStr = OrderInfo.cust.mailAddressStr;
-						OrderInfo.jbr.identityPic = OrderInfo.cust.identityPic;
-						OrderInfo.jbr.identityNum = OrderInfo.cust.idCardNumber;
+						if (OrderInfo.cust.isGov=="Y") {
+//							OrderInfo.jbr.custId = OrderInfo.cust.userCustId;
+//							OrderInfo.jbr.partyName = OrderInfo.cust.userName;
+//							OrderInfo.jbr.telNumber = "";
+//							OrderInfo.jbr.addressStr = OrderInfo.cust.usercertAddress;
+//							OrderInfo.jbr.identityCd = OrderInfo.cust.userIdentityCd;
+//							OrderInfo.jbr.mailAddressStr = "";
+//							OrderInfo.jbr.identityPic = OrderInfo.cust.identityPic;
+//							OrderInfo.jbr.identityNum = OrderInfo.cust.userIdentityNum;
+						}else{
+							OrderInfo.jbr.partyName = OrderInfo.cust.partyName;
+							OrderInfo.jbr.telNumber = OrderInfo.cust.telNumber;
+							OrderInfo.jbr.addressStr = OrderInfo.cust.addressStr;
+							OrderInfo.jbr.identityCd = OrderInfo.cust.identityCd;
+							OrderInfo.jbr.mailAddressStr = OrderInfo.cust.mailAddressStr;
+							OrderInfo.jbr.identityPic = OrderInfo.cust.identityPic;
+							OrderInfo.jbr.identityNum = OrderInfo.cust.idCardNumber;
+						}
 					}
 					$("#jbrName").html(OrderInfo.jbr.partyName);
 					

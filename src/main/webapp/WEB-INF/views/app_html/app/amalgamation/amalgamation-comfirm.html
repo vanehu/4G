@@ -76,5 +76,10 @@
 <script>
 $(function() {
 	order.broadband.feeInfos = ${fee_list};
+	var propertiesKey2 = "REAL_NAME_PHOTO_"+(OrderInfo.staff.soAreaId+"").substring(0,3);
+	var isFlag = offerChange.queryPortalProperties(propertiesKey2);
+	if(isFlag == "ON"){//开关打开则必须填写经办人信息，否则默认隐藏
+		order.broadband.isNeedJbr=true;//经办人必须
+	}
 });
 </script>
