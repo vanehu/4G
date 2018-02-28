@@ -7,6 +7,7 @@
         <td width="60">受理人</td>
         <td width="60">受理工号</td>
         <td width="80">受理时间</td>
+        <td width="80">处理时限</td>
         <td width="60">联系方式</td>
         <td width="70">操作</td>
     </tr>
@@ -21,6 +22,7 @@
             <td>${item.staffName}</td>
             <td>${item.staffCode}</td>
             <td>${item.soDate}</td>
+            <td>${item.accept_date}</td>
             <td>${item.telNbr}</td>
             <td>
                 <a class="purchase" href="javascript:oneFive.certNumberHandle.queryDetail('${item.orderId}')"
@@ -45,6 +47,7 @@
     </#if>
     </tbody>
 </table>
+<input type="hidden" id="queryOneFiveListTotalSize" value="${totalResultNum}">
 <!--页码-->
 <@portal.modelPagination pageModel 5 "oneFive.certNumberHandle.queryOneFiveList"/>
 <script src="${contextPath}/js/our-js/ec.pagination.js?${jsversion}" type="text/javascript"></script>
