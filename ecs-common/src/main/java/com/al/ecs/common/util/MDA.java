@@ -711,4 +711,7 @@ public class MDA {
 	
 	/**回执打印分省配置*/
 	public static final Map<String, Object> PDF_PRINT_CONFIG = new HashMap<String, Object>();
+	
+	/**撤单页面对订单类型为2的撤单限制开关*/
+	public static final Map<String,String> ESS_UNDO_FLAG  = new HashMap<String,String>();
 }
