@@ -170,15 +170,24 @@ check.offer = (function() {
 			offerSpecIds = offerSpecIds.substr(0, offerSpecIds.length-1);
 			info = info + "的销售品与新套餐存在互斥关系，请确认是否退订";
 			var offerSpecIdArray = offerSpecIds.split(",");
+			var thisId = [];
+			var needIdArray = [];
 			$.confirm("信息确认",info,{
 			    yesdo:function(){
-			    	for(var i=0;i<offerSpecIdArray.length;i++){
-			    		nowId = $("dd[offerspecid ='"+offerSpecIdArray[i]+"']").attr("id");
-			    		for(var j = 0;j<nowId.length;j++){
-			    			var needIds = nowId.split("_");
-			    			AttachOffer.delOfferBomb(needIds[1], needIds[2]);
-			    		}
+			    	for(var i=0;i < offerSpecIdArray.length;i++){
+			    		$("dd[offerspecid ='"+offerSpecIdArray[i]+"']").each(function(){
+			    			thisId.push($(this).attr("id"));
+			    		});
 			    	}
+			    	for(var a = 0;a < thisId.length;a++){
+		    			nowId = thisId[a];
+		    			var needIds = nowId.split("_");
+		    			needIdArray.push(needIds[1]);
+		    			needIdArray.push(needIds[2]);
+		    		}
+			    	for(var j = 0;j < needIdArray.length;j+=2){
+		    			AttachOffer.delOfferBomb(needIdArray[j], needIdArray[j+1]);
+		    		}
 			    },
 			    no:function(){
 				   
