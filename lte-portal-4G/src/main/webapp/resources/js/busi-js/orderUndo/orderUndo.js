@@ -122,7 +122,7 @@ order.undo = (function(){
 		}
 		if(cancelFlag!=null && cancelFlag!="" && cancelFlag !=undefined && cancelFlag==2){
 			var essUndoFlag = query.common.queryPropertiesValue("ESS_UNDO_" + String(OrderInfo.staff.areaId).substr(0, 3));
-			if(statusCd != '201900' && essUndoFlag!="ON"){
+			if(statusCd != '201900' || essUndoFlag!="ON"){
 				$.alert("提示","该订单是电渠ESS订单，且未向ESS异常报竣，请先异常报竣后再撤单！");
 				return;
 			}
