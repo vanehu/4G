@@ -1489,6 +1489,7 @@ OrderInfo = (function() {
 		recordId:_recordId,
 		preBefore:_preBefore,
 		oneCardFiveNum : _oneCardFiveNum,
-		oneCardFiveNO  : _oneCardFiveNO
+		oneCardFiveNO  : _oneCardFiveNO,
+		saveOrderedOfferSpecIds: _saveOrderedOfferSpecIds
 	};
 })();

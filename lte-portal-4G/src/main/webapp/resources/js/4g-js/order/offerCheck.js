@@ -179,6 +179,20 @@ check.offer = (function() {
 			    			thisId.push($(this).attr("id"));
 			    		});
 			    	}
+			    	if(thisId.length == 0){
+			    		for(var i=0;i < offerSpecIdArray.length;i++){
+				    		$("a[offerspecid ='"+offerSpecIdArray[i]+"']").each(function(){
+				    			thisId.push($(this).attr("id"));
+				    		});
+				    	}
+			    	}
+			    	if(thisId.length == 0){
+			    		for(var i=0;i < offerSpecIdArray.length;i++){
+				    		$("li[offerspecid ='"+offerSpecIdArray[i]+"']").each(function(){
+				    			thisId.push($(this).attr("id"));
+				    		});
+				    	}
+			    	}
 			    	for(var a = 0;a < thisId.length;a++){
 		    			nowId = thisId[a];
 		    			var needIds = nowId.split("_");
