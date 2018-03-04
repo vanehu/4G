@@ -206,6 +206,8 @@
 			}
 		</const>
 
+		<const type="String" name="PHONENUMBER_RELEASE_FLAG" value="ON" description="填单页面号码释放优化开关"></const>
+
 		<const type="String" name="ASYNC_FLAG" value="OFF" />
 		<const type="String" name="DEF_HTTP_FLAG" value="ON" />
 		<const type="Map" name="PROVORDERATTR_FLAG" description="是否显示省内订单属性 0-打开，1-关闭">
