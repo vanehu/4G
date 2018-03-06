@@ -183,7 +183,7 @@ oneFive.certNumberQuery = (function () {
         }else{
         	param.ifQryHandle = "Y";
         }
-        param.statusCd = $("#dealOrder").val();
+        param.itemStatusCd = $("#dealOrder").val();
         param.ifFilterItem = "N";
         $.callServiceAsHtmlGet(contextPath + "/certNumber/queryOneFiveOrderList", param, {
             "before": function () {
@@ -219,9 +219,9 @@ oneFive.certNumberQuery = (function () {
         var areaId = $("#p_areaId").val();
         var startDt = $("#p_startDt").val().replace(/-/g, '');
         var endDt = $("#p_endDt").val().replace(/-/g, '');
-        var statusCd = $("#dealOrder").val();
+        var itemStatusCd = $("#dealOrder").val();
         var url = contextPath+"/certNumber/queryOneFiveListExport?areaId=" + areaId
-        + "&statusCd=" + statusCd
+        + "&itemStatusCd=" + itemStatusCd
         + "&startDt=" + startDt
         + "&endDt="   + endDt;
         $("#queryOneFiveListExport").attr("action", url);
