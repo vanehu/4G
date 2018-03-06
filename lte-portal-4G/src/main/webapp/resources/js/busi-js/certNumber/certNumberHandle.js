@@ -145,7 +145,8 @@ oneFive.certNumberHandle = (function () {
                 "sort":sort
             };
         }
-        param.statusCd = $("#dealOrder").val();//CONST.CERT_NUMBER_ORDER_STATUS.INIT;
+        param.statusCd = "100002";
+        param.itemStatusCd = $("#dealOrder").val();//CONST.CERT_NUMBER_ORDER_STATUS.INIT;
         param.ifFilterAreaId = "N";
         param.ifFilterItem = "Y";
         param.ifFilterOwnAccNbr = $("#onlyMe").val();//是否过滤其他人接单工单选项默认Y
@@ -189,10 +190,10 @@ oneFive.certNumberHandle = (function () {
         var areaId = $("#p_areaId").val();
         var startDt = $("#p_startDt").val().replace(/-/g, '');
         var endDt = $("#p_endDt").val().replace(/-/g, '');
-        var statusCd = $("#dealOrder").val();
+        var itemStatusCd = $("#dealOrder").val();
         var ifFilterOwnAccNbr = $("#onlyMe").val();
         var url = contextPath+"/certNumber/queryOneFiveListExport?areaId=" + areaId
-        + "&statusCd=" + statusCd
+        + "&itemStatusCd=" + itemStatusCd
         + "&ifFilterOwnAccNbr=" + ifFilterOwnAccNbr
         + "&startDt=" + startDt
         + "&endDt="   + endDt;
