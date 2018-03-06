@@ -71,6 +71,11 @@ public class MDA {
 	public static final Map<String, String> EXCLUDEDEPEND_FLAG = new HashMap<String, String>();
 	
 	/**
+	 * 填单页面号码释放优化开关
+	 */
+	public static final String PHONENUMBER_RELEASE_FLAG = new String("");
+	
+	/**
 	 * 宽带甩单过csb的http地址
 	 */
 	public static final String CSB_HTTP_MIDDLE_URL=new String("");
