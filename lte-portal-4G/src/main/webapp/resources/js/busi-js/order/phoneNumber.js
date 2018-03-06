@@ -582,7 +582,7 @@ order.phoneNumber = (function(){
 				},	
 				"done" : function(response){
 					var phoneNumberRelease = query.common.queryPropertiesValue("PHONENUMBER_RELEASE_FLAG");
-					if (response.code == 0 || response.code != 0) {
+					if (response.code == 0 || (response.code != 0&&phoneNumberRelease == "ON")) {
 						if(phoneNumberRelease == "ON" && response.code == -2){
 							if((response.data.errMsg).indexOf('1001') < 0){
 								$.alertM(response.data);
