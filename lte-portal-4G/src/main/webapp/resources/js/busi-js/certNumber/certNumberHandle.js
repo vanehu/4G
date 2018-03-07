@@ -52,7 +52,13 @@ oneFive.certNumberHandle = (function () {
 
         // 查询按钮事件绑定
         $("#bt_15handleQry").off("click").on("click", function () {
-            oneFive.certNumberHandle.queryOneFiveList(1);
+            oneFive.certNumberHandle.queryOneFiveList(1,"desc");
+        });
+        $("#bt_15handleSortAsc").off("click").on("click", function () {
+            oneFive.certNumberHandle.queryOneFiveList(1,"asc");
+        });
+        $("#bt_15handleSortDesc").off("click").on("click", function () {
+            oneFive.certNumberHandle.queryOneFiveList(1,"desc");
         });
     };
 
@@ -70,15 +76,15 @@ oneFive.certNumberHandle = (function () {
      * @param pageIndex
      * @private
      */
-    var _queryOneFiveList = function (pageIndex) {
+    var _queryOneFiveList = function (pageIndex,sort) {
         var curPage = 1;
         if (pageIndex > 0) {
             curPage = pageIndex;
         }
         var param = {};
 
-        if (DateUtil.differDays(new Date(Date.parse($("#p_startDt").val())), new Date(Date.parse($("#p_endDt").val()))) > 31) {
-            $.alert("提示", "日期跨度太长，超过一个月，请重新选择");
+        if (DateUtil.differDays(new Date(Date.parse($("#p_startDt").val())), new Date(Date.parse($("#p_endDt").val()))) > 92) {
+            $.alert("提示", "日期跨度太长，超过三个月，请重新选择");
             return;
         }
 
@@ -101,7 +107,8 @@ oneFive.certNumberHandle = (function () {
                 "areaId": $("#p_areaId").val(),
                 "orderNbr": $("#p_olNbr").val(),
                 "nowPage": curPage,
-                "pageSize": 10
+                "pageSize": 10,
+                "sort":sort
             };
         } else {
             var areaId = $("#p_areaId").val();
@@ -134,10 +141,12 @@ oneFive.certNumberHandle = (function () {
                 "startDt": startDt,
                 "endDt": endDt,
                 "nowPage": curPage,
-                "pageSize": 10
+                "pageSize": 10,
+                "sort":sort
             };
         }
-        param.statusCd = $("#dealOrder").val();//CONST.CERT_NUMBER_ORDER_STATUS.INIT;
+        param.statusCd = "100002";
+        param.itemStatusCd = $("#dealOrder").val();//CONST.CERT_NUMBER_ORDER_STATUS.INIT;
         param.ifFilterAreaId = "N";
         param.ifFilterItem = "Y";
         param.ifFilterOwnAccNbr = $("#onlyMe").val();//是否过滤其他人接单工单选项默认Y
@@ -169,6 +178,28 @@ oneFive.certNumberHandle = (function () {
             }
         });
     };
+    /**
+     * 导出Excel
+     */
+    var _queryOneFiveListExport = function(){
+    	var totalListNum = $("#queryOneFiveListTotalSize").val();
+    	if(totalListNum == null || totalListNum == "" || totalListNum == undefined || totalListNum <= 0){
+    		$.alert("提示信息","没有数据可导出，请先查询符合条件的数据");
+    		return ;
+    	}
+        var areaId = $("#p_areaId").val();
+        var startDt = $("#p_startDt").val().replace(/-/g, '');
+        var endDt = $("#p_endDt").val().replace(/-/g, '');
+        var itemStatusCd = $("#dealOrder").val();
+        var ifFilterOwnAccNbr = $("#onlyMe").val();
+        var url = contextPath+"/certNumber/queryOneFiveListExport?areaId=" + areaId
+        + "&itemStatusCd=" + itemStatusCd
+        + "&ifFilterOwnAccNbr=" + ifFilterOwnAccNbr
+        + "&startDt=" + startDt
+        + "&endDt="   + endDt;
+        $("#queryOneFiveListExport").attr("action", url);
+        $("#queryOneFiveListExport").submit();
+    }
 
     /**
      * 返回主页面
@@ -178,7 +209,6 @@ oneFive.certNumberHandle = (function () {
         $("#d_detailInfo").hide();
         $("#d_query").show();
     };
-
     /**
      * 查询订单详情
      * @param scope 当前详情按钮对象
@@ -406,7 +436,7 @@ oneFive.certNumberHandle = (function () {
                     $.confirm("确认", "一证五卡业务单[" + param.orderId + "]已经受理成功，是否继续受理？", {
                         names: ["是", "否"],
                         yesdo: function () {
-                            _showMain();
+                        	_queryDetail(orderId);
                         },
                         no: function () {
                         }
@@ -456,6 +486,7 @@ oneFive.certNumberHandle = (function () {
         orderReceive: _orderReceive,
         orderReset: _orderReset,
         orderCancel: _orderCancel,
+        queryOneFiveListExport:_queryOneFiveListExport,
         queryAllDetail:_queryAllDetail
     }
 })();

@@ -2,6 +2,8 @@ package com.al.lte.portal.bmo.crm;
 
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import com.al.ecs.exception.BusinessException;
 import com.al.lte.portal.model.SessionStaff;
 
@@ -107,6 +109,9 @@ public interface CartBmo {
 	  */
 	public Map<String, Object> queryCltCarts(Map<String, Object> dataBusMap,String optFlowNum, SessionStaff sessionStaff) throws Exception;
 	
+	public void cacheParamsInSession(HttpServletRequest request, Map<String, Object> param, String businessFlag);
+	
+	public Map<String, Object> getCachedParamsInSession(HttpServletRequest request, Map<String, Object> param, String businessFlag);
 	/**
 	  * 实名信息采集单详情
 	  * @param dataBusMap

@@ -717,6 +717,8 @@ public final class SysConstant {
 	/** 绑定状态 **/
 	public static final String BIND_STATUS = "BIND_STATUS";
 
+	/**一五采集单查询列表*/
+	public static final String ONEFIVE_LIST = "oneFivelist";
 	/** 明细报表 */
 	public static final String TERMINAL_STATISTIC_DETAIL = "terminalStatisticDetail";
 	/** 汇总报表 */

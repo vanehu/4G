@@ -811,6 +811,63 @@ AttachOffer = (function() {
 		}
 	};
 	
+	//删除附属销售品实例PC端弹框
+	var _delOfferBomb = function(prodId, offerId, reflag) {
+		var $span = $("#li_" + prodId + "_" + offerId).find("span"); //定位删除的附属
+		//退订
+		var offer = CacheData.getOffer(prodId, offerId);
+		if (!ec.util.isArray(offer.offerMemberInfos)) {
+		    var param = {
+		        prodId: prodId,
+		        areaId: OrderInfo.getProdAreaId(prodId),
+		        offerId: offerId
+		    };
+		    if (ec.util.isArray(OrderInfo.oldprodInstInfos) && OrderInfo.actionFlag == 6) { //主副卡纳入老用户
+		        for (var i = 0; i < OrderInfo.oldprodInstInfos.length; i++) {
+		            if (prodId == OrderInfo.oldprodInstInfos[i].prodInstId) {
+		                param.areaId = OrderInfo.oldprodInstInfos[i].areaId;
+		                param.acctNbr = OrderInfo.oldprodInstInfos[i].accNbr;
+		            }
+		        }
+		    } else {
+		        param.acctNbr = OrderInfo.getAccessNumber(prodId);
+		    }
+		    var data = query.offer.queryOfferInst(param);
+		    if (data == undefined) {
+		        return;
+		    }
+		    //遍历附属的构成要和主套餐的构成实例要一致（兼容融合套餐）
+		    var offerMemberInfos = [];
+		    $.each(data.offerMemberInfos,
+		    function() {
+		        var prodInstId = this.objInstId;
+		        var flag = false;
+		        $.each(OrderInfo.offer.offerMemberInfos,
+		        function() {
+		            if (this.objInstId == prodInstId) {
+		                flag = true;
+		                return false;
+		            }
+		        });
+		        if (flag) {
+		            offerMemberInfos.push(this);
+		        }
+		    });
+
+		    offer.offerMemberInfos = data.offerMemberInfos = offerMemberInfos;
+		    offer.offerSpec = data.offerSpec;
+		}
+		var content = "";
+		if (offer.offerSpec != undefined) {
+		    content = CacheData.getOfferProdStr(prodId, offer, 1);
+		} else {
+		    content = '退订【' + $span.text() + '】可选包';
+		}
+		offer.isdel = "Y";
+		$span.addClass("del");
+		delServByOffer(prodId, offer);
+	};
+	
 	//关闭服务规格
 	var _closeServSpec = function(prodId,servSpecId,specName,ifParams,ifConfirm){
 		var $span = $("#li_"+prodId+"_"+servSpecId).find("span"); //定位删除的附属
@@ -4528,6 +4585,7 @@ AttachOffer = (function() {
 		servSpecIds:_servSpecIds,
 		servSpecs:_servSpecs,
 		offerSpecs:_offerSpecs,
-		setParam4RepeatOrder:_setParam4RepeatOrder
+		setParam4RepeatOrder:_setParam4RepeatOrder,
+		delOfferBomb:_delOfferBomb
 	};
 })();

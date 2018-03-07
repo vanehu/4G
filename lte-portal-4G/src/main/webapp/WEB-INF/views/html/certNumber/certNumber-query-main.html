@@ -66,11 +66,21 @@
                                   	<select id="onefivecard_province" style="width: 160px;" >
                                   		<option value="province_all" selected="selected">本省全部</option>
                                 		<option value="province_deal" >本省处理</option>
-                                		<option value="province_accept" >本省受理</option
+                                		<option value="province_accept" >本省受理</option>
                                 	</select>
-                                  	<label class="f_red">&nbsp;</label>
-                                  </dd>	      
-                            
+                                  	<label class="f_red">*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                                  </dd>
+                                  	      
+                            <dt>处理情况：</dt>
+                            	<dd>
+                                	<select id="dealOrder" style="width: 80px;">
+                                		<option value="100002" selected="selected">初始化</option>
+                                    	<option value="201300">已接单</option>
+                                    	<option value="100004">已取消</option>
+                                    	<option value="301200">成功</option>
+                                	</select>
+                                	<label class="f_red">&nbsp;</label>
+                           	 	</dd>
                             <dt style="width:75px"><input type="checkbox" id="if_p_olNbr">流水号：</dt>
                             <dd>
                                 <input type="text" class="numberTextBox width198" style="width:145px" id="p_olNbr" value=""
@@ -79,6 +89,15 @@
                             <dd>
                             	<label class="f_red">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
                                 <input type="button" value="查询" class="numberSearch" id="bt_15handleQry"/>
+                            </dd>
+                            <dd>
+                            	<input type="button" value="导出Excel" class="numberSearch" onclick="oneFive.certNumberQuery.queryOneFiveListExport()" />
+                            </dd>
+                            <dd>
+                            	<input type="button" value="升序" class="numberSearch" id="bt_15handleSortAsc"/>
+                            </dd>
+                            <dd>
+                            	<input type="button" value="降序" class="numberSearch" id="bt_15handleSortDesc"/>
                             </dd>
                         </dl>
                         
@@ -105,6 +124,7 @@
                     </div>
                 </div>
             </div>
+            <form method="post" id="queryOneFiveListExport"></form>
         </div>
         <!--订单准备 end-->
     </div>

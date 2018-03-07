@@ -1,7 +1,4 @@
-<center>集团LTE-4G 开发库</center>
-===========================
-Git global setup
-----------------
+<center>集团LTE-4G 营业门户</center>
 ```
 git config --global user.name "NT账号"
 git config --global user.email "NT账号@asiainfo.com"
