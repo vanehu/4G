@@ -278,7 +278,7 @@ public class OneCertFiveNumberController extends BaseController {
             	if(ifFilterOwnAccNbr != null && ifFilterOwnAccNbr != ""){
             		 excelTitle = "OneFiveHandleList";
                      String[][] tempHeaders = {
-                         {"orderNbr","areaName","channelName","staffName","staffCode","soDate","accept_date","telNbr"},
+                         {"orderNbr","areaName","channelName","staffName","staffCode","soDate","limitDate","telNbr"},
                          {"流水号","受理地区","受理渠道","受理人","受理工号","受理时间","处理时限","联系方式"}
                      };
                      headers = tempHeaders;
