@@ -2004,7 +2004,7 @@ SoOrder = (function() {
 		if(OrderInfo.acct!=undefined&&OrderInfo.acct.acctId!=undefined&&OrderInfo.acct.acctId!=null&&OrderInfo.acct.acctId!=""){//新装传帐户id
 			acctId=OrderInfo.acct.acctId;
 		}
-		var acctCd = -1;
+        var acctCd = -1;
 		if(acctId==undefined){
 			acctId = -1;
 			acctCd = -1;
@@ -2013,6 +2013,10 @@ SoOrder = (function() {
 		}else{
 			acctCd = OrderInfo.acct.acctcd;
 		}
+		if((OrderInfo.actionFlag ==2 || OrderInfo.actionFlag ==6 ) && OrderInfo.acctId !=undefined &&  OrderInfo.acctId !="" &&  acctCd == -1){
+            acctId = OrderInfo.acctId;
+            acctCd = OrderInfo.acctCd;
+        }
 		
 		var boAccountRela = {
 			acctId : acctId,
