@@ -1046,8 +1046,8 @@ public class StaffBmoImpl implements StaffBmo {
 		params.put(SysConstant.STAFF_ID, sessionStaff.getStaffId());
 		params.put(SysConstant.AREA_ID, sessionStaff.getCurrentAreaId());
 		params.put(SysConstant.CHANNEL_ID, sessionStaff.getCurrentChannelId());
-				
-		DataBus db = InterfaceClient.callService(params, PortalServiceCode.QRY_OPERATESPEC_STAFF_LIST, null, sessionStaff);
+		//	调用系管新接口获取人像审核跨部门的审核人员列表
+		DataBus db = InterfaceClient.callService(params, PortalServiceCode.QRY_RXSH_STAFF_LIST, null, sessionStaff);
 		try {
 			String resultCode = StringUtils.defaultString(db.getResultCode(), "1");
 			if (ResultCode.R_SUCC.equals(resultCode)) {
@@ -1055,7 +1055,7 @@ public class StaffBmoImpl implements StaffBmo {
 				if(staffList == null){
 					returnMap.put(SysConstant.RESULT_CODE, ResultCode.R_FAILURE);
 					returnMap.put(SysConstant.RESULT_MSG, "系管operatSpecCd服务未返回非null的有效结果集：" + JsonUtil.toString(db.getReturnlmap()));
-					log.error("系管operatSpecCd服务未返回非null的有效结果集={}", JsonUtil.toString(db.getReturnlmap()));
+					log.error("系管queryStaffWhoCanRXSH服务未返回非null的有效结果集={}", JsonUtil.toString(db.getReturnlmap()));
 					throw new BusinessException(ErrorCode.QUERY_STAFF_INFO, params, returnMap, null);
 				} else{
 					returnMap.put(SysConstant.RESULT_CODE, ResultCode.R_SUCC);
@@ -1066,7 +1066,7 @@ public class StaffBmoImpl implements StaffBmo {
 				returnMap.put(SysConstant.RESULT_MSG, db.getResultMsg());
 			}
 		} catch (Exception e) {
-			log.error("门户处理系统管理的queryOperaStaff服务返回的数据异常", e);
+			log.error("门户处理系统管理的queryStaffWhoCanRXSH服务返回的数据异常", e);
 			throw new BusinessException(ErrorCode.QUERY_STAFF_INFO, params, db.getReturnlmap(), e);
 		}
 		
