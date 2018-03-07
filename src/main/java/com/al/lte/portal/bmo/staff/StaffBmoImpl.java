@@ -1054,7 +1054,7 @@ public class StaffBmoImpl implements StaffBmo {
 				List<Map<String, Object>> staffList = (List<Map<String, Object>>) db.getReturnlmap().get("result");
 				if(staffList == null){
 					returnMap.put(SysConstant.RESULT_CODE, ResultCode.R_FAILURE);
-					returnMap.put(SysConstant.RESULT_MSG, "系管operatSpecCd服务未返回非null的有效结果集：" + JsonUtil.toString(db.getReturnlmap()));
+					returnMap.put(SysConstant.RESULT_MSG, "系管queryStaffWhoCanRXSH服务未返回非null的有效结果集：" + JsonUtil.toString(db.getReturnlmap()));
 					log.error("系管queryStaffWhoCanRXSH服务未返回非null的有效结果集={}", JsonUtil.toString(db.getReturnlmap()));
 					throw new BusinessException(ErrorCode.QUERY_STAFF_INFO, params, returnMap, null);
 				} else{
