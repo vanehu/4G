@@ -4345,6 +4345,7 @@ order.prodModify = (function(){
 	};
 	//二次业务菜单鉴权方式查询
 	var _querySecondBusinessAuth=function(menuId,isSimple,callbackFunc){
+		OrderInfo.secondBusiAuthType = "";
 		if (CONST.USER_PRE_INSTALLED == $("#iPreInstall").val()) {
 			return false;
 		}
@@ -4423,6 +4424,7 @@ order.prodModify = (function(){
 		}
 
 		if (response.code == 0) {
+			OrderInfo.SecondBusiAuth = true;
 			easyDialog.open({
 				container: 'auth2',
 				callback:function(){

@@ -3106,6 +3106,11 @@ SoOrder = (function() {
                 }
 			}
 
+			//#2580757 当换卡且是个人证件鉴权时，经办人必须拍照
+			if(OrderInfo.busitypeflag == "21" && (OrderInfo.secondBusiAuthType == "1" || (OrderInfo.secondBusiAuthType == "" && OrderInfo.cust_validateType == "1"))){
+				jbrFlag = true;
+			};
+			
             //若页面没有填写经办人，根据权限和业务类型进行判断和限制
             var isActionFlagLimited = (
                     jbrFlag	||	//办套餐入口做新装//返档//购手机入口做新装(OrderInfo.busitypeflag为1)

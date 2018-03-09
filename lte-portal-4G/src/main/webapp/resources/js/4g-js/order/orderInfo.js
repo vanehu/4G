@@ -1926,6 +1926,8 @@ OrderInfo = (function() {
 	var _handleCustCertReadInfos = {};
 	var _getCustAgeByCheck = {};
 	
+	var _secondBusiAuthType = "";
+	
 	return {	
 		order					: _order,
 		SEQ						: _SEQ,
@@ -2069,6 +2071,7 @@ OrderInfo = (function() {
         handleCustCertReadInfos	:_handleCustCertReadInfos,
         getCustAgeByCheck       :_getCustAgeByCheck,
         saveOrderedOfferSpecIds :_saveOrderedOfferSpecIds,
-        queryExcludeDependData  :_queryExcludeDependData
+        queryExcludeDependData  :_queryExcludeDependData,
+        secondBusiAuthType      :_secondBusiAuthType
 	};
 })();
