@@ -79,6 +79,7 @@ essPartner.main = (function() {
 			extCustOrderId : extCustOrderId,
 			orderType : orderType,
 			commonRegionId : commonRegionId,
+			province : commonRegionId,
 			essTransactionId : transactionId,
 			orderStatus : orderStatus,
 			channelId : channelId,

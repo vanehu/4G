@@ -3739,6 +3739,103 @@
 		}
 		</const>
 		<const type="String" name="REAL_NAME_AUTHENTICATION_TOGGLE" value="OFF" description="是否进行实名认证的开关ON OFF"></const>
+		<const type="Map" name="ORDER_TYPE_ORDER_STATUS" description="订单类型、订单状态默认配置">
+		{
+			"result": {
+				"orderStatusList": [
+					{
+						"orderStatus": "19",
+						"orderStatusName": "返销"
+					}, {
+						"orderStatus": "99",
+						"orderStatusName": "订单失效"
+					}, {
+						"orderStatus": "10",
+						"orderStatusName": "订单校验"
+					}, {
+						"orderStatus": "11",
+						"orderStatusName": "处理中"
+					}, {
+						"orderStatus": "12",
+						"orderStatusName": "在途"
+					}, {
+						"orderStatus": "13",
+						"orderStatusName": "竣工"
+					}, {
+						"orderStatus": "14",
+						"orderStatusName": "撤单"
+					}, {
+						"orderStatus": "15",
+						"orderStatusName": "退单"
+					}, {
+						"orderStatus": "16",
+						"orderStatusName": "换单"
+					}, {
+						"orderStatus": "17",
+						"orderStatusName": "异常竣工"
+					}, {
+						"orderStatus": "18",
+						"orderStatusName": "系统异常"
+					}, {
+						"orderStatus": "9",
+						"orderStatusName": "订单预校验"
+					}
+				],
+				"orderTypeList": [
+					{
+						"orderType": "smallOrderCancle",
+						"orderTypeName": "小号拆机"
+					}, {
+						"orderType": "modCust",
+						"orderTypeName": "反档"
+					}, {
+						"orderType": "preCheck",
+						"orderTypeName": "预校验"
+					}, {
+						"orderType": "check",
+						"orderTypeName": "校验单"
+					}, {
+						"orderType": "newInstall",
+						"orderTypeName": "新装"
+					}, {
+						"orderType": "preInstall",
+						"orderTypeName": "预装"
+					}, {
+						"orderType": "offerChange",
+						"orderTypeName": "套餐变更"
+					}, {
+						"orderType": "changeRoleMember",
+						"orderTypeName": "成员变更"
+					}, {
+						"orderType": "functional",
+						"orderTypeName": "功能类订单"
+					}, {
+						"orderType": "optional",
+						"orderTypeName": "可选包订单"
+					}, {
+						"orderType": "addCard",
+						"orderTypeName": "补换卡"
+					}, {
+						"orderType": "backEnd",
+						"orderTypeName": "退货"
+					}, {
+						"orderType": "changeEnd",
+						"orderTypeName": "换货"
+					}, {
+						"orderType": "cancelOrder",
+						"orderTypeName": "撤单"
+					}, {
+						"orderType": "backToSell",
+						"orderTypeName": "返销"
+					}, {
+						"orderType": "bareTerminal",
+						"orderTypeName": "裸终端"
+					}
+				]
+			}
+		}
+		</const>
+		
 		<const type="String" name="FINGER_PRINT_ADDRESS" value="http://10.128.21.66:8020/fingerprint/browser" description="浏览器指纹记录地址"></const>
 		
 		<const type="List" name="CERTIFICATES_MUST_READ_CERT" description="必须读卡的证件：人民武装警察居民身份证52、现役军人居民身份证51、居民身份证1">

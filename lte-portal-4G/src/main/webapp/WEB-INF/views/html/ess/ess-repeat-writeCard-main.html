@@ -34,6 +34,14 @@
 									id="p_accNbr" value=""/>
 							   <label class="f_red">&nbsp;&nbsp;</label>
 							</dd>
+							<dt style="width: 100px">选择地区：</dt>
+							<dd>
+								<input type="text" class="numberTextBox width198"
+									readonly="readonly" id="p_areaId_val"
+									onclick="ess.repeatWriteCard.chooseAllArea('p_areaId_val','p_areaId')" value="${p_areaId_val}"
+									placeholder="请选择地区" />
+							    <input type="hidden" id="p_areaId" value="${p_areaId}">
+							</dd>
 						</dl>
 						<dl>
 							<dt style="width: 100px">开始时间：</dt>
