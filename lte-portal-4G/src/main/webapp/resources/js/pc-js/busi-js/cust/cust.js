@@ -3733,9 +3733,13 @@ order.cust = (function(){
                 			 if(inParam.certNum ==oneCard.certNum){
                 				 if ((parseInt(result.usedNum) + oneCard.oneCertFiveNO) <=5) {
                 	                    checkResult=true;
-                	                } else {
-                	                	 checkResult = false;
+                	                } else {	 
                 	                	 $.alert("提示", "证件「" + inParam.certNum + "」全国范围已有"+result.usedNum+"张移动号卡，您当前业务在本证件下新增"+oneCard.oneCertFiveNO+"张号卡「"+OrderInfo.oneCardPhone+"]，合计超过5卡，请对于新号卡登记其他使用人");
+                	                	 if($("#isTemplateOrder").attr("checked")=="checked"){
+                	                		 checkResult = true;
+                	                	 }else{
+                	                		 checkResult = false;
+                	                	 }
                 	                	 OrderInfo.oneCardFiveNum = [];
                 	                	 return checkResult;
                 	                }
