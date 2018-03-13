@@ -518,6 +518,24 @@ order.phoneNumber = (function(){
 							if((response.data.errMsg).indexOf('1001') < 0){
 								$.alertM(response.data);
 								return;
+							}else{
+								for(var key in params){
+									if(key == "oldPhoneNumber" || key == "oldAnTypeCd"){
+										delete params[key];
+									}if(key == "newPhoneNumber"){
+										params.phoneNumber = params.newPhoneNumber;
+										delete params[key];
+									}if(key == "newAnTypeCd"){
+										params.anTypeCd = params.newAnTypeCd;
+										delete params[key];
+									}
+								}
+								params.actionType = 'E';
+								$.callServiceAsJson(purchaseUrl, params,{
+									fail:function(response){
+										$.alert("提示","请求可能发生异常，请稍后再试！");
+									}
+								})
 							}
 						}
 						if(phoneNumberRelease == "ON" && response.code != -2 && response.code != 0){
