@@ -630,6 +630,8 @@ order.undo = (function(){
 							areaId : $("#p_areaId").val(),
 							staffId : OrderInfo.staff.staffId,
 							channelId : OrderInfo.staff.channelId,
+							//撤单新增入参FLAG='U'
+							flag: 'U',
 							remarks : $("#undo_d_txt").val()
 					};
 					$.callServiceAsJsonGet(contextPath+"/order/delOrder",param,{
@@ -663,7 +665,9 @@ order.undo = (function(){
 			var param;
 			param = {
 					olId : $("#"+submit_id).attr("olId"),
-					areaId : $("#p_areaId").val()
+					areaId : $("#p_areaId").val(),
+					//撤单新增入参FLAG='U'
+					flag: 'U'
 			};
 			$.callServiceAsJsonGet(contextPath+"/order/delOrder",param,{
 				"done" : function(response){
