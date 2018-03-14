@@ -59,6 +59,16 @@
 							    <input type="text" class="numberTextBox" style="width: 160px"
 									id="p_endDate" readonly="readonly" value="${p_endDt}"/> 
 							</dd>
+						</dl>
+						<dl>
+							<dt style="width: 100px">选择地区：</dt>
+							<dd>
+								<input type="text" class="numberTextBox width198"
+									readonly="readonly" id="p_areaId_val"
+									onclick="ess.writeCard.chooseAllArea('p_areaId_val','p_areaId')" value="${p_areaId_val}"
+									placeholder="请选择地区" />
+							    <input type="hidden" id="p_areaId" value="${p_areaId}">
+							</dd>
 							<dd>
 								<label class="f_red">&nbsp;&nbsp;</label> 
 								<input type="button" value="查 询" class="numberSearch" id="bt_orderListQry" />

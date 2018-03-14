@@ -46,6 +46,7 @@ essMktRes.terminal = (function() {
 		var orderStatus = ec.util.defaultStr($("#p_orderStatus").val());
 		var startDate = ec.util.defaultStr($("#p_startDate").val());
 		var endDate = ec.util.defaultStr($("#p_endDate").val());
+		var province = ec.util.defaultStr($("#p_areaId").val());
 		if(extCustOrderId == "" && consignee == "" && accNbr == "" && orderStatus == "" && startDate == "" && endDate == ""){
 			$.alert("提示","请输入查询条件！");
 			return;
@@ -71,6 +72,7 @@ essMktRes.terminal = (function() {
 		}
 		var param = {
 			extCustOrderId : extCustOrderId,
+			province : province,
 			consignee : consignee,
 			accNbr : accNbr,
 			orderStatus : orderStatus,
@@ -103,7 +105,11 @@ essMktRes.terminal = (function() {
 			}
 		});
 	};
-
+	
+	var _chooseAllArea = function(areaName, areaId) {
+		order.area.chooseAreaTreeAll(areaName, areaId, "2");
+	};
+	
 	var _showTerminalBackfill = function(extCustOrderId,commonRegionId,channelId,channelName) {
 		var param = {
 			extCustOrderId : extCustOrderId,
@@ -190,7 +196,8 @@ essMktRes.terminal = (function() {
 		queryOrderList : _queryOrderList,
 		showTerminalBackfill : _showTerminalBackfill,
 		mktResInstMakeUp : _mktResInstMakeUp,
-		showMain : _showMain  
+		showMain : _showMain,
+		chooseAllArea : _chooseAllArea
 	};
 
 })();

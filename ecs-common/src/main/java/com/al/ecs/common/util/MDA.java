@@ -705,6 +705,9 @@ public class MDA {
     /**是否进行实名认证的开关*/
     public static final String REAL_NAME_AUTHENTICATION_TOGGLE = new String("");
     
+    /**订单类型、订单状态默认配置*/
+	public static final Map<String, Object> ORDER_TYPE_ORDER_STATUS = new HashMap<String, Object>();
+    
     /**浏览器指纹记录地址*/
 	public static final String FINGER_PRINT_ADDRESS = new String("");
 	

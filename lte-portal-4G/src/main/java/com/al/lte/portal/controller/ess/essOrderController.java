@@ -36,6 +36,7 @@ import org.springframework.web.context.request.WebRequest;
 import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ecs.common.entity.JsonResponse;
 import com.al.ecs.common.entity.PageModel;
+import com.al.ecs.common.util.MDA;
 import com.al.ecs.common.util.PageUtil;
 import com.al.ecs.common.util.PropertiesUtils;
 import com.al.ecs.common.web.ServletUtils;
@@ -331,11 +332,19 @@ public class essOrderController extends BaseController {
 						ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
 			}
 		} catch (BusinessException e) {
-			return super.failed(e);
+			//return super.failed(e);
 		} catch (InterfaceException ie) {
-			return super.failed(ie, param, ErrorCode.ESS_STATUS_TYPE_QUERY);
+			//return super.failed(ie, param, ErrorCode.ESS_STATUS_TYPE_QUERY);
 		} catch (Exception e) {
-			return super.failed(ErrorCode.ESS_STATUS_TYPE_QUERY, e, param);
+			//return super.failed(ErrorCode.ESS_STATUS_TYPE_QUERY, e, param);
+		}finally{
+			if(null == rMap && null == jsonResponse){
+				//没有正常获取到数据，给默认的 订单类型 与 订单状态
+				Map<String, Object> orderTypeAndOrderStatus  = (Map<String, Object>) MDA.ORDER_TYPE_ORDER_STATUS.get("result");
+				jsonResponse = super.successed(orderTypeAndOrderStatus,
+						ResultConstant.SUCCESS.getCode());
+			}
+			
 		}
 		return jsonResponse;
 	}
