@@ -1,25 +1,32 @@
 <script src="${contextPath}/js/app-js/new-js/function.min.js?${jsversion}" type="text/javascript"></script>
 <script src="${contextPath}/js/app-js/new-js/mobiscroll.js?${jsversion}" type="text/javascript"></script>
 <script src="${contextPath}/js/app-js/busi-js/sourceRelease/sourceRelease.js?${jsversion}" type="text/javascript"></script>
+<style type="text/css">
+<!--
+	.sr panel-heading{
+		position:fixed;
+	}
+-->
+</style>
 <div id="res_release">
   <!-- begin row -->
   <div class="row">
     <!-- begin col-12 -->
-    <div class="panel panel-inverse panel-with-tabs" data-sortable-id="ui-unlimited-tabs-1">
+    <div class="sr panel panel-inverse panel-with-tabs" data-sortable-id="ui-unlimited-tabs-1">
       <div class="panel-heading p-0">
         <div class="tab-overflow">
           <ul class="nav nav-tabs nav-tabs-inverse nav-top p-t-5">
-            <li class="active" id="tab1_li">
+            <li class="" id="tab1_li" onclick="sourceRelease.toggleTabBtn()">
               <a ><i class="iconfont tab-icon">&#xe6d5;</i>资源查询<i class="iconfont tab-result-icon dis-none">&#xe611;</i></a>
             </li>
-            <li class="" id="tab2_li">
+            <li class="active" id="tab2_li" >
               <a ><i class="iconfont tab-icon">&#xe64d;</i>查询结果<i class="iconfont tab-result-icon dis-none">&#xe611;</i></a>
             </li>
           </ul>
         </div>
       </div>
       <div class="tab-content p-0 m-t-10">
-        <div class="tab-pane fade active in tab-top" id="nav-tab-1">
+        <div class="tab-pane fade  tab-top" id="nav-tab-1">
           <div>
             <div class="list-box m-t-10">
               <ul class="choice-list-box bg-body border-none">
@@ -61,10 +68,34 @@
             </div>
           </div>
         </div>
-        <div class="tab-pane fade tab-top" id="nav-tab-2">
-          <div class="list-box m-t-10" id="resList">
-          </div>
+        <!-- //XXX 对资源释放页面修改 :   初始化展示,和上下页按钮修复-->
+        <!-- begin -->
+ <!--   <div class="tab-pane fade tab-top" id="nav-tab-2">
+           <div class="list-box m-t-10" id="resList">
+          </div> 
+        </div> -->
+        
+        <div class="tab-pane fade active in tab-top" id="nav-tab-2">
+	        <div class="list-box m-t-10" id="resList">
+	        </div>
+			<nav class="navbar navbar-default navbar-fixed-bottom" id="pageBtn">
+			    <div class="container-fluid">
+				<div class="btn-group btn-group-justified navbar-btn" role="group" aria-label="...">
+					<div class="sub-btn-box p p-b-15">
+							<button class="double-btn pull-left" id="bt_cartQry" onclick="sourceRelease.upPage()">上一页</button><!-- onclick="SoOrder.orderBack();" -->
+							<button id="toCharge" class="double-btn pull-right" id="bt_cartQry" onclick="sourceRelease.nextPage()">下一页</button>
+					</div>
+			    </div>
+			    </div>
+		    </nav>
         </div>
+        	<!-- 记录当前页 -->
+              <input type="hidden" id="currentPage" value="1" />
+        	<!--   保存初始日期 -->
+              <input type="hidden" id="init_startDt" value="${p_startTime}" />
+              <input type="hidden" id="init_endDt" value="${p_endTime}" />
+     		  
+          <!-- end -->
       </div>
     </div>
   </div>
@@ -76,6 +107,7 @@
 	  OrderInfo.order.step = 1;
 	  OrderInfo.actionFlag = 114;
 	  mydate();
+	  sourceRelease.initData();
   });
 </script>
 

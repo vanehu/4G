@@ -314,14 +314,15 @@ common = (function($) {
 	
 	//调用客户端的二代证识别方法       method：表示回调js方法 如：order.prodModify.getIDCardInfos
 	var _callGenerationRec=function(method,type,isKhjq){
-		if(isKhjq!=undefined && isKhjq.length>0){
-			cust.isKhjq = isKhjq+"";
-		}else{
-			cust.isKhjq = "";
-		}
 		var arr=new Array(1);
 		arr[0]=method;
 		arr[1]=type;
+		if(isKhjq!=undefined && isKhjq.length>0){
+			cust.isKhjq = isKhjq+"";
+			arr[2]=isKhjq;
+		}else{
+			cust.isKhjq = "";
+		}
 		MyPlugin.getGenerationInfos(arr,
             function(result) {
             },
@@ -366,11 +367,14 @@ common = (function($) {
 	
 	//调用客户端的关闭webview方法
 	var _callCloseWebview=function(){
+		if(cust.certInfoId!=undefined){
+			cust.certInfoId = "";
+		}
 		OrderInfo.order.soNbr = "";
 		cust.custCatsh = {};
 		cust.userCatsh = {};
 		cust.mainuserCatsh = {};
-		if(order.phoneNumber.mainFlag != undefined){
+		if(order.phoneNumber != undefined && order.phoneNumber.mainFlag != undefined){
 			order.phoneNumber.mainFlag = "true";
 		}
 		if($("#alert-modal").length>0){
