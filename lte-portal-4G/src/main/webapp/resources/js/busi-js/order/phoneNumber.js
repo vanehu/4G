@@ -581,7 +581,48 @@ order.phoneNumber = (function(){
 					$.unecOverlay();
 				},	
 				"done" : function(response){
-					if (response.code == 0) {
+					var phoneNumberRelease = query.common.queryPropertiesValue("PHONENUMBER_RELEASE_FLAG");
+					if (response.code == 0 || (response.code != 0&&phoneNumberRelease == "ON")) {
+						if(phoneNumberRelease == "ON" && response.code == -2){
+							if((response.data.errMsg).indexOf('1001') < 0){
+								$.alertM(response.data);
+								return;
+							}else{
+								for(var key in params){
+									if(key == "oldPhoneNumber" || key == "oldAnTypeCd"){
+										delete params[key];
+									}if(key == "newPhoneNumber"){
+										params.phoneNumber = params.newPhoneNumber;
+										delete params[key];
+									}if(key == "newAnTypeCd"){
+										params.anTypeCd = params.newAnTypeCd;
+										delete params[key];
+									}
+								}
+								params.actionType = 'E';
+								$.callServiceAsJson(purchaseUrl, params,{
+									fail:function(response){
+										//$.unecOverlay();
+										$.alert("提示","请求可能发生异常，请稍后再试！");
+									}
+								})
+							}
+						}
+						if(phoneNumberRelease == "ON" && response.code != -2 && response.code != 0){
+							var msg="";
+							if(response.data!=undefined&&response.data.msg!=undefined){
+								msg=response.data.msg;
+								if(msg.indexOf('1001') < 0){
+									$.alert("提示","号码预占失败，可能原因:"+msg);
+									return;
+								}
+							}else{
+								msg="号码["+phoneNumber+"]预占失败";
+								$.alert("提示","号码预占失败，可能原因:"+msg);
+							}
+							
+						}
+						
 						if(selectedLevel==""){//selectedLevel缓存号码等级信息，以缓存的为准
 							selectedLevel=response.data.phoneLevelId;
 						}
@@ -679,9 +720,9 @@ order.phoneNumber = (function(){
 								order.phoneNumber.dialogForm.close(order.phoneNumber.dialog);
 							}
 						}
-					}else if (response.code == -2) {
+					}else if (phoneNumberRelease == "OFF" && response.code == -2) {
 						$.alertM(response.data);
-					}else{
+					}else if(phoneNumberRelease == "OFF" && response.code != -2 && response.code != 0){
 						var msg="";
 						if(response.data!=undefined&&response.data.msg!=undefined){
 							msg=response.data.msg;

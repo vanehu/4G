@@ -473,8 +473,8 @@ offerChange = (function() {
 			}
 		});
 
+        order.main.initAcct(0);
 		if(offerChange.oldMemberFlag){
-			order.main.initAcct(0);
 			order.main.initAcct(1);//初始化副卡帐户列表
 			for(var i=0;i<OrderInfo.oldprodInstInfos.length;i++){
 				var prodInfo = OrderInfo.oldprodInstInfos[i]; //获取老用户产品信息
@@ -728,11 +728,6 @@ offerChange = (function() {
 					}
 				}
 			}
-		}
-		//返回互斥的校验结果
-		var isExcludeDepend = common.queryPropertiesStatus("EXCLUDEDEPEND_FLAG_" + String(OrderInfo.staff.areaId).substr(0, 3));
-		if(isExcludeDepend == true){
-			check.offer.getExcludeDependData();
 		}
 	};
 	

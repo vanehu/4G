@@ -3002,6 +3002,9 @@ order.cust = (function(){
 	//鉴权方式日志记录成功
 	var _saveAuthRecordSuccess=function(param){
 		param.resultCode = "0";
+		if(param.validateLevel == "2"){
+			OrderInfo.secondBusiAuthType = param.validateType;
+		}
 		_saveAuthRecord(param);
 	};
 	//鉴权方式日志记录失败
