@@ -32,6 +32,7 @@ import com.al.ec.serviceplatform.client.ResultCode;
 import com.al.ecs.common.entity.JsonResponse;
 import com.al.ecs.common.entity.PageModel;
 import com.al.ecs.common.util.JsonUtil;
+import com.al.ecs.common.util.MDA;
 import com.al.ecs.common.util.MapUtil;
 import com.al.ecs.common.util.PageUtil;
 import com.al.ecs.common.util.PropertiesUtils;
@@ -1611,6 +1612,7 @@ public class CustController extends BaseController {
     	String dekeyWord=(String)request.getSession().getAttribute(SysConstant.SESSION_DATASOURCE_KEY);
     	JsonResponse jsonResponse=new JsonResponse();
     	try {
+    		System.out.println("++++++++++++++蓝牙读卡入参"+JsonUtil.toString(param));
     		resMap = custBmo.decodeUserInfo(param, flowNum, sessionStaff,dekeyWord,request);  
     		if(Integer.valueOf(resMap.get("code").toString())==ResultConstant.SUCCESS.getCode()){
     			//将读卡得到的身份证号码存入session，用于再次比对，防篡改
@@ -1625,6 +1627,68 @@ public class CustController extends BaseController {
             	String nonce = RandomStringUtils.randomAlphanumeric(Const.RANDOM_STRING_LENGTH); //随机字符串
             	String signature = commonBmo.signature(partyName, certNumber, certAddress, identityPic, nonce, appSecret);
             	userInfo.put("signature", signature);
+            	
+    			int venderId = 10004;
+    			String versionSerial = "1.0";
+    			String servCode = "0";
+    			if(param.get("servCode")!=null){
+    				servCode = String.valueOf(param.get("servCode"));
+    				if("0".equals(servCode)){
+    					servCode = "客户定位";
+    				}else if("1".equals(servCode)){
+    					servCode = "客户鉴权";
+    				}else if("2".equals(servCode)){
+    					servCode = "经办人";
+    				}else if("3".equals(servCode)){
+    					servCode = "客户新建";
+    				}else if("4".equals(servCode)){
+    					servCode = "使用人";
+    				}
+    				if(servCode.length()>0){
+    					List<Map<String, Object>> certReaders = MDA.CERT_READER;
+    	    			if(param.get("readerName")!=null){
+    	    				String readerName = String.valueOf(param.get("readerName"));
+    	    				for(int i=0;i<certReaders.size();i++){
+    	    					if(readerName.contains(String.valueOf(certReaders.get(i).get("name")))){
+    	    						venderId = Integer.parseInt(String.valueOf(certReaders.get(i).get("venderId")));
+    	    						versionSerial = String.valueOf(certReaders.get(i).get("versionSerial"));
+    	    					}
+    	    				}
+    	    			}
+    	    			Map<String, Object> paramMap = new HashMap();
+    	    			Map<String, Object> certMsgMap = new HashMap();
+    	    			certMsgMap.put("bornDay", MapUtils.getString(userInfo,"bornDay"));
+    	    			certMsgMap.put("certAddress", certAddress);
+    	    			certMsgMap.put("certNumber", certNumber);
+    	    			certMsgMap.put("certOrg", MapUtils.getString(userInfo,"certOrg"));
+    	    			certMsgMap.put("effDate", MapUtils.getString(userInfo,"effDate"));
+    	    			certMsgMap.put("expDate", MapUtils.getString(userInfo,"expDate"));
+    	    			certMsgMap.put("gender", Integer.parseInt(MapUtils.getString(userInfo,"gender")));
+    	    			certMsgMap.put("identityPic", identityPic);
+    	    			certMsgMap.put("nation", MapUtils.getString(userInfo,"nation"));
+    	    			certMsgMap.put("partyName", partyName);
+    	    			certMsgMap.put("servCode", servCode);
+    	    			certMsgMap.put("venderId", venderId);
+    	    			certMsgMap.put("versionSerial ", versionSerial);
+    	    			List certInfos = new ArrayList();
+    	    			certInfos.add(certMsgMap);
+    	    			paramMap.put("areaId", sessionStaff.getCurrentAreaId());
+    	    			paramMap.put("certInfos", certInfos);
+    	    			Map<String, Object> saveResult = custBmo.saveCertInfoFromIdentification(paramMap, null, sessionStaff);
+    	    			String certInfoId = "";
+    	    			if(saveResult!=null && "0".equals(saveResult.get("resultCode"))){
+    	    				List certInfo = (List) saveResult.get("certResults");
+    	    				if(certInfo.size()>0){
+    	    					Map cert = (Map) certInfo.get(0);
+    	    					certInfoId = String.valueOf(cert.get("certInfoId"));
+    	    				}
+    	    			}
+    	    			MapUtils.safeAddToMap(userInfo, "certInfoId", certInfoId);
+    	    			System.out.println("++++++++++++++身份证信息保存结果"+JsonUtil.toString(saveResult));
+    				}
+    			}
+    			
+            	System.out.println("++++++++++++++身份证信息"+JsonUtil.toString(userInfo));
     			jsonResponse=super.successed(resMap, ResultConstant.SUCCESS.getCode());
     		}else{
     			jsonResponse=super.failed(MapUtils.getString(resMap, "msg", "抱歉,查询蓝牙密钥的decodeUserInfo服务解析异常！"), ResultConstant.SERVICE_RESULT_FAILTURE

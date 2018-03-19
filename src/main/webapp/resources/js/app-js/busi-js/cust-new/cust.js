@@ -12,7 +12,7 @@ cust = (function(){
 	var _checkUserInfo = {
 			 accNbr: ""
 	};
-	var _iskhjq = "";//是否客户鉴权调用的读卡
+	var _iskhjq = "";//是否客户鉴权调用的读卡（0：客户定位；1：客户鉴权；2：经办人本人；3：客户新建；4：使用人）
 	var _isOldCust = false;
 	var _isSameOne = false;
 	var _checkCustLog = {};//客户信息核验记录
@@ -28,6 +28,7 @@ cust = (function(){
 	var _custCernum = [];//客户证件使用数缓存
 	var _jbrAge;//客户证件使用数缓存
 	var _OneFiveResult=false;//一证五号校验结果,false拦截，true不拦截
+	var _certInfoId = "";//身份证id
 	var _clearCustForm = function(){
 		$('#cmCustName').val("");
 		$('#cmAddressStr').val("");
@@ -1447,7 +1448,17 @@ cust = (function(){
 		order.dealer.closeJBR();//拍完照片直接关闭经办人界面
 	};
 	
-	var _getGenerationInfos=function(name,idcard,address,identityPic){
+	var _getGenerationInfos=function(name,idcard,address,identityPic,signature,map){
+		if(map!=undefined){
+			map.replace(" ","");
+			map.replace(/\\/g,"");
+			if(map.length>100){
+				var totalMap = $.parseJSON(map);
+				if(totalMap.certInfoId!=undefined && totalMap.certInfoId.length>0){
+					cust.certInfoId = totalMap.certInfoId;
+				}
+			}
+		}
 		if(cust.isKhjq == "1" || cust.isKhjq == "2"){
 			if(OrderInfo.actionFlag!=9){//返档需查客户
 				var tm_idCardNumber = "";
@@ -3434,6 +3445,7 @@ cust = (function(){
 		getAge                      :       _getAge,
 		jbrAge                      :       _jbrAge,
 		iskhjq						:		_iskhjq,
-		initMyData                  :       _initMyData
+		initMyData                  :       _initMyData,
+		certInfoId					:		_certInfoId
 	};	
 })();

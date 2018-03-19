@@ -182,4 +182,14 @@ public interface CustBmo {
 	 * @throws Exception
 	 */
 	 public Map<String, Object> queryCert(Map<String, Object> dataBusMap, String optFlowNum, SessionStaff sessionStaff) throws Exception;
+	 
+	 /**
+	 * 读卡信息存库接口
+	 * @param dataBusMap
+	 * @param optFlowNum
+	 * @param sessionStaff
+	 * @return
+	 * @throws Exception
+	 */
+	 public Map<String, Object> saveCertInfoFromIdentification(Map<String, Object> dataBusMap, String optFlowNum, SessionStaff sessionStaff) throws Exception;
 }

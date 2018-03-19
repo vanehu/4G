@@ -76,6 +76,9 @@ custQuery = (function(){
 	
 	//客户定位证件类型选择事件
 	var _custidentidiesTypeCdChoose = function(scope,id) {
+		if(cust.certInfoId!=undefined){
+			cust.certInfoId = "";
+		}
 		OrderInfo.cust = {};
 		OrderInfo.jbr = {};
 		// 非接入号隐藏产品类别选择

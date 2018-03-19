@@ -1250,7 +1250,8 @@ public final class PortalServiceCode {
     public static final String QUERY_MKT_ACTIVITY_LIST = "biz-service/intf.couponService/queryMktActivityList";
     /**营销任务（接触）反馈结果记录服务*/
     public static final String SAVE_MKT_CONTACT_RESULT = "biz-service/intf.couponService/saveMktContactResult";
-    
+    /**读卡信息存库接口*/
+    public static final String SAVE_CERTINFO = "biz-service/intf.soService/saveCertInfoFromIdentification";
     /** 调用系管获取人像审核审核人员列表*/
     public static final String QRY_RXSH_STAFF_LIST = "sys-queryStaffWhoCanRXSH";
 }

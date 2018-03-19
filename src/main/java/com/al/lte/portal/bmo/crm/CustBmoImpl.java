@@ -598,9 +598,9 @@ public class CustBmoImpl implements CustBmo {
 		        JSONObject jsonObj =JSONObject.fromObject(json.toString(2));
 		        boolean jsonflag = jsonObj.containsKey("identityPic");
 		        String identityPic= null;
-		        if(jsonflag) {
-		        	identityPic = jsonObj.getString("identityPic");	
-		        }
+//		        if(jsonflag) {
+//		        	identityPic = jsonObj.getString("identityPic");	
+//		        }
 		       
 		        if(StringUtils.isNotBlank(identityPic)) {
 		        	  byte[] decode = new BASE64Decoder().decodeBuffer(identityPic);
@@ -1050,6 +1050,33 @@ public class CustBmoImpl implements CustBmo {
             log.error("云平台api/v1/queryCert服务返回的数据异常", e);
             throw new BusinessException(ErrorCode.QUERY_CLOUD_CERT, dataBusMap, db.getReturnlmap(), e);
         }
+    }
+    
+    /**
+     * 读卡信息存库接口
+     *
+     * @param dataBusMap
+     * @param optFlowNum
+     * @param sessionStaff
+     * @return
+     * @throws Exception
+     */
+    public Map<String, Object> saveCertInfoFromIdentification(Map<String, Object> dataBusMap, String optFlowNum, SessionStaff sessionStaff) throws Exception {
+    	DataBus db = InterfaceClient.callService(dataBusMap,
+				PortalServiceCode.SAVE_CERTINFO, optFlowNum, sessionStaff);
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		try{
+			if (ResultCode.R_SUCC.equals(db.getResultCode())) {
+				resultMap = (Map<String,Object>)db.getReturnlmap().get("result");
+				resultMap.put("resultCode", ResultCode.R_SUCC);
+			} else {
+				resultMap.put("resultCode", ResultCode.R_FAILURE);
+				resultMap.put("resultMsg", db.getResultMsg());
+			}
+		} catch (Exception e) {
+            throw new BusinessException(ErrorCode.QUERY_CLOUD_CERT, dataBusMap, db.getReturnlmap(), e);
+        }
+		return resultMap;
     }
   	
 }

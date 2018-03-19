@@ -37,6 +37,13 @@ SoOrder = (function() {
 	
 	//提交订单节点
 	var _submitOrder = function(data) {
+		if(cust.certInfoId!=undefined && cust.certInfoId.length>0){
+			OrderInfo.orderData.orderList.orderListInfo.certInfoKeys = [];
+			OrderInfo.orderData.orderList.orderListInfo.certInfoKeys.push({
+				certInfoId : cust.certInfoId,//身份证id
+				partyId : OrderInfo.cust.custId
+			});
+		}
 		if(MD5("tgjbr"+OrderInfo.staff.isHandleCustNeeded+"tgjbr")!=OrderInfo.staff.MD5_tgjbr.toUpperCase()){
 			$.alert("提示","请勿篡改跳过经办人权限！");
 			return;

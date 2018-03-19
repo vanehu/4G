@@ -295,6 +295,7 @@ public class CommonController extends BaseController {
     @RequestMapping(value="/decodeCertNew", method = RequestMethod.POST)
     public JsonResponse decodeCertNew(@RequestBody Map<String, Object> param,
         HttpServletRequest request) throws Exception {
+		System.out.println("++++++++++++++云读卡入参"+JsonUtil.toString(param));
 		SessionStaff sessionStaff = (SessionStaff) ServletUtils
 				.getSessionAttribute(super.getRequest(),
 						SysConstant.SESSION_KEY_LOGIN_STAFF);
@@ -319,14 +320,61 @@ public class CommonController extends BaseController {
 		paramsMap.put("timestamp", timestamp);
 		paramsMap.put("nonce", qrynonce);
 		paramsMap.put("decodeId", decodeId);
-		//serverIp="223.255.252.39:4001";//本地测试时打开
+//		serverIp="223.255.252.39:4001";//本地测试时打开
 		paramsMap.put("serverIp", serverIp);
 		try {
+//			String venderId = "10004";
+//			String versionSerial = "1.0";
+//			String servCode = "客户定位";
+//			if(param.get("servCode")!=null){
+//				servCode = String.valueOf(param.get("servCode"));
+//			}
+//			List<Map<String, Object>> certReaders = MDA.CERT_READER;
+//			if(param.get("readerName")!=null){
+//				String readerName = String.valueOf(param.get("readerName"));
+//				for(int i=0;i<certReaders.size();i++){
+//					if(readerName.contains(String.valueOf(certReaders.get(i).get("name")))){
+//						venderId = String.valueOf(certReaders.get(i).get("venderId"));
+//						versionSerial = String.valueOf(certReaders.get(i).get("versionSerial"));
+//					}
+//				}
+//			}
+//			Map<String, Object> paramMap = new HashMap();
+//			Map<String, Object> certMsgMap = new HashMap();
+//			certMsgMap.put("bornDay", "19950218");
+//			certMsgMap.put("certAddress", "福建省平和县文峰镇黄井村田中央87号");
+//			certMsgMap.put("certNumber", "350628199502181017");
+//			certMsgMap.put("certOrg", "平和县公安局");
+//			certMsgMap.put("effDate", "20130507");
+//			certMsgMap.put("expDate", "20230507");
+//			certMsgMap.put("gender", "1");
+//			certMsgMap.put("identityPic", "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");
+//			certMsgMap.put("nation", "汉");
+//			certMsgMap.put("partyName", "林少煌");
+//			certMsgMap.put("servCode", servCode);
+//			certMsgMap.put("venderId", venderId);
+//			certMsgMap.put("versionSerial ", versionSerial);
+//			List certInfos = new ArrayList();
+//			certInfos.add(certMsgMap);
+//			paramMap.put("areaId", sessionStaff.getCurrentAreaId());
+//			paramMap.put("certInfos", certInfos);
+//			Map<String, Object> saveResult = custBmo.saveCertInfoFromIdentification(paramMap, null, sessionStaff);
+//			String certInfoId = "";
+//			if(saveResult!=null && "0".equals(saveResult.get("resultCode"))){
+//				List certInfo = (List) saveResult.get("certResults");
+//				if(certInfo.size()>0){
+//					Map cert = (Map) certInfo.get(0);
+//					certInfoId = String.valueOf(cert.get("certInfoId"));
+//				}
+//			}
+//			System.out.println("++++++++++++++身份证信息保存结果"+JsonUtil.toString(saveResult));
 			Map<?, ?> returntMap = custBmo.queryCert(paramsMap, null,
 					sessionStaff);// 请求云平台获取的加密身份证信息
 			String certificate = MapUtils.getString(returntMap, "certificate");
 			Map<?, ?> certificateMap = custBmo.decodeCert(certificate.trim(),
 					secret);
+//			Map<?, ?> certificateMap = certMsgMap;
+//			System.out.println("++++++++++++++身份证信息"+JsonUtil.toString(certificateMap));
 			/* 对下面的字段进行签名，可根据需要增加签名字段 */
 			String partyName = MapUtils.getString(certificateMap, "partyName"); // 姓名
 			String certAddress = MapUtils.getString(certificateMap,
@@ -345,6 +393,67 @@ public class CommonController extends BaseController {
 				request.getSession().setAttribute(Const.SESSION_SIGNATURE,
 						signature);
 			}
+			
+			int venderId = 10004;
+			String versionSerial = "1.0";
+			String servCode = "0";
+			if(param.get("servCode")!=null){
+				servCode = String.valueOf(param.get("servCode"));
+				if("0".equals(servCode)){
+					servCode = "客户定位";
+				}else if("1".equals(servCode)){
+					servCode = "客户鉴权";
+				}else if("2".equals(servCode)){
+					servCode = "经办人";
+				}else if("3".equals(servCode)){
+					servCode = "客户新建";
+				}else if("4".equals(servCode)){
+					servCode = "使用人";
+				}
+				if(servCode.length()>0){
+					List<Map<String, Object>> certReaders = MDA.CERT_READER;
+					if(param.get("readerName")!=null){
+						String readerName = String.valueOf(param.get("readerName"));
+						for(int i=0;i<certReaders.size();i++){
+							if(readerName.contains(String.valueOf(certReaders.get(i).get("name")))){
+								venderId = Integer.parseInt(String.valueOf(certReaders.get(i).get("venderId")));
+								versionSerial = String.valueOf(certReaders.get(i).get("versionSerial"));
+							}
+						}
+					}
+					Map<String, Object> paramMap = new HashMap();
+					Map<String, Object> certMsgMap = new HashMap();
+					certMsgMap.put("bornDay", MapUtils.getString(certificateMap,"bornDay"));
+					certMsgMap.put("certAddress", certAddress);
+					certMsgMap.put("certNumber", certNumber);
+					certMsgMap.put("certOrg", MapUtils.getString(certificateMap,"certOrg"));
+					certMsgMap.put("effDate", MapUtils.getString(certificateMap,"effDate"));
+					certMsgMap.put("expDate", MapUtils.getString(certificateMap,"expDate"));
+					certMsgMap.put("gender", Integer.parseInt(MapUtils.getString(certificateMap,"gender")));
+					certMsgMap.put("identityPic", identityPic);
+					certMsgMap.put("nation", MapUtils.getString(certificateMap,"nation"));
+					certMsgMap.put("partyName", partyName);
+					certMsgMap.put("servCode", servCode);
+					certMsgMap.put("venderId", venderId);
+					certMsgMap.put("versionSerial ", versionSerial);
+					List certInfos = new ArrayList();
+					certInfos.add(certMsgMap);
+					paramMap.put("areaId", sessionStaff.getCurrentAreaId());
+					paramMap.put("certInfos", certInfos);
+					Map<String, Object> saveResult = custBmo.saveCertInfoFromIdentification(paramMap, null, sessionStaff);
+					String certInfoId = "";
+					if(saveResult!=null && "0".equals(saveResult.get("resultCode"))){
+						List certInfo = (List) saveResult.get("certResults");
+						if(certInfo.size()>0){
+							Map cert = (Map) certInfo.get(0);
+							certInfoId = String.valueOf(cert.get("certInfoId"));
+						}
+					}
+					MapUtils.safeAddToMap(certificateMap, "certInfoId", certInfoId);
+					System.out.println("++++++++++++++身份证信息保存结果"+JsonUtil.toString(saveResult));
+				}
+			}
+			
 			MapUtils.safeAddToMap(certificateMap, "signature", signature);
 			return super.successed(certificateMap);
 		} catch (BusinessException be) {
