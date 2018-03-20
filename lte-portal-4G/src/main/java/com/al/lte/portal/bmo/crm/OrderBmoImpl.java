@@ -15,13 +15,15 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.bouncycastle.jcajce.provider.asymmetric.rsa.RSAUtil;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -36,6 +38,7 @@ import com.al.ecs.common.util.DigestUtils;
 import com.al.ecs.common.util.JsonUtil;
 import com.al.ecs.common.util.MDA;
 import com.al.ecs.common.util.PropertiesUtils;
+import com.al.ecs.common.util.RSAUtil;
 import com.al.ecs.common.util.UIDGenerator;
 import com.al.ecs.common.web.ServletUtils;
 import com.al.ecs.common.web.SpringContextUtil;
@@ -3423,7 +3426,6 @@ public class OrderBmoImpl implements OrderBmo {
 		
 		return returnMap;
 	}
-	
 	public Map<String, Object> queryPayOrderStatus(Map<String, Object> paramMap,
 			String optFlowNum, SessionStaff sessionStaff) throws Exception {
 		Map<String, Object> paramMap2 = new HashMap<String, Object>();
