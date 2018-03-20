@@ -3,6 +3,7 @@ package com.al.lte.portal.bmo.crm;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URLEncoder;
+import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -20,6 +21,7 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.bouncycastle.jcajce.provider.asymmetric.rsa.RSAUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -34,6 +36,7 @@ import com.al.ecs.common.util.DigestUtils;
 import com.al.ecs.common.util.JsonUtil;
 import com.al.ecs.common.util.MDA;
 import com.al.ecs.common.util.PropertiesUtils;
+import com.al.ecs.common.util.UIDGenerator;
 import com.al.ecs.common.web.ServletUtils;
 import com.al.ecs.common.web.SpringContextUtil;
 import com.al.ecs.exception.BusinessException;
@@ -2495,36 +2498,11 @@ public class OrderBmoImpl implements OrderBmo {
 		Map<String, Object> dataBusMap2 = new HashMap<String, Object>();
 		dataBusMap2.put("proot", dataBusMap);
 		DataBus db = InterfaceClient.callService(dataBusMap2,
-				PortalServiceCode.PAY_TOCKEN, null, sessionStaff);
+				PortalServiceCode.PAY_TOKEN, null, sessionStaff);
 		return db.getReturnlmap();
 	}
 
-	public Map<String, Object> queryPayOrderStatus(Map<String, Object> paramMap,
-			String optFlowNum, SessionStaff sessionStaff) throws Exception {
-		Map<String, Object> paramMap2 = new HashMap<String, Object>();
-		String reqPlatForm="1000000244";
-		String provinceCode="";
-		String cityCode = sessionStaff.getCurrentAreaId();
-		if(cityCode!=null && !cityCode.equals("")){
-			provinceCode=cityCode.substring(0,3)+"0000";
-		}
-		String olId = paramMap.get("olId").toString();//业务订单号
-		String reqPayType = "1";//支付
-		String paramStr = "provinceCode=" + provinceCode + "&olId=" + olId+"&reqPayType="+reqPayType;
-		String sign = AESUtils.encryptToString(paramStr, "YXS_KEY_2016");
-		paramMap2.put("provinceCode", provinceCode);
-		paramMap2.put("olId", olId);
-		paramMap2.put("reqPayType", reqPayType);
-		paramMap2.put("sign", sign);
-		Map<String, Object> dataBusMap = new HashMap<String, Object>();
-		Map<String, Object> dataBusMap2 = new HashMap<String, Object>();
-		dataBusMap.put("reqPlatForm", reqPlatForm);//请求平台
-		dataBusMap.put("params", paramMap2);
-		dataBusMap2.put("proot", dataBusMap);
-		DataBus db = InterfaceClient.callService(dataBusMap2,
-				PortalServiceCode.PAY_QUERY, null, sessionStaff);
-		return db.getReturnlmap();
-	}
+	
 	
 	public Map<String, Object> preCheckBeforeOrde(Map<String, Object> paramMap,
 			String flowNum, SessionStaff sessionStaff) throws Exception {
@@ -3444,5 +3422,181 @@ public class OrderBmoImpl implements OrderBmo {
 		}
 		
 		return returnMap;
+	}
+	
+	public Map<String, Object> queryPayOrderStatus(Map<String, Object> paramMap,
+			String optFlowNum, SessionStaff sessionStaff) throws Exception {
+		Map<String, Object> paramMap2 = new HashMap<String, Object>();
+		String reqPlatForm = SysConstant.CSB_SRC_SYS_ID_LTE;
+		String provinceCode="";
+		String cityCode = "";
+		cityCode = sessionStaff.getCurrentAreaId();
+		if(StringUtils.isNotBlank(cityCode)){
+			provinceCode=cityCode.substring(0,3)+"0000";
+		}
+		String olId = paramMap.get("olId") + "";//业务订单号
+		String reqPayType = MapUtils.getString(paramMap, "reqPayType","1");//支付
+		String reqNo = "";
+		String paramStr = "reqPlatForm="+reqPlatForm+"&provinceCode=" + provinceCode + "&olId=" + olId+"&reqNo=" + reqNo+"&reqPayType="+reqPayType;
+		String sign = AESUtils.encryptToString(paramStr, MDA.PAY_AES_KEY);
+		paramMap2.put("provinceCode", provinceCode);
+		paramMap2.put("olId", olId);
+		paramMap2.put("reqPayType", reqPayType);
+		paramMap2.put("sign", sign);
+		Map<String, Object> dataBusMap = new HashMap<String, Object>();
+		Map<String, Object> dataBusMap2 = new HashMap<String, Object>();
+		dataBusMap.put("reqPlatForm", reqPlatForm);//请求平台
+		dataBusMap.put("params", paramMap2);
+		dataBusMap2.put("proot", dataBusMap);
+		DataBus db = InterfaceClient.callService(dataBusMap2,
+				PortalServiceCode.PAY_QUERY, null, sessionStaff);
+		return db.getReturnlmap();
+	}
+	public Map<String, Object> queryPayToken(Map<String, Object> paramMap,
+			String optFlowNum, SessionStaff sessionStaff) throws Exception {
+		Map<String, Object> paramMap2 = new HashMap<String, Object>();
+		//Random rand = new Random();
+		//int k = rand.nextInt(89999)+10000;//支付流水随机码
+		String reqPlatForm=SysConstant.CSB_SRC_SYS_ID_LTE; 
+		String provinceCode="";
+		String cityCode = sessionStaff.getCurrentAreaId();
+		if(StringUtils.isNotBlank(cityCode)){
+			provinceCode=cityCode.substring(0,3)+"0000";
+		}
+		String channelId=sessionStaff.getCurrentChannelId();
+		//String reqNo = paramMap.get("olId") + ""+k;//业务流水号
+		String reqNo = reqPlatForm+UIDGenerator.getReqNo();
+		String detail = MapUtils.getString(paramMap, "actionTypeName","电信业务受理");
+		String customerId = "";
+		String customerName="";
+		String olId = paramMap.get("olId") + "";
+		String olNbr = paramMap.get("soNbr")+ "";
+		String staffCode = sessionStaff.getStaffCode();
+		if(paramMap.get("chargeCheck")!=null){
+			String chargeCheck=paramMap.get("chargeCheck")+"";
+			paramMap2.put("chargeCheck", chargeCheck);//代理商保证金校验结果，0展示现金，其他不展示
+		}
+		paramMap2.put("olId",  olId);//购物车id
+		paramMap2.put("olNbr",  olNbr);//购物车流水
+		paramMap2.put("reqNo", reqNo);//传给支付平台的业务流水号要保证不同
+		String payAmount = paramMap.get("charge")+""; 
+		String busiUpType= "0".equals(paramMap.get("busiUpType")+"")? "1":paramMap.get("busiUpType")+"";//业务类型
+		//if ("4".equals(busiUpType)) {
+		//	paramMap2.put("accNbr", MapUtils.getString(paramMap, "accNbr"));
+		//}
+		@SuppressWarnings("unchecked")
+		List<Map<String, Object>> chargeItems2 = (List<Map<String, Object>>) paramMap.get("chargeItems");
+		JSONArray chargeItems = JSONArray.fromObject(chargeItems2);
+		if(paramMap.get("chargeItems")!=null && chargeItems2.size()>0){
+			paramMap2.put("chargeItems", chargeItems);
+		}
+		paramMap2.put("provinceCode", provinceCode);
+		
+		paramMap2.put("frontUrl", paramMap.get("frontUrl"));
+		paramMap2.put("cityCode", cityCode);
+		paramMap2.put("channelId", channelId);
+		paramMap2.put("payAmount", payAmount);// 金额，单位分
+		paramMap2.put("olNumber", staffCode);// 工号
+		paramMap2.put("customerId", customerId);// 
+		paramMap2.put("customerName", customerName);
+		paramMap2.put("detail", detail);// 详情描述
+		paramMap2.put("busiUpType", busiUpType);// 业务类型：
+		String paramStr = "provinceCode=" + provinceCode + "&cityCode=" + cityCode + "&channelId=" + channelId + 
+				"&reqNo=" + reqNo + "&payAmount=" + payAmount +"&detail="+detail+"&olId="+olId+"&olNumber="+staffCode+"&busiUpType="+busiUpType;
+		String sign = AESUtils.encryptToString(paramStr, MDA.PAY_AES_KEY); 
+		paramMap2.put("sign", sign);
+		Map<String, Object> dataBusMap = new HashMap<String, Object>();
+		dataBusMap.put("reqPlatForm", reqPlatForm);//请求平台
+		dataBusMap.put("params", paramMap2);
+		Map<String, Object> dataBusMap2 = new HashMap<String, Object>();
+		dataBusMap2.put("proot", dataBusMap);
+		DataBus db = InterfaceClient.callService(dataBusMap2,
+				PortalServiceCode.PAY_TOKEN, null, sessionStaff);
+		db.getReturnlmap().put("reqNo", reqNo);
+		return db.getReturnlmap();
+	}
+	/**
+	 * 支付平台退款接口
+	 */
+	
+	public Map<String, Object> payRefundOrder(Map<String, Object> paramMap,
+			String optFlowNum, SessionStaff sessionStaff) throws Exception {
+		Map<String, Object> paramMap2 = new HashMap<String, Object>();
+		String reqPlatForm= SysConstant.CSB_SRC_SYS_ID_LTE;
+		String provinceCode="";
+		String cityCode = sessionStaff.getCurrentAreaId();
+		if(StringUtils.isNotBlank(cityCode)){
+			provinceCode=cityCode.substring(0,3)+"0000";
+		}
+		//省份秘钥
+	    String signKey = propertiesUtils.getMessage("PRO_PAY_KEY_"+provinceCode);
+	    String timeStamp = String.valueOf(DateUtil.dateToLong(new Date()));
+		String olId = MapUtils.getString(paramMap, "olId");//业务订单号
+		String remark = MapUtils.getString(paramMap, "remark","电信营业退款"); // 退款原因
+		//Random rand = new Random();
+		//int k = rand.nextInt(89999)+10000;//退款流水随机码
+		//String newNbr=olId+k;
+		String payAmount = MapUtils.getString(paramMap, "payAmount");; //退款金额
+		
+		String reqNo= MapUtils.getString(paramMap, "reqNo");  
+		if(StringUtils.isBlank(reqNo)){
+			reqNo= reqPlatForm+UIDGenerator.getReqNo();
+		}
+		paramMap2.put("reqNo", reqNo);
+		
+		paramMap2.put("oldId", olId);
+		
+		if(StringUtils.isNotBlank(paramMap.get("newId")+"") && !"null".equals(paramMap.get("newId")+"")){
+			paramMap2.put("newNbr", paramMap.get("newId")+"");
+		}
+		
+		paramMap2.put("records", JsonUtil.toObject((String)paramMap.get("order"), List.class) );
+		
+		String paramStr = "reqPlatForm="+reqPlatForm+"&provinceCode=" + provinceCode + "&oldId=" + olId+"&newId="+paramMap2.get("newNbr")+ "&reqNo="+reqNo+"&timeStamp="+timeStamp;
+		String sign = AESUtils.encryptToString(paramStr, signKey);
+		paramMap2.put("provinceCode", provinceCode);
+		paramMap2.put("reqPlatForm", reqPlatForm);
+		//paramMap2.put("oldNbr", olId);
+		paramMap2.put("payAmount", payAmount);
+		//paramMap2.put("newNbr", newNbr);
+		
+		paramMap2.put("timeStamp", timeStamp);
+		paramMap2.put("remark", remark);
+		paramMap2.put("sign", sign);
+		Map<String, Object> dataBusMap = new HashMap<String, Object>();
+		Map<String, Object> dataBusMap2 = new HashMap<String, Object>();
+		dataBusMap.put("params", paramMap2);
+		//省份编码rsa加密
+		String gKey = MDA.PAY_RSA_KEY;
+		PublicKey publicKey = RSAUtil.restorePublicKey(RSAUtil.hex2byte(gKey));
+		byte[] encodedText = RSAUtil.RSAEncode(publicKey, provinceCode.getBytes());
+        String proKey = Base64.encodeBase64String(encodedText);
+        dataBusMap.put("proKey", proKey);//用RSA对省份编码进行加密
+		dataBusMap2.put("proot", dataBusMap);
+		
+		DataBus db = InterfaceClient.callService(dataBusMap2,
+				PortalServiceCode.PAY_REFUND, null, sessionStaff);
+		if (db.getReturnlmap() != null && ResultCode.R_SUCCESS.equals(db.getReturnlmap().get("respCode"))) {
+//			try{
+//				Map<String,Object> param = new HashMap<String,Object>();
+//				Map<String,Object> orderPaymentRecord = new HashMap<String,Object>();
+//				orderPaymentRecord.put("paymentTransId", reqNo);
+//				orderPaymentRecord.put("paymentMethodCd",   MapUtils.getString(param, "payCode",""));
+//				orderPaymentRecord.put("operationType",  "1100");
+//				orderPaymentRecord.put("amount",  payAmount);
+//				orderPaymentRecord.put("staffId", sessionStaff.getStaffId());
+//				orderPaymentRecord.put("custOrderIdz", olId);
+//				param.put("areaId", sessionStaff.getAreaId());
+//				param.put("orderId", MapUtils.getString(param, "newId",""));
+//				param.put("orderPaymentRecord", orderPaymentRecord);
+////				rMap = saveOrderPaymentRecord(param, null, sessionStaff);
+////				if (rMap != null && ResultCode.R_SUCCESS.equals(rMap.get("code").toString())) {
+////			    	
+////			    }
+//			}catch(Exception e){
+//			    log.error("支付交易信息保存接口服务出错", e);
+//			}
+		}
+		return db.getReturnlmap();
 	}
 }

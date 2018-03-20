@@ -121,6 +121,7 @@
  													   <input id="remark_${trid}" type="text" style="display:none ;border: 1px solid #DCDCDC;line-height: 23px;padding: 1px; width: 100px;">
 		   											</td>
 							                        <td>
+							                        <input type="hidden" id="paymentTransId_${trid}" value="${itemList.paymentTransId}" />
 				                        			<input type="hidden" id="feeAmount_${trid}" value="${itemList.feeAmount}" />
 				                        			<input type="hidden" id="paymentAmount_${trid}" value="${itemList.paymentAmount}" />
 				                        			<input type="hidden" id="realhidden_${trid}" value="${((itemList.realAmount)?number / 100)?string('0.00')}" />
@@ -186,6 +187,8 @@
            </table>
 	       <div align="right" style="margin: 20px auto;">
 			   <a class="btna_o" href="javascript:void(0)" id="orderCancel"><span>返回</span></a>
+			   <a class="btna_o" href="javascript:void(0)" id="payBack" style="display:none" onclick="order.calcharge.backToCharge()"><span>返回收银台</span></a>
+			   <a class="btna_o" href="javascript:void(0)" id="payRefund" style="display:none" ><span>我要退款</span></a>
 		       <a class="btna_g" id="printInvoiceA"><span>打印发票</span></a>
 		       <a class="btna_g" href="javascript:void(0)" id="toComplate"><span>提交</span></a>
 		   </div>            
@@ -253,3 +256,16 @@
 		<input type="hidden" name="invoiceInfos" value="" id="invoiceInfos" /> 
 	</form>
 </div>
+<script>
+$(function() {
+	//查分省支付开关
+    var propertiesKey = "NEWPAYFLAG_"+(OrderInfo.staff.soAreaId+"").substring(0,3);
+    var isNewPay = offerChange.queryPortalProperties(propertiesKey);
+    if(isNewPay == "ON"){//开关打开收费方式隐藏，点收费跳转支付平台，否则默认调用原收费方式
+		order.calcharge.payFlag=true;
+		//$("#thPay").css("display","none");	
+       // $("input[id^='payMethodText_']").css("display","none");	
+    }		
+});
+
+</script>

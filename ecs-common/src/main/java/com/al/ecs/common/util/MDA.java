@@ -722,4 +722,20 @@ public class MDA {
 	
 	/**撤单页面对订单类型为2的撤单限制开关*/
 	public static final Map<String,String> ESS_UNDO_FLAG  = new HashMap<String,String>();
+	
+	/**
+     * 支付平台退费接口秘钥
+     */
+    public static final Map<String, String> PRO_PAY_KEY = new HashMap<String, String>();
+    
+	/**
+     * 支付平台RSA加密公钥
+     */
+	public static final String PAY_RSA_KEY = new String("");
+	
+	
+	/**
+     * 支付平台AES加密
+     */
+	public static final String PAY_AES_KEY = new String("");
 }

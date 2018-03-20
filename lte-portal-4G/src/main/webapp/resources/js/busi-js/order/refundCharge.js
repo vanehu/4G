@@ -277,6 +277,7 @@ order.refund = (function(){
 					if(chargeModifyReasonCd==1){
 						remark = $("#remark_"+val).val();
 					}
+					
 					if(acctItemId=="-1"){
 						operType="1";
 					}else if(backAmount*1>0){
@@ -312,6 +313,18 @@ order.refund = (function(){
 		if(!_submitParam()){
 			return ;
 		}
+		
+		if (order.calcharge.payFlag && ec.util.isObj($("#paymentTransId_"+val).val())) { 
+			  
+			var payMethodCdStr = offerChange.queryPortalProperties("PAY_METHOD_CD");
+		    if (isAddChargeItem && $("#realmoney").val()- $("#backAmount").val() > 0) {
+		    	
+		    	if(orderr.calcharge.isNewPayMethodCd()){
+		    		return _getPayToken();// 补费 
+		    	}
+
+		    }
+		}
 		var params={
 			"olId":_olId,
 			"areaId" : _areaId,
@@ -330,6 +343,15 @@ order.refund = (function(){
 				if (response.code == 0) {
 					submit_success=true;
 					msg="提交成功";	
+				    if (order.calcharge.payFlag && ec.util.isObj($("#paymentTransId_"+val).val())) {   			
+						if(($("#realmoney").val()- $("#backAmount").val() < 0 || (operType =-1 && !isAddChargeItem))){ //退费
+							var payAmount = $("#realmoney").val()- $("#backAmount").val();
+							if((operType =-1 && !isAddChargeItem)){
+								payAmount =  $("#backAmount").val();
+							}
+						    _payRefund(OrderInfo.orderResult.olId,payAmount*100,'1100');
+						}
+				    }
 					$("#toComplate").removeClass("btna_o").addClass("btna_g");
 					$("#toComplate").off("click");	
 					var html='<table class="contract_list rule">';
@@ -370,6 +392,169 @@ order.refund = (function(){
 		});
 		
 	};
+	
+	//支付退款
+	 var _payRefund=function(_olId,payAmount,operationType){
+		   var isSuccess = true;
+		   if(ec.util.isArray(_getOrders(payAmount))){
+			    var olId="";
+			    if(OrderInfo.actionFlag == 11){
+			       olId = OrderInfo.uOlId;  
+				}if(OrderInfo.actionFlag == 19){
+				   olId = OrderInfo.rOlId;
+			    }
+				var params={
+						"olId":olId, 
+						"newId":_olId,
+						"payAmount":payAmount*100,
+						"remark"   : OrderInfo.actionTypeName,
+						"actionFlag" :OrderInfo.actionFlag,
+						"operationType":operationType,
+						"order":JSON.stringify(_getOrders(payAmount))
+				};
+				var url = contextPath+"/pay/payRefund";
+				var response = $.callServiceAsJson(url, params);
+				//if (response.code == 0) {// 支付平台能查询到订单才退款
+					//params.payCode = response.data.payCode;
+				//	var response = $.callServiceAsJson(url, params);
+					if (response.code == 0) {
+						if(operationType == "1000" && $("#payResultDiv")){
+							$("#payResultDiv",document.frames("pay").document).empty();
+							$("#payResultDiv",document.frames("pay").document).text("退费已成功，您的费用将在1到7个工作日退到您的账户，请注意查收!");
+						}else{
+							$.alert("提示","退费已成功，您的费用将在1到7个工作日退到您的账户，请注意查收!");
+						}
+						
+						if(OrderInfo.actionFlag==15){
+							$("#d_refund_order").show();$("#order_charge").hide();
+						}else{
+							 $("#payRefund").hide();
+							 $('#payRefund').off("click");
+							//$("#printVoucherA").hide();
+							//$("#payInvoice").hide();
+							 $("#payBack").show();
+						}
+					}else if (response.code == -2) {
+						isSuccess = false;
+						$.alertM(response.data);
+					}else{
+						isSuccess = false;
+							if(response.data){
+								if(operationType == "1000" && $("#payResultDiv")){
+									$("#payIframe").contents().find("#payResultDiv").empty();
+									$("#payIframe").contents().find("#payResultDiv").text(response.data);
+								}else{
+									$.alert("提示",response.data + ",请点击[我要退款]进行手动退款!");
+								}
+							}else{
+								$.alert("提示","退款失败!要退款,请点击[我要退款]进行手动退款!");
+							}
+							//if(operationType == "1100"){
+								$("#toComplate").removeClass("btna_o").addClass("btna_g");
+								$("#toComplate").off("click");	
+								$("#payRefund").show();
+								$('#payRefund').off("click").on("click",function(event){_payRefund(OrderInfo.orderResult.olId,payAmount*100,'1100')});
+							//}
+						}
+			    }
+		   return isSuccess;
+	 };
+	/**
+	 * 获取支付平台支付页面
+	 */
+	var _getPayToken = function(){
+		
+		var charge = $("#realmoney").val()- $("#backAmount").val();
+		if((operType =-1 && !isAddChargeItem)){
+			charge =  $("#backAmount").val();
+		}
+		//var charge= $("#realmoney").val();//支付金额
+		//_chargeItems=[];
+		//_buildChargeItems();
+		
+//		_setOlId(OrderInfo.orderResult.olId);
+		
+		if(_chargeItems.length==0){//费用项为空，则只设soNbr
+			var item={
+					"soNbr":OrderInfo.order.soNbr,
+					"operType":operType
+			};
+			_chargeItems.push(item);
+//			$.alert("提示","无费用项");
+//			return;
+		}
+        var params={
+				"olId":_olId,
+				//"soNbr":OrderInfo.orderResult.olNbr,
+				"charge":charge*100,
+				"busiUpType":  OrderInfo.actionFlag, //OrderInfo.busitypeflag,
+				"chargeItems":_chargeItems,
+			//	"strParam":JSON.stringify(resources),
+			//	"actionFlag":OrderInfo.actionFlag,
+				"actionTypeName":OrderInfo.actionTypeName,
+				"chargeCheck":"0"
+		};
+
+        $("#pay").empty();
+		$("#pay").hide();
+		var url = contextPath+"/pay/getPayUrl";
+		var response = $.callServiceAsJson(url, params);
+		if(response.code==0){
+			payUrl=response.data;
+		    $("#calTab").hide();
+		    $("#pay").append("<iframe id ='payIframe'  src='"+ payUrl +"'> </iframe>"); //style='width:1200px;height: 330px;'
+			$("#pay").show();
+			$("#orderCancel").hide();
+			$("#toComplate").hide();
+			$("#payBack").show();
+		}else if(response.code==1002){
+//			var checkUrl = contextPath + "/pay/queryOrdStatusFromRedis";
+//			var param = {
+//					"olId" : _olId,
+//					"reqPayType":"9"
+//			};
+//			var response2 = $.callServiceAsJson(checkUrl, param);
+//			if (response2.code == 0){
+//		            $("#calTab").hide();
+//				    $("#pay").append("<iframe id ='payIframe' style='width:1200px;height: 330px;' src='"+ payUrl +"'> </iframe>");
+//					$("#pay").show();
+//					$("#orderCancel").hide();
+//					$("#toComplate").hide();
+//					$("#payBack").show();
+//			}else{
+				$("#toComplate").removeClass("btna_g").addClass("btna_o");
+				if(response.data){
+					$.alert("提示",response.data);
+				}else{
+					$.alert("提示","打开支付页面出错！");
+				}
+				
+//			}
+		}
+		else{
+			//解决收费按钮置灰
+			$("#toComplate").removeClass("btna_g").addClass("btna_o");
+			$.alertM(response.data);
+		}
+	};
+	var _getOrders = function(payAmount){
+		var orders= [];
+		$("#calTab tbody tr").each(function() {
+			var val = $(this).attr("id");
+			if(val!=undefined&&val!=''){
+				val=val.substr(5,val.length);
+				var paymentTransId=$("#paymentTransId_"+val).val();
+				if(ec.util.isObj(payAmount)&&payAmount>0&&ec.util.isObj(paymentTransId)){
+					orders.push({
+						oldbusiOrderId : paymentTransId, 
+						amount : payAmount 
+					});
+				}
+				
+			}
+		});
+		 return orders;
+	}
 	return {
 		queryOrderList:_queryOrderList,
 		queryChargeItems:_queryChargeItems,

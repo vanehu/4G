@@ -880,4 +880,17 @@ public interface OrderBmo {
 	 * @throws Exception
 	 */
 	public Map<String, Object> savePhotographReviewRecord(Map<String, Object> params, SessionStaff sessionStaff) throws InterfaceException, IOException, BusinessException, Exception;
+	
+	/**
+	 * 调用支付平台退费接口
+	 */
+	public Map<String,Object> payRefundOrder(Map<String, Object> paramMap,String optFlowNum, SessionStaff sessionStaff) throws Exception;
+	
+	
+	/**
+	 * 支付页面token查询
+	 */
+	public Map<String,Object> queryPayToken(Map<String, Object> paramMap,String optFlowNum, 
+			SessionStaff sessionStaff) throws Exception;
+	
 }
