@@ -301,8 +301,8 @@ order.calcharge = (function(){
 				$("#realAmount_" + trid).attr("oldValue", $("#realAmount_" + trid).val());
 				$("#feeAmount_" + trid).attr("oldValue", $("#feeAmount_" + trid).val());
 			}
-			$("#item_" + trid).find("td:eq(2)").text("0.00");
-			$("#feeAmount_" + trid).val("0");
+			//$("#item_" + trid).find("td:eq(2)").text("0.00");
+			//$("#feeAmount_" + trid).val("0");
 			$("#realAmount_" + trid).click();
 			$("#realAmount_" + trid).val("0.00");
 			$("#realAmount_" + trid).blur();
