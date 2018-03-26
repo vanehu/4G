@@ -121,8 +121,11 @@ order.undo = (function(){
 			return;
 		}
 		if(cancelFlag!=null && cancelFlag!="" && cancelFlag !=undefined && cancelFlag==2){
-			$.alert("提示","该订单是电渠ESS订单，且未向ESS异常报竣，请先异常报竣后再撤单！");
-			return;
+			var essUndoFlag = query.common.queryPropertiesValue("ESS_UNDO_" + String(OrderInfo.staff.areaId).substr(0, 3));
+			if(statusCd != '201900' || essUndoFlag!="ON"){
+				$.alert("提示","该订单是电渠ESS订单，且未向ESS异常报竣，请先异常报竣后再撤单！");
+				return;
+			}
 		}
 		if(all_only=="all" && (statusCd == '100002' || statusCd == '100001')){ // 状态
 			var content = "是否作废购物车： " +$("#"+id).attr("olNbr");
@@ -627,6 +630,8 @@ order.undo = (function(){
 							areaId : $("#p_areaId").val(),
 							staffId : OrderInfo.staff.staffId,
 							channelId : OrderInfo.staff.channelId,
+							//撤单新增入参FLAG='U'
+							flag: 'U',
 							remarks : $("#undo_d_txt").val()
 					};
 					$.callServiceAsJsonGet(contextPath+"/order/delOrder",param,{
@@ -660,7 +665,9 @@ order.undo = (function(){
 			var param;
 			param = {
 					olId : $("#"+submit_id).attr("olId"),
-					areaId : $("#p_areaId").val()
+					areaId : $("#p_areaId").val(),
+					//撤单新增入参FLAG='U'
+					flag: 'U'
 			};
 			$.callServiceAsJsonGet(contextPath+"/order/delOrder",param,{
 				"done" : function(response){

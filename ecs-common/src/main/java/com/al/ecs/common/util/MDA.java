@@ -71,6 +71,11 @@ public class MDA {
 	public static final Map<String, String> EXCLUDEDEPEND_FLAG = new HashMap<String, String>();
 	
 	/**
+	 * 填单页面号码释放优化开关
+	 */
+	public static final String PHONENUMBER_RELEASE_FLAG = new String("");
+	
+	/**
 	 * 宽带甩单过csb的http地址
 	 */
 	public static final String CSB_HTTP_MIDDLE_URL=new String("");
@@ -711,4 +716,7 @@ public class MDA {
 	
 	/**回执打印分省配置*/
 	public static final Map<String, Object> PDF_PRINT_CONFIG = new HashMap<String, Object>();
+	
+	/**撤单页面对订单类型为2的撤单限制开关*/
+	public static final Map<String,String> ESS_UNDO_FLAG  = new HashMap<String,String>();
 }

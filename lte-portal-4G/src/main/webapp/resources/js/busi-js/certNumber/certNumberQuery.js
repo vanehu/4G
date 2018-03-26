@@ -52,7 +52,13 @@ oneFive.certNumberQuery = (function () {
 
         // 查询按钮事件绑定
         $("#bt_15handleQry").off("click").on("click", function () {
-            oneFive.certNumberQuery.queryOneFiveList(1);
+            oneFive.certNumberQuery.queryOneFiveList(1,"desc");
+        });
+        $("#bt_15handleSortAsc").off("click").on("click", function () {
+            oneFive.certNumberQuery.queryOneFiveList(1,"asc");
+        });
+        $("#bt_15handleSortDesc").off("click").on("click", function () {
+            oneFive.certNumberQuery.queryOneFiveList(1,"desc");
         });
     };
 
@@ -70,7 +76,7 @@ oneFive.certNumberQuery = (function () {
      * @param pageIndex
      * @private
      */
-    var _queryOneFiveList = function (pageIndex) {
+    var _queryOneFiveList = function (pageIndex,sort) {
         var curPage = 1;
         if (pageIndex > 0) {
             curPage = pageIndex;
@@ -78,8 +84,8 @@ oneFive.certNumberQuery = (function () {
         var param = {};
         var noDateParam = {};
 
-        if(DateUtil.differDays(new Date(Date.parse($("#p_startDt").val())),new Date(Date.parse($("#p_endDt").val())))>31){
-            $.alert("提示","日期跨度太长，超过一个月，请重新选择");
+        if(DateUtil.differDays(new Date(Date.parse($("#p_startDt").val())),new Date(Date.parse($("#p_endDt").val())))>92){
+            $.alert("提示","日期跨度太长，超过三个月，请重新选择");
             return;
         }
 
@@ -102,7 +108,8 @@ oneFive.certNumberQuery = (function () {
                 "areaId": $("#p_areaId").val(),
                 "orderNbr": $("#p_olNbr").val(),
                 "nowPage": curPage,
-                "pageSize": 10
+                "pageSize": 10,
+                "sort":sort
             };
             
         } else {
@@ -137,13 +144,15 @@ oneFive.certNumberQuery = (function () {
                 "startDt": startDt,
                 "endDt": endDt,
                 "nowPage": curPage,
-                "pageSize": 10
+                "pageSize": 10,
+                "sort":sort
             };
             noDateParam = {
             	"collectType": "2",
                 "areaId": areaId,
                 "nowPage": curPage,
-                "pageSize": 10
+                "pageSize": 10,
+                "sort":sort
             };
         }
         if (ec.util.isObj(telNumber) || ec.util.isObj(certNumber)) {
@@ -174,7 +183,7 @@ oneFive.certNumberQuery = (function () {
         }else{
         	param.ifQryHandle = "Y";
         }
-        
+        param.itemStatusCd = $("#dealOrder").val();
         param.ifFilterItem = "N";
         $.callServiceAsHtmlGet(contextPath + "/certNumber/queryOneFiveOrderList", param, {
             "before": function () {
@@ -198,7 +207,26 @@ oneFive.certNumberQuery = (function () {
             }
         });
     };
-
+    /**
+     * 导出Excel
+     */
+    var _queryOneFiveListExport = function(){
+    	var totalListNum = $("#queryOneFiveListTotalSize").val();
+    	if(totalListNum == null || totalListNum == "" || totalListNum == undefined || totalListNum <= 0){
+    		$.alert("提示信息","没有数据可导出，请先查询符合条件的数据");
+    		return ;
+    	}
+        var areaId = $("#p_areaId").val();
+        var startDt = $("#p_startDt").val().replace(/-/g, '');
+        var endDt = $("#p_endDt").val().replace(/-/g, '');
+        var itemStatusCd = $("#dealOrder").val();
+        var url = contextPath+"/certNumber/queryOneFiveListExport?areaId=" + areaId
+        + "&itemStatusCd=" + itemStatusCd
+        + "&startDt=" + startDt
+        + "&endDt="   + endDt;
+        $("#queryOneFiveListExport").attr("action", url);
+        $("#queryOneFiveListExport").submit();
+    }
     /**
      * 返回主页面
      * @private
@@ -309,6 +337,7 @@ oneFive.certNumberQuery = (function () {
         init: _init,
         chooseArea: _chooseArea,
         queryOneFiveList: _queryOneFiveList,
+        queryOneFiveListExport:_queryOneFiveListExport,
         showMain: _showMain,
         queryDetail: _queryDetail,
         queryAttachment: _queryAttachment

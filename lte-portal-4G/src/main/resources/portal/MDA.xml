@@ -50,7 +50,7 @@
 			value="http://10.128.90.194:10901/LTE-CSB/HttpDEPService" />
 		<const type="String" name="FACE_VERIFY_APP_ID" value="crm"
 			description="人证平台配置：应用ID" />
-		<const type="String" name="SecretKey" value="JTPTCMPTESTMY"
+		<const type="String" name="SecretKey" value="DJKF34ER35D58D"
 			description="EOP协议加密钥" />
 		<const type="String" name="FACE_VERIFY_APP_ID_SECRET" value="FACEKEY_20170308"
 			description="人证平台配置：APP_ID对应的加密密钥" />
@@ -205,6 +205,8 @@
 			'EXCLUDEDEPEND_FLAG_899':'OFF'<!-- 虚拟省 -->
 			}
 		</const>
+
+		<const type="String" name="PHONENUMBER_RELEASE_FLAG" value="ON" description="填单页面号码释放优化开关"></const>
 
 		<const type="String" name="ASYNC_FLAG" value="OFF" />
 		<const type="String" name="DEF_HTTP_FLAG" value="ON" />
@@ -3743,7 +3745,7 @@
 		["1", "51", "52"]
 		</const>
 		<const type="String" name="WRITE_FILTER_LOG_FLAG" value="ON" description="是否进行开启订单过滤器"></const>
-		<const type="Map" name="PDF_PRINT_CONFIG" description="回执打印（入网协议）分省配置">
+		<const type="Map" name="PDF_PRINT_CONFIG" description="回执打印分省配置">
 		{
 			"PDF_PRINT_CONFIG_854": {},<!-- 西藏 -->
 			"PDF_PRINT_CONFIG_863": {},<!-- 青海 -->
@@ -3792,6 +3794,42 @@
 			"PDF_PRINT_CONFIG_865": {},<!-- 新疆 -->
 			"PDF_PRINT_CONFIG_899": {}<!-- 虚拟省 -->
 		}
+		</const>
+		<const type="Map" name="ESS_UNDO_FLAG" description="撤单页面对订单类型为2的撤单限制开关,默认OFF">
+			{
+			'ESS_UNDO_854':'OFF',<!-- 西藏 -->
+			'ESS_UNDO_863':'OFF',<!-- 青海 -->
+			'ESS_UNDO_815':'OFF',<!-- 内蒙古 -->
+			'ESS_UNDO_823':'OFF',<!-- 黑龙江 -->
+			'ESS_UNDO_845':'OFF',<!-- 广西 -->
+			'ESS_UNDO_850':'OFF',<!-- 重庆 -->
+			'ESS_UNDO_861':'OFF',<!-- 陕西 -->
+			'ESS_UNDO_842':'OFF',<!-- 湖北 -->
+			'ESS_UNDO_835':'OFF',<!-- 福建 -->
+			'ESS_UNDO_832':'OFF',<!-- 江苏 -->
+			'ESS_UNDO_846':'OFF',<!-- 海南 -->
+			'ESS_UNDO_864':'OFF',<!-- 宁夏 -->
+			'ESS_UNDO_814':'OFF',<!-- 山西 -->
+			'ESS_UNDO_853':'OFF',<!-- 云南 -->
+			'ESS_UNDO_836':'OFF',<!-- 江西 -->
+			'ESS_UNDO_837':'OFF',<!-- 山东 -->
+			'ESS_UNDO_811':'OFF',<!-- 北京 -->
+			'ESS_UNDO_843':'OFF',<!-- 湖南 -->
+			'ESS_UNDO_851':'OFF',<!-- 四川 -->
+			'ESS_UNDO_844':'OFF',<!-- 广东 -->
+			'ESS_UNDO_831':'OFF',<!-- 上海 -->
+			'ESS_UNDO_812':'OFF',<!-- 天津 -->
+			'ESS_UNDO_813':'OFF',<!-- 河北 -->
+			'ESS_UNDO_841':'OFF',<!-- 河南 -->
+			'ESS_UNDO_821':'OFF',<!-- 辽宁 -->
+			'ESS_UNDO_822':'OFF',<!-- 吉林 -->
+			'ESS_UNDO_834':'OFF',<!-- 安徽 -->
+			'ESS_UNDO_833':'OFF',<!-- 浙江 -->
+			'ESS_UNDO_852':'OFF',<!-- 贵州 -->
+			'ESS_UNDO_862':'OFF',<!-- 甘肃 -->
+			'ESS_UNDO_865':'OFF',<!-- 新疆 -->
+			'ESS_UNDO_899':'OFF'<!-- 虚拟省 -->
+			}
 		</const>
 	</mda>
 </mdas>
