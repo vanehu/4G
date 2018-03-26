@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContractRoot>
+	<TcpCont>
+		<BusCode>CEP_BUS_CODE</BusCode>
+		<ServiceCode>CEP_SERVICE_CODE</ServiceCode>
+		<ServiceContractVer>CEP_SERVICE_CONTRACT_VER</ServiceContractVer>
+		<ActionCode>1</ActionCode>
+		<TransactionID>CEP_TRANS_ID</TransactionID>
+		<ServiceLevel>1</ServiceLevel>
+		<SrcOrgID>CEP_SRC_ORG_ID</SrcOrgID>
+		<SrcSysID>CEP_SRC_SYS_ID</SrcSysID>
+		<SrcSysSign>123</SrcSysSign>
+		<DstOrgID>CEP_DST_ORG_ID</DstOrgID>
+		<DstSysID>CEP_DST_SYS_ID</DstSysID>
+		<ReqTime>CEP_REQ_TIME</ReqTime>
+		<OldPackageGroup>CEP_OLD_PKG_GROUP</OldPackageGroup>
+		<TotalPackageNum>1</TotalPackageNum>
+		<CurrentPackage>1</CurrentPackage>
+	</TcpCont>
+	<SvcCont>
+		<![CDATA[
+			CEP_SVC_CONT
+		]]>
+	</SvcCont>
+</ContractRoot>

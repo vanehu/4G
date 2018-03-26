@@ -1,0 +1,52 @@
+<#if templateType=="9">
+	<#if (pageModel.list)?? &&((pageModel.list)?size>0)>		 
+		 <#list pageModel.list as childList>
+			 <#if childList_index==0>
+			 	<iframe src="${contextPath}/order/batchOrder/batchForm?olId=${childList.custOrderId}&olseq=${childList.custSoNumber}&type=9" width="100%" height="250" style="border:0px"></iframe>
+			 </#if>
+		 </#list>
+	<#else>
+		抱歉，没有没有找到批量的模板订单
+	</#if>
+<#else>
+	<#if (pageModel.list)?? &&((pageModel.list)?size>0)>
+	    <table class="numberList" >
+	       <thead>
+		     <tr>
+		       <td width="20%">订单流水号</td>
+		       <td width="10%">地市</td>
+		       <td width="15%">渠道</td>
+		       <td width="10%">工号</td>
+		       <td width="20%">创建时间</td>
+		       <td width="25%">操作</td>
+		     </tr>
+		     </thead>
+		     <tbody>
+		     <#assign staffCode = "${Session['_ecs_login_session_key'].staffCode}" />
+		     <#list pageModel.list as childList>
+		     	 <tr>
+		     	 	<td>${childList.custSoNumber}</td>
+		     	 	<td>${childList.commonRegionName}</td>
+		     	 	<td>${childList.channelName}</td>
+		     	 	<td>${staffCode}</td>
+		     	 	<td>${childList.createDt}</td>
+		     	 	<td>
+		     	 	<i id="plan_detail" onclick="order.batch.batchOrderDel(this,'${childList.custOrderId}')">作废</i>
+		     	 	&nbsp;&nbsp;<i id="plan_detail" onclick="cart.main.queryCartInfo('${childList.custOrderId}')">详情</i>&nbsp;&nbsp;
+		     	 	<i id="plan_detail" onclick="order.batch.barchImport('${childList.custOrderId}','${childList.custSoNumber}','${childList.commonRegionId}')">导入Excel</i>
+		     	 	</td>
+		     	 </tr>
+		     </#list>
+		   </tbody>
+		</table>
+		
+	<@portal.modelPagination pageModel 5 "order.batch.batchOrderList"/>
+	<script src="${contextPath}/js/our-js/ec.pagination.js?${jsversion}" type="text/javascript"></script>
+	<#else>
+	    <div class="no_search"> 
+			<div class="h1">
+				<img style="vertical-align:middle" src="${contextPath}/image/common/query_search.gif" />&nbsp;&nbsp;抱歉，没有找到相关的记录，请尝试其他筛选条件。
+			</div>
+		</div>
+	</#if>
+</#if>

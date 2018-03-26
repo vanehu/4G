@@ -1,0 +1,107 @@
+<#if (cust.custInfos)?? &&((cust.custInfos)?size>0)>
+
+<#if query??>
+<table class="table tabletop paddingnone" id="custListTable" custInfoSize="0">
+  <thead>
+    <tr>
+      <th style="padding-left: 0">姓名</th>
+      <th>证件号</th>
+      <th>操作</th>
+    </tr>
+  </thead>
+  <tbody class="panel-group" id="accordion">
+    <#list cust.custInfos as custInfo>
+    <tr id="custInfos" class="custInfo_${custInfo_index}" canRealName="${custInfo.canRealName}" custFlag="${custInfo.custFlag}" norTaxPayer="${custInfo.norTaxPayer}" identityName="${custInfo.identityName}" custId="${custInfo.custId}" partyName="${custInfo.partyName}" areaId="${custInfo.areaId}" corCustId="${custInfo.corCustId}" identityCd="${custInfo.identityCd}" addressStr="${custInfo.addressStr}" areaName="${custInfo.areaName}" vipLevel="${custInfo.vipLevel}" vipLevelName="${custInfo.vipLevelName}" segmentId="${custInfo.segmentId}" segmentName="${custInfo.segmentName}" extCustId="${custInfo.extCustId}" accNbr="${custInfo.accNbr}" <#if query=="prod">onclick="product.query.chooseCust(this)"<#elseif query=="acct">onclick="account.query.chooseCust(this)"</#if> >
+      <td id="custListTableParName">${custInfo.partyName}</td>
+      <td>${custInfo.filterIdCardNumber}</td>
+      <td id="custAccNbr">${custInfo.accNbr}</td>
+	  <!-- <td id="areaName">${custInfo.areaName}</td> -->
+	  <td><button type="button" class="btn btn-info">选择</button></td>
+	  <td id="custListTablecustId" style="display:none;">${custInfo.custId}</td>
+	</tr>
+	</#list>
+  </tbody>
+</table>
+<#elseif multiCust=="Y">
+	<div class="userclose"></div>
+	<div><input id="jumpAuthflag" type="hidden" value="${jumpAuthflag}"/></div>
+	<table class="table tabletop paddingnone" id="custListTable" custInfoSize="${custInfoSize}">
+		<thead>
+			<tr>
+				<th style="padding-left: 0">姓名</th>
+				<!-- <th>证件</th> -->
+				<th>电话号码</th>
+				<th>操作</th>
+			</tr>
+		</thead>
+		<tbody class="panel-group">
+			<#list cust.custInfos as custInfo>
+			<tr id="custInfos" class="custInfo_${custInfo_index}" onclick="cust.showCustAuth(this)" canRealName="${custInfo.canRealName}"
+				custFlag="${custInfo.custFlag}" norTaxPayer="${custInfo.norTaxPayer}" identityName="${custInfo.identityName}" custId="${custInfo.custId}" partyName="${custInfo.partyName}" idCardNumber="${custInfo.filterIdCardNumber}" areaId="${custInfo.areaId}" corCustId="${custInfo.corCustId}" identityCd="${custInfo.identityCd}" addressStr="${custInfo.addressStr}" areaName="${custInfo.areaName}" vipLevel="${custInfo.vipLevel}" vipLevelName="${custInfo.vipLevelName}" segmentId="${custInfo.segmentId}" segmentName="${custInfo.segmentName}" extCustId="${custInfo.extCustId}" accNbr="${custInfo.accNbr}" CN="${custInfo.CN}" address="${custInfo.address}" certNum="${custInfo.certNum}"> 
+				<td id="custListTableParName">${custInfo.partyName}</td>
+				<!-- <td>${custInfo.filterIdCardNumber}</td> -->
+				<!-- <td id="areaName">${custInfo.areaName}</td> -->
+				<td id="custAccNbr">${custInfo.accNbr}</td>
+				<td id="custListTablecustId" style="display:none;">${custInfo.custId}</td>
+				<td style="display:none;">${custInfo.filterIdCardNumber}</td>
+				<td><button type="button" class="btn btn-info">选择</button></td>
+			</tr>
+			</#list>
+		</tbody>
+	</table>
+	
+	<!--页码
+    <@portal.fakeModelPaginationWithNoJump pageModel "order.cust.queryCustByPageIndex"/>
+	<script src="${contextPath}/js/our-js/ec.pagination.js?${jsversion}" type="text/javascript"></script>
+	<!--页码 end-->
+<#else>
+	<div class="userclose"></div>
+	<div><input id="jumpAuthflag" type="hidden" value="${jumpAuthflag}"/></div>
+	<table class="table tabletop paddingnone" id="custListTable" custInfoSize="${custInfoSize}">
+		<thead>
+			<tr>
+				<th style="padding-left: 0">姓名</th>
+				<th>证件号码</th>
+				<th>操作</th>
+			</tr>
+		</thead>
+		<tbody class="panel-group">
+			<#list cust.custInfos as custInfo>
+			<tr id="custInfos" class="custInfo_${custInfo_index}" onclick="cust.showCustAuth(this)"  canRealName="${custInfo.canRealName}"
+				custFlag="${custInfo.custFlag}" norTaxPayer="${custInfo.norTaxPayer}" identityName="${custInfo.identityName}" custId="${custInfo.custId}" partyName="${custInfo.partyName}" idCardNumber="${custInfo.filterIdCardNumber}" areaId="${custInfo.areaId}" corCustId="${custInfo.corCustId}" identityCd="${custInfo.identityCd}" addressStr="${custInfo.addressStr}" areaName="${custInfo.areaName}" vipLevel="${custInfo.vipLevel}" vipLevelName="${custInfo.vipLevelName}" segmentId="${custInfo.segmentId}" segmentName="${custInfo.segmentName}" extCustId="${custInfo.extCustId}" accNbr="${custInfo.accNbr}" CN="${custInfo.CN}" address="${custInfo.address}" certNum="${custInfo.certNum}">
+				<td id="custListTableParName">${custInfo.partyName}</td>
+				<td>${custInfo.filterIdCardNumber}</td>
+				<!-- <td id="areaName">${custInfo.areaName}</td> -->
+				<td><button type="button" class="btn btn-info">选择</button></td>
+				<td id="custListTablecustId" style="display:none;">${custInfo.custId}</td>
+				<td style="display:none;">${custInfo.filterIdCardNumber}</td>
+			</tr>
+			</#list>
+		</tbody>
+	</table>
+</#if>
+<!-- 解决IE7下  easydialog未定义问题
+<script src="${contextPath}/js/4g-js/easydialog.min.js?${jsversion}" type="text/javascript"></script>-->
+<script>
+	cust.jumpAuthflag = "";
+	var jumpAuthflag=${jumpAuthflag};
+	var custInfoSize=${custInfoSize};
+	cust.jumpAuthflag=jumpAuthflag;
+	//if(custInfoSize>1 && (OrderInfo.actionFlag==1 || OrderInfo.actionFlag==13 || OrderInfo.actionFlag==14)){//新装老客户定位默认使用第一个
+	//	cust.authType = '${cust.custInfos[0].authType}';
+	//	$(".custInfo_0").click();
+	//}else 
+	if(custInfoSize==1){
+		cust.authType = '${cust.custInfos[0].authType}';
+		$("#custInfos").click();
+	}
+</script>
+<#else>
+false
+</#if>
+<#if showVerificationcode=="Y">
+<div style="display:none;">showVerificationcode</div>
+</#if>
+<#if showDiffcode=="Y">
+<div style="display:none;">showDiffcode</div>
+</#if>

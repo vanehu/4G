@@ -1,0 +1,52 @@
+    <div class="main-box">
+    	<div class="input-box" id="jrfs">
+				<span class="glyphicon glyphicon-compressed"></span> 
+				<span class="glyphicon glyphicon-chevron-right"></span> 
+				<span class="select-title font-color">查询方式</span> 
+				<select class="myselect select-option" data-role="none" onchange="order.broadband.searchMd(this)">
+					<option value="0">请选择查询方式</option>
+                    <option value="1">查询附近营业厅</option>
+                    <option value="2">查询当前渠道附近营业厅</option>
+                    <option value="3">关键字搜索营业厅</option>
+				</select>
+		</div>
+		<div class="input-box" id="mdName" style="display:none;">
+					<span class="glyphicon glyphicon-map-marker"></span>
+					<span class="glyphicon glyphicon-search green" onclick="javascript:order.broadband.showMap('3')"></span>
+					<input type="text" id="queryValue" placeholder="营业厅名称">
+		</div>
+        <!-- <div>
+            <ul class="list-group">
+                <li>
+                    <div class="form-group">
+                    <label for="idtype_dummy">查询方式</label>
+                    <select id="province" class="selectpicker show-tick form-control" onchange="order.broadband.searchMd(this)">
+                    	<option value="0">请选择查询方式</option>
+                    	<option value="1">查询附近营业厅</option>
+                    	<option value="2">查询当前渠道附近营业厅</option>
+                    	<option value="3">关键字搜索营业厅</option>
+                    </select>
+                	</div>
+                </li>
+                <li id="mdName" style="display:none;">
+                    <div class="form-group">
+                        <label for="userid">营业厅名称</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="queryValue" placeholder="营业厅关键字">
+                            <span class="input-group-btn">
+                              <button class="btn btn-info" type="button" onclick="javascript:order.broadband.showMap('3')"> 查询 </button>
+                              </span> 
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div> -->
+        <!-- 百度地图 -->
+		<div id="map" style="display:none;">
+		</div>
+    </div>
+<script>
+$(function() {
+      order.broadband.init_select();
+});
+</script>

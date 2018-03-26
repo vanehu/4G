@@ -1,0 +1,399 @@
+@charset "utf-8";
+/* Combine external base CSS
+ * include list:
+ * /css/mend.css
+ * 
+ * fin.
+ */
+/* /css/mend.css */
+/* 补丁样式 */
+
+.relative {
+	position: relative;
+}
+.absolute {
+	left: 94px;
+	position: absolute;
+   top: 32px;
+   z-index: 999;
+   -webkit-border-bottom-radius:5px;
+   -moz-border-bottom-radius:5px;
+   border-bottom-radius:5px;
+   -webkit-box-shadow:0 8px 8px rgba(0,0,0,0.4);
+   -moz-box-shadow:0 8px 8px rgba(0,0,0,0.4);
+   box-shadow:0 8px 8px rgba(0,0,0,0.4);
+   border:5px solid #cbced0;
+   display:none;
+}
+.absolute_canshu {
+	left: 0px;
+	position: absolute;
+   top: 0px;
+   z-index: 999;
+   -webkit-border-bottom-radius:5px;
+   -moz-border-bottom-radius:5px;
+   border-bottom-radius:5px;
+   -webkit-box-shadow:0 8px 8px rgba(0,0,0,0.4);
+   -moz-box-shadow:0 8px 8px rgba(0,0,0,0.4);
+   box-shadow:0 8px 8px rgba(0,0,0,0.4);
+   border:5px solid #cbced0;
+   display:none;
+}
+
+/*其它*/
+li.home_pro {
+	width:208px;
+}
+
+div.tips {
+	width:100%;
+	text-align:center;
+	color:#b4b4b4;
+	margin:20px 0px 30px 0px
+}
+a.btn_more {
+	display:block;
+	width:55px;
+	height:25px;
+	background:url(../image/common/btn_more.png) no-repeat scroll 0 0 transparent;
+	color:#797979;
+	position:absolute;
+	top:8px;
+	right:10px;
+	line-height:25px;
+	text-indent:10px;
+	cursor:pointer;
+}
+a.btn_less {
+	background-position: 0 -24px;
+}
+i.order_check {
+	width:24px;
+	height:24px;
+}
+.purchase {
+	margin-left:1px;
+}
+table.contract_list .purchase {
+	margin-left:5px;
+}
+.order_check{
+	float:left;
+	height:24px;
+	min-width:24px;
+	margin-left:5px;
+	background:url(../image/common/order_check.png) left no-repeat;
+	
+}
+.order_check_error{
+	float:left;
+	height:24px;
+	min-width:24px;
+	margin-left:5px;
+	background:url(../image/common/order_check_error.png) left no-repeat;
+	
+}
+.numberTextBox {
+	height:22px;
+	line-height:22px;
+}
+#plan_detail, #plan_no{
+	background: none repeat scroll 0 0 #95B27B;
+    border: 0 none;
+    color: #fff;
+    cursor: pointer;
+    text-align: center;
+	padding:0 5px;
+	margin-right:10px;
+	font-style:normal;
+}
+#plan_cart {
+	border-radius: 3px;
+	background:#f15a1f;
+    border: 0 none;
+    color: #fff;
+    cursor: pointer;
+    text-align: center;
+	font-size:13px;
+	padding:2px 5px;
+	font-style:normal;
+}
+#plan_no {
+	background:none;
+	margin-right:0px;
+}
+.width22 {
+	padding:0px;
+	width:22px;
+	height:auto;
+	margin:0px 3px;
+	float:left;
+	line-height:16px;
+}
+a.add, a.add2 {
+	width:16px;
+	height:16px;
+	display:block;
+	float:left;
+	background:url(../image/common/fsIcon.png) no-repeat 0 -96px; 
+}
+a.add2 {
+	background:url(../image/common/fsIcon.png) no-repeat 0 -112px; 
+}
+a.add:hover {
+	background:url(../image/common/fsIcon.png) no-repeat 0 -64px; 
+}
+a.add2:hover {
+	background:url(../image/common/fsIcon.png) no-repeat 0 -80px; 
+}
+.contract_list2{text-align:center; width:50%;background-color:#FFF;border:1px solid #E6E6E6; float:left;border-right:1px solid #dcdcdc}
+.contract_list2 thead { background:#f8f8f8;}
+.contract_list2 thead td{padding:10px 0; font-weight:bold;color:#797979; border-bottom:1px solid #dcdcdc; font-size:13px}
+.contract_list2 thead td.borderLTB{}
+.contract_list2 thead td.borderRTB{}
+.contract_list2 tbody td{border-bottom:1px dotted #d3d3d3;padding:10px 0px 10px 10px; color:#797979; cursor:pointer; text-align:left; }
+.contract_list2 tbody td .font_a{ color:#388500;}
+.contract_list2 tbody td .font_a:hover{ text-decoration:underline;}
+.contract_list2 tbody .submit_result{ background-color:#f8f8f8;}
+.contract_list2 tbody .submit_result td{padding:6px 0; text-align:right;}
+.contract_list2 tbody .bg{  background-color:#fcfcfc;}
+.contract_list2 tbody tr:hover{ background-color:#f6f9f8;}
+.contract_list2 tbody tr:hover td{ color:#797979;}
+.border { border:1px solid #dcdcdc}
+.order_copy {
+	position:absolute;
+	top:62px;
+	right:30px;
+	height:24px;
+	line-height:24px
+}
+.order_copy input {
+	float:left;
+	margin:5px 9px 0px 0px
+}
+.order_copy span {
+	font-size:14px;
+	margin-right:10px;
+}
+span.orange {
+	margin-top:2px;
+}
+div.plan_second_list {
+	width:100%;
+}
+.nofloat {
+	float:none
+}
+#qudao dd {
+	width:100%;
+	height:100%;
+	position:relative;
+	line-height:45px;
+	font-size:14px;
+	color:#327501;
+	font-weight:bold;
+}
+#qudao dd i.select {
+	display:block;
+	background: url("../image/common/order_check.png") no-repeat scroll;
+	width:24px;
+	height:24px;
+	top:10px;
+	left:24px;
+	position:absolute
+}
+.useredit_hover{ position:absolute; top:26px; left:0; background:#327501; z-index:101; display:none;}
+
+.inputMargin0 { margin: 0}
+#tsn{ text-indent:0px;}
+
+/** alert 提示 更多 功能 样式 **/
+.am_baseMsg{padding-bottom: 6px;padding-top: 6px;max-height: 150px;overflow-y: auto}
+.am_more{text-align:right;padding-bottom: 6px;padding-right: 6px}
+.am_more a{color:red;font-weight:bold;}
+.am_more a:hover{color:black;font-weight:bold;background-color:#CAE1EE;}
+.am_moreMsg{padding-bottom:6px;max-height:240px;min-height:0px; padding-right: 6px;overflow-y:auto;display:none}
+.am_moreMsg font{color:blue;font-weight: bold;}
+.am_moreMsg p{text-indent: 0.6cm;line-height:1.5}
+/** alert 提示 更多 功能 样式 **/
+/*其它 end*/
+
+.ecdialogsubmit{
+	background: url("../image/common/add_btn.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);
+    border: 0 none;
+    color: #327501;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    height: 36px;
+    margin: 4px 0 0 20px;
+    text-align: center;
+    vertical-align: middle;
+    width: 80px;
+    padding-bottom: 5px;
+}
+
+.main_order_title{
+	display:none;
+}
+
+.main_order_title a{
+	display:none;
+	width:60px;
+}
+
+.ec_dialog_form_btn_cls{
+	margin: 0 15px;
+	vertical-align: middle;
+}
+.ec_dialog_form_btn_div{
+    margin: 30px auto;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.modshortnum{
+	background: url("../image/common/changeshortnumIcon.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);
+    cursor: pointer;
+    height: 16px;
+    width: 40px;
+    padding:0px;
+}
+
+.floatNone {
+	float : none;
+}
+
+.invoiceUl {
+	display : block;
+	
+}
+
+.invoiceUl li span,.invoiceUl input,.invoiceUl select {
+	float : left;
+}
+
+.invoiceUl li input {
+	border : 1px solid;
+}
+select.marginR0 {
+	margin-right:0px;
+}
+select.width120 {
+	width:120px;
+}
+input.width150 {
+	width:150px;
+}
+input.width210 {
+	width:210px;
+}
+select.width420 {
+	width:420px;
+}
+
+div.bottom20px {
+	margin-bottom : 20px;
+}
+
+div.showme .mc {
+	display: block;
+}
+
+div.max920px {
+	max-width: 920px;
+}
+
+
+td i.terminalSelect {
+	background: url("../image/common/sel.png") no-repeat scroll 0 0 rgba(0, 0, 0, 0);
+    height: 23px;
+    vertical-align: middle;
+    display:inline-block;
+    width: 22px;
+}
+
+div.marginAndFont {
+	margin: 10px 0 20px 10px;
+	font-size: 12pt;
+}
+
+.buy_phone_home {
+	background:url(../image/main_sprite.png);
+	background-position: 0 0;
+	width:89px;
+	height:128px;
+	display: inline-block;
+	position: absolute;
+	top: 16px;
+	left: 12%;
+}
+.buy_pack_home {
+	background:url(../image/main_sprite.png);
+	background-position: -90px 0;
+	width:89px;
+	height:128px;
+	display: inline-block;
+	position: absolute;
+	top: 16px;
+	left: 12%;
+}
+.buy_nbr_home {
+	background:url(../image/main_sprite.png);
+	background-position: -180px 0;
+	width:89px;
+	height:128px;
+	display: inline-block;
+	position: absolute;
+	top: 16px;
+	left: 12%;
+}
+
+.icon00 {
+	background:url(../image/main_sprite.png) transparent;
+	background-position: 0 -129px;
+	width:56px;
+	height:56px;
+	position: absolute;
+	top: 14px;
+	left: 27px;
+}
+
+.quick_setting {
+	background:url(../image/main_sprite.png) transparent;
+	background-position: -57px -129px;
+	width:131px;
+	height:29px;
+}
+
+.quick_star {
+	background:url(../image/main_sprite.png) transparent;
+	background-position: -189px -129px;
+	width:21px;
+	height:21px;
+	float:left;
+	margin-top:11px;
+}
+
+.top_user_sprite {
+	background:url(../image/main_sprite.png) transparent;
+	background-position: -211px -129px;
+	width:18px;
+	height:17px;
+	margin-top:6px;
+}
+
+.bill_type_radio {
+	float: left;
+	margin-top: 9px;
+}
+
+.cursor_def tbody td{
+	cursor: default;
+}
+input.width160 {width:160px}
+
+#memberDiv ul li{
+	float:left;
+	margin:0px 15px 0px 15px;
+}

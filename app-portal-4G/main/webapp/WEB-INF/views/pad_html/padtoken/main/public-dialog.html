@@ -1,0 +1,91 @@
+<div id="dlg-select-area" data-role="popup" data-transition="slidedown" data-overlay-theme="b" data-dismissible="false">
+    <div data-role="header">
+       <h1>选择地区</h1>
+    </div>
+    <div data-role="content">
+   		<ul data-role="listview"><li><a id="" href="#" data-corners="false" >山东省 > 济南市 > 历下区 [受理渠道地区]</a></li></ul>
+   		<div data-role="collapsible" data-mini="true">
+	        <h2>山东省*</h2>
+	        <ul data-role="listview"><li><a href="index.html"><h3>济南市1</h3></a></li><li><a href="index.html"><h3>济南市2</h3></a></li></ul>
+	    </div>
+		<div data-role="collapsible" data-mini="true">
+			<h2>江苏省*</h2>
+			<ul data-role="listview"><li><a href="index.html"><h3>南京市1</h3></a></li><li><a href="index.html"><h3>南京市2</h3></a></li><li><a href="index.html"><h3>南京市x</h3></a></li></ul>
+		</div>
+    </div>
+    <div data-role="footer" class="popup-bottom-button">
+		<a href="#" data-role="button" data-rel="back" >取 消</a>
+	</div>
+</div>
+
+<div id="dlg-exchange-channel" data-role="popup" data-transition="slidedown" data-overlay-theme="b" data-dismissible="false">
+     <div data-role="header">
+		<h1>切换渠道</h1>
+    </div>
+    <div data-role="content">
+		<ul data-role="listview" style="min-width:380px;min-height: 140px">
+  		<#if Session["_staff_channel"]?? && (Session["_ecs_login_session_key"].currentChannelId!="") >
+	  	<#list Session["_staff_channel"] as channel>
+      		<li <#if channel.id==Session["_ecs_login_session_key"].currentChannelId> class="" </#if>>
+      			<a cnlid="${channel.id}" href="javascritp:;">${channel.name}</a></li>
+      	</#list>
+    	<#else>
+    		<li><a href="#">抱歉,没有找到相关渠道信息.</a></li>  
+    	</#if> 
+    	</ul>
+    </div>
+    <div data-role="footer" class="popup-bottom-button">
+		<a href="#" data-role="button" data-rel="back">取&nbsp;&nbsp;消</a>
+	</div>
+</div>
+<div id="dlg-chk-auth" data-role="popup" data-transition="slidedown" data-overlay-theme="b" data-dismissible="false">
+    <div data-role="header">
+    	<a href="#" data-role="button" data-rel="back" data-icon="delete" data-iconpos="notext" class="ui-btn-right"></a>
+       	<h1>客户身份鉴权</h1>
+    </div>
+    <div data-role="content" class="popup-content-height">
+        <div class="ui-grid-c">
+		<form id="custAuthForm">
+		   	<div class="ui-block-a"><label for="authPassword" id="custAuthTypeName">产品密码：</label></div>
+		    <div class="ui-block-b"><input type="text" name="authPassword" id="authPassword" type="password" placeHolder="请输入密码" data-validate="validate(required:密码不能为空, maxlength:密码长度最多为{arg1}(12)) on(blur)"></div>
+		    <div class="ui-block-c"><a id="custAuthbtn" href="#" data-icon="check" data-theme="g" data-role="button">校验</a></div>
+		    <div class="ui-block-d"><a id="jumpAuth" href="#" data-icon="forward" data-theme="g" data-role="button">跳过校验</a></div>
+	    </form>
+	    </div>
+    </div>
+</div>
+<!-- <div id="dlg-phonenumber-pwd" data-role="popup" data-transition="slidedown" data-overlay-theme="b" data-dismissible="false" style="z-index: 1200;">
+ <div data-role="header">
+ 	   <a href="#" data-role="button" data-rel="back" data-icon="delete" data-iconpos="notext" class="ui-btn-right"></a>
+       <h1>预占密码</h1>
+    </div>
+   <div data-role="content" class="popup-content-height">
+    	<div class="ui-grid-c">
+   			<form id="phoneNbrPwdForm">
+        	<div class="ui-block-a"><label for="pree_password_text">预占密码：</label></div>
+	        <div class="ui-block-b"><input type="text" name="pree_password_text" id="pree_password_text" type="password" placeHolder="请输入密码" data-validate="validate(required:密码不能为空, maxlength:密码长度最多为{arg1}(12)) on(blur)"></div>
+	        <div class="ui-block-c"><a id="phoneNbrSurebtn" href="#" data-theme="g" data-icon="check" data-role="button">确认</a></div>
+	        <div class="ui-block-d"><a href="#" data-role="button" data-rel="back" data-icon="back" data-theme="g">取消</a></div>
+	        </form>
+        </div>
+    </div>
+</div> -->
+<div id="dlg-invalid-invoice" data-role="popup" data-transition="slidedown" data-overlay-theme="b" data-dismissible="false">
+ <div data-role="header">
+ 	   <a href="#" data-role="button" data-rel="back" data-icon="delete" data-iconpos="notext" class="ui-btn-right"></a>
+       <h1>发票处理</h1>
+    </div>
+    <div data-role="content" id="invalidInvoiceInfoDiv" style="min-width:480px;min-height: 140px">
+    </div>
+     <div data-role="footer" style="text-align: right;padding-right:10px">
+     	<a id="invalidInvoiceConfirm" href="#" data-theme="g" data-icon="check" data-role="button">确认</a>
+		<a href="#" data-role="button" data-rel="back"  data-icon="back" data-theme="g">取消</a>
+	</div>
+</div>
+<div class="dialog_box" style="display:none" id="poppopdialog">
+    <div class="dialog_box_title">
+      <a class="ui-link ui-btn-left ui-btn ui-icon-back ui-btn-icon-notext ui-shadow ui-corner-all" data-iconpos="notext"  data-icon="back" data-role="button" href="#" role="button">返回</a>
+      <h1>业务规则提示</h1>
+      <div id="ruleBody"></div>
+    </div>
+</div>

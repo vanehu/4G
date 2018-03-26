@@ -1,0 +1,145 @@
+<link href="${contextPath}/css/app-css/newstyle.css" rel="stylesheet">
+<div id="pre_order_search">
+	<div class="container-fluid">
+		<div class="row">
+			<div class="panel panel-default paneltop">
+				<!-- Default panel contents -->
+				<div class="panel-heading">
+					<span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+					宽带订单查询
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tab-box">
+			<ul>
+				<li id="search" class="tab-1 active">
+					<span class="glyphicon glyphicon-search"></span>
+					<p>查询条件<span class="glyphicon glyphicon-ok-sign"></span></p>
+				</li>
+				<li id="result" class="tab-2">
+					<span class="glyphicon glyphicon-th-list"></span>
+					<p>查询结果<span class="glyphicon glyphicon-ok-sign dis-none"></span></p>
+				</li>
+			</ul>
+		</div>
+	<div class="main-box">
+		<div id="search_condition">
+			<div class="tab-1-box info-box"><!--查询条件页面-->
+				<div class="input-box">
+					<span class="glyphicon glyphicon-calendar"></span>
+					<span class="glyphicon glyphicon-search green"></span>
+					<input type="text" id="p_startDt" class="mydate"  placeholder="起始时间">
+				</div>
+				<div class="input-box">
+					<span class="glyphicon glyphicon-calendar"></span>
+					<span class="glyphicon glyphicon-search green"></span>
+					<input type="text" id="p_endDt" class="mydate" placeholder="结束时间">
+				</div>
+				<div class="input-box">
+					<span class="glyphicon glyphicon-stats"></span>
+					<input type="text" id="orderId" name="" placeholder="订单号">
+				</div>
+				<div class="submite-box">
+					<button class="submite-btn" onclick="order.pre.querypreorderlist()">查询</button>
+				</div>
+			</div>
+		</div>
+		<div class="tab-2-box info-box dis-none"><!--查询结果页面-->
+				<dl id="search_result"  class="search-result-list">
+		           
+		            </dl> 
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+			//tab页内容自适应
+			var num = $('.tab-box ul').children().length;
+			$('.tab-box ul li').css('width',100/num + '%');
+			//tab页面点击切换事件
+			$('.tab-box ul li').on('touchend',function(){
+				$('.tab-box ul .active').removeClass('active');
+				$(this).addClass('active');
+				$('.main-box .info-box').addClass('dis-none');
+				var className = $(this).attr("class");
+				$('.' + className.substr(0,5) + '-box').removeClass('dis-none');
+			});
+
+			//订单列表百叶窗打开脚本	
+			$('.search-result-list dd').on('touchend',function(){
+		       if($(this).hasClass('active')){
+		          $(this).removeClass('active');
+		        }
+		        else{ 
+		          $('.search-result-list .active').removeClass('active');
+		          $(this).addClass('active');
+		        } 
+		      });
+		</script>
+	<script>
+			$(function() {
+				function init() {
+					// Select demo initialization
+					$('.myselect').mobiscroll().select({
+						theme: "android-holo-light", // Specify theme like: theme: 'ios' or omit setting to use default 
+						mode: "scroller", // Specify scroller mode like: mode: 'mixed' or omit setting to use default 
+						display: "bottom", // Specify display mode like: display: 'bottom' or omit setting to use default 
+						lang: "zh", // Specify language like: lang: 'pl' or omit setting to use default 
+						inputClass: "form-control"
+					});
+					$('.mydate').mobiscroll().date({
+						theme: "android-holo-light", // Specify theme like: theme: 'ios' or omit setting to use default 
+						mode: "scroller", // Specify scroller mode like: mode: 'mixed' or omit setting to use default 
+						display: "bottom", // Specify display mode like: display: 'bottom' or omit setting to use default 
+						lang: "zh", // Specify language like: lang: 'pl' or omit setting to use default 
+						// wheels:[], 设置此属性可以只显示年月，此处演示，就用下面的onBeforeShow方法,另外也可以用treelist去实现  
+						showLabel:true,
+						headerText: function(valueText) { //自定义弹出框头部格式  
+							array = valueText.split('/');
+							return array[0] + "年" + array[1] + "月" + array[2] + "日";
+						}
+					}); // Date & Time demo initialization
+					$('.mydatetime').mobiscroll().datetime({
+						theme: "android-holo-light", // Specify theme like: theme: 'ios' or omit setting to use default 
+						mode: "scroller", // Specify scroller mode like: mode: 'mixed' or omit setting to use default  
+						display: "bottom", // Specify display mode like: display: 'bottom' or omit setting to use default
+						lang: "zh", // Specify language like: lang: 'pl' or omit setting to use default 
+						showLabel:true,
+						minDate: new Date(2012, 3, 10, 9, 22), // More info about minDate: http://docs.mobiscroll.com/2-14-0/datetime#!opt-minDate
+						maxDate: new Date(2015, 11, 30, 15, 44), // More info about maxDate: http://docs.mobiscroll.com/2-14-0/datetime#!opt-maxDate
+						stepMinute: 1, // More info about stepMinute: http://docs.mobiscroll.com/2-14-0/datetime#!opt-stepMinute
+						
+					});
+					// Time demo initialization
+					$('.mytime').mobiscroll().time({
+						theme: "android-holo-light", // Specify theme like: theme: 'ios' or omit setting to use default 
+						mode: "scroller", // Specify scroller mode like: mode: 'mixed' or omit setting to use default 
+						display: "bottom", // Specify display mode like: display: 'bottom' or omit setting to use default 
+						showLabel:true,
+						lang: "zh", // Specify language like: lang: 'pl' or omit setting to use default 
+					});
+					// Treelist demo initialization
+					var i = Math.floor($('.treelist>li').length / 2); 
+        var j = Math.floor($('.treelist>li').eq(i).find('ul li').length / 2);
+					$('.treelist').mobiscroll().treelist({
+						theme: "android-holo-light", // Specify theme like: theme: 'ios' or omit setting to use default 
+						mode: "scroller", // Specify scroller mode like: mode: 'mixed' or omit setting to use default 
+						display: "bottom", // Specify display mode like: display: 'bottom' or omit setting to use default 
+						lang: "zh", // Specify language like: lang: 'pl' or omit setting to use default 
+						defaultValue: [i,j], 
+						inputClass: "form-control",
+						showLabel:true,
+						labels: ['省', '市'], // More info about labels: http://docs.mobiscroll.com/2-14-0/list#!opt-labels
+						formatResult: function (array) { //返回自定义格式结果  
+				            return $('.treelist>li').eq(array[0]).children('span').text() +' '+ $('.treelist>li').eq(array[0]).find('ul li').eq(array[1]).text().trim(' ');
+						}
+					});
+		          
+				}
+				// -------------------------------------------------------------------
+				// Demo page code START, you can disregard this in your implementation
+				init();
+				// Demo page code END
+				// -------------------------------------------------------------------
+			});
+		</script>

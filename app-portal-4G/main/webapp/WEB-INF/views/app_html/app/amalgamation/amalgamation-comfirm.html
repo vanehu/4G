@@ -1,0 +1,85 @@
+    <div class="main-box">
+            <div class="tab-3-box info-box">
+            	<div class="input-box">
+					<span class="glyphicon glyphicon-user"></span>
+					<span class="select-title">订单流水</span>
+					<input type="text" id="TransactionID" class="form-control" style="width:170px;font-size:12px;" value="${TransactionID}" readonly="readonly">
+				</div>
+				<div class="input-box">
+					<span class="glyphicon glyphicon-user"></span>
+					<span class="select-title">联系人</span>
+					<input type="text" id="userName" class="form-control" placeholder="请输入联系人">
+				</div>
+				<div class="input-box">
+					<span class="glyphicon glyphicon-phone"></span>
+					<span class="select-title">联系电话</span>
+					<input type="text" id="userPhone" class="form-control" placeholder="请输入联系电话">
+				</div>
+				<div class="input-box" onclick="javascript:order.broadband.selectYYT();" style="display:none">
+					<span class="glyphicon glyphicon-map-marker"></span>
+					<i class="iconfont pull-right p-10 font-secondary">&#xe66e;</i>
+					<input type="hidden" id="MDId" class="form-control">
+					<input type="hidden" id="MDadd" class="form-control">
+					<span class="select-title">受理营业厅</span>
+					<input type="text" id="MDname" class="form-control" placeholder="选择受理营业厅" readonly="readonly">
+				</div>
+			</div>
+    </div>
+    <div class="table-responsive">
+				<table class="table table-striped table-bordered tablecenter" id="calChangeTab">
+					<thead>
+						<tr>
+							<!-- <th>产品</th> -->
+							<th>费用名称</th>
+							<th>应收费用</th>
+							<th>实收费用</th>
+						</tr>
+					</thead>
+					<tbody class="form-inline" style=" text-align:center;">
+					<#list feelList as fList>
+						<tr id="${fList_index}" class="item_fee" objId="${fList.objId}" acctItemTypeName="${fList.acctItemTypeName}" feeAmount="${fList.feeAmount}" realAmount="" onclick="order.broadband.showEditPage(this)">
+							<input type="hidden" id="feeAmount_${fList_index}" value="${fList.feeAmount}" />
+							<input type="hidden" id="acctItemTypeId_${fList_index}" value="${fList.acctItemTypeId}" />
+		                  	<input type="hidden" id="objId_${fList_index}" value="${fList.objId}" />
+		                  	<input type="hidden" id="realhidden_${fList_index}" value="${fList.feeAmount}" />
+							<!-- <td>${fList.objId}</td> -->
+							<td>${fList.acctItemTypeName}</td>
+							<td>${fList.feeAmount}</td>
+							<td id="ssfy_${fList_index}">${fList.feeAmount}</td>
+							<span id="editBtn_${fList_index}" style="display:none">
+								<button type="button" class="btn btn-primary btn-lg" style="background-color:#FFFF44;" onclick="order.calcharge.changePayMethod('${fList.objId}','${fList_index}','',this);">减免费用</button>
+							</span>
+						</tr>
+					</#list>
+					</tbody>
+				</table>
+			</div>
+<div class="form-group panel-body" style="">
+<label style="width: 100%; text-align: left;">备注</label>
+<textarea class="form-control" id="order_remark" style="width: 100%;height:60px!important;"></textarea>
+</div>
+<!-- <nav class="navbar navbar-default navbar-fixed-bottom" id="cal_main_content">
+  <div class="container-fluid">
+    <div class="btn-group btn-group-justified navbar-btn" role="group" aria-label="...">
+      <div class="btn-group" role="group">
+        <button type="button" onClick="order.broadband.printVoucher()" class="btn btn-primary btn-lg"> <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> 回执 </button>
+      </div>
+      <div class="btn-group" role="group">  
+        <button type="button" id="toCharge" onClick="order.broadband.orderSubmit()" class="btn btn-info btn-lg"> <span class="glyphicon glyphicon-yen" aria-hidden="true"></span> 收费</button>
+      </div>
+    </div>
+  </div>
+</nav> -->
+<!-- <div class="submite-box" id="broadband_Submit">
+	<button class="submite-btn" onClick="order.broadband.orderSubmit()">提交</button>
+</div> -->
+<script>
+$(function() {
+	order.broadband.feeInfos = ${fee_list};
+	var propertiesKey2 = "REAL_NAME_PHOTO_"+(OrderInfo.staff.soAreaId+"").substring(0,3);
+	var isFlag = offerChange.queryPortalProperties(propertiesKey2);
+	if(isFlag == "ON"){//开关打开则必须填写经办人信息，否则默认隐藏
+		order.broadband.isNeedJbr=true;//经办人必须
+	}
+});
+</script>

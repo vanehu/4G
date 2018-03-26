@@ -1,0 +1,66 @@
+<@override name="title">在线POS确认页面</@override> 
+<@override name="header">
+<#include "/busi-js-tpl.html"/>
+</@override> 
+<@override name="content">
+<!--内容-->
+<div class="main_div"> 
+  <div class=" main_warp">
+  <div class="ordercon">
+	<div class="order_confirmation ordertabcon">
+  <h2 class="h2_title"><span>在线POS确认页面</span><span class="showhide"></span></h2>
+<div id="finishpage">
+<#if code==0>
+<h5 style="background: none repeat scroll 0 0 #FFFFFF;color: #71AB5A;font-size: 16px;height: 25px;line-height: 25px;padding: 5px 20px 5px 0;position: relative;" id="buyid">购物车流水号：${param.soNbr}</h5>
+<#else>
+<h5 style="background: none repeat scroll 0 0 #FFFFFF;color: #71AB5A;font-size: 16px;height: 25px;line-height: 25px;padding: 5px 20px 5px 0;position: relative;" id="buyid">错误信息：${msg}</h5>
+</#if>
+<#if code==0>
+<div align="left" style="margin: 20px auto;"><a class="btna_o" id="printfp" onclick="initPrintInfo();"><span>打印发票</span></a></div>
+<#else>
+<div align="left" style="margin: 20px auto;"><a class="btna_g" id="printfp" onclick=""><span>打印发票</span></a></div>
+</#if>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!--发票弹出框的内容-->
+<#include "/print/invoice-prepare.html"/>
+<!--弹出层-->
+<!--内容 end--> 
+<script type="text/javascript">
+	function initPrintInfo(){
+		OrderInfo.cust.custId=${param.custId};
+		OrderInfo.orderResult.olId=${param.olId};
+		OrderInfo.orderResult.olNbr=${param.soNbr};
+		var param={
+				"soNbr":"${param.soNbr}",
+				"billType" : 0,
+				"olId" : "${param.olId}",
+				"printFlag" : -1,
+				"areaId" : OrderInfo.staff.areaId,
+				"acctItemIds":[],
+				"olposflag":"pos"
+			};
+		var initResult = common.print.initPrintInfo(param);
+		if(!initResult) {
+			return;
+		}
+		var param={
+				"soNbr":"${param.soNbr}",
+				"billType" : 0,
+				"olId" : "${param.olId}",
+				"printFlag" : 0,
+				"areaId" : OrderInfo.staff.areaId,
+				"acctItemIds":[]
+			};
+			common.print.prepareInvoiceInfo(param);
+	}
+</script>
+</@override>
+<#if Session["_session_portal_type"]?? && Session["_session_portal_type"]=="LTE" >
+<@extends name="/content-template.html"/>
+<#else>
+<@extends name="/mvno-template.html"/>
+</#if>

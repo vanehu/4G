@@ -1,0 +1,41 @@
+<div class=" main_warp">       
+  <div class="order_confirmation">
+	<h2 class="h2_title"><span>修改帐户信息</span></h2>
+    <div class="main_body">
+      <#if (prodAcctInfos)?? &&((prodAcctInfos)?size>0)>	
+	  <h5 class="s_title">帐户选择</h5>
+	  <table class="contract_list textleft" style="height: 24px;">
+	    <thead>
+          <tr>
+            <td class="borderLTB" style="text-align:center;" width="10%">&nbsp;</td>
+            <td style="text-align:center" width="20%">帐户名称</td>
+            <td style="text-align:center;" width="30%">合同号</td>
+            <td style="text-align:center;" width="15%">帐户属主</td>
+            <td style="text-align:center;" width="25%">代表号码</td>                                                            
+          </tr>                                                    
+        </thead>
+		<tbody id="acctInfoList">
+		  <#list prodAcctInfos as prodAcctInfo>
+		  <tr id="${prodAcctInfo.acctId}">
+	        <td style="text-align:center" id="${prodAcctInfo.acctCd}" name="${prodAcctInfo.chargeItemCd}"></td>
+			<td style="text-align:center">${prodAcctInfo.name}</td>
+			<td style="text-align:center">${prodAcctInfo.acctCd}</td>
+			<td style="text-align:center">${prodAcctInfo.owner}</td>
+			<td style="text-align:center">${prodAcctInfo.accessNumber}</td>
+		  </tr>
+		  </#list>
+		</tbody>
+	  </table>
+      <#else>
+	  <div class="no_search"> 
+	    <p class="tips"><i><img width="25" height="25" src="${contextPath}/image/icon/tip.png"></i>抱歉,没有找到帐户信息！</p>
+      </div>
+      </#if>	
+      <div id="acctInfoDetail"></div>              
+      <div align="right" style="margin: 20px auto;">
+        <a id="fillLastStep" class="btna_o" href="javascript:void(0)" class="btna_o"><span>取消</span></a>
+        <a href="javascript:acct.acctModify.acctInfoModify_Submit()" id="custInfoModifyBtn" class="btna_o" style=" margin-left:20px;"><span>下一步</span></a>
+      </div>                                                
+    </div>
+  </div>              
+</div>

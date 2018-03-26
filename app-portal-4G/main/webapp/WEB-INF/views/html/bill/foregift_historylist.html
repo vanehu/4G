@@ -1,0 +1,34 @@
+<div class="order_content" id="foregifthistory" style="border: none; padding: 10px">
+	<table class="contract_list numberList">
+		<thead>
+       		<tr>
+           		<td width="100">操作名称</td>
+           		<td width="100">押金金额/元</td>
+           		<td width="100">费用项</td>
+           		<td width="100">收/退押金时间</td>
+           		<td width="150">生效时间</td>
+           		<td width="150">失效时间</td>
+       		</tr>
+    	</thead>
+    	<#if resultlst?? && (resultlst?size>0)>
+   		<tbody>
+    		<#list resultlst as items >
+       		<tr >
+       			<td>${items.chargeStatusName}</td>
+           		<td><#if (items.charge)?number != 0>${items.charge?number / 100}<#else>--</#if></td>
+           		<td>${items.chargeTypeName}</td>
+           		<td>${items.payDate}</td>
+           		<td>${items.startDt}</td>
+           		<td>${items.endDt}</td>
+        	</tr>
+        	</#list>
+		</tbody>
+		<#else>
+		<tbody>
+ 			<tr>
+ 				<td colspan="9">对不起，该用户没有押金历史记录！</td>
+ 			</tr>
+		</tbody>
+		</#if>
+	</table>
+</div>

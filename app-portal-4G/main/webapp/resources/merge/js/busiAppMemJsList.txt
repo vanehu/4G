@@ -1,0 +1,28 @@
+# 按行读取待合并的文件名称
+# 只读取后缀为js或css的文件
+# 以#号开始的行会被视作注释
+# 路径从WEB-INF的上级目录作为基础目录
+# 读取能力开放APP版本需要压缩的JS文件
+resources/js/busi-js/common/const.js
+resources/js/app-js/busi-js/common/common.js
+resources/js/app-js/busi-js/order/orderProdModify.js
+resources/js/app-js/op-js/order/orderInfo.js
+resources/js/app-js/op-js/newmember/soOrder.js
+resources/js/app-js/op-js/newmember/attachOffer.js
+resources/js/app-js/op-js/order/calCharge.js
+resources/js/app-js/op-js/newmember/order.js
+resources/js/app-js/op-js/newmember/orderMain.js
+resources/js/app-js/op-js/newmember/offerQuery.js
+resources/js/app-js/busi-js/order/offerChange.js
+resources/js/app-js/op-js/newmember/cacheData.js
+resources/js/app-js/op-js/newmember/custMgr.js
+resources/js/app-js/busi-js/cust/cust.js
+resources/js/app-js/busi-js/cart/cart.js
+resources/js/app-js/op-js/newmember/rule.js
+resources/js/app-js/busi-js/mktRes/phoneNumber.js
+resources/js/app-js/busi-js/mktRes/terminal.js
+resources/js/app-js/op-js/newmember/uim.js
+resources/js/app-js/op-js/query/queryProd.js
+resources/js/app-js/busi-js/print/print.js
+resources/js/app-js/op-js/order/dealer.js
+resources/js/app-js/op-js/newmember/memberChange.js

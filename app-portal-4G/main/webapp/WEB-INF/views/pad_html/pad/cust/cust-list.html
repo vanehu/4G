@@ -1,0 +1,47 @@
+<#if (cust.custInfos)?? &&((cust.custInfos)?size>0)>
+
+<#if query??>
+    <#list cust.custInfos as custInfo>
+    <li>
+        <a href="#" custFlag="${custInfo.custFlag}" norTaxPayer="${custInfo.norTaxPayer}" identityName="${custInfo.identityName}" 
+        	areaId="${custInfo.areaId}" corCustId="${custInfo.corCustId}" identityCd="${custInfo.identityCd}" 
+        	addressStr="${custInfo.addressStr}" areaName="${custInfo.areaName}" vipLevel="${custInfo.vipLevel}" 
+        	vipLevelName="${custInfo.vipLevelName}" segmentId="${custInfo.segmentId}" custId="${custInfo.custId}"
+        	segmentName="${custInfo.segmentName}" extCustId="${custInfo.extCustId}" 
+        	<#if query=="prod">onclick="javascript:product.query.chooseCust(this)"<#elseif query=="acct">onclick="javascript:account.query.chooseCust(this)"</#if> >
+        <h2>${custInfo.partyName}</h2>
+        <p>${custInfo.identityName}:${custInfo.idCardNumber}</p>
+        </a>
+    </li>
+	</#list>
+<#else>
+	<#list cust.custInfos as custInfo>
+	<li>
+        <a id ="custInfos" href="javascript:;" custFlag="${custInfo.custFlag}" norTaxPayer="${custInfo.norTaxPayer}"  
+        	areaId="${custInfo.areaId}" corCustId="${custInfo.corCustId}" identityCd="${custInfo.identityCd}" 
+        	addressStr="${custInfo.addressStr}" areaName="${custInfo.areaName}" vipLevel="${custInfo.vipLevel}" 
+        	vipLevelName="${custInfo.vipLevelName}" segmentId="${custInfo.segmentId}" custId="${custInfo.custId}"
+        	segmentName="${custInfo.segmentName}" extCustId="${custInfo.extCustId}" partyName="${custInfo.partyName}"
+        	idCardNumber="${custInfo.idCardNumber}" identityName="${custInfo.identityName}"
+        	onclick="javascript:order.cust.mgr.showCustAuth(this);">
+        <h2>${custInfo.partyName}</h2>
+        <p>${custInfo.identityName}:${custInfo.idCardNumber}</p>
+        </a>
+    </li>
+	</#list>
+</#if>
+<script>
+$(function(){
+	var custInfoSize=${custInfoSize};
+	order.cust.mgr.jumpAuthflag="${jumpAuthflag}";
+	if(custInfoSize==1){
+		order.cust.mgr.authType = '${cust.custInfos[0].authType}';
+		$("#custInfos").click();
+	}else{
+		$("#div_user_qry_result").panel("open");
+	}
+})
+</script>
+<#else>
+false
+</#if>

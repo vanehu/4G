@@ -1,0 +1,115 @@
+<style type="text/css">
+<!--
+.btn-group-active{
+	background:#fff;
+	color:#ff8202;
+	box-shadow:none;
+	border:1px solid #ff8202;
+} 
+-->
+.form-control{
+font-size: 1.6rem;
+padding-left: 9.86rem;
+}
+</style>
+<div id="order_prepare">
+<input type="hidden" id="subPage" value="${subPage}" />
+<input type="hidden" id="enter" value="${enter}" />
+<div class="main-box">
+		<div id="myTabContent">
+			<!-- 套餐入口 -->
+			<div id="pakeage">
+				<div>
+						<div class="input-box" onclick="$('#search-modal').modal('show')">
+							<span class="glyphicon glyphicon-list"></span>
+							<span class="glyphicon glyphicon-search green"></span>
+							<span class="select-title font-color">高级搜索</span>
+						</div>
+				</div>
+				<div id="offer-list" style="margin: 10px; margin-top:0px;">
+				</div>
+			</div>
+		</div>
+</div>
+</div>
+<!-- 副卡弹出框 -->
+<div class="modal fade" id="vice_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal_wrapper">
+  <div class="modal-dialog" style="display:block;">
+    <div class="modal-content">
+      <div class="panel panel-default" style="margin-bottom: 0;">
+          <div class="panel-body">
+            <form>
+            	<div id="div_content">
+                </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+          	<div class="col-xs-6">
+          		<button type="button" style="height: 42px;font-size: 14px; width:100%;" id="btn_modal" class="btn btn-default"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> 确定</button>
+          	</div>
+          	<div class="col-xs-6">
+          		<button type="button"  style="height: 42px;font-size: 14px; width:100%;" class="btn btn-default" data-toggle="modal" data-target="#vice_modal"> <span class="glyphicon" aria-hidden="true" style="display: none;"></span>关闭</button> 
+           	</div>
+          </div>
+        </div>
+    </div>
+  </div>
+</div>
+</div>
+<div id="order" style="display: none;">
+</div>
+<!-- 选号页面用 -->
+<div class="item" id="phonenumberContent" style="display:none">
+ 
+</div>
+<div class="modal modal-message fade modal-top" id="search-modal">
+	<div class="modal-dialog" style="display: block;">
+		<div class="modal-content">
+			<div class="modal-header" >
+				<button type="button" class="close"  data-dismiss="modal" aria-hidden="true">×</button>
+				<h4 class="modal-title" >套餐查询</h4>
+			</div>
+			<div class="modal-body">
+				<div class="choice-box m-t-10" >
+					<i class="iconfont pull-left p-l-10" >&#xe667;</i>
+					<input placeholder="请输入套餐名称"  class="choice-input" id="qryStr"/>
+				</div>
+				<div class="choice-box m-t-10" >
+					<i class="iconfont pull-left p-l-10" >&#xe61a;</i> 
+					<select name="" placeholder="价格区间（元）" id="select_price" class="myselect select-option" data-role="none">
+						<option id="-1" value="">价格区间（元）</option>
+					</select>
+					<i class="iconfont pull-right p-r-10" >&#xe66e;</i>
+				</div>
+				<div class="choice-box m-t-10" >
+					<i class="iconfont pull-left p-l-10" >&#xe648;</i> 
+					<select name="" placeholder="语音时长（分钟）" id="select_invoice" class="myselect select-option" data-role="none">
+						<option id="-1" value="">语音时长（分钟）</option>
+					</select>
+					<i class="iconfont pull-right p-r-10" >&#xe66e;</i>
+				</div>
+				<div class="choice-box m-t-10" >
+					<i class="iconfont pull-left p-l-10" >&#xe618;</i>
+					<select name="" placeholder="流量（G）" id="select_influx" class="myselect select-option" data-role="none">
+						<option id="-1" value="">流量（G）</option>
+					</select>
+					<i class="iconfont pull-right p-r-10" >&#xe66e;</i>
+				</div>
+			</div>
+			<div class="modal-footer" style="margin-top:10px;">
+				<div class="ordinary-btn-box p p-b-15">
+					<button class="sun-btn" onclick="order.service.searchPack(1);">确定</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+//初始化
+$(function(){
+	order.broadband.initProd();
+	$("#pakeage").attr("class","tab-pane fade in active");
+	order.broadband.init_select();
+});
+</script>

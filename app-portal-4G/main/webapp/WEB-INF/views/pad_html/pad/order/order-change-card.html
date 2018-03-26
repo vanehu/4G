@@ -1,0 +1,19 @@
+<div id="order_fill_content" data-role="content"  data-theme="w" class="ui-content ui-body-w">
+<div class="ordertitle">补换卡 </div>
+<div><h5>产品信息</h5></div>
+<div class="tabs-body">
+	<div class="ordercona orderform" style="display:block;">
+		<div class="ui-grid-a">
+			<#include "/pad/order/order-uim.html" />
+		</div>
+	</div>
+  	<div data-role="fieldcontain">
+    	<label for="beizhu">订单备注:</label>
+    	<textarea cols="40" rows="8" name="beizhu" id="orderRemark"></textarea>
+ 	</div>
+</div>
+<!--订单填写 end-->
+<div align="right" style="margin: 20px auto; padding: 0 20px;">
+ <button data-inline="true" data-icon="prev" id="fillLastStep" onclick="javascript:void(0)">取消</button>
+ <button data-inline="true" data-icon="next" onclick="javascript:prod.changeUim.submit();">下一步</button> 
+</div>

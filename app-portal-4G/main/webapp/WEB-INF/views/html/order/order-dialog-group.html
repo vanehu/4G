@@ -1,0 +1,69 @@
+<div class="easyDialogclose" id="gourp_dialog_close" onclick="easyDialog.close()"></div>
+  <table class="contract_list">
+            <thead>
+                <tr>
+                    <td>选择加入的群</td>
+                    <td align="right" style="width:180px" >
+					<input type="button" class="numberSearch" value="确 认" onclick="order.main.setGroup('${pageParam.objInstId}')" >
+					<input type="button" class="numberSearch" value="取消" style="margin-right: 20px" onclick="easyDialog.close();" >
+					</td>
+                </tr>                                                    
+            </thead>
+        </table>
+  <div class="form-content">
+    <div class="selectList">
+      <dl>
+        <dt>群号码：</dt>
+        <dd>
+          &nbsp;<input type="text" class="inputWidth150px" id="BIZID" value="${pageParam.BIZID}">
+        </dd>
+        <dt>接入号：</dt>
+        <dd>
+          &nbsp;<input type="text" class="inputWidth150px" id="accessNbr" value="${pageParam.acctNbr}">
+        </dd>
+        <!-- <dt>证件号码：</dt>
+        <dd>
+          &nbsp;<input type="text" class="inputWidth150px" id="identifyNbr" value="${pageParam.identifyNbr}">
+        </dd>
+        <dt>客户名称：</dt>
+        <dd>
+          &nbsp;<input type="text" class="inputWidth150px" id="custName" value="${pageParam.custName}">
+        </dd> -->
+        <dd>
+          &nbsp;<input type="button" class="numberSearch" value="查 询" onclick="order.main.queryGroupPage(1)" >
+          <input type="hidden" id="queryType" value="${pageParam.queryTypeTmp}" >
+          <input type="hidden" id="id" value="${pageParam.objInstId}" >
+        </dd>
+      </dl>
+    </div>
+    <div class="phone_warp">
+      <table class="contract_list numberList222">
+        <thead>
+          <tr>
+          	<td class="borderLTB" style="width:40px">&nbsp;</td>
+          	<td class="borderLTB">产品号码</td>
+            <td class="borderLTB">套餐名称</td>
+            <td class="borderLTB">产品规格</td>
+            <td class="borderLTB">状态</td>
+            <td class="borderLTB">付费类型</td>
+            <td class="borderLTB"></td>
+          </tr>
+        </thead>
+        <tbody id="group_list_body">
+        	<#if groupMap??>
+	        	<#if groupMap.prodStateCd=="100000">
+		        	<tr accessNumber="${pageParam.BIZID}">
+		          	<td></td>
+		          	<td>${groupMap.accNbr}</td>
+		            <td>${groupMap.prodOfferName}</td>
+		            <td>${groupMap.prodStateName}</td>
+		            <td>${groupMap.feeTypeName}</td>
+		          	<td></td>
+		          	</tr>
+	          	</#if>
+        	</#if>
+        </tbody>
+      </table>
+    </div>
+  </div>
+<!--帐户选择弹窗 End-->
