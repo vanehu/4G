@@ -258,14 +258,7 @@
 </div>
 <script>
 $(function() {
-	//查分省支付开关
-    var propertiesKey = "NEWPAYFLAG_"+(OrderInfo.staff.soAreaId+"").substring(0,3);
-    var isNewPay = offerChange.queryPortalProperties(propertiesKey);
-    if(isNewPay == "ON"){//开关打开收费方式隐藏，点收费跳转支付平台，否则默认调用原收费方式
-		order.calcharge.payFlag=true;
-		//$("#thPay").css("display","none");	
-       // $("input[id^='payMethodText_']").css("display","none");	
-    }		
+	order.refund.init();
 });
 
 </script>

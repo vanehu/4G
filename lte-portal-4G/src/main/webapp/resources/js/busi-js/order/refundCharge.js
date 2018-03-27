@@ -10,6 +10,15 @@ order.refund = (function(){
 	var money=0;
 	var _areaId=OrderInfo.staff.areaId;
 	var _soNbr=0;
+	var _addSum=0;
+	var _isReqNo = false;
+	var propertiesKey = "";
+	var _payFlag = "";
+	//查分省支付开关
+	var _init = function(pageIndex){
+		 propertiesKey = "NEWPAYFLAG_"+(OrderInfo.staff.soAreaId+"").substring(0,3);
+		_payFlag= offerChange.queryPortalProperties(propertiesKey)=="ON"?true:false;//是否开启调用支付平台
+	};
 	var _queryOrderList = function(pageIndex){
 		if(!$("#p_areaId_val").val()||$("#p_areaId_val").val()==""){
 			$.alert("提示","请选择'地区'再查询");
@@ -246,6 +255,11 @@ order.refund = (function(){
 			if(val!=undefined&&val!=''){
 				val=val.substr(5,val.length);
 				var acctItemId=$("#acctItemId_"+val).val();
+				
+				if(ec.util.isObj($("#paymentTransId_"+val).val())){
+					_isReqNo = true;
+				}
+			
 				var realmoney=($("#realAmount_"+val).val())*100+'';
 				var amount=$("#feeAmount_"+val).val();
 				var backAmount=$("#backAmount_"+val).val();
@@ -278,7 +292,10 @@ order.refund = (function(){
 						remark = $("#remark_"+val).val();
 					}
 					
-					if(acctItemId=="-1"){
+					if(acctItemId=="-1"){ 
+						if(_payFlag){
+							_addSum += $("#realAmount_"+val).val();
+						}
 						operType="1";
 					}else if(backAmount*1>0){
 						operType="-1";
@@ -303,6 +320,10 @@ order.refund = (function(){
 				}
 			}
 		});
+		if(_payFlag && _isReqNo && !order.calcharge.isNewPayMethodCd()){
+			$.alert("提示","付费方式请选择微信，支付宝,现金或翼支付!");
+			return false ;
+		}
 		return true ;
 	};
 	var _tochargeSubmit=function(){
@@ -314,20 +335,18 @@ order.refund = (function(){
 			return ;
 		}
 		
-		if (order.calcharge.payFlag && ec.util.isObj($("#paymentTransId_"+val).val())) { 
-			  
-			var payMethodCdStr = offerChange.queryPortalProperties("PAY_METHOD_CD");
-		    if (isAddChargeItem && $("#realmoney").val()- $("#backAmount").val() > 0) {
-		    	
-		    	if(orderr.calcharge.isNewPayMethodCd()){
+		if (_payFlag) { 
+			//var payMethodCdStr = offerChange.queryPortalProperties("PAY_METHOD_CD");
+		    if (_addSum- $("#backAmount").val() > 0) {
+		    	if(order.calcharge.isNewPayMethodCd()){
 		    		return _getPayToken();// 补费 
 		    	}
-
-		    }
+            }
 		}
 		var params={
 			"olId":_olId,
 			"areaId" : _areaId,
+			"paymentTransId":"",
 			"chargeItems":_chargeItems,
 			"soNbr":OrderInfo.order.soNbr
 		};
@@ -343,13 +362,10 @@ order.refund = (function(){
 				if (response.code == 0) {
 					submit_success=true;
 					msg="提交成功";	
-				    if (order.calcharge.payFlag && ec.util.isObj($("#paymentTransId_"+val).val())) {   			
-						if(($("#realmoney").val()- $("#backAmount").val() < 0 || (operType =-1 && !isAddChargeItem))){ //退费
-							var payAmount = $("#realmoney").val()- $("#backAmount").val();
-							if((operType =-1 && !isAddChargeItem)){
-								payAmount =  $("#backAmount").val();
-							}
-						    _payRefund(OrderInfo.orderResult.olId,payAmount*100,'1100');
+				    if (_payFlag && ec.util.isObj($("#paymentTransId_"+val).val())) {   			
+						if(_addSum - $("#backAmount").val() < 0 ){ //退费
+							var payAmount = Math.abs(addSum- $("#backAmount").val());
+							 _payRefund(OrderInfo.orderResult.olId,payAmount*100,'1100');
 						}
 				    }
 					$("#toComplate").removeClass("btna_o").addClass("btna_g");
@@ -464,10 +480,10 @@ order.refund = (function(){
 	 */
 	var _getPayToken = function(){
 		
-		var charge = $("#realmoney").val()- $("#backAmount").val();
-		if((operType =-1 && !isAddChargeItem)){
-			charge =  $("#backAmount").val();
-		}
+		var charge = Math.abs(_addSum- $("#backAmount").val());
+		//if((operType =-1 && !isAddChargeItem)){
+		//	charge =  $("#backAmount").val();
+		//}
 		//var charge= $("#realmoney").val();//支付金额
 		//_chargeItems=[];
 		//_buildChargeItems();
@@ -497,7 +513,7 @@ order.refund = (function(){
 
         $("#pay").empty();
 		$("#pay").hide();
-		var url = contextPath+"/pay/getPayUrl";
+		var url = contextPath+"/pay/getPayUrl";	
 		var response = $.callServiceAsJson(url, params);
 		if(response.code==0){
 			payUrl=response.data;
@@ -561,6 +577,7 @@ order.refund = (function(){
 		conBtns:_conBtns,
 		editMoney:_editMoney,
 		setGlobeMoney:_setGlobeMoney,
-		delItems:_delItems
+		delItems:_delItems,
+		init : _init
 	};
 })();
