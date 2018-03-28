@@ -35,6 +35,11 @@ OrderInfo = (function() {
 	var _confidence = "0";  //  人脸比对结果的相似程度
 	 
 
+	
+    var _uOlId ="";  // 撤单原购物车Id
+	
+	var _rOlId ="";  // 返销原购物车Id
+	
 	var _isExistCFQ = false;//是否是橙分期业务
 	
 	/*购物车业务动作，定义依据《购物车动作跟主数据对应关系.xlsx》
@@ -2072,6 +2077,8 @@ OrderInfo = (function() {
         getCustAgeByCheck       :_getCustAgeByCheck,
         saveOrderedOfferSpecIds :_saveOrderedOfferSpecIds,
         queryExcludeDependData  :_queryExcludeDependData,
-        secondBusiAuthType      :_secondBusiAuthType
+        secondBusiAuthType      :_secondBusiAuthType,
+        uOlId                  :_uOlId,
+        rOlId                  :_rOlId
 	};
 })();

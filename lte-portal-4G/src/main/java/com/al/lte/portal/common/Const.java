@@ -54,6 +54,14 @@ public class Const {
 	/**人证比对成功标示*/
 	public static final String SESSION_FACEVERIFYFLAG = "SESSION_FACEVERIFYFLAG";
 	
+	
+	public static final String SESSION_PAY_REQ_NO = "SESSION_PAY_REQ_NO";
+	
+	public static final String SESSION_PAY_CHARGE_AMOUNT = "SESSION_PAY_CHARGE_AMOUNT";
+	
+	public static final String SESSION_REFUND_REQ_NO = "SESSION_REFUND_REQ_NO";
+	
+	
 	/**经办人身份证读卡session校验*/
 	public static final String SESSION_SIGNATURE_HANDLE_CUST = "SESSION_SIGNATURE_HANDLE_CUST";
 	/**经办人证件照上传校验*/

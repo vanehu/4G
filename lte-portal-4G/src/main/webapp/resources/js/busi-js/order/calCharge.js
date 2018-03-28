@@ -20,6 +20,19 @@ order.calcharge = (function(){
 	var olpos = false;
 	var _posPayMethodIofo = []; //记录使用 离线pos支付方式 的费用项trid
 	var ranNum = 1;//随机数，用于积分扣减生成不同的订单号
+	
+	var chargeOlId;//算费时的OlId
+	var payCode;  // 
+	var refundType;
+	var payMethodCd;
+	var propertiesKey = "";
+	var _payFlag = "";
+	//查分省支付开关
+	var _init = function(pageIndex){
+		 propertiesKey = "NEWPAYFLAG_"+(OrderInfo.staff.soAreaId+"").substring(0,3);
+		_payFlag= offerChange.queryPortalProperties(propertiesKey)=="ON"?true:false;//是否开启调用支付平台
+	};
+	
 	var _addbusiOrder=function(proId,obj){
 		var html=$("#pro_"+proId).html();
 		if(html!=undefined&&html!=''){
@@ -367,6 +380,33 @@ order.calcharge = (function(){
 										html+='<option value="'+method.payMethodCd+'">'+method.payMethodName+'</option>';
 									}
 								});
+								
+								
+								if(_payFlag &&  ec.util.isObj($("#paymentTransId_"+trid).val()) ){
+								    html='';
+								    html='<select class=\'txt_cal_edit\' id="changeMethod_'+trid+'" style="border: 1px solid #DCDCDC;height: 23px;line-height: 23px;padding: 1px; width: 120px;" onchange="order.calcharge.selectChangePayMethodCd('+id+')">';
+								    var payMethodCdStr = offerChange.queryPortalProperties("PAY_METHOD_CD");
+								    for(var i=0;i<payMethodCdStr.split(",").length;i++){
+								    	var str = '';
+								    	if(payMethodCdStr.split(",")[i] == 100000){
+								    		str = '现金';
+								    	}
+								    	if(payMethodCdStr.split(",")[i] == 120100){
+								    		str = '翼支付';
+								    	}
+								    	if(payMethodCdStr.split(",")[i] == 120200){
+								    		str = '支付宝';
+								    	}
+								    	if(payMethodCdStr.split(",")[i] == 120400){
+								    		str = '微信';
+								    	}
+								    	if(payMethodCdStr.split(",")[i] == 100000){
+								    		html+='<option value="'+payMethodCdStr.split(",")[i]+'" selected="selected">'+str+'</option>';
+								    	}else{
+								    		html+='<option value="'+payMethodCdStr.split(",")[i]+'">'+str+'</option>';
+								    	}
+								    }
+								}
 								html+='</select>';
 								$("#payMethodText_"+trid).html(html);
 								
@@ -743,6 +783,22 @@ order.calcharge = (function(){
 				        document.body.appendChild(vra);
 				        vra.click();
 					}else{
+						
+						var payMethodCdStr = offerChange.queryPortalProperties("PAY_METHOD_CD");
+						if (_payFlag && OrderInfo.actionFlag!=11 && OrderInfo.actionFlag!=19 && OrderInfo.actionFlag!=20) { // 补费
+//						    var payMethodCd = _getPayMethodCd(payMethodCdStr);
+//						    if(payMethodCdStr){
+//						    	 for(var i=0;i<payMethodCdStr.split(",").length;i++){
+//						    		 if(payMethodCd== payMethodCdStr.split(",")[i]){
+							          if(_isNewPayMethodCd(payMethodCdStr)){
+							        	  return _getPayToken();
+							          }
+						    			
+//						    			 return;
+//						    		 }
+//							    }
+						    }
+							          
 						_chargeSave(flag);
 					}
 				}else if (response.code == -2) {
@@ -932,8 +988,14 @@ order.calcharge = (function(){
 			}
 			*/
 			SoOrder.updateResState(); //修改UIM，号码状态
+			
+			var isSuccess = true;
+			if(_payFlag && (OrderInfo.actionFlag == 11 || OrderInfo.actionFlag == 19 || OrderInfo.actionFlag == 20)){ //退费
+				isSuccess = order.refund.payRefund(OrderInfo.orderResult.olId,$('#realmoney').val()*100,"1100");
+			}
+			
 			//金额不为零，提示收费成功
-			if(flag=='1'&& OrderInfo.actionFlag!=37){
+			if(flag=='1'&& OrderInfo.actionFlag!=37 && isSuccess){
 				var realmoney=($('#realmoney').val())*1;
 				//费用大于0，才可以打印发票
 				if (realmoney > 0) {
@@ -1581,7 +1643,190 @@ order.calcharge = (function(){
 		);
 	};
 
-	
+	/**
+	 * 获取支付平台支付页面
+	 */
+	var _getPayToken = function(){
+		var charge= $("#realmoney").val();//支付金额
+		//_chargeItems=[];
+		//_buildChargeItems();
+		
+//		_setOlId(OrderInfo.orderResult.olId);
+		if(_chargeItems.length==0){//费用项为空，则只设soNbr
+			var item={
+					"soNbr":OrderInfo.order.soNbr	
+			};
+			_chargeItems.push(item);   
+		}
+        var params={
+				"olId":OrderInfo.orderResult.olId,
+				"soNbr":OrderInfo.orderResult.olNbr,
+				"charge":charge*100,
+				"busiUpType":  OrderInfo.actionFlag, //OrderInfo.busitypeflag,
+				"chargeItems":_chargeItems,
+			//	"strParam":JSON.stringify(resources),
+				"actionTypeName":OrderInfo.actionTypeName,
+				"chargeCheck":"0"
+		};
+//		var params={
+//				"olId":"111",
+//				"soNbr":"222",
+//				"charge":"500",
+//		        "busiUpType":"1",
+//		        "chargeItems":_chargeItems,
+//				"chargeCheck":"0"
+//		};
+//		if(chargeOlId!=OrderInfo.orderResult.olId){//调取算费接口的olId与跳转支付平台的OlId比较，不一样直接拦截
+//			$.alert("提示","算费时的olId:["+chargeOlId+"]与跳转支付界面的olId["+OrderInfo.orderResult.olId+"]不一致，请退出重新受理!");
+//			return;
+//		}
+		var url = contextPath+"/pay/getPayUrl";
+		var response = $.callServiceAsJson(url, params);
+		if(response.code==0){
+			payUrl=response.data;
+			//var payUrl2="http://192.168.4.137:7001/pay_web/platpay/index?payToken="+payUrl.split("=")[1];
+   		  // payUrl2="https://crm.189.cn:86/upay/platpay/index?payToken=5D0CB495B3DD59CAEC106F93EEBD13952F62C58C4A13445FB8AC378A32038E99";
+			//window.location.href="https://crm.189.cn:86/upay/platpay/index?payToken=5D0CB495B3DD59CAEC106F93EEBD13952F62C58C4A13445FB8AC378A32038E99" 
+				//timeId=setInterval(order.calcharge.timeToFee,3000);//定时查询支付状态，若成功则下计费接口，已下过则不再下。
+			//"http://42.99.16.141:7001/upay/platpay/index?payToken=824C9C39C49BFFA4636B6D5F29631953A3786E22FCA435004B3418049F7C1F65"
+			// min-height: 551px;
+			
+			$("#calTab").hide();
+			$("#pay").empty();
+			$("#pay").append("<iframe id ='payIframe'  src='"+ payUrl +"'> </iframe>"); //style='height: 330px;'
+			$("#pay").show();
+			
+			$("#payBack").show();
+			$("#toCharge").hide();
+			$("#toComplate").hide();
+			$("#yiPayBoundCard").hide();
+			$("#orderSave").hide();  
+			$("#orderCancel").show();
+			$("#orderCancel").removeClass("btna_g").addClass("btna_o");
+			$("#orderCancel").off("click").on("click",function(event){
+//				var obj = _getPayCallBack();
+//				if(obj && obj.respCode &&  obj.respCode == "POR-0000" ){
+//					$.alert("提示","支付已成功，不能取消订单!");//支付已成功，请单击【受理完成】按钮，进行操作！
+//					return;
+//				}
+//				var array = _getPayCallBack();
+//				if(payFlag && array && array[2] == 1){
+//					return _backToEntr();
+//				}
+			//	if($("#calTab").is(":visible")){
+			//		  return order.calcharge.backToCharge();
+			//	}else{
+					SoOrder.orderBack();
+			//	}
+			});
+			
+			
+		}else if(response.code==1002){
+			//解决收费按钮置灰
+			$("#toCharge").removeClass("btna_g").addClass("btna_o");
+			$.alert("提示",response.data);
+		}
+		else{
+			//解决收费按钮置灰
+			$("#toCharge").removeClass("btna_g").addClass("btna_o");
+			$.alertM(response.data);
+		}
+	};
+    //返回收银台
+	var _backToCharge = function(){
+		    var obj = _getPayCallBack();
+			if(obj && obj.respCode &&  obj.respCode == "POR-0000" ){
+				$.alert("提示","支付已成功，不能返回!");
+				return;
+			}
+			//$.confirm("信息确认", "返回收银台页面?",{ 
+		    //	yes:function(){
+					$("#pay").hide();
+					$("#calTab").show();
+					$("#payBack").hide();
+					
+					$("#toComplate").show();
+					$("#orderCancel").show(); 
+					
+					
+					if(OrderInfo.actionFlag==15){
+						$("#orderCancel").off("click").on("click",function(event){
+							$("#d_refund_order").show();
+							$("#order_charge").hide();
+						});
+					}else{
+						$("#toCharge").show();
+						$("#orderSave").show();
+						$("#orderSave").removeClass("btna_g").addClass("btna_o");
+						$("#yiPayBoundCard").show();
+						$("#orderCancel").removeClass("btna_g").addClass("btna_o");
+						$("#orderCancel").off("click").on("click",function(event){
+	//						var obj = _getPayCallBack();
+	//						if(obj && obj.respCode &&  obj.respCode == "POR-0000" ){
+	//							$.alert("提示","支付已成功，不能取消订单!");//支付已成功，请单击【受理完成】按钮，进行操作！
+	//							return;
+	//						}
+	//						var array = _getPayCallBack();
+	//						if(payFlag && array && array[2] == 1){
+	//							return _backToEntr();
+	//						}
+						//	if($("#calTab").is(":visible")){
+						//		  return order.calcharge.backToCharge();
+						//	}else{
+								SoOrder.orderBack();
+						//	}
+						
+				//	},
+				//	no:function(){
+						
+				//	}
+				        });
+					}
+	};
+	var _getPayCallBack = function(){
+	    var param = {
+				"olId" : OrderInfo.orderResult.olId
+		};
+	    var url = contextPath + "/pay/queryOrdStatusFromRedis";
+	    var response = $.callServiceAsJson(url, param);
+	    if(response.code==0 && response.data){
+			return response.data;
+		}else if (response.code == -2) {
+			//$.alertM(response.data);
+			return false ;
+		}else{
+			//$.alert("提示","查询支付结果失败!");
+			return false ;
+		}
+	}
+	// 是否是 微信、支付宝。现金。翼支付  支付方式  
+	var _isNewPayMethodCd = function(payMethodCdStr){
+		var i = 0;
+		var len = 0;
+		$("#calTab tbody tr").each(function() {
+			var val = $(this).attr("id");
+			if(val!=undefined&&val!=''){
+				val=val.substr(5,val.length);
+				 if($("#payMethodCd_" + val).val()== payMethodCdStr.split(",")[1] ||
+						$("#payMethodCd_" + val).val()== payMethodCdStr.split(",")[2] || $("#payMethodCd_" + val).val()== payMethodCdStr.split(",")[3]){
+//					if(payMethodCd == payMethodCdStr.split(",")[1] ||
+//							payMethodCd == payMethodCdStr.split(",")[2] ||
+//							  payMethodCd == payMethodCdStr.split(",")[3]){
+			              return true;
+			      } 
+		          if($("#payMethodCd_" + val).val()== payMethodCdStr.split(",")[0]){
+					  i++;
+				  }
+		          len++; 
+		    }
+			
+			 
+		});
+        if(len == i && i !=0 ){
+	        return true;
+        }
+		return false;
+	}
 	return {
 		addItems:_addItems,
 		delItems:_delItems,
@@ -1603,7 +1848,9 @@ order.calcharge = (function(){
 		tochargeSubmit:_tochargeSubmit,
 		backToEntr:_backToEntr,
 		changeFeeDisabled:_changeFeeDisabled,
-		changePoingts:_changePoingts
+		changePoingts:_changePoingts,
+		isNewPayMethodCd : _isNewPayMethodCd,
+		init : _init
 	};
 })();
 
