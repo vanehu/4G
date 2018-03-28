@@ -124,7 +124,7 @@ order.calcharge = (function(){
 			var val = $(this).attr("id");
 			if(val!=undefined&&val!=''){
 				val=val.substr(5,val.length);
-				feeAmount += parseInt($(this).find("td:eq(2)").text());
+				feeAmount += parseFloat($(this).find("td:eq(2)").text());
 				if($("#paymentAmount_"+val) && $("#paymentAmount_"+val).val()*1==0){
 					
 				}else{
@@ -227,7 +227,7 @@ order.calcharge = (function(){
 			var val = $(this).attr("id");
 			if(val!=undefined&&val!=''){
 				val=val.substr(5,val.length);
-				var realmoney=parseInt(($("#realAmount_"+val).val())*100)+'';
+				var realmoney=Math.round(($("#realAmount_"+val).val())*100)+'';
 				var amount=$("#feeAmount_"+val).val();
 				var feeAmount="";
 				if(amount!=undefined&&amount!=''){
@@ -301,8 +301,8 @@ order.calcharge = (function(){
 				$("#realAmount_" + trid).attr("oldValue", $("#realAmount_" + trid).val());
 				$("#feeAmount_" + trid).attr("oldValue", $("#feeAmount_" + trid).val());
 			}
-			$("#item_" + trid).find("td:eq(2)").text("0.00");
-			$("#feeAmount_" + trid).val("0");
+			//$("#item_" + trid).find("td:eq(2)").text("0.00");
+			//$("#feeAmount_" + trid).val("0");
 			$("#realAmount_" + trid).click();
 			$("#realAmount_" + trid).val("0.00");
 			$("#realAmount_" + trid).blur();
