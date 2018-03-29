@@ -46,6 +46,10 @@ essPartner.main = (function() {
 		var extCustOrderId = ec.util.defaultStr($("#p_extCustOrderId").val());
 		var orderType = ec.util.defaultStr($("#p_orderType").val());
 		var commonRegionId = ec.util.defaultStr($("#p_areaId").val());
+		var province = commonRegionId;
+		if(commonRegionId.endsWith("0000") ){//如果是二级地区，将commonRegionId置空
+			commonRegionId = "";
+		}
 		var transactionId = ec.util.defaultStr($("#p_transactionId").val());
 		var orderStatus = ec.util.defaultStr($("#p_orderStatus").val());
 		var channelId = ec.util.defaultStr($("#p_channelId").val());
@@ -79,7 +83,7 @@ essPartner.main = (function() {
 			extCustOrderId : extCustOrderId,
 			orderType : orderType,
 			commonRegionId : commonRegionId,
-			province : commonRegionId,
+			province : province,
 			essTransactionId : transactionId,
 			orderStatus : orderStatus,
 			channelId : channelId,
