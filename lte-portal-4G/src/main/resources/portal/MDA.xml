@@ -1301,15 +1301,15 @@
 			},
 			'832':<!-- 江苏 -->
 			{
-			'QRCODE_LOGIN_SWITCH':'ON'
+			'QRCODE_LOGIN_SWITCH':'OFF'
 			},
 			'851':<!-- 四川 -->
 			{
-			'QRCODE_LOGIN_SWITCH':'ON'
+			'QRCODE_LOGIN_SWITCH':'OFF'
 			},
 			'833':<!-- 浙江 -->
 			{
-			'QRCODE_LOGIN_SWITCH':'ON'
+			'QRCODE_LOGIN_SWITCH':'OFF'
 			},
 			'834':<!-- 安徽 -->
 			{
@@ -1317,7 +1317,7 @@
 			},
 			'861':<!-- 陕西 -->
 			{
-			'QRCODE_LOGIN_SWITCH':'ON'
+			'QRCODE_LOGIN_SWITCH':'OFF'
 			},
 			'842':<!-- 湖北 -->
 			{
@@ -3516,7 +3516,7 @@
 			},
 			'FACE_VERIFY_832':<!-- 江苏 -->
 			{
-			'FACE_VERIFY_SWITCH':'ON','FZ':'60','FACE_VERIFY_LIVENESS':'OFF','FACE_VERIFY_ROTATE':'OFF'<!-- FACE_VERIFY_LIVENESS  是否打开后端防hack校验     FACE_VERIFY_ROTATE  是否翻转照片-->
+			'FACE_VERIFY_SWITCH':'OFF','FZ':'60','FACE_VERIFY_LIVENESS':'OFF','FACE_VERIFY_ROTATE':'OFF'<!-- FACE_VERIFY_LIVENESS  是否打开后端防hack校验     FACE_VERIFY_ROTATE  是否翻转照片-->
 			},
 			'FACE_VERIFY_851':<!-- 四川 -->
 			{
