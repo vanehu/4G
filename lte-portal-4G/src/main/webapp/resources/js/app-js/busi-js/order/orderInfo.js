@@ -1386,10 +1386,17 @@ var _boPartyContactInfo = {
 			OrderInfo.certInfoKeys.push(certInfoKeys);
 		}
 	};
+	//读卡信息（不去重）
+	var _pushCertInfoKeysNoFilter = function(certInfoKeys){
+		if(ec.util.isObj(certInfoKeys) && ec.util.isObj(certInfoKeys["certNumber"]) && ec.util.isObj(certInfoKeys["certInfoId"])){
+			OrderInfo.certInfoKeys.push(certInfoKeys);
+		}
+	};
 	
 	return {
 		certInfoKeys			:_certInfoKeys,
 		pushCertInfoKeys		:_pushCertInfoKeys,
+		pushCertInfoKeysNoFilter:_pushCertInfoKeysNoFilter,
 		order					: _order,
 		acctId                  : _acctId,
 		acctCd                  : _acctCd,
