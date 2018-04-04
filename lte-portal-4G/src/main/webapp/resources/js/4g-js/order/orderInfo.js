@@ -1926,6 +1926,14 @@ OrderInfo = (function() {
 			OrderInfo.certInfoKeys.push(certInfoKeys);
 		}
 	};
+	//读卡信息（不去重）
+	var _pushCertInfoKeysNoFilter = function(certInfoKeys){
+		if(ec.util.isObj(certInfoKeys) && ec.util.isObj(certInfoKeys["certNumber"]) && ec.util.isObj(certInfoKeys["certInfoId"])){
+			OrderInfo.certInfoKeys.push(certInfoKeys);
+		} else{
+			window.console && window.console.log && (console.log("%cWarn：certInfoKeys为空节点或存在空字段", "color:red"));
+		}
+	};
 	
 	//针对经办人读卡缓存证件信息，临时补丁方案
 	var _handleCustCertReadInfos = {};
@@ -2072,6 +2080,7 @@ OrderInfo = (function() {
         confidence 				: _confidence,
         certInfoKeys			:_certInfoKeys,
         pushCertInfoKeys		:_pushCertInfoKeys,
+        pushCertInfoKeysNoFilter:_pushCertInfoKeysNoFilter,
         needCheckFlag           :_needCheckFlag,
         handleCustCertReadInfos	:_handleCustCertReadInfos,
         getCustAgeByCheck       :_getCustAgeByCheck,
