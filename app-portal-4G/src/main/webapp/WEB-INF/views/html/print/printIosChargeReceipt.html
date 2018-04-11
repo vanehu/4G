@@ -1,0 +1,19 @@
+<!DOCTYPE html SYSTEM>
+<html>
+	<head>
+		<meta charset="UTF-8"/>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<title>入网协议打印</title>
+		<script src="${absolutePath}/js/third-js/jquery/jquery-1.7.2.min.js" type="text/javascript"></script>
+		<script>
+		$(function(){
+			$("#receiptInfo")[0].submit(); 
+		})
+		</script>
+</head>
+<body >
+<form method="post" id="receiptInfo"  action="${absolutePath}/print/chargeReceipt" target="_self">
+<input type="hidden" id="chargeReceipt" name="chargeReceipt" value='${chargeReceipt}'/>
+</form>
+</body>
+</html>

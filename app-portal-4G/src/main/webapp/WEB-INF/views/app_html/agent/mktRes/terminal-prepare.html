@@ -1,0 +1,111 @@
+<div class="row divtab">
+	<form id="form_terminal_qry" data-ajax="false" method="post">
+	<div class="col-xs-10">
+		<div class="form-group has-feedback search-top">
+			<input type="text" id="input_phone_name" class="form-control" aria-describedby="inputSuccess2Status" placeholder="请输入手机名称">
+            <span class="glyphicon glyphicon-search form-control-feedback" aria-hidden="true"></span>
+        </div>
+    </div>
+    </form>
+    <div class="col-xs-2">
+         <button type="button" class="btn btn-default navbar-btn nav-justified no-mp" data-toggle="modal" data-target="#phoneModal"> <span class="glyphicon glyphicon-search" aria-hidden="true"></span><br>
+         	高级查询 </button>
+    </div>
+</div>
+<div id="phone-list">
+</div>
+
+<!-- 终端高级查询 -->
+<div class="modal fade modal_search" id="phoneModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal_top">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="panel panel-default">
+          <div class="panel-body">
+            <form>
+            	<div class="form-group">
+                   	<label for="exampleInputEmail1">品牌</label>
+                   	<div class="input-group">
+                    <select id="select_brand" class="selectpicker show-tick form-control" >
+                    	<option value="">不限</option>
+	                </select>
+		            <span class="input-group-addon select-span"></span>
+	         		</div>
+                </div>
+  				<div class="form-group">
+    				<label for="exampleInputEmail1">价格区间<small>（元）</small></label>
+    				<input type="hidden" id="phonePrice_numd01">
+    				<input type="hidden" id="phonePrice_numd02">
+    				<!--
+				    <div class="row">
+				    	<div class="col-xs-3"><input type="email" class="form-control" id="phonePrice_numd01" placeholder=""></div>
+				        <div class="col-xs-6"><div class="noUiSlider noUiSliderd"></div></div>
+				        <div class="col-xs-3"><input type="email" class="form-control" id="phonePrice_numd02" placeholder=""></div>
+				    </div>
+				    -->
+				    <div class="input-group">
+	                    <select id="phonePrice" onchange="setPrice();"; class="selectpicker show-tick form-control" >
+	                    	<option id="0" value="0">不限</option>
+	                    	<option id="1" value="1">1-499</option>
+	                    	<option id="500" value="500">500-900</option>
+	                    	<option id="1000" value="1000">1000-1999</option>
+	                    	<option id="2000" value="2000">2000-2999</option>
+	                    	<option id="3000" value="3000">3000-4999</option>
+	                    	<option id="5000" value="5000">5000以上</option>
+	                	</select>
+			            <span class="input-group-addon select-span"></span>
+	         		</div>
+  				</div>
+  				<div class="form-group">
+                    <label for="exampleInputEmail1">手机分类</label>
+                    <div class="input-group">
+                    <select id="select_phone_type" class="selectpicker show-tick form-control" >
+                    	<option value="">不限</option>
+                	</select>
+		            <span class="input-group-addon select-span"></span>
+	         		</div>
+                </div>
+			</form>
+          </div>
+          <div class=" divfoot modal-footer">
+          	<div class="col-xs-6">
+          		<button type="button" class="btn btn-default"  style="height: 42px;font-size: 14px; width:100%;" onclick="mktRes.terminal.btnQueryTerminal(1);"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> 确定</button>
+          	</div>
+          	<div class="col-xs-6">
+          		<button type="button" style="height: 42px;font-size: 14px; width:100%;" class="btn btn-default" data-toggle="modal" data-target="#phoneModal"> <span class="glyphicon" aria-hidden="true"></span>
+            		关闭
+            	</button>
+            </div>
+          </div>
+        </div>
+    </div>
+  </div>
+</div>
+	<script type="text/javascript">
+		function setPrice(){
+			var price = $("#phonePrice").val();
+			if(price=="0"){
+				$("#phonePrice_numd01").val("");
+				$("#phonePrice_numd02").val("");
+			}else if(price=="1"){
+				$("#phonePrice_numd01").val("1");
+				$("#phonePrice_numd02").val("499");
+			}else if(price=="500"){
+				$("#phonePrice_numd01").val("500");
+				$("#phonePrice_numd02").val("999");
+			}else if(price=="1000"){
+				$("#phonePrice_numd01").val("1000");
+				$("#phonePrice_numd02").val("1999");
+			}else if(price=="2000"){
+				$("#phonePrice_numd01").val("2000");
+				$("#phonePrice_numd02").val("2999");
+			}else if(price=="3000"){
+				$("#phonePrice_numd01").val("3000");
+				$("#phonePrice_numd02").val("4999");
+			}else if(price=="5000"){
+				$("#phonePrice_numd01").val("5000");
+				$("#phonePrice_numd02").val("");
+			}
+		}
+	</script>
+</div>

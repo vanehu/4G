@@ -1,0 +1,90 @@
+<@override name="title">中国电信4G营业受理</@override>
+
+<@override name="header">
+<#include "/busi-js-tpl.html"/>
+
+<script src="${contextPath}/js/busi-js/order/entrance.js?${jsversion}" type="text/javascript"></script>
+<script  type="text/javascript">
+function createDialog(){
+	ec.form.dialog.createDialog({"initCallBack":function(){},
+		"submitCallBack":function(dialogForm,dialog){},
+		width:100,height:200,
+	});
+}
+</script>
+</@override>
+
+</head>
+<@override name="content">
+<body>
+	<!--客户定位未定位-->
+	<div id="custQryDiv" class="main_div location main_warp">
+		<h2>客户定位</h2>
+		<div class="usersearch">
+			<input name="" type="text" class="numberTextBox"
+				placeHolder="请输入客户的证件号码或手机号码" />
+			<div id="custList">
+			</div>
+		</div>
+		<a class="btn_h30" id="usersearchbtn"
+			onclick="order.cust.queryCust()"><span>查 询</span></a> <a
+			class="btn_h30" id="createUserbtn"><span>新建客户</span></a>
+	</div>
+
+	<!--客户定位已定位-->
+	<div id="custInfo"></div>
+
+	<!--内容-->
+	<div class="main_div">
+		<!--步骤 -->
+		<div id="step1" class="step floatright displaynone">
+			<ul>
+				<li class="fore1"><a href="新装_填单.html">第一步:订单准备</a><b></b></li>
+				<li class="fore2"><a href="新装_订单确认.html">第二步:订单确认</a><b></b></li>
+				<li class="fore3"><a href="新装_算费.html">第三步:收银台</a></li>
+			</ul>
+		</div>
+		<div class="clear"></div>
+		<!--步骤 end-->
+		<div id="main_content_div">
+			<div  class="main_warp">
+				<!--订单准备-->
+				<div class="order">
+					<div class="order_nav_new">
+						<ul class="order_nav_ul">
+							<li id="buyTerminal" id="tab1"><a href="#">购终端</a></li>
+							<li id="buyOffer" id="tab2"><a href="#">办套餐</a></li>
+							<li id="choosePrettyNumber" id="tab3"><a href="#" class="leftborder">挑靓号</a></li>
+						</ul>
+						<div class="tips">注：请按照你的需求选择最便捷的入口办理业务</div>
+					</div>
+	
+				</div>
+				<!--订单准备 end-->
+			</div>
+		</div>
+	</div>
+	<!--内容 end-->
+
+	<!--用户鉴权弹窗-->
+	<div class="easyDialogdiv" style="height:300px;" id="auth">
+	<div class="easyDialogclose" id="authClose"></div>
+	<h1 class="easyDialogTitle">客户身份鉴权</h1>
+	<div class="infoBox">
+		<table class="network">
+                          <tbody>
+                          <tr>
+                                <td width="100"><label class="f_red">*</label>客户密码：</td>
+                                <td width="300"><input id="authPassword" type="text" class="inputWidth150px"><a  class="purchase" id="" onclick="order.cust.custAuth(this)">校验</a><a class="purchase" id="">跳过校验</a>
+                                </td>
+                          </tr>   
+                          
+                        </tbody>
+                    </table>
+	</div>
+</div>
+	<!--用户鉴权弹窗 end-->
+
+</@override>
+
+<@extends name="/main-template.html"/>

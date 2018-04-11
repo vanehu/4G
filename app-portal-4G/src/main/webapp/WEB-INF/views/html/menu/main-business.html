@@ -1,0 +1,23 @@
+
+<div >
+	<div class="main_warp">
+		<div class="main_list" id="main_list">
+			<#list bussinthreeList as thritem>
+			<ul class="main_list_ul" url="${contextPath}${thritem.MENU_PATH}?current=${thritem.RESOURCE_CODE}">
+				<div class="list_ul_padding">
+					<img src="${contextPath}${thritem.RESOURCE_PATH}" width="84"
+						height="84" />
+					<ul>
+						<h2>
+							<a href="javascript:void(0);">${thritem.RESOURCE_NAME}</a>
+						</h2>
+						<p>${thritem.DESCRIPTION}</p>
+					</ul>
+				</div>
+			</ul>
+			</#list>
+		</div>
+	</div>
+</div>
+
+

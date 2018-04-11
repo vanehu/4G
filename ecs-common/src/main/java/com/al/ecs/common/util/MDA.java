@@ -686,6 +686,32 @@ public class MDA {
   
 	/**营销推荐接触反馈结果*/
 	public static final List<Map<String,String>> MKT_CONTACT_RESULT = new ArrayList<Map<String,String>>();
+	
+	/**爱运维菜单配置列表*/
+	public static final List<String> AYW_MENU_PRO = new ArrayList<String>();
+	
+	/**
+     * 支付平台RSA加密公钥
+     */
+	public static final String gKey = new String("");
+	
+	/**
+	 * 宽带甩单定位门店接口地址
+	 */
+	public static final String READ_UIM=new String("");
+	
+	/**
+	 * 宽带甩单定位门店接口地址
+	 */
+	public static final String BROWSER_FINGERPRINT_URL=new String("");
+	
+	/**
+     * 一五接口加密密钥
+     */
+	public static final String OneFiveSecretKey = new String("");
+	
+	/**省份特殊协议配置*/
+	public static final Map<String, List> SPECIAL_AGREEMENT  = new HashMap<String, List>();
 
 	/**#1614052套餐变更校验副卡数量是否满足目的套餐规则*/	
 	public static final String OFFER_CHANGE_CHECK = new String("");

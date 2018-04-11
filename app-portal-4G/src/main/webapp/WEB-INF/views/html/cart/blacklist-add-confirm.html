@@ -1,0 +1,80 @@
+<div class="order_confirmation">
+    <div class="main_body">
+    	<h2 class="s_title">受理完成</h2>
+<#if code==0>
+<div class="height18"></div>
+	    		<table id="ruleTable" class="com_table">
+	    			<thead>
+		    			<tr>
+			                <th>受理成功</th>
+		              	</tr>
+		    		</thead>
+		    		<tbody id="ruleTbody">		            	
+		            	<tr>				            
+				        	<td>${message}</td>
+			          	</tr>
+		            </tbody>
+	    		</table>
+	    		<div align="right" style="margin: 20px auto;">
+					<a id="success_add_blacklist" class="btn_h30 ec_dialog_form_btn_cls"><span >继续受理</span></a>
+				</div>
+<#else>
+<div class="height18"></div>
+	    		<table id="ruleTable" class="com_table">
+	    			<thead>
+		    			<tr>
+			                <th>添加黑名单失败</th>
+		              	</tr>
+		    		</thead>
+		    		<#if errorStack??>
+		    		<#if errorStack.code == "-2">
+		    		<tbody id="ruleTbody">		            	
+		            <tr>	
+		    		<table width="100%" border="0" cellspacing="0" cellpadding="0">
+		              <tr>
+						<td align="left">
+						错误编码【${errorStack.data.errCode}】${errorStack.data.errMsg}<a style=" color: #FF0000;font-weight: bold;" id="alertMoreOp" href="javascript:void(0);" onclick="order.batch.getMoreError();">&nbsp;【更多】&nbsp;</a></div> 
+						<br/><span id="alertMoreContent" style="display:none">
+							<span style="color: #0000FF;font-weight: bold;">【详细信息】</span><br/> 
+						    <span style="color: #0000FF;font-weight: bold;">入参：</span><br/>
+						    <span> ${errorStack.data.paramMap} </span><br/> 
+						    <#if errorStack.data.resultMap??>
+						    	<span style="color: #0000FF;font-weight: bold;">回参：</span><br/>
+						    	<span> ${errorStack.data.resultMap}</span><br/> 
+						    </#if>
+						    <span style="color: #0000FF;font-weight: bold;">异常信息：</span><br/>
+						    <span> ${errorStack.data.errData} </span><br/> 
+						    </span>
+				 		</td>
+			 		  </tr>
+			        </table>
+			        </tr>
+		            </tbody>
+			        <#elseif errorStack.code == "1002">
+		    		        <tbody id="ruleTbody">		            	
+		            	    <tr>				            
+				        	    <td>${errorStack.data}</td>
+			          	    </tr>
+		                    </tbody>
+	    		    <#else>
+		    		        <tbody id="ruleTbody">		            	
+		            	    <tr>				            
+				        	    <td>请求可能发生异常，请稍后再试！</td>
+			          	    </tr>
+		                    </tbody>
+			        </#if>
+			        </#if>
+			        <script>
+			        $(function(){
+				
+			        });
+			        </script>
+	    		</table>
+	    		<div align="right" style="margin: 20px auto;">
+	    		<a class="btna_o" id="add_confirmBack"><span >返回修改</span></a>
+				</div>
+</#if>
+</div>
+</div>
+	
+

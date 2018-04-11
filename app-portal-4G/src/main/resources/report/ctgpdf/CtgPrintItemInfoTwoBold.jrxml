@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="CtgPrintItemInfoTwoBold" language="groovy" pageWidth="465" pageHeight="802" columnWidth="465" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="styleBlackBold10_5" fontName="宋体" fontSize="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false"/>
+	<field name="itemName0" class="java.lang.String"/>
+	<field name="itemValue0" class="java.lang.String"/>
+	<field name="itemName1" class="java.lang.String"/>
+	<field name="itemValue1" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="14" splitType="Stretch">
+			<textField>
+				<reportElement style="styleBlackBold10_5" x="0" y="0" width="80" height="14">
+					<printWhenExpression><![CDATA[$F{itemName0}!=null]]></printWhenExpression>
+				</reportElement>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{itemName0}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="styleBlackBold10_5" x="80" y="0" width="150" height="14">
+					<printWhenExpression><![CDATA[$F{itemValue0}!=null]]></printWhenExpression>
+				</reportElement>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{itemValue0}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="styleBlackBold10_5" x="230" y="0" width="80" height="14">
+					<printWhenExpression><![CDATA[$F{itemName1}!=null]]></printWhenExpression>
+				</reportElement>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{itemName1}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement style="styleBlackBold10_5" x="310" y="0" width="155" height="14">
+					<printWhenExpression><![CDATA[$F{itemValue1}!=null]]></printWhenExpression>
+				</reportElement>
+				<textElement/>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{itemValue1}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

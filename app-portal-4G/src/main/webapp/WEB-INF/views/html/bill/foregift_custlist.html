@@ -1,0 +1,62 @@
+<table class="contract_list numberList">
+	<#if type == "cust">
+		<thead>
+	       <tr>
+	           <td width="20">姓名</td>
+	           <td width="80">地区</td>
+	           <td width="200">证件类型</td>
+	           <td width="70">证件号码</td>
+	       </tr>
+	    </thead>
+	    <#if cust.custInfos??>
+	    <tbody id="phoneNumList">
+	    	<#list cust.custInfos as sub >
+	       	<tr >
+	           <td>${sub.partyName}</td>
+	           <td>${sub.areaName}</td>
+	           <td>${sub.identityName}</td>
+	           <td>${sub.idCardNumber}</td>
+	           <td style="display:none;">${sub.custId}</td>
+	        </tr>
+	        </#list>
+		</tbody>
+		<#else>
+		<tbody>
+	    	<tr>
+	    		<td colspan="4">对不起，没有查询到帐户信息！</td>
+	    	</tr>
+		</tbody>
+		</#if>	
+	</#if>
+	<#if type == "prod" && prodinstlist??>
+		<thead>
+        	<tr>
+        		<td width="25%">客户名称</td>
+                <td width="25%">产品号码</td>
+                <td width="25%">状态</td>
+                <td width="25%">付费方式</td>
+            </tr>                                                    
+        </thead>
+        <#if (prodinstlist?size>0)>
+		<tbody id="phoneNumList">
+		<#list prodinstlist as item>
+			<tr>
+				<td>${item.custName}</td>
+				<td class="nbr">${item.accessNumber}</td>
+				<td>${item.statusName}</td>
+				<td>${item.feeTypeName}</td>
+				<td style="display:none;" id="statusCd">${item.statusCd}</td>
+				<td style="display:none;">${item.partyId}</td>
+				<td style="display:none;">${item.prodId}</td>
+		  </tr>
+		</#list>
+		</tbody>
+		<#else>
+		<tbody>
+			<tr>
+				<td colspan="4">对不起，没有查询到帐户信息！</td>
+			</tr>
+		</tbody>
+		</#if>
+	</#if>
+</table>

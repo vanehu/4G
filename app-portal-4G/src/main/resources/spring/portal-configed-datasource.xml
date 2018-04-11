@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="
+     http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+     http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+     http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+	<!-- 门户层配置需要使用的数据源关键字 -->
+	<bean id="dataSourceManager" class="com.al.lte.portal.core.DataSourceManager">
+		<property name="configDataSourceKeys">
+			<list>
+				<value>portal</value><!--公共库-->
+				<value>8440000</value><!--广东 -->
+				<value>8320000</value><!--江苏 -->
+				<value>8510000</value><!--四川 -->
+				<value>8330000</value><!--浙江 -->
+				<value>8340000</value><!--安徽 -->
+				<value>8610000</value><!--陕西 -->
+				<value>8350000</value><!--福建 -->
+				<value>8310000</value><!--上海 -->
+				<value>8130000</value><!--河北 -->
+				<value>8150000</value><!--内蒙古 -->
+				<value>8430000</value><!--湖南 -->
+				<value>8210000</value><!--辽宁 -->
+				<value>8420000</value><!--湖北 -->
+				<value>8520000</value><!--贵州 -->
+				<value>8370000</value><!--山东 -->
+				<value>8500000</value><!--重庆 -->
+				<value>8650000</value><!--新疆 -->
+				<value>8110000</value><!--北京 -->
+				<value>8120000</value><!--天津 -->
+				<value>8360000</value><!--江西 -->
+				<value>8630000</value><!--青海 -->
+				<value>8620000</value><!--甘肃 -->
+				<value>8220000</value><!--吉林 -->
+				<value>8410000</value><!--河南 -->
+				<value>8230000</value><!--黑龙江 -->
+				<value>8530000</value><!--云南 -->
+				<value>8450000</value><!--广西 -->
+				<value>8140000</value><!--山西 -->
+				<value>8460000</value><!--海南 -->
+				<value>8640000</value><!--宁夏 -->
+				<value>8540000</value><!--西藏 -->
+			</list>
+		</property>
+	</bean>
+
+</beans>

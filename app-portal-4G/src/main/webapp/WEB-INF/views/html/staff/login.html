@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>中国电信4G营业受理<#if Session["_server_ip"]?? >[${Session["_server_ip"]}]</#if></title>
+<#if XUA?? >${XUA}</#if>
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store,no-cache,must-revalidate">
+<META HTTP-EQUIV="Expires" CONTENT="0">
+<META name="keywords" content="电信集团">
+<META name="description" content="电信集团">
+<#include "/common-css-tpl.html"/>
+<#include "/common-js-tpl.html"/>
+<script type="text/javascript">
+	var isQRLogin = false; 
+	var qrLoginParam = {};
+	var userMap = ${userJson};
+	if(ec.util.isObj(userMap.areaId)){
+		if(userMap.isQrFlag){
+			isQRLogin = true;
+			qrLoginParam = userMap;
+		}
+	}
+</script>
+<script src="${contextPath}/js/busi-js/staff/qrLogin.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/busi-js/staff/login.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/busi-js/staff/fingerprint.js?${jsversion}" type="text/javascript"></script>
+ <script event="OnCompleted()" for=foo>  
+	//事件执行完成后，将获取的IP地址MAC地址计算机名称传入
+       document.getElementById('txtMac').value=unescape(MACAddr);  
+ </script> 
+ <script event="OnObjectReady(objObject,objAsyncContext)" for="foo"> 
+	 //找到相应的API的object对象，判断MAC地址IP地址计算机名称是否存在，除去为空的现象。将MAC地址IP地址计算机名称赋值给变量。
+         if(objObject.IPEnabled != null && objObject.IPEnabled != "undefined" && objObject.IPEnabled == true) { 
+             if(objObject.MACAddress != null && objObject.MACAddress != "undefined" && objObject.DNSServerSearchOrder!=null) 
+                 MACAddr = objObject.MACAddress; 
+         } 
+ </script>
+<script type="text/javascript">
+     var MACAddr ; 
+        //页面加载的时候执行init()方法，定义一个服务器对象为当前连接的机器；
+        //设定安全级别的参数,一般设置为3；
+        //通过api得到当前机器的配置信息；
+    function init(){
+       if ($.browser.msie && locator.ConnectServer() != undefined) {
+    	var service = locator.ConnectServer(); 
+        service.Security_.ImpersonationLevel=3; 
+        service.InstancesOfAsync(foo,'Win32_NetworkAdapterConfiguration'); 
+        }
+    };
+</script>
+</head>
+<body style="padding:0px;" onload="init();_submit();">
+<div class="login_top"></div>
+<div id="portaltop" style="display:none;"></div>
+<div class="login_bg"></div>
+<div class="login_con">
+	<div class="logo"></div>
+    <div class="login_form">
+    	<div class="qricon" id="div_qricon">
+    	</div>
+    	<div class="div_loginForm">
+        	<form id="loginForm" name="loginForm" method="post">
+	        <table width="100%" height="100%" border="0" cellspacing="0" cellpadding="0" class="login_table">
+	          <tr>
+	            <td>
+	            	<div id="summary-stock">
+		            	<div class="dt">地&nbsp;&nbsp;&nbsp;&nbsp;市</div>
+		            	<div class="dd">
+							<div class="" id="store-selector">
+								<div class="text"><div title="" id="store-selector-text" area-id="8110000">北京</div><b></b></div>
+								<div class="content">			
+									<div id="ctc-area" class="m ctc-area" data-widget="tabs">
+										<div class="mt">
+											<ul class="tab">
+												<li class="" data-widget="tab-item" data-index="0">
+													<a class="" href="#none"><em>北京</em><i></i></a>
+												</li>
+												<li style="" data-widget="tab-item" data-index="1" class="">
+													<a class="" href="#none" title=""><em></em><i></i></a>
+												</li>
+											</ul>
+											<div class="stock-line"></div>
+										</div>
+										<div id="stock_province_item" data-widget="tab-content" data-area="0" class="mc" style="display: none;">
+											<ul class="area-list">
+												<li><a data-value="8110000" href="#none">北京</a></li><li><a data-value="8310000" href="#none">上海</a></li><li><a data-value="8120000" href="#none">天津</a></li><li><a data-value="8500000" href="#none">重庆</a></li><li><a data-value="8130000" href="#none">河北</a></li><li><a data-value="8140000" href="#none">山西</a></li><li><a data-value="8410000" href="#none">河南</a></li><li><a data-value="8210000" href="#none">辽宁</a></li><li><a data-value="8220000" href="#none">吉林</a></li><li><a data-value="8230000" href="#none">黑龙江</a></li><li><a data-value="8150000" href="#none">内蒙古</a></li><li><a data-value="8320000" href="#none">江苏</a></li><li><a data-value="8370000" href="#none">山东</a></li><li><a data-value="8340000" href="#none">安徽</a></li><li><a data-value="8330000" href="#none">浙江</a></li><li><a data-value="8350000" href="#none">福建</a></li><li><a data-value="8420000" href="#none">湖北</a></li><li><a data-value="8430000" href="#none">湖南</a></li><li><a data-value="8440000" href="#none">广东</a></li><li><a data-value="8450000" href="#none">广西</a></li><li><a data-value="8360000" href="#none">江西</a></li><li><a data-value="8510000" href="#none">四川</a></li><li><a data-value="8460000" href="#none">海南</a></li><li><a data-value="8520000" href="#none">贵州</a></li><li><a data-value="8530000" href="#none">云南</a></li><li><a data-value="8540000" href="#none">西藏</a></li><li><a data-value="8610000" href="#none">陕西</a></li><li><a data-value="8620000" href="#none">甘肃</a></li><li><a data-value="8630000" href="#none">青海</a></li><li><a data-value="8640000" href="#none">宁夏</a></li><li><a data-value="8650000" href="#none">新疆</a></li><li><a data-value="8990000" href="#none">虚拟省</a></li>
+											</ul>
+										</div>
+										<div id="stock_city_item" data-widget="tab-content" data-area="1" class="mc" style="display: none;">
+											<ul class="area-list">
+												<li><a data-value="8110101" href="#none">东城区</a></li><li><a data-value="8110102" href="#none">西城区</a></li><li><a data-value="8110105" href="#none">朝阳区</a></li><li><a data-value="8110106" href="#none">丰台区</a></li><li><a data-value="8110107" href="#none">石景山区</a></li><li><a data-value="8110108" href="#none">海淀区</a></li><li><a data-value="8110109" href="#none">门头沟区</a></li><li><a data-value="8110111" href="#none">房山区</a></li><li><a data-value="8110112" href="#none">通州区</a></li><li><a data-value="8110113" href="#none">顺义区</a></li><li><a data-value="8110114" href="#none">昌平区</a></li><li><a data-value="8110115" href="#none">大兴区</a></li><li><a data-value="8110116" href="#none">怀柔区</a></li><li><a data-value="8110117" href="#none">平谷区</a></li><li><a data-value="8110228" href="#none">密云县</a></li><li><a data-value="8110229" href="#none">延庆县</a></li>
+											</ul>
+										</div>
+									</div>
+									<span class="clr"></span>
+								</div>
+								<div onclick="$('#store-selector').removeClass('hover')" class="close"></div>
+							</div>
+							<!-- <div id="store-prompt"><strong></strong></div> -->
+		             	</div>
+		            	<span class="clr"></span>
+		            </div>
+	            </td>
+	          </tr>
+	          <tr>
+	            <td><span><label>工&nbsp;&nbsp;&nbsp;&nbsp;号</label><input type="text" value="${user.staffCode}" id="staffCode" name="staffCode" class="login_input" data-validate="validate(required:工号不能为空) on(blur)" placeholder="请输入工号"></span></td>
+	          </tr>
+	          <tr>
+	            <td><span><label>密&nbsp;&nbsp;&nbsp;&nbsp;码</label><input type="password" value="${user.password}" id="password" name="password" autocomplete="off" class="login_input" data-validate="validate(required:密码不能为空且不超过6位) on(blur)" placeholder="请输入密码" ></span></td>
+	          </tr>
+	          <tr id="validatecode_li" style="display:none;" code="${image_code}">
+	            <td><span>验证码</span><input type='text' id='vali_code_input' name='validatecode' class="login_input code" placeholder="请输入验证码" maxlength="6"/>
+	            	<a id="vali_code_a" title="看不清楚，换一张">
+	            		<img id="validatecodeImg" src="" class="codeimg"/>
+	            	</a>
+	            </td>
+	          </tr>
+	          <tr>
+	            <td><div id="button" class="button_login"></div><div id="resetBtn" class="button_reset"></div></td>
+	          </tr>
+	          <tr>
+	            <td id="login_tip_span" style="display:none;"><div class="login_tishi"></div><span class="login_tip">用户提示：密码错误两次，请填写验证码！</span></td>
+	          </tr>
+	        </table>
+        </form>
+    	</div>
+    	<div class="div_loginQrcode">
+    		<div class="center_loginQrcode">
+	    		<div class="mainQrcode">
+	    			<div class="loginQrcode">
+			    		<a id="qgcode" href="javascript:void(0);">
+			    		</a>
+		    		</div>
+		    		<div class="errQrcode">
+		    			<h6>二维码已失效</h6>
+		    			<a href="javascript:void(0);" class="refresh" id="refreshCode">请点击刷新</a>
+	    			</div>
+	    		</div>
+	    		<div class="footQrcode">
+	    			<i class="iconfont"><img src="${contextPath}/image/login/icon_scan.png"/></i>
+					<label>下载 </label>
+					<a href="javascript:void(0);" style="color: #f40;" class="download" >翼销售客户端
+						<div class="download-tips">
+							<div>
+								<img src="${contextPath}/image/login/download_app.png">
+							</div>
+						</div>
+					</a><br/>
+					<label class="testlabel">手机扫一扫 </label>
+	    		</div>
+    		</div>
+    		<div class="successQrcode">
+  				<div>
+    				<img src="${contextPath}/image/login/scan_success.png"/>
+  				</div>
+				<h6>扫描成功！</h6>
+				<p>请在手机上确认登录</p>
+				<div class="link">
+					<a href="#" style="color: #f40;" id="backLink">返回二维码登录</a>
+				</div>
+			</div>
+    	</div>
+    </div>
+    <div class="login_copy">版权所有 ©2014 中国电信集团公司</div>
+</div>
+<div class="login_foot"></div>
+<div class="easyDialogdiv" style="width:400px;height:240px;" id="SMS">
+  <div class="easyDialogclose" id="svCloseDiv"></div>
+    	<table class="contract_list">
+            <thead>
+                <tr>
+                  <td colspan="6" align="center">短信验证码</td>
+                </tr>                                                    
+            </thead>
+        </table>
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="SMScode">
+          <tr>
+            <td><p>为确保您的个人信息安全，在办理该业务前，请输入随机短信验证码</p></td>
+          </tr>
+          <tr>
+            <td>
+            	<span style="float:left; margin-top:5px">短信验证码</span>
+		        <form id="loginSmsForm" >
+		        <input  type="text" class="txt2 inputWidth228px" style="float:left; margin:0px 5px;" name="smspwd" id="smspwd" data-validate="validate(required:短信验证码不能为空) on(blur)" placeholder="请输入您手机收到的验证码" maxlength="6"/>
+		        <!-- <input type="button" id="smsbutton" class="btn2"  value="确&#12288;定"/> -->
+		        <a class="purchase" id="smsbutton" href="javascript:void(0)">确 认</a>
+		        </form>
+	        </td>
+          </tr>
+           <tr class="randomCode" style="display:none">
+             <td>
+	         <span style="float:left; margin-top:5px">随机序列号</span>
+	         <form id="num">
+		        <input class="txtnum" disabled='disabled'  style="float:left; margin:0px 5px;height:24px" />
+		     </form>
+	        </td>
+           </tr>
+          <tr>
+            <td>
+            <p>- 验证码在5分钟内有效，3次错误输入后失效。</p>
+            <!-- <p><span style="color:#aaa" id="timeInfo"></span></p> -->
+            <p>- 如您在<font id="defaultTimeResend"></font>秒内仍未收到验证码，请点击<a id="smsresend" class="cf" onclick="javascript:void(0)">重新获取验证码。</a></p>
+			<p>- 如果您连续3次重试都没有成功收到短信验证码，建议您稍后再试。</p>
+			</td>
+          </tr>
+        </table>
+</div>
+<!--弹出层 end-->
+<div class="easyDialogdiv" id="PWC" style="width:600px;height:340px;">
+  <div class="easyDialogclose" id="PWC_div"></div>
+	<table class="contract_list">
+            <thead>
+                <tr>
+                  <td colspan="6" align="center">密码修改</td>
+                </tr>                                                    
+            </thead>
+        </table>
+      <!-- <table width="100%" border="0" cellspacing="0" cellpadding="0" class="SMScode">
+          <tr>
+            <td><span style="font-size:15px;line-height:22px" id="tipMessage">&nbsp;&nbsp;&nbsp;&nbsp;您的密码为初始密码，为了您的帐号安全，必须修改才能登录。请您修改密码！</span></td>
+          </tr>
+           <form id="PWCForm" > 
+            <tr>  
+           		<td><span style="float:left;font-size:17px;color:#49A800;padding-bottom:10px">新&nbsp;密&nbsp;码:</span> 						
+					<input type="password" id="newPassword" placeholder="请输入新密码" data-validate="validate(required:密码不能为空) on(blur)" class="login_input"  maxlength="6"/>
+				</td>
+			</tr>
+			<tr> 
+				<td>
+				<span style="float:left;font-size:17px;color:#49A800;padding-bottom:10px">确认新密码:</span>	
+					<input type="password" id="confirm_password" placeholder="请输入确认密码" class="login_input" maxlength="6" data-validate="validate(required:确认密码不能为空) on(blur)" />
+					</td>
+				</tr>
+ 			<tr>
+				<td><div align="center" style="margin-left:135px;">
+      				<a href="#" class="btna_o"id="pwcbutton"><span>确认</span></a> 
+				</div>
+			</td>
+			</tr>     
+		</form>
+	     </table> -->
+	      <form id="PWCForm" > 
+	     <table class="network">
+						<tbody>
+							<tr>
+								<td align="right"><label class="f_red">*</label>新密码</td>
+								<td>
+									<input type="password" id="newPassword" placeholder="请输入新密码"  data-validate="validate(required:密码不能为空,minlength:口令长度至少8位(8),isNewRegex,isContinue) on(blur)" class="inputWidth228px" maxlength="20" />
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<label class="f_red">*</label>确认新密码
+								</td>
+								<td>
+									<input type="password" id="confirm_password" placeholder="请输入确认密码"  data-validate="validate(depEq:两次密码必须一致(newPassword)) on(blur)" class="inputWidth228px"/>
+								</td>
+							</tr>
+							<tr><td><img width="20" height="20" style="margin-left:30px;"src="${contextPath}/image/icon/tip.png"></td><td id="tipMessage">抱歉，为了您的帐号安全，必须修改才能登录。请您修改密码！</td></tr>
+							<tr>
+								<td align="right"></td>
+      							<td><a href="#"  class="btna_o" id="pwcbutton"><span>确认</span></a></td> 
+      						</tr>
+						</tbody>
+					</table>
+	     </form>
+	 <object id="locator" classid="CLSID:76A64158-CB41-11D1-8B02-00600806D9B6" VIEWASTEXT></object> 
+     <object id="foo" classid="CLSID:75718C9A-F029-11d1-A1AC-00C04FB6C223"></object> 
+     <input type="hidden" id="txtMac"/>
+ </div>
+<!--初始密码修改弹出层 end-->
+</body>
+<script type="text/javascript">
+	var _submit = function() {
+		var userMap = ${userJson};
+		if(ec.util.isObj(userMap.areaId)){
+			$("#store-selector-text").attr("area-id", userMap.areaId);
+			if (ec.util.isObj(userMap.provinceName) && ec.util.isObj(userMap.areaName)) {
+				$("#store-selector-text").text(userMap.provinceName + userMap.areaName);
+			}
+			if(isQRLogin){
+				staff.login.unifyQrLogin();
+			}else{
+				/*
+				 * 问题：10.128.86.10/lteportal 选择北京登录后，正常；再用上海登录，工号不存在；再用北京登录，也报工号不存在
+				 * 原因：地区默认取cookie，如果没有cookie,则默认是北京
+				 * 方案：取统一登录传过来的地区名称和地区id
+				 */
+				staff.login.unifyLogin();
+			}
+		}
+	}
+</script>
+</html>
+
+

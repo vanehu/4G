@@ -240,4 +240,17 @@ public class RSAUtil {
         }
         return null;
     }
+    /**
+	 * rsa加密
+	 * 
+	 * @param content
+	 * @param gKey
+	 * @return
+	 */
+	public static String getRsaString(String content, String gKey) {
+		PublicKey publicKey = restorePublicKey(hex2byte(gKey));
+		byte[] encodedText = RSAEncode(publicKey, content.getBytes());
+		return Base64.encodeBase64String(encodedText);
+
+	}
 }

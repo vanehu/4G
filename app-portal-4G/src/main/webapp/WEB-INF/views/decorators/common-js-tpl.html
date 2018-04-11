@@ -1,0 +1,49 @@
+<script type="text/javascript">
+var contextPath = "${request.getContextPath()}";
+var globalAppDesc = "${APPDESC}";
+function getToken(){
+	var token="${Request['_al_ec_token']}";
+	return token;
+}
+</script>
+
+<#if COMPRESS_JS_LEVEL?? && (COMPRESS_JS_LEVEL == "BASE" || COMPRESS_JS_LEVEL == "BUSI")>
+<script src="${contextPath}/merge/js/base-${BASE_VERSION}.min.js?${jsversion}" type="text/javascript"></script>
+<#else>
+<script src="${contextPath}/js/third-js/jquery/jquery-1.7.2.min.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/third-js/json/json2.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/third-js/utils/md5.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/third-js/utils/Base64.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/third-js/utils/UUID.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/third-js/validate/jquery.ketchup.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/third-js/validate/jquery.ketchup.validations_zh.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/third-js/validate/jquery.ketchup.helpers.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/third-js/jquery/zebra-dialog/zebra_dialog.src.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/third-js/jquery/jquery.overlay/jquery.overlay.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/third-js/jquery/jquery.jevent.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/third-js/jquery/jquery.cookies.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/third-js/jquery/jquery.simplemodal/jquery.simplemodal.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/third-js/jquery/jquery.lhgcalendar/lhgcalendar.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/third-js/utils/DateUtil.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/third-js/utils/validateSimple.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/third-js/jquery/jquery.ztree/jquery.ztree.core-3.4.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/third-js/ligerUI/ligerui.min.js?${jsversion}" type="text/javascript"></script>
+
+<script src="${contextPath}/js/our-js/common.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/busi-js/common/page.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/busi-js/common/arrayPage.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/our-js/ec.agent.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/our-js/ec.dialog.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/our-js/ec.util.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/our-js/serviceAxClient.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/our-js/login.windowpub.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/our-js/ec.form.dialog.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/4g-js/global.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/4g-js/jquery.idTabs.min.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/4g-js/top_plugins.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/4g-js/jquery.scrolltotop.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/4g-js/nav.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/4g-js/easydialog.min.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/4g-js/other.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/busi-js/query/common.js?${jsversion}" type="text/javascript"></script>
+</#if>
