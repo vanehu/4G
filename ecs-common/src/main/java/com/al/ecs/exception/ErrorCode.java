@@ -325,7 +325,7 @@ public enum ErrorCode {
 	QUERY_PROD_INST_STATS("营销标签查询服务","012016","01","022016","02"),
 	QUERY_PROD_OFFER_TIMES("已订购销售品次数下省查询接口","012019","01","022019","02"),
 	SAVE_MKT_CONTACT_RESULT("营销任务（接触）反馈结果记录服务","012018","01","022018","02"),
-	PAY_REFUND_ORDER("支付平台退费接口","012015","01","022015","02");
+	APP_PAY_REFUND_ORDER("支付平台退费接口","012015","01","022015","02");
     String name;  
     String code;
     String oppoCode;

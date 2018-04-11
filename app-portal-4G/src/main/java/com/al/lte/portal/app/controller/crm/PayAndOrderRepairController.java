@@ -377,10 +377,10 @@ public class PayAndOrderRepairController extends BaseController{
 			this.log.error("调用主数据接口失败", be);
 			return super.failed(be);
 		} catch (InterfaceException ie) {
-			return super.failed(ie, param, ErrorCode.PAY_REFUND_ORDER);
+			return super.failed(ie, param, ErrorCode.APP_PAY_REFUND_ORDER);
 		} catch (Exception e) {
 			log.error("支付平台退费方法异常", e);
-			return super.failed(ErrorCode.PAY_REFUND_ORDER, e, param);
+			return super.failed(ErrorCode.APP_PAY_REFUND_ORDER, e, param);
 		}
 
 	}
