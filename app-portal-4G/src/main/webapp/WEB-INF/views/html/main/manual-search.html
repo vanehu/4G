@@ -1,0 +1,93 @@
+<@override name="title">操作手册</@override>
+
+<@override name="header">
+
+<#include "/busi-js-tpl.html"/>
+<script src="${contextPath}/js/busi-js/main/manual-search.js?${jsversion}" type="text/javascript" charset="UTF-8"></script>
+
+</@override>
+
+<@override name="content">
+
+<div class="main_div">
+	<div class="main_warp">
+		<h2 class="h2_title">操作手册<span></span></h2>
+        <div class="order">
+        	<div class="order_content" style="border:none; padding:10px">
+                <div class="order_tab_panel" style="display:block;">
+                
+              		<div class="selectList">
+                   		<dl>
+                   			<dt>功能模块：</dt>
+                  			<dd>
+                   				<select id="moduleSystem" class="width202" style="width:100px">
+                            		<option value="" >--请选择--</option>
+                            		<option value="1" >营业受理</option>
+                            		<option value="2" >系统管理</option>
+                            		<option value="3" >渠道管理</option>
+                            		<option value="4" >营销资源</option>
+                         		</select>
+                     		</dd>
+              				<dt style="width:100px;">发布时间 从：</dt>
+                      		<dd>
+                    			<input type="text" class="numberTextBox" style="width:160px" id="beginDate" readonly="readonly" value="${defaultBeginDate}" />
+                    			<label class="f_red">*</label>
+                			</dd>
+          					<dt style="width:30px;">到：</dt>
+                			<dd>
+                 				<input type="text" class="numberTextBox" style="width:160px" id="endDate" readonly="readonly" value="${defaultEndDate}" />
+                 				<label class="f_red">*</label>
+                   			</dd>
+             			</dl>      
+                  		<dl>
+                    		<dt>需求编号：</dt>
+                     		<dd>
+                      			<input type="text" class="numberTextBox" style="width:160px" id="requestCode" />
+                   			</dd>
+                   			<dt>内部编号：</dt>
+                     		<dd>
+                      			<input type="text" class="numberTextBox" style="width:160px" id="privateCode" />
+                   			</dd>
+                  			<dt>描述关键字：</dt>
+                  			<dd>
+                     			<input type="text" class="numberTextBox" style="width:160px" id="keyWords" />
+                      		</dd>
+                      		<input type="button" value="搜 索" class="numberSearch" id="bt_manualQuery" style="left:18px;top:2px;" />
+                		</dl>
+                	</div>
+                 		
+                  	<div class="phone_warp" id="manualList" >
+           				<table class="numberList">
+              				<thead>
+                				<tr>
+                  					<td width="80">发布人</td>
+                  					<td width="130">手册描述</td>
+                  					<td width="80">发布时间</td>
+                  					<td width="80">手册下载</td>
+               	 				</tr>
+              				</thead>
+              				<tbody>
+              					<!-- 
+ 								<tr>
+                  					<td>大肠今</td>
+                  					<td style="word-break:break-all;">带欠费受理权限申请</td>
+                  					<td>2015-09-23 11:18:20</td>
+                  					<td><a style="text-decoration:underline;" href="http://www.baidu.com">带欠费受理权限申请.txt</a></td>
+               					</tr>
+               					 -->
+              				</tbody>
+            			</table>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</@override>
+<#if Session["_session_portal_type"]?? && Session["_session_portal_type"]=="MVNO" >
+<@extends name="/mvno-template.html"/>
+<#else>
+<@extends name="/content-template.html"/>
+</#if>

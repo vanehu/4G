@@ -1,0 +1,119 @@
+<@override name="title">预写白卡</@override>
+<@override name="header"> 
+<script src="${contextPath}/js/4g-js/order/orderInfo.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/busi-js/order/reserveNumber.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/busi-js/order/phoneNumber.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/4g-js/order/soOrder.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/busi-js/main/main.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/4g-js/card/writeCardNew.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/busi-js/order/areaTree.js?${jsversion}" type="text/javascript"></script>
+</@override>
+<@override name="content">
+<input type="hidden" id="areaCodecard" value="${areaCode}"/>
+<input type="hidden" id="areaIdcard" value="${areaId}"/>
+<input type="hidden" id="channelIdcard" value="${channelId}"/>
+<input type="hidden" id="staffId" value="${staffId}"/>
+<input type="hidden" id="phoneNumFlag" value="new"/>
+<input type="hidden" id="phoneNumNew" value=""/>
+<div class="main_div" id="d_query">
+	<div class="main_warp">
+		<h2 class="h2_title">预写白卡</h2>
+		<div class="order">
+			<div class="order_content" id="phoneNew" style="border: none; padding: 10px">
+				<div class="order">
+					<div class="order_content" style="border: none; padding: 10px">
+						<!--挑靓号-->
+						<div class="order_tab_panel" style="display: block;" id="orderCotent">
+							<div id="order_phonenumber">
+								<div class="selectList">
+									<dl>
+										<dt>选择地区：</dt>
+							            <dd>
+							              <input type="text" class="numberTextBox width198" id="p_areaId_val" onclick="order.writeCard.chooseArea()" value="${p_areaId_val}" placeholder="请选择地区" />
+							            </dd>
+							            <input type="hidden" id="p_areaId" value="${p_areaId}">
+									</dl>
+									<dl>
+										<dt>号码自定义：</dt>
+										<dd id="pnHead"></dd>
+										<dd>
+											<input type="hidden" id="phoneNum"
+												class="numberTextBox width82" maxlength="4" value="任意四位"
+												onblur="javascript:if($(this).val()==''){$(this).val('任意四位');}"
+												onfocus="javascript:if($(this).val()=='任意四位'){$(this).val('')}" />
+											<input type="text" id = "pnFour" class="numberTextBox width82 input-box" maxlength="1" placeholder="四" title = "中间四位"/>
+					                       	<input type="text" id = "pnFive" class="numberTextBox width82 input-box" maxlength="1" placeholder="五" title = "中间四位"/>
+					                       	<input type="text" id = "pnSix" class="numberTextBox width82 input-box" maxlength="1" placeholder="六" title = "中间四位"/>
+					                       	<input type="text" id = "pnSeven" class="numberTextBox width82 input-box" maxlength="1" placeholder="七" title = "中间四位"/>
+											<input type="text" id="pnEnd" class="numberTextBox width82"
+												maxlength="4" value="最后四位"
+												onblur="javascript:if($(this).val()==''){$(this).val('最后四位');}"
+												onfocus="javascript:if($(this).val()=='最后四位'){$(this).val('')}" />
+											<input type="text" id="pnNotExitNum" class="numberTextBox width82"
+												maxlength="1" value="后四位不含"
+												onblur="javascript:if($(this).val()==''){$(this).val('后四位不含');}"
+												onfocus="javascript:if($(this).val()=='后四位不含'){$(this).val('')}" />
+											<input type="button" value="搜 索" class="numberSearch"
+												id="btnNumSearch" /> <input type="button" value="换一组"
+												class="numberSearch" id="btnSwitchNbr"
+												style="margin-left: 2px;" />
+										</dd>
+									</dl>
+									<dl>
+										<dt>靓号类型：</dt>
+										<dd id="pnCharacterId_basic" style="width: 700px;"></dd>
+										<dd id="pnCharacterId_all" style="display: none; width: 700px;"></dd>
+										<span id="pnCharacterId_more" style="display: none;"> <a href="javascript:void(0);" val="更多" class="btn_more"
+											style="margin-right: -4px;">展开</a>
+										</span>
+										<div class="clear"></div>
+									</dl>
+									<dl class="noBorder">
+										<dt>预存话费：</dt>
+										<dd id="preStore"></dd>
+									</dl>
+									<dl class="noBorder">
+					                    <dt>号码排序：</dt>
+					                    <dd id="pnOrder">
+					                    	<a href="javascript:void(0);" class="selected" onclick="order.phoneNumber.numOrder('#pnOrder a', this, 1, 'value')">顺序升序</a>
+					                     	<a href="javascript:void(0);" onclick="order.phoneNumber.numOrder('#pnOrder a', this, -1, 'value')">顺序降序</a>
+					                     	<a href="javascript:void(0);" onclick="order.phoneNumber.numOrder('#pnOrder a', this, 1, 'level')">等级升序</a>
+					                     	<a href="javascript:void(0);" onclick="order.phoneNumber.numOrder('#pnOrder a', this, -1, 'level')">等级降序</a>
+					                     </dd>
+					                </dl>
+								</div>
+								<!--号码列表-->
+								<div class="phone_warp"><#include
+									"/loading-template.html"/></div>
+								<!--号码列表 end-->
+							</div>
+						</div>
+						<!--挑靓号 end-->
+					</div>
+				</div>
+				<!--订单准备 end-->
+				<div align="right" style="margin: 20px auto; padding: 0 20px;">
+					<a class="btna_o"
+						href="javascript:order.writeCard.endSelectNumW()"><span>下一步</span></a>
+				</div>
+			</div>
+			<div id="uimNew" style="display: none"  >
+			<#include "/order/order-uimNew.html" />
+			<div align="right" style="margin: 20px auto; padding: 0 20px;">
+					<a class="btna_o"
+						href="javascript:order.writeCard.backSelectNumW()"><span>上一步</span></a>
+			</div>
+			</div>
+		</div>
+	</div>
+</div>
+ <script>
+ order.reserveNumber.reserveNumInit();
+ </script>
+<!--弹出款的内容-->
+</@override>
+<#if Session["_session_portal_type"]?? && Session["_session_portal_type"]=="MVNO" >
+<@extends name="/mvno-template.html"/>
+<#else>
+<@extends name="/content-template.html"/>
+</#if>

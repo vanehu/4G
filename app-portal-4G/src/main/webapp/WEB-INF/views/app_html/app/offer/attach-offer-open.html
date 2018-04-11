@@ -1,0 +1,109 @@
+<div style="display:block">
+	<div class="orderleft" style="height:503px" id="attachSearch_div_${param.prodId}">
+		<div class="listtitle">选择需要订购的可选包/功能
+		</div>
+	</div>
+	<div class="orderright" style="height:503px">
+		 <div class="ui-grid-a">
+           	<div class="listtitle ui-block-a">已选可选包/功能</div>
+ 			<div class="ui-block-b offerchoose">
+				<select  data-native-menu="false" data-icon="select" onchange="AttachOffer.changeOfferS(this,'${param.prodId}');">
+					<option value="0">已选可选包</option>
+					<option value="1">已选功能</option>
+				</select>
+			</div>
+		</div>
+		<!-- 已选可选包 -->
+		<ul class="optionallist" data-role="listview" data-inset="false" id="open_ul_${param.prodId}" style="height:413px">
+		<#if openMap.result??>
+			<#assign openSpecList=openMap.result.offerSpec />
+			<#if openSpecList?? &&(openSpecList?size>0)>	
+				<#list openSpecList as item>
+	   			<li id="li_${param.prodId}_${item.offerSpecId}" offerSpecId="${item.offerSpecId}" isdel='N'>
+	       			<div class="block">
+	      				 ${item.offerSpecName}<span id="li_span1_${param.prodId}_${item.offerSpecId}"></span>
+	      				 <span id="li_span_${param.prodId}_${item.offerSpecId}">
+	      				 <#if item.ifShowTime=="Y" >
+	      				 <a href="javascript:void(0);" class="abtn01" id="time_${param.prodId}_${item.offerSpecId}" isset="N" onclick="AttachOffer.showTime(${param.prodId},${item.offerSpecId},'${item.offerSpecName}');">时</a>
+	      				 </#if>
+	      				 <#if item.ifParams && item.offerSpecParams?? >
+	      				 <a href="javascript:void(0);" class="abtn03" id="can_${param.prodId}_${item.offerSpecId}" isset="N" onclick="AttachOffer.showParam(${param.prodId},${item.offerSpecId},0);" >参</a>
+	      				 </#if>
+	      				 <#if item.ifDault==0 >
+	      				 <a href="javascript:void(0);" class="abtn03 icon-nodel">&nbsp;</a>
+	      				 <#else>
+	      				 <a href="javascript:void(0);" class="abtn02 icon-del" onclick="AttachOffer.delOfferSpec(${param.prodId},${item.offerSpecId})">&nbsp;</a>
+	      				  </#if>
+	      				 </span>
+	       			</div>
+	     		</li>
+     			</#list>
+		    </#if>
+	    </#if>
+   		</ul>
+   		<!-- 已选可选包 -->
+   		<!-- 已选功能产品 -->
+   		<ul class="optionallist" data-role="listview" data-inset="false"  id="open_serv_ul_${param.prodId}" style="height:413px;display:none">
+		<#if openServMap.result.servSpec??>
+			<#assign openServList=openServMap.result.servSpec />
+			<#if openServList?? &&(openServList?size>0)>	
+				<#list openServList as item>
+		   		<li id="${param.prodId}_${item.servSpecId}" offerSpecId="${item.servSpecId}" isdel='N'>
+	       			<div class="block">
+	      				 ${item.servSpecName}<span></span>
+	      				 <span  id="li_span_${param.prodId}_${item.servSpecId}">
+	      				  <#if item.ifParams == 'Y' >
+	      				 <a href="javascript:void(0);" class="abtn01" id="can_${prodId}_${item.servSpecId}" isset="N" onclick="AttachOffer.showServParam(${param.prodId},${item.servSpecId},0);" >参</a>
+	      				 </#if>
+	      				 <#if item.ifDault==0 >
+	      				 <a href="javascript:void(0);" class="abtn03 icon-nodel">&nbsp;</a>
+	      				 <#else>
+	      				 <a href="javascript:void(0);" class="abtn02 icon-del" onclick="AttachOffer.closeServSpec(${param.prodId},${item.servSpecId},'${item.servSpecName}','${item.ifParams}')">&nbsp;</a>
+	      				  </#if>
+	      				 </span>
+	       			</div>
+	     		</li>
+     			</#list>
+		    </#if>
+	    </#if>
+   		</ul>
+	</div>
+</div>
+<script>
+	var openMap=${openMapJson};
+	var prodId= ${prodId};
+	var open = {
+		prodId : prodId,
+		specList : []
+	};
+	if(openMap!=undefined && openMap.result!=undefined){
+		open.specList = openMap.result.offerSpec;
+		AttachOffer.openList.push(open);
+		$.each(openMap.result.offerSpec,function(){
+			if(this.ifParams){
+				var flag = CacheData.setParam(prodId,this);
+				if(flag){
+					$("#can_"+prodId+'_'+this.offerSpecId).removeClass("abtn03").addClass("abtn01");
+				}
+			}
+		});
+	}
+	
+	var openServMap=${openServMapJson};
+	var openServ = {
+		prodId : prodId,
+		servSpecList : []
+	};
+	if(openServMap!=undefined && openServMap.result!=undefined){
+		openServ.servSpecList = openServMap.result.servSpec;
+		AttachOffer.openServList.push(openServ);
+		$.each(openServMap.result.servSpec,function(){
+			if(this.ifParams){
+				var flag = CacheData.setServParam(prodId,this);
+				if(flag){
+					$("#can_"+prodId+'_'+this.servSpecId).removeClass("abtn03").addClass("abtn01");
+				}
+			}
+		});
+	}
+</script>

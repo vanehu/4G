@@ -1,0 +1,66 @@
+<#if aoList?? > 
+<ul class="choice-list-box bg-body border-none">
+	<li>
+		<div class="choice-box">
+			<i class="iconfont pull-left">&#xe6da;</i>
+			<select name="" id="select_agreementType" class="myselect select-option" data-role="none" onchange="order.phone.changePeriod(this,'${agreementType}');">
+					<#list aoList as item>
+					<#if item_index==0>
+						<option value="${item_index}" selected="selected">
+					<#else>
+		              	<option value="${item_index}">
+		            </#if>
+			              <#if agreementType==1>
+			              	${item.period}%机补
+			              <#else>
+			              	${item.period}%话补
+			              </#if>
+		              </option>
+		            </#list>
+			</select>
+		</div>
+	</li>
+	<div id="tab_content">
+	<input id="select_offerSpecId" type="hidden">
+	<#list aoList as item>
+	        <#if item_index==0>
+	    		<div id="tab_content_${item_index}" class="itemMain">
+		    <#else>
+		    	<div id="tab_content_${item_index}" class="itemMain" style="display: none">
+		    </#if>
+	<li class="m-t-10">
+			<div class="choice-box">
+				<i class="iconfont pull-left">&#xe6da;</i>
+					<select name="" id="select_offerSpecId_${item_index}" class="myselect select-option" data-role="none" onchange="order.phone.changeHyContent(this,'${agreementType}');"">
+					<#list item.subList as subItem>
+		    		<#if subItem_index==0>
+		            <option value="${subItem.offerSpecId}" selected="selected" hyName="${subItem.offerSpecName}">${subItem.offerSpecName}</option>
+		            <#else>
+		            <option value="${subItem.offerSpecId}" hyName="${subItem.offerSpecName}">${subItem.offerSpecName}</option>
+		            </#if>
+		            </#list>
+				 </select>
+			</div>
+	</li>
+	<#list item.subList as subItem>
+	         <span offerSpecId="${subItem.offerSpecId}"
+				offerSpecName="${subItem.offerSpecName}"
+				agreementType="${agreementType}"
+				agreementPeriod="${subItem.agreementPeriod}"
+				agreementPrice="${subItem.agreementPrice}"
+				terminalSubsidyPrice="${subItem.terminalSubsidyPrice}"
+				storedCalls="${subItem.storedCalls}"
+				subsidyAmount="${subItem.subsidyAmount}"
+				permonthReturn="${subItem.permonthReturn}"
+				firstmonthReturn="${subItem.firstmonthReturn}"
+				lastmonthReturn="${subItem.lastmonthReturn}" id="subItem_${item_index}_${subItem.offerSpecId}">
+			 </span>
+	</#list>
+	</div>
+	</#list>
+	</div>
+</ul>
+</#if>
+ <div  id="offerSecond">
+  </div>  
+  

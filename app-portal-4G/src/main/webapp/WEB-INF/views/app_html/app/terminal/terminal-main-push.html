@@ -1,0 +1,141 @@
+<script>
+			$(function() {
+				$(".noUiSlidera").noUiSlider({
+					range: [0, 500],
+					start: [0, 500],
+					step: 10,
+					slide: function() {
+						var values = $(this).val();
+						$("#numa01").val(values[0]);
+						$("#numa02").val(values[1]);
+					}
+				});
+				$(".noUiSliderb").noUiSlider({
+					range: [0, 500],
+					start: [0, 500],
+					step: 10,
+					slide: function() {
+						var values = $(this).val();
+						$("#numb01").val(values[0]);
+						$("#numb02").val(values[1]);
+					}
+				});
+				$(".noUiSliderc").noUiSlider({
+					range: [0, 500],
+					start: [0, 500],
+					step: 10,
+					slide: function() {
+						var values = $(this).val();
+						$("#numc01").val(values[0]);
+						$("#numc02").val(values[1]);
+					}
+				});
+				$(".noUiSliderd").noUiSlider({
+					range: [0, 500],
+					start: [0, 500],
+					step: 10,
+					slide: function() {
+						var values = $(this).val();
+						$("#numd01").val(values[0]);
+						$("#numd02").val(values[1]);
+					}
+				});
+				$(".noUiSlidere").noUiSlider({
+					range: [0, 500],
+					start: [0, 500],
+					step: 10,
+					slide: function() {
+						var values = $(this).val();
+						$("#nume01").val(values[0]);
+						$("#nume02").val(values[1]);
+					}
+				});
+			});
+		</script>
+
+<nav class="navbar navbar-default navbar-fixed-top">
+			<div class="container-fluid">
+				<!-- Brand and toggle get grouped for better mobile display -->
+				<div class="navbar-header">
+					<!--<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+						<span class="sr-only">Toggle navigation</span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					--><a href="t.index.html" class="navbar-brand" href="#"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>返回</a>
+					<h4 class="header-title">推荐终端</h4>
+				</div>
+
+				<!-- Collect the nav links, forms, and other content for toggling -->
+				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+				</div>
+				<!-- /.navbar-collapse -->
+			</div>
+			<!-- /.container-fluid -->
+</nav>
+
+
+
+
+
+<#if mktResList?? &&(mktResList?size>0)>
+		<#list mktResList as mkt>
+			<#if mkt_index<4>
+			<#assign intf_pic = false>
+			<#assign p_pic = ''>
+			<#assign brand = ''>
+			<#assign phoneType = ''>
+			<#assign phoneColor = ''>
+			<#if (mkt.attrList)??>
+			 <div class="row phonelist">
+				<#list mkt.attrList as attrList>
+					<#if mktResPicUrl?? && (attrList.attrId)?? && (attrList.attrId) =='60019454'>
+						<#assign p_pic = mktResPicUrl+attrList.attrValue>
+						<#assign intf_pic = true>
+					</#if>
+					<#if (attrList.attrId)?? && (attrList.attrId) =='2100161'>
+						<#assign brand = attrList.attrValue>
+					</#if>
+					<#if (attrList.attrId)?? && (attrList.attrId) =='2100162'>
+						<#assign phoneType = attrList.attrValue>
+					</#if>
+					<#if (attrList.attrId)?? && (attrList.attrId) =='17'>
+						<#assign phoneColor = attrList.attrValue>
+					</#if>
+					<#if (attrList.attrId)?? && (attrList.attrId) =='60010005'>
+						<#assign mktSpecCode = attrList.attrValue>
+					</#if>
+				</#list>
+			</#if>
+			<div class="col-xs-6">
+				<div class="thumbnail" onclick="javascript:mktRes.terminal.selectTerminal(this)" 
+		            	mktResTypeCd="${mkt.mktResTypeCd}" mktResId="${mkt.mktResId}" mktResCd="${mkt.mktResCd}" brand="${brand}" phoneType="${phoneType}" phoneColor="${phoneColor}" mktName="${mkt.mktResName}" mktPrice="${(mkt.salePrice)}" mktPicA="${p_pic}" mktSpecCode="${mktSpecCode}">
+					<img class="media-object" src="${p_pic}" alt="${(mkt.mktResName)?default("--")}">
+					<div class="caption">
+						<h5>${(mkt.mktResName)?default("--")} </h5>
+						<p class="text-warning">￥<#if (mkt.salePrice)?default(0) != 0>${mkt.salePrice / 100}<#else>--</#if>元</p>
+
+					</div>
+				</div>
+			</div>
+			</#if>
+		</#list>
+		 </div>
+<#else>
+	<div class="media">
+		<img style="vertical-align:middle" src="${contextPath}/image/common/query_search.gif" />&nbsp;&nbsp;抱歉，没有找到相关的手机，请尝试其他筛选条件。
+	</div>
+</#if>
+			<!-- 
+			<div class="col-xs-6" onClick="javascript:location.href='t.phoneDetails.html'">
+				<div class="thumbnail">
+					<img class="media-object" src="${contextPath}/image/app-image/phonesmall.png" alt="...">
+					<div class="caption">
+						<h5>手机名称，最多支持两行</h5>
+						<p class="text-warning">￥ 4999</p>
+
+					</div>
+				</div>
+			</div>
+			 -->

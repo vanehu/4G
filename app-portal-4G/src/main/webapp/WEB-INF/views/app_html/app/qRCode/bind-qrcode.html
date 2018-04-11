@@ -1,0 +1,81 @@
+<html>
+<head lang="zh-CN">
+	<meta charset="UTF-8">
+	<meta content="width=device-width,maximum-scale=1.0, user-scalable=0" name="viewport"> 
+	<meta content="yes" name="apple-mobile-web-app-capable"> 
+	<meta content="telephone=no" name="format-detection">
+	<script src="${contextPath}/js/app-js/busi-js/prod/qRCode.js?${jsversion}" type="text/javascript"></script>
+</head>
+<style>
+	button:focus{ outline: none;}
+</style>
+<script>
+			$(function() {
+				OrderInfo.order.step = 1;
+				OrderInfo.actionFlag=1001;
+				common.callScanning('order.service.scaningCallBack','-998');
+			});
+		</script>
+<body style="background: #fff;">
+	<div style="position: relative; padding: 5px 10px;">
+		<div style=" width: 60%; margin: 50% 20%;">
+			<img src="${contextPath}/image/pc.png" alt="" style=" width: 80%; margin-left: 10%;">
+			<p style=" width: 100%; text-align: center; color:#000;">翼销售登录确认</p>
+		</div>
+		<div style="position: fixed; width: 40%; left: 30%; bottom: 40px;">
+		    <input type="hidden" id="qrCode"/>
+			<button style="width: 100%; padding: 5px 10px; border: 1px solid #21b724; color: #21b724; border-radius: 4px; background: none;" onclick="prod.qRCode.bindCode()">登录</button>
+			<button style="width: 100%; padding: 5px 10px; color: #666; border: none; margin-top: 30px; border-radius: 4px; background: none;" onclick="common.callScanning('order.service.scaningCallBack','-998');">取消登录</button>
+		</div>
+	</div>
+</body>
+</html>
+
+<!-- 
+<html lang="zh-cn">
+
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, target-densityDpi=device-dpi" name="viewport" />
+		<title></title>
+		<style type="text/css">
+		/* 头部 */
+.header-title {
+    height: 50px;
+    padding: 15px 65px;
+    font-weight: normal;
+    margin: 0;
+    color: #fff;
+    font-size: 18px;
+    line-height: 20px;
+    text-align: center;
+}
+		</style>
+	</head>
+
+	<body>
+	<!-- 客户绑定二维码登录信息主页面begin
+	  <div>
+		<nav style="background-color:#66DD00;>
+			<div class="container-fluid">
+				<!-- Brand and toggle get grouped for better mobile display 
+				<div class="navbar-header">
+					<h4 class="header-title">二维码绑定</h4>
+				</div>
+			</div>
+		</nav>
+		<div class="form-group">
+		<label for="exampleInputPassword1">二维码ID</label>
+		<div class="input-group">
+		<input type="text" class="form-control" style="margin-left: 5px;" id="qrCode" disabled="disabled" >
+					<span class="input-group-btn">
+                      <button type="button" class="btn btn-primary btn-lg" onClick="common.callScanning('order.service.scaningCallBack','-998')" > <span class="glyphicon glyphicon-ok" aria-hidden="true"></span> 扫描 </button>
+                      <button class="btn btn-primary btn-lg" type="button" id="bindBtn" onclick="prod.changeUim.bindCode()"> 绑定 </button>
+                    </span>
+		</div>		  
+	    </div>
+	</body>
+
+</html>
+ -->

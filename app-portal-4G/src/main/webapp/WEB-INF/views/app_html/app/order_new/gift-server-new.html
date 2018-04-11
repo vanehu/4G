@@ -1,0 +1,150 @@
+<#assign prodId="${param.prodId}"/>
+ <ul class="choice-list-box m-b-10">
+	<li name="card-list" id="mainOfferLi_${prodId}">
+		<i class="iconfont pull-left">&#xe667;</i>
+		<span class="list-title">
+               <span class="title-lg" id="mainOfferName_${prodId}"></span>
+		<span class="subtitle font-secondary">主套餐</span>
+		</span>
+	</li>
+</ul>
+<ul class="choice-list-box m-b-10" name="card-list">
+	<li name="card">
+	<i class="iconfont pull-left">&#xe6b9;</i> 
+	<span class="list-title font-secondary" id="cardNameSpan_${prodId}"></span> 
+	<span class="pull-right font-orange p-r-40 list-text" id="phoneNumSpan_${prodId}"></span> 
+	<i class="iconfont absolute-right font-secondary">&#xe66e;</i>
+	</li>
+</ul>
+<div class="choice-box">
+<!-- 促销分类下拉框 -->
+	<i class="iconfont pull-left p-l-10">&#xe661;</i> 
+	<select name="" placeholder="" id="specType_${prodId}" class="myselect select-option" data-role="none" onchange="AttachOffer.changeShowAttachOffer(${prodId},${param.prodSpecId})" >
+	    <option value="10000">功能产品</option>	
+	</select> 
+	<i class="iconfont pull-right p-r-10">&#xe66e;</i>
+</div>
+<div class="list-box four-list m-t-10" id="" style="overflow: scroll;overflow-x:hidden;border:0px;">
+<!-- 模糊搜索 -->
+		<ul class="choice-list-box m-0" id="">
+			<li id="" >
+				<div class="choice-box border-top-none">
+					<i class="iconfont pull-left">&#xe66c;</i>
+					<input placeholder="请输入查询条件" class="choice-input" id="search_text_${prodId}">
+					<i class="iconfont pull-right font-orange absolute-right m-r-3 p-r-10" onclick="AttachOffer.searchAttachOfferSpec(${param.prodId},${param.offerSpecId},${param.prodSpecId})">&#xe647;</i>
+				</div> 
+				<i class="iconfont absolute-right"></i>
+			</li>
+	</ul>
+</div>
+	<div class="list-box four-list m-t-10" style="overflow: scroll;overflow-x:hidden;border:0px;">
+		<ul class="choice-list-box m-0" id="canChooseUl_${prodId}">
+		</ul>
+		<!-- 可选择促销 -->
+</div>
+		<!-- 已选择促销 -->
+		<div class="list-box two-list m-t-10" style="overflow: scroll;overflow-x:hidden;border:0px;">
+			<ul class="choice-list-box m-0" id="haveChooseUl">
+				<li><i class="iconfont pull-left">&#xe66c;</i>
+				 <span class="list-title font-secondary">已选择促销</span>
+				<i class="iconfont absolute-right open-list">&#xe66e;</i></li>
+			</ul>
+		</div>
+
+		<div style="overflow: scroll;overflow-x:hidden;border:0px;" id="haveChooseServDiv_${param.prodId}">
+			<ul class="choice-list-box" id="open_serv_ul_${param.prodId}" style="overflow: scroll;border:0px;">
+				<!-- 已选择功能产品 -->
+				<#if openServMap.result.servSpec??> <#assign
+				openServList=openServMap.result.servSpec /> <#if openServList??
+				&&(openServList?size>0)> <#list openServList as item> <#if
+				item.ifDault==0 >
+				<li id="li_${prodId}_${item.servSpecId}">
+				<span class="list-title" id="span_${prodId}_${item.servSpecId}">${item.servSpecName}</span>
+				<#if item.ifParams =="Y" && item.servSpecId?? &&item.servSpecId!="">
+				<button class="list-can absolute-right" id="can_${prodId}_${item.servSpecId}" onclick="AttachOffer.showServParam(${prodId},${item.servSpecId});">参</button>
+				</#if>
+				<div class="list-checkbox absolute-right">
+							<div class="checkbox-box">
+								<input type="checkbox" value="1" name=""
+									id="input_${prodId}_${item.servSpecId}"
+									servSpecId="${item.servSpecId}" checked="checked" onclick="javascript:{common.setBtnTimer(this);AttachOffer.closeServSpec(${prodId},${item.servSpecId},'${item.servSpecName}','${item.ifParams}');}"/> <label
+									for="input_${prodId}_${item.servSpecId}"></label>
+							</div>
+					</div> 
+				<#else>
+				<li id="li_${prodId}_${item.servSpecId}">
+				<span class="list-title" id="span_${prodId}_${item.servSpecId}">${item.servSpecName}</span>
+				<#if item.ifParams =="Y" && item.servSpecId?? &&item.servSpecId!="">
+				<button class="list-can absolute-right" id="can_${prodId}_${item.servSpecId}" onclick="AttachOffer.showServParam(${prodId},${item.servSpecId});">参</button>
+				</#if>
+				<#if item.servSpecId?? &&item.servSpecId==235010004>
+				<input id="yzfFlag_${prodId}_${item.servSpecId}" value="1" style="display:none;">
+				</#if>
+					<div class="list-checkbox absolute-right">
+							<div class="checkbox-box">
+								<input type="checkbox" value="1" name=""
+									id="input_${prodId}_${item.servSpecId}"
+									servSpecId="${item.servSpecId}" checked="checked" onclick="javascript:{common.setBtnTimer(this);AttachOffer.closeServSpec(${prodId},${item.servSpecId},'${item.servSpecName}','${item.ifParams}');}"/> 
+									<label for="input_${prodId}_${item.servSpecId}"></label>
+							</div>
+					</div> 
+				</#if> 
+				</#list>
+				</#if> 
+				</#if>
+			</ul>
+		</div>
+		<script>
+
+$(function() {
+  order.broadband.init_select();//刷新select组件，使样式生效
+  if(OrderInfo.actionFlag == 112 && order.amalgamation.cot == "1000"){
+//		var newSpec = AttachOffer.setSpec("-1",order.amalgamation.rh_attachOfferId);
+//		CacheData.setServForOfferSpec("-1",newSpec);
+//		AttachOffer.checkOfferExcludeDepend("-1",newSpec);
+	}
+  
+//初始化Slider 实例
+  new Slider({
+  	dom: document.getElementById('tab-change-list'),
+  	list: document.getElementsByName('tab-li'),
+  	run: document.getElementsByName('card-list'),
+  	runList: document.getElementsByName('card'),
+  	tab_flag: "cx_tab_flag"
+  });
+  //主副卡滚动时 小绿点也滚动
+  if(OrderInfo.actionFlag==6){//加装副卡圆点数减1
+	  for(var i=1;i<order.phoneNumber.secondaryCarNum;i++){
+		  if($("#cx_tab_flag_"+i).length==0){
+			  $("#cx_tab_flag").append('<a id="cx_tab_flag_'+i+'" href="#"  class="cx_tab_flag"></a>');
+		  }
+	  }
+  }else{
+	  for(var i=1;i<order.phoneNumber.secondaryCarNum+1;i++){
+		  if($("#cx_tab_flag_"+i).length==0){
+			  $("#cx_tab_flag").append('<a id="cx_tab_flag_'+i+'" href="#"  class="cx_tab_flag"></a>');
+		  }
+	  }
+  }
+  
+});
+
+	var prodId= ${prodId};	
+	var openServMap=${openServMapJson};
+	var openServ = {
+		prodId : prodId,
+		servSpecList : []
+	};
+	if(openServMap!=undefined && openServMap.result!=undefined){
+		openServ.servSpecList = openServMap.result.servSpec;
+		AttachOffer.openServList.push(openServ);
+		//$.each(openServMap.result.servSpec,function(){
+		//	if(this.ifParams){
+		//		var flag = CacheData.setServParam(prodId,this);
+		//		if(flag){
+		//			$("#can_"+prodId+'_'+this.servSpecId).removeClass("canshu").addClass("canshu2");
+		//		}
+		//	}
+		//});
+	}
+</script>

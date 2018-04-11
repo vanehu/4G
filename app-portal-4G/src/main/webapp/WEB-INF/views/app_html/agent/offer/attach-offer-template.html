@@ -1,0 +1,28 @@
+<#if main.offerMembers?? &&(main.offerMembers?size>0)>	
+<#assign i = 0 />		
+<#list main.offerMembers as item>		
+		<#if item.objType==2>
+		<#assign prodId = item.objInstId/>
+		<#assign i = i+1 />
+		<#if i==1>
+	<div class="item active" id="attach_tab_${prodId}">
+		<!-- <div class="panel-heading" style="color: #ff8202;">${item.roleName}:${item.accessNumber}</div> -->
+		<div id="item_order_${prodId}">
+			<#include "/agent/order/order-uim.html" />
+			<div id="attach_${prodId}">
+			</div>
+		</div>
+	</div>
+	<#else>
+	<div class="item" id="attach_tab_${prodId}">
+		<!-- <div class="panel-heading" style="color: #ff8202;">${item.roleName}:${item.accessNumber}</div> -->
+		<div id="item_order_${prodId}">
+			<#include "/agent/order/order-uim.html" />
+			<div id="attach_${prodId}">
+			</div>
+		</div>
+	</div>
+	</#if>
+	</#if>
+	</#list>
+</#if>	

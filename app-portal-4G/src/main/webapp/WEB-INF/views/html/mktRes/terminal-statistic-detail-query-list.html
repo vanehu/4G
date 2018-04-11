@@ -1,0 +1,99 @@
+<#if (pageModel.list)?? &&((pageModel.list)?size>0)>
+<style>
+	.reportform thead tr:nth-child(3) td {
+		background: #71ab5a;
+		color: #fff;
+	}
+	.reportform td {
+		border: 1px solid #d3d8d0;
+	}		
+</style>
+<input type="hidden" id="terminalStatisticDetailTotalSize" value="${totalResultNum}">
+<div class="phone_warp">
+	<table class="numberList reportform">
+		<thead>
+			<#if qryType == "0"> <!-- 精品渠道终端进销存明细报表 -->
+				<tr>
+					<td width="8%">品牌</td>
+					<td width="13%">机型</td>
+					<td width="8%">颜色</td>
+					<td width="14%">串码</td>
+					<td width="9%">操作</td>
+					<td width="13%">操作时间</td>
+					<td width="10%">操作工号</td>
+					<td width="8%">操作姓名</td>
+					<td width="17%">终端仓库</td>
+				</tr>
+			<#else> <!-- 精品渠道终端进销存(库存量)明细报表 -->
+				<tr>
+					<td width="9%">品牌</td>
+					<td width="13%">机型</td>
+					<td width="9%">颜色</td>
+					<td width="18%">串码</td>
+					<td width="18%">入库时间</td>
+					<td width="7%">是否注册激活</td>
+					<td width="19%">终端仓库</td>
+					<td width="7%">库存超期</td>
+				</tr>
+			</#if>
+		</thead>
+		<tbody>
+			<#list pageModel.list as childList>
+			   	<#if qryType == "0"> <!-- 精品渠道终端进销存明细报表 -->
+					<tr>
+					    <td>${childList.brand}</td>		<!-- 品牌 -->
+						<td>${childList.type}</td>		<!-- 机型 -->
+						<td>${childList.color}</td>		<!-- 颜色 -->
+						<td>${childList.instCode}</td>	<!-- 串码 -->
+						<td>							<!-- 操作 -->
+							<#if childList.dealType == "0">领用
+				     	 	<#elseif childList.dealType == "1">回退
+				     	 	<#elseif childList.dealType == "2">裸机销售
+				     	 	<#elseif childList.dealType == "3">合约销售
+				     	 	<#else>未知状态
+				     	 	</#if>
+						</td>
+						<td>${childList.dealTime}</td>	<!-- 操作时间 -->
+						<td>${childList.staffCode}</td>	<!-- 操作工号 -->
+						<td>${childList.staffName}</td>	<!-- 操作姓名 -->
+						<td>${childList.storeName}</td>	<!-- 终端仓库 -->
+				   	</tr>
+				<#else> <!-- 精品渠道终端进销存(库存量)明细报表 -->
+					<tr>
+					    <td>${childList.brand}</td>			<!-- 品牌 -->
+						<td>${childList.type}</td>			<!-- 机型 -->
+						<td>${childList.color}</td>			<!-- 颜色 -->
+						<td>${childList.instCode}</td>		<!-- 串码 -->
+						<td>${childList.dealTime}</td>		<!-- 入库时间 -->
+						<td>								<!-- 是否注册激活 -->
+							<#if childList.isSelfRegister == "0">否
+				     	 	<#elseif childList.isSelfRegister == "1">是
+				     	 	<#else>未知状态
+				     	 	</#if>
+						</td>
+						<td>${childList.storeName}</td>	<!-- 终端仓库 -->
+						<td>							<!-- 库存超期 -->
+							<#if childList.overFlag == "0">是
+				     	 	<#elseif childList.overFlag == "1">否
+				     	 	<#else>未知状态
+				     	 	</#if>
+						</td>	
+				   	</tr>
+				</#if>
+		   	</#list>
+		</tbody>
+	</table>
+	
+	<!--页码 -->
+	<@portal.modelPagination pageModel 5 "mktRes.terminal.terminalStatisticDetailQuery"/>
+	<script src="${contextPath}/js/our-js/ec.pagination.js?${jsversion}" type="text/javascript"></script>
+	<!--页码 end-->
+
+</div>
+<#else>
+	<div class="no_search"> 
+		<div class="h1">
+			<img style="vertical-align:middle" src="${contextPath}/image/common/query_search.gif" />&nbsp;&nbsp;抱歉，没有找到相关的记录，请尝试其他筛选条件。
+		</div>
+	</div>
+</#if>

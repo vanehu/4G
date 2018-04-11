@@ -1,0 +1,315 @@
+<#if flag==0>
+<h5 class="s_title">基本信息</h5>
+  <ul class="fillin prod">
+    <li>
+      <font>产品名称：</font><span>${basic.prodName}</span>
+    </li>
+    <li>
+      <font>接入号码：</font><span>${basic.accessNumber}</span>
+    </li>
+    <li>
+      <font>地区：</font><span>${basic.area}</span>
+    </li>
+    <li>
+      <font>产品状态：</font><span>${basic.prodStatus}</span>
+    </li>
+    <li>
+      <font>付费类型：</font><span>${basic.feeType}</span>
+    </li>
+    <li>
+      <font>开通时间：</font><span>${basic.beginDate}</span>
+    </li>
+    <li style="width:99%;">
+      <font>失效时间 ： </font><span>${basic.endDate}</span>
+    </li>
+  </ul>
+<div class="height18"></div>
+<#if offerMembers??>
+<h5 class="s_title">销售品成员信息</h5>
+  <div class="infoBox">
+  <table width="100%" border="0" cellspacing="0" cellpadding="0" class="orderdetail_fs">
+    <thead>
+      <tr>
+        <td>主套餐名称</td>
+        <td>成员角色</td>
+        <td>接入号</td>
+        <td>操作</td>
+      </tr>
+    </thead>
+    <tbody>
+      <#list offerMembers as offerMember>
+      <#if offerMember.objType=="2">
+   	  <tr>
+   	    <td>${offerMember.offerName}</td>
+        <td>${offerMember.roleName}</td>
+   		<td>${offerMember.accessNumber}</td>
+   		<td><a class="purchase" type="main" href="javascript:void(0)" onclick="product.query.queryProdDetail(${offerMember.memberProdId!'null'},${offerMember.accessNumber!'null'},${offerMember.areaId!'null'})">详情</a></td>
+   	  </tr>
+   	  </#if>
+      </#list>
+    </tbody>
+  </table>
+</div>
+<div class="height18"></div>
+</#if>
+<#if queryMembersFail??>
+<h5 class="s_title">销售品成员信息</h5>
+<div class="infoBox">
+  <table width="100%" border="0" cellspacing="0" cellpadding="0" class="orderdetail_fs">
+    <thead>
+      <tr>
+        <td>查询失败</td>
+      </tr>
+    </thead>
+    <tbody>
+   	  <tr>
+   	    <td style="word-break:break-all;"><a class="cartLink_fail" style="color:red;" onclick="cart.main.slideFailInfo(this)">展开错误信息</a><p style="display:none;">${queryMembersFail}</p></td>
+   	  </tr>
+    </tbody>
+  </table>
+</div>
+<div class="height18"></div>
+</#if>
+<h5 class="s_title">客户信息</h5>
+  <ul class="fillin prod">
+    <li>
+      <font>客户名称：</font><span>${prodParties.partyName}</span>
+    </li>
+    <li>
+      <font>客户类型：</font><span>${prodParties.partyType}</span>
+    </li>
+    <li>
+      <font>证件类型：</font><span>${prodParties.identityType}</span>
+    </li>
+    <li>
+      <font>证件号码：</font><span>${prodParties.identityNum}</span>
+    </li>
+    <li>
+      <font>所在地：</font><span>${prodParties.address}</span>
+    </li>
+    <li>
+      <font>通信地址：</font><span>${prodParties.mailAddress}</span>
+    </li>
+  </ul>
+<div class="height18"></div>
+<h5 class="s_title">产品属性</h5>
+<div class="infoBox">
+  <table width="100%" border="0" cellspacing="0" cellpadding="0" class="orderdetail_fs">
+    <thead>
+      <tr>
+        <td>属性名称</td>
+        <td>属性值</td>
+        <td>修改时间</td>
+      </tr>
+    </thead>
+    <tbody>
+      <#list prodItems as prodItem>
+   	  <tr>
+   	    <td>${prodItem.itemName}</td>
+        <td>${prodItem.itemValue}</td>
+   		<td>${prodItem.updateTime}</td>
+   	  </tr>
+      </#list>
+    </tbody>
+  </table>
+</div>
+<div class="height18"></div>
+<h5 class="s_title">销售品信息</h5>
+<div class="infoBox">
+  <h4>主套餐</h4>
+  <div class="fs_tab">
+    <ul>
+      <#list dtos as dto>
+	  <#if dto.dtoType==10 || dto.dtoType==11>
+	  <li style="cursor:auto">
+	  	<span style="padding:0px;">【${dto.dtoName}】&nbsp;${dto.dtoStatus}</span>
+	  	<span style="padding:0px;">${dto.mainOfferDescription}</span>
+	  	<span style="padding:0px;">生效日期：${dto.startDate}</span>
+	  	<span style="padding:0px;">失效日期：${dto.endDate}</span>
+	  </li>
+      </#if>
+	  </#list>
+    </ul>
+    <div class="clear"></div>
+  </div>
+  <h4>已订购可选包</h4>
+  <div class="fs_tab">
+    <ul>
+      <#list dtos as dto>
+      <#if dto.dtoType==12 || dto.dtoType==13 || dto.dtoType==14>
+	  <li style="cursor:auto">
+	  	<span style="padding:0px;">【${dto.dtoName}】&nbsp;${dto.dtoStatus}</span>
+	  	<span style="padding:0px;">生效日期：${dto.startDate}</span>
+	  	<span style="padding:0px;">失效日期：${dto.endDate}</span>
+	  </li>
+	  </#if>
+	  </#list>
+    </ul>
+    <div class="clear"></div>
+  </div>
+</div>
+<div class="height18"></div>
+<h5 class="s_title">服务信息</h5>
+<div class="infoBox">
+  <table width="100%" border="0" cellspacing="0" cellpadding="0" class="orderdetail_fs">
+    <thead>
+      <tr>
+        <td>服务名称</td>
+        <td>服务参数</td>
+        <td>状态</td>
+        <td>生效时间</td>
+        <td>失效时间</td>
+      </tr>
+    </thead>
+    <tbody>
+      <#list servs as serv>
+      <tr>
+        <td>${serv.servName}</td>
+        <td>
+          <#assign servItems = serv.servItems/>
+          <ul>
+            <#list servItems as servItem>
+            <li>${servItem.itemName} : ${servItem.itemValue}</li>
+            </#list>
+          </ul>
+        </td>
+        <td>${serv.servStatus}</td>
+        <td>${serv.beginDate}</td>
+        <td>${serv.endDate}</td>
+      </tr>
+      </#list>
+    </tbody>
+  </table>
+</div>
+<div class="height18"></div>
+<h5 class="s_title">物品信息</h5>
+<div class="infoBox">
+  <table width="100%" border="0" cellspacing="0" cellpadding="0" class="orderdetail_fs">
+    <thead>
+      <tr>
+        <td>出入库流水号</td>
+        <td>物品名称</td>
+        <td>实例化编码</td>
+        <td>物品数量</td>
+        <td>备注</td>
+      </tr>
+    </thead>
+    <tbody>
+      <#list coupons as coupon>
+      <tr>
+   		<td>${coupon.flowNum}</td>
+   	    <td>${coupon.couponName}</td>
+   		<td>${coupon.instNum}</td>
+   		<td>${coupon.num}</td>
+   		<td>${coupon.mktResInfo}</td>
+      </tr>
+   	  </#list>
+    </tbody>
+  </table>
+</div>
+<div class="height18"></div>
+<h5 class="s_title">帐户信息</h5>
+<#assign num = prodAccounts?size/>
+<div class="height18"></div>
+<#if (num>0)>
+<div class="cardtab">	
+  <ul id="acct_tab" class="pdcard">      
+    <#list 1..num as n>
+    <li <#if n==1>class="setcon"</#if> id="acct_tab_${n}" onclick="product.query.changeAcct(${n})">帐户${n}</li>
+    </#list>
+    <div class="clear"></div>
+  </ul>
+  <div class="clear"></div>
+</div>
+<div class="cardtabcon" id="acct_div">
+<#list prodAccounts as prodAcct>
+  <div <#if prodAcct_index==0>style="display:block" class="show"<#else>style="display:none"</#if> id="acct_div_${prodAcct_index+1}">
+  	<ul class="fillin prod">
+      <li>
+        <font>帐户名称：</font><span>${prodAcct.acctName}</span>
+      </li>
+      <li>
+        <font>帐户合同号：</font><span>${prodAcct.acctCd}</span>
+      </li>
+      <li>
+        <font> 帐户属主：</font><span>${prodAcct.owner}</span>
+      </li>
+      <li>
+        <font>支付号码：</font><span>${prodAcct.chargeNum}</span>
+      </li>
+      <li>
+        <font>支付类型：</font><span>${prodAcct.paymentMethod}</span>
+      </li>
+<!--       <li>
+        <font>支付百分比：</font><span>${prodAcct.percent}</span>
+      </li>
+      <li>
+        <font>优先级：</font><span>${prodAcct.priority}</span>
+      </li> -->
+      <li>
+        <font>银行：</font><span>${prodAcct.bank}</span>
+      </li>
+      <li>
+        <font>开户人：</font><span>${prodAcct.accountBuilder}</span>
+      </li>
+      <li>
+        <font>银行账号：</font><span>${prodAcct.bankAcct}</span>
+      </li>
+ <!--      <li>
+        <font>最高限额：</font><span>${prodAcct.limit}</span>
+      </li> -->
+      <li>
+        <font>联系人：</font><span>${prodAcct.contactPerson}</span>
+      </li>
+      <li style="width:99%;">
+        <font>联系电话：</font><span>${prodAcct.contactNum}</span>
+      </li>
+    </ul>   
+    <div class="height18"></div>
+  </div>
+</#list>
+</div>
+</#if>
+<div class="height18"></div>
+<h5 class="s_title">组合产品关联</h5>
+<div class="infoBox">
+  <table width="100%" border="0" cellspacing="0" cellpadding="0" class="orderdetail_fs">
+    <thead>
+      <tr>
+        <td>组合产品</td>
+        <td>成员角色</td>
+        <td>成员产品</td>
+        <td>组合属性</td>
+      </tr>
+    </thead>
+    <tbody>
+      <#list prodComps as prodComp>
+      <tr>
+        <td>${prodComp.compProdName}[${prodComp.compProdAccNum}]</td>
+        <td>${prodComp.memberRole}</td>
+        <td>${prodComp.memberProdName}[${prodComp.memberProdAccNum}]</td>
+        <td>
+          <#assign compProdItems = prodComp.compProdItems/>
+          <ul>
+            <#list compProdItems as compProdItem>
+            <li>${compProdItem.itemName} : ${compProdItem.itemValue}</li>
+            </#list>
+          </ul>
+        </td>
+      </tr>
+      </#list>
+    </tbody>
+  </table>
+</div>
+<div class="height18"></div>
+<div class="height18"></div>
+<div align="right" style="margin: 20px auto; padding: 0 20px;">
+  <a class="btna_o" href="javascript:product.query.back()">
+    <span>返 回</span>
+  </a>
+</div>
+<#elseif flag==1>
+<#if failInfo??><i><img width="25" height="25" style="margin:5px;" src="${contextPath}/image/icon/tip.png"></i><p style="position:relative;left:40px;bottom:30px;margin-bottom:-20px;width:97%;word-break:break-all;color:red;">查询失败：${failInfo}</p><#else>fail</#if>
+<#else>
+error
+</#if>

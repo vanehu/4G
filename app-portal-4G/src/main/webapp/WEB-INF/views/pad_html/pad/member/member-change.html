@@ -1,0 +1,336 @@
+<script src="${contextPath}/js/pad-js/our-js/layout.js?${jsversion}"></script>
+<script type="text/javascript">
+	//$.get("top.html",function(data){
+	//$("#top").html(data);
+	//});
+$(document).ready(function(){
+	$("#logobar").click(function(){
+    $("#navbar").slideToggle(400);
+  });
+	
+});
+</script>
+<script type="text/javascript">
+$(document).ready(function () {
+	$(".many li").bind("click", function () {
+		var index = $(this).index();
+		var divs = $("#tabs-body .ordercona");
+		$(this).parent().children("li").attr("class", "tab-nav");//将所有选项置为未选中
+		$(this).attr("class", "tab-nav-action"); //设置当前选中项为选中样式
+		divs.hide();//隐藏所有选中项内容
+		divs.eq(index).show(); //显示选中项对应内容
+		var type = $(this).attr("type");
+		if(type == 1){//加装
+			$("#accountDiv").show();
+			$("#orderAttrDiv").show();				
+		}else if(type == 2){//副卡变更
+			$("#accountDiv").hide();
+			$("#orderAttrDiv").hide();
+		}
+	});
+	
+	var actionFlag = '${main.actionFlag}';	
+	if(actionFlag == 6){
+		$("#accountDiv").show();
+		$("#orderAttrDiv").show();
+	}else if(actionFlag == 21){
+		$("#accountDiv").hide();
+		$("#orderAttrDiv").hide();
+	}
+});
+var x_m_d =null;
+var x_m_u = null;
+var m_d=false;
+document.getElementById("tabs").addEventListener('touchstart',m_down, false);
+document.getElementById("tabs").addEventListener('touchmove',m_up, false);
+function m_down(e){
+     x_m_d = e.touches[0].pageX;
+                
+     m_d=true;
+}
+function m_up(e){
+    x_m_u = e.touches[0].pageX;
+    if(m_d){
+        if(x_m_u - x_m_d > 50)
+                  right();//调用右划方法 
+       if(x_m_u - x_m_d < -50)
+                 left();//调用左划方法
+    }
+}
+</script>
+<div class="ui-content" data-role="content" role="main">
+<!-- 多个订单时，分标签展示 -->
+	<#assign prodId = 0 /> 
+	<#assign offerSpec = main.offerSpec />	
+	<#list 1..main.offerNum as n >
+    <div id="tabs-body" class="tabs-body">
+    	<!-- 产品信息展示 -->    	
+    		<#assign i = 0 />
+   			<#if main.addflag?? && main.addflag=="ADD">
+   				<#list main.prodInstInfos as prodinfos>
+					<#list main.offer as offerinst>
+						<#if prodinfos.accNbr==offerinst.accNbr>
+							<#list offerinst.offerMemberInfos as item>
+								<#if item.objType==2>
+									<#assign prodId = item.objInstId/>
+									<#if i==0>
+										<div class="ordercona orderform" style="display:block;">						
+									<#else>
+										<div class="ordercona orderform" style="display:none;">						
+									</#if>
+										<div class="optional"> 可选包/功能产品 <a href="#optional_${prodId}" data-role="button" data-icon="optional" data-iconpos="notext" data-theme="i">可选包/功能产品</a></div>
+									</div>
+									<#assign i = i+1 />
+								</#if>
+							</#list>
+						</#if>
+					</#list>
+				</#list>
+			<#elseif offerSpec?has_content>
+				<#assign i = i+1 />
+				<@block name="product">
+					<#include "/pad/member/order-product.html" />
+				</@block>				
+			</#if>			
+			<#if main.viceParam?? &&(main.viceParam?size>0)>		
+				<#list main.viceParam as item>				
+					<#assign prodId = item.objInstId/>
+					<#if i==0>
+						<div id="change_${prodId}" class="ordercona orderform" style="display:block;">						
+					<#else>
+						<div id="change_${prodId}" class="ordercona orderform" style="display:none;">						
+					</#if>
+							<div id="changePlaninfo" class="ui-grid-a">
+								<div class="ui-grid-c">							
+									<div class="ui-block-a">原套餐:${main.oldOfferSpecName}</div>	
+									<div class="ui-block-b" style="color:#5a9203;">新套餐:${item.offerSpecName}</div>	
+								</div>
+							</div>
+							<div class="optional" style="top: 62px;"> 可选包/功能产品 <a href="#optional_${prodId}" data-role="button" data-icon="optional" data-iconpos="notext" data-theme="i">可选包/功能产品</a></div>
+						</div>
+					<#assign i = i+1 />
+				</#list>
+			</#if>
+    </div>
+     <div class="orderconb" style="height: 325px;">
+        <div class="many">
+      	  <button data-role="button" data-icon="arrow-l" data-iconpos="notext" disabled>向左</button>
+	      <div class="tabsdiv">
+		        <ul id="tabs">
+		        	<!--展示套餐下多个成员标签-->
+	          		<#assign index = 0>
+					<#if main.addflag?? && main.addflag=="ADD">
+						<#list main.prodInstInfos as prodinfos>
+							<#list main.offer as offerinst>
+								<#if prodinfos.accNbr==offerinst.accNbr>
+									<#list offerinst.offerMemberInfos as Member>
+										<#if Member.objType==2>
+											<#if index=0>
+												<li id="tab_${Member.objInstId}" prodId="${Member.objInstId}" class="tab-nav-action" onclick="offerChange.changeTab(${Member.objInstId})">${Member.roleName}${Member.accessNumber}</li>									
+											<#else>
+												<li id="tab_${Member.objInstId}" prodId="${Member.objInstId}" class="tab-nav" onclick="offerChange.changeTab(${Member.objInstId})">${Member.roleName}${Member.accessNumber}</li>	
+											</#if>
+											<#assign index = index+1>
+										</#if>
+									</#list>
+								</#if>
+							</#list>
+						</#list>
+					<#elseif offerSpec?has_content>
+						<#if offerSpec.offerRoles?? && (offerSpec.offerRoles?size>0)>					
+							<#list offerSpec.offerRoles as offerRole>	
+								<#if (offerRole.prodInsts?? && offerRole.prodInsts?size>0)>
+									<#list offerRole.prodInsts as prod>
+										<#if index=0>
+										<li offerRoleId=${offerRole.offerRoleId} class="tab-nav-action">${prod.offerRoleName}</li>									
+										<#else>
+										<li offerRoleId=${offerRole.offerRoleId} class="tab-nav">${prod.offerRoleName}</li>	
+										</#if>
+										<#assign index = index+1>
+									</#list>
+								</#if>
+							</#list>
+						</#if>					
+					</#if>
+					
+					<#if main.viceParam?? &&(main.viceParam?size>0)>	          			
+						<#list main.viceParam as item>						
+							<#if index==0>
+								<li class="tab-nav-action" id="tab_${item.objInstId}" prodId="${item.objInstId}" type="2" onclick="offerChange.changeTab(${item.objInstId})">${item.roleName}${item.accessNumber}</li>
+							<#else>
+								<li class="tab-nav" id="tab_${item.objInstId}" prodId="${item.objInstId}" type="2" onclick="offerChange.changeTab(${item.objInstId})">${item.roleName}${item.accessNumber}</li>
+							</#if>
+							<#assign index = index+1>
+						</#list>
+	          		</#if>
+	        	</ul>
+	        </div>
+	       <button data-role="button" data-icon="arrow-r" data-iconpos="notext" disabled>向右</button>
+	      </div>
+	      
+	      	<!-- 帐户展示 -->
+	      	<div id="accountDiv">
+	      		<div class="ordertitle">账户信息</div>			
+				<@block name="account">
+					<#include "/pad/member/order-account.html" />
+				</@block>				
+	      	</div>
+			
+				
+	      	<div class="ordertitle">管理属性</div>
+	     	<!-- 发展人展示 -->
+			<@block name="dealer">
+				<#include "/pad/order/order-dealer.html" />
+			</@block>
+			<div class="ordertitle">订单信息</div>
+	      	<!-- 订单备注展示-->
+			<@block name="remark">
+				<#include "/pad/member/order-remark.html" />
+			</@block>
+			
+			<!--购物车订单属性展示-->
+			<div id="orderAttrDiv" style="display: none;">
+				<div class="ordertitle">经办人</div>
+				<@block name="orderAttr">
+					<#include "/pad/member/order-attr.html" />
+				</@block>
+			</div>			
+			<!--省内订单属性展示-->
+			<div id="orderProvAttrDiv"  style="display: none;">
+				<@block name="orderProvAttr">
+					<#include "/pad/order/order-prov-attr.html" />
+				</@block>
+			</div>
+	  	</div>
+    </#list>
+  	
+  	<div data-role="footer" data-position="fixed" data-tap-toggle="false" data-theme="n">
+ 	<div class="orderpackage"><span>${main.boActionTypeName}</span> 
+			<#if main.actionFlag == 1>
+				${main.offerSpec.offerSpecName}
+			<#elseif main.actionFlag == 14>
+				${main.offerSpec.offerSpecName}
+			<#else>
+				${main.accessNumber}
+			</#if> 
+	</div>     
+     <button id="fillNextStep" data-inline="true" data-icon="next">下一步</button>
+     <button id="fillLastStep" data-inline="true" data-icon="prev">取消</button> 
+ 	</div>
+ 	
+ 	<#if main.addflag?? && main.addflag=="ADD">
+		<#assign i = 0 />
+		<#list main.prodInstInfos as prodinfos>
+			<#list main.offer as offerinst>
+				<#if prodinfos.accNbr==offerinst.accNbr>
+					<#list offerinst.offerMemberInfos as item>
+						<#if item.objType==2>
+							<#assign prodId = item.objInstId/>
+							<#assign i = i+1 />
+							<#if i==1>
+								<div type="attach" id="attach_${prodId}">
+							<#else>
+								<div type="attach" id="attach_${prodId}" style="display:none">
+							</#if>									
+								<div id="uimDiv_${prodId}" style="display: none;">
+									<h5 class="s_title" id="title_${prodId}">补换卡： </h5>
+									<div class="pdcardcon show" >
+										<ul class="fillin show">
+											<#include "/pad/member/order-uim.html" />
+										</ul>
+									</div>
+								</div>
+							</div>
+						</#if>
+					</#list>
+				</#if>
+			</#list>
+		</#list>
+	<#elseif offerSpec?has_content>
+		<#if offerSpec.offerRoles?? && (offerSpec.offerRoles?size>0)>
+			<#list offerSpec.offerRoles as offerRole>
+				<#if offerRole.prodInsts?? && (offerRole.prodInsts?size>0)>
+					<#list offerRole.prodInsts as prod>
+						<#assign prodId = prod.prodInstId />
+						<div id="attach_${prodId}"></div>
+					</#list>
+				</#if>
+			</#list>
+		</#if> 					
+	</#if>
+ 	
+ 	<#if main.viceParam?? &&(main.viceParam?size>0)>		
+		<#list main.viceParam as item>		
+			<#assign prodId = item.objInstId/>
+			<div id="attach_${prodId}"></div>
+			<div id="uimDiv_${prodId}" style="display: none;">
+				<h5 class="s_title">补换卡： </h5>
+				<div class="pdcardcon show" >
+					<ul class="fillin show">
+						<#include "/pad/member/order-uim.html" />
+					</ul>
+				</div>
+			</div>
+		</#list>
+	</#if>		
+ 	
+ 	<!-- 帐户、协销人等弹出框-->
+	<div id="dialogDiv" style="display:none">
+		<div class="easyDialogdiv" style="width:980px;height:400px;" id="acctDialog">
+			<div class="easyDialogclose" id="zhanghuclose"></div>
+			<table class="contract_list">
+				<thead>
+					<tr>
+						<td>选择帐户</td>
+					</tr>
+				</thead>
+			</table>
+			<div class="form-content">
+				<div class="selectList">
+					<form id="acctQueryForm">
+						<dl>
+							<select id="chooseQueryAcctType" style="width:120px">
+								<option value=0>客户下帐户</option>
+								<option value=1>接入号码</option>
+								<option value=2>帐户合同号</option>
+							</select>
+							<!-- <dd>
+								&nbsp;<input id="d_query_nbr" type="text" data-validate="validate(required:接入号不能为空) on(keyup blur)" value="" class="inputWidth150px">
+							</dd>
+							<dd id="d_query_pwd">
+								产品密码：&nbsp;<input  type="password" data-validate="validate(required:密码不能为空) on(keyup blur)" value="" class="inputWidth150px">
+							</dd>
+							<dd>
+								&nbsp;<input id="d_query_cd" type="text" data-validate="validate(required:合同号不能为空) on(keyup blur)" value="" class="inputWidth150px" style="display:none">
+							</dd> -->
+							<dd>
+								&nbsp;<input type="button" class="numberSearch" value="查 询" id="querAcctBtn" >
+							</dd>
+						</dl>
+					</form>
+				</div>
+				<div class="phone_warp">
+					<table id="acctListTab" class="numberList">
+						<thead>
+							<tr>
+								<td class="borderLTB">帐户名称</td>
+								<td class="borderLTB">合同号</td>
+								<td class="borderLTB">帐户属主</td>
+								<td class="borderLTB">代表号码</td>
+							</tr>
+						</thead>
+						<tbody>
+						</tbody>
+					</table>
+		
+					<!--页码-->
+					<div id="acctPageDiv"></div>
+					<!--页码 end-->
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	
+	
+  </div>

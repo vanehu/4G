@@ -1,0 +1,31 @@
+<div class="otabs">
+ 	<ul id="otabs">
+  		<li class="otab-nav-action">
+  			<span>订购可选包</span>
+  			<input type="search" id="search_text_${param.prodId}" name="search_text_${param.prodId}"
+  				placeholder="请输入您想要办理的附属业务的名称" data-theme="o" onkeydown="if(event.keyCode==13){AttachOffer.searchAttachOfferSpec(${param.prodId},${param.offerSpecId},${param.prodSpecId})}">
+   			<select id="attachType_${param.prodId}" name="attachType_${param.prodId}" data-native-menu="false" data-icon="select" onchange="AttachOffer.changeLabel1(${param.prodId},${param.prodSpecId},this)" ondblclick="AttachOffer.changeLabel1(${param.prodId},${param.prodSpecId},this)">
+				<#if labelMap.result?? &&(labelMap.result?size>1)>
+					<#list labelMap.result as item>
+		   				<option value="${item.label}">${item.value}</option>
+		   			</#list>
+	   			</#if>
+	   			<option value="10000">功能产品</option>
+			</select>
+		</li>
+ 	</ul>
+</div>
+
+<script>
+	var labelMap=${labelMapJson};
+	var prodId= ${param.prodId};
+	var label = {
+		prodId : prodId,
+		labels : []
+	};
+	if(labelMap!=undefined && labelMap.result!=undefined){
+		label.labels = labelMap.result;
+		label.labels.push({label:"10000",value:"功能产品"});
+		AttachOffer.labelList.push(label);
+	}
+</script>
