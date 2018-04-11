@@ -99,7 +99,7 @@ public class MarketingRecommendController extends BaseController {
 		}
         param.put("areaId", areaId);
         //反馈结果
-        List<Map<String, Object>> fk_list = MDA.MKT_CONTACT_RESULT;
+        List<Map<String, String>> fk_list = MDA.MKT_CONTACT_RESULT;
         model.addAttribute("fk_list", fk_list);
         try {
         	 Map<String, Object> param1 = new HashMap<String, Object>();
