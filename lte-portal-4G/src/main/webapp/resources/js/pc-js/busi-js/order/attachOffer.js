@@ -4941,7 +4941,9 @@ AttachOffer = (function() {
 		}
 		var content = '<form id="paramForm">' ;
 		if(newSpec.labelId == null || newSpec.labelId == ""){
-			content += "订购次数" + ' : '+newSpec.counts+'<br>'; 
+			//content += "订购次数" + ' : '+newSpec.counts+'<br>'; 
+			content += "重复订购次数" + ' : <input id="text_'+prodId+'_'+offerSpecId  
+			+'" class="inputWidth183px" type="text" value="'+newSpec.counts+'"><br>';
 		}else{
 			content += "重复订购次数" + ' : <input id="text_'+prodId+'_'+offerSpecId  
 			+'" class="inputWidth183px" type="text" value="'+newSpec.counts+'"><br>'; 
@@ -4957,7 +4959,12 @@ AttachOffer = (function() {
 			if(flag==1){
 				var nums=$("#text_"+prodId+"_"+offerSpecId).val();
 				if(newSpec.labelId == null || newSpec.labelId == ""){
-					nums=newSpec.counts; 
+					if(nums > newSpec.counts){
+						nums=newSpec.counts;
+						$("#text_"+prodId+"_"+offerSpecId).val(newSpec.counts);
+						$.alert("提示","4G前台不可见的销售品，不允许再订购");
+						return;
+					}
 				}
 				var reg = /^\+?[0-9][0-9]*$/;//正整数
 				if(!reg.test(nums)){
@@ -4967,7 +4974,12 @@ AttachOffer = (function() {
 			}else{
 				var nums=$("#text_"+prodId+"_"+offerSpecId).val();
 				if(newSpec.labelId == null || newSpec.labelId == ""){
-					nums=newSpec.counts; 
+					if(nums > newSpec.counts){
+						nums=newSpec.counts;
+						$("#text_"+prodId+"_"+offerSpecId).val(newSpec.counts);
+						$.alert("提示","4G前台不可见的销售品，不允许再订购");
+						return;
+					}
 				}
 				var reg = /^\+?[1-9][0-9]*$/;//正整数
 				if(!reg.test(nums)){
