@@ -1075,7 +1075,7 @@ order.cust = (function(){
 		if((CONST.getAppDesc()!=0)&&($("#custModifyId").is(":hidden"))){
 			$("#custModifyId").show();
 		}
-
+		cert.resetAllCertReaderCustInfos();
 	};
 
 	/**
