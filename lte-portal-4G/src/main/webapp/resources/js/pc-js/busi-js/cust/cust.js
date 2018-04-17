@@ -3622,8 +3622,6 @@ order.cust = (function(){
 			$("#li_order_attr span").text("");
 			$("#li_order_remark2 span").text("");
 			$("#li_order_remark3 span").text("");
-			
-			cert.deleteCertReaderCustInfosByServCode(CONST.CERT_READER_HANDLE_CUST);
 		}else{
 			//初始化页面
 			$("#orderAttrReset").hide();

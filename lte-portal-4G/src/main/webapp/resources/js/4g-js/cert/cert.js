@@ -440,6 +440,10 @@ cert = (function() {
 			});
 		}
 	};
+	//清空OrderInfo.certInfoKeys中的读卡信息
+	var _resetAllCertReaderCustInfos = function(){
+		OrderInfo.certInfoKeys = [];
+	};
 	
 	return {
 		readCert		: _readCert,
@@ -452,7 +456,8 @@ cert = (function() {
 		fillupPartyId2CertReaderCustInfos	:_fillupPartyId2CertReaderCustInfos,
 		fillupOrderInfoCertReaderCustInfos	:_fillupOrderInfoCertReaderCustInfos,
 		deleteCertReaderCustInfosByCertNum	:_deleteCertReaderCustInfosByCertNum,
-		deleteCertReaderCustInfosByServCode	:_deleteCertReaderCustInfosByServCode
+		deleteCertReaderCustInfosByServCode	:_deleteCertReaderCustInfosByServCode,
+		resetAllCertReaderCustInfos			:_resetAllCertReaderCustInfos
 	};
 })();
 $(function(){

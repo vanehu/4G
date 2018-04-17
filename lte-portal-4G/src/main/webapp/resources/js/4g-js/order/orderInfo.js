@@ -1857,8 +1857,6 @@ OrderInfo = (function() {
 			OrderInfo.boUserPartyContactInfo  = $.extend(true, {}, _boUserPartyContactInfo);//使用人：联系人节点
 			OrderInfo.handleCustCertReadInfos = {}
 			//OrderInfo.getCustAgeByCheck = {}
-			
-			cert.deleteCertReaderCustInfosByServCode(CONST.CERT_READER_HANDLE_CUST);
 			OrderInfo.confidence = 0 ;
 			OrderInfo.faceVerifyFlag = "N" ;
 		}
