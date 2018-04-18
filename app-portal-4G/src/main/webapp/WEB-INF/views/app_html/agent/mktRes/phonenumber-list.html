@@ -1,0 +1,47 @@
+<#assign height = "80"/>
+<#assign namespaces = "phonenumber-list"/>
+<#if subPage != "number">
+ <#assign height = "40"/>
+ <#assign namespaces = "number-list"/>
+</#if>
+<div class="container-fluid">
+		<div class="row">
+			<div class="panel panel-default paneltop">
+<#if phoneNumList?? &&(phoneNumList?size>0)>
+<@portal.scrollPagination namespaces "both" "1" height 0 "order.phoneNumber.scroll">
+<table class="table table-striped tablecenter table-head" style="margin-bottom:0px">
+	<thead>
+		<tr>
+			<th>号码</th>
+			<th>预存款</th>
+			<th>月最低消费</th>
+		</tr>
+	</thead>
+	<tbody>
+	<#if phoneNumList?? &&(phoneNumList?size>0)>
+	       <#list phoneNumList as item>
+	 		<#assign phoneNumber="${item.phoneNumber}" />
+	 	    <#assign phonehead="${(item.phoneNumber)?substring(0,3)}" />
+	 	    <#assign phonemiddle="${(item.phoneNumber)?substring(3,7)}" />
+	 	    <#assign phoneend="${(item.phoneNumber)?substring(7,(item.phoneNumber)?length)}" />
+	 	    <tr onclick="order.phoneNumber.endSelectNum(this,${ispurchased!'0'});" zoneNumber="${item.zoneNumber}" numberVal="${item.phoneNumber}_${item.prePrice}_${item.pnPrice}_${item.anTypeCd}_${item.pnCharacterId}_${item.pnLevelId}_${item.phoneNumId}_${item.needPwd?default("0")}">
+					<td>${phonehead} ${phonemiddle} ${phoneend}</td>
+					<td><span class="text-warning">${item.prePrice}</span>元</td>
+					<td><span class="text-warning">${item.pnPrice}</span>元</td>
+			</tr>
+			</#list> 
+		
+	</#if>
+  </tbody>
+</table>
+</@portal.scrollPagination>
+<#else>
+	<div class="list-group-item"> 
+		<div class="h4">
+			<img style="vertical-align:middle" src="${contextPath}/image/common/query_search.gif" />&nbsp;&nbsp;抱歉，没有找到相关的号码。
+		</div>
+	</div>
+</#if>
+</div>
+</div>
+</div>

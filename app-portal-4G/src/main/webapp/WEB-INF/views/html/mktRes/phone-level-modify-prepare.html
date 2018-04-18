@@ -1,0 +1,18 @@
+<!-- 靓号调级入口 -->
+<@override name="title">靓号调级</@override>
+<@override name="header">
+	<#include "/common-js-tpl.html"/>
+	<#include "/busi-js-tpl.html"/>
+</@override>
+
+<@override name="content">
+	<#include "/order-template.html"/>
+</@override>
+
+<#if Session["_session_portal_type"]?? && Session["_session_portal_type"]=="MVNO" >
+<@extends name="/mvno-template.html"/>
+<#else>
+<@extends name="/content-template.html"/>
+</#if>
+
+

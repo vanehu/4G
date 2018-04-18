@@ -3240,6 +3240,7 @@ SoOrder = (function() {
 				$("#isTemplateOrder").removeAttr("checked");
 				return;
 			}
+			$("#templateInfo").show();
 			if(OrderInfo.actionFlag==1||OrderInfo.actionFlag==14){
 				$(".template_info_type").show();
 				$("#isActivation").removeAttr("checked");
@@ -3250,6 +3251,7 @@ SoOrder = (function() {
 			}
 			$(".template_info_name").show();
 		}else {
+			$("#templateInfo").hide();
 			$(".template_info_name").hide();
 			$(".template_info_type").hide();
 			$("#templateOrderName").val("");

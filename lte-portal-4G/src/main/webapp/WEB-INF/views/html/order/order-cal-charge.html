@@ -153,6 +153,7 @@
 													   <input id="remark_${trid}" type="text" value="" class="txt_cal_edit" style="display:none;border: 1px solid #DCDCDC;height: 23px;line-height: 23px;padding: 1px; width: 120px;">
 													</td>
 							                        <td>
+							                        <input type="hidden" id="paymentTransId_${trid}" value="${itemList.paymentTransId}" />
 				                        			<input type="hidden" id="feeAmount_${trid}" value="${itemList.feeAmount}" />
 				                        			<input type="hidden" id="paymentAmount_${trid}" value="${itemList.paymentAmount}" />
 		                  					 		<input type="hidden" id="objId_${trid}" value="${itemList.objId}" />
@@ -242,6 +243,7 @@
 							<input id="remark_${trid}" type="text" style="display:none ;border: 1px solid #DCDCDC;line-height: 23px;padding: 1px; width: 80px;">
 						</td>
 						<td>
+						    <input type="hidden" id="paymentTransId_${trid}" value="${itemList.paymentTransId}" />
 							<input type="hidden" id="feeAmount_${trid}" value="${itemList.feeAmount}" />
 							<input type="hidden" id="paymentAmount_${trid}" value="${itemList.paymentAmount}" />
 							<input type="hidden" id="objId_${trid}" value="${itemList.objId}" />
@@ -304,6 +306,8 @@
 		               <span>pos终端号：</span><input type="text"  class="inputWidth250px" style="width:280px;" id="terminalNumber" name="terminalNumber" onblur="order.calcharge.conBtns();" onfocus ="order.calcharge.conBtns();">
 		               <span>pos流水号：</span><input type="text"  class="inputWidth250px" style="width:280px;"   id="serialNumber" name="serialNumber" onblur="order.calcharge.conBtns();" onfocus ="order.calcharge.conBtns();">
 		       </div>
+		       	<a class="btna_o" href="javascript:void(0)" id="payBack" style="display:none" onclick="order.calcharge.backToCharge()"><span>返回收银台</span></a>
+		        <a class="btna_o" href="javascript:void(0)" id="payRefund" onclick="order.refund.payRefund(OrderInfo.orderResult.olId,$('#realmoney').val()*100,'1000')" style="display:none"><span>我要退款</span></a>
 		        <#if isYiPayBoundCard??&&(isYiPayBoundCard=="1") >
 		      		<a class="btna_o" href="javascript:window.parent.main.home.addTab('main_tab_${yiPayBoundCardId}','翼支付绑卡','${contextPath}/${yiPayBoundCardUrl}');" id="yiPayBoundCard" style="display:"><span>翼支付绑卡</span></a>
 		       </#if>
@@ -348,6 +352,8 @@
             $("#mfbhk").attr("checked", "true");
             $("#mfbhk").click();
         }
+        
+        order.calcharge.init();
     });
 
 </script>

@@ -2766,10 +2766,10 @@ public class OrderController extends BaseController {
 			this.log.error("调用主数据接口失败", be);
 			return super.failed(be);
 		} catch (InterfaceException ie) {
-			return super.failed(ie, param, ErrorCode.PAY_TOCKEN);
+			return super.failed(ie, param, ErrorCode.PAY_TOKEN);
 		} catch (Exception e) {
 			log.error("支付平台/tocken方法异常", e);
-			return super.failed(ErrorCode.PAY_TOCKEN, e, param);
+			return super.failed(ErrorCode.PAY_TOKEN, e, param);
 		}
 
 	}
@@ -2812,10 +2812,10 @@ public class OrderController extends BaseController {
 			this.log.error("调用主数据接口失败", be);
 			return super.failed(be);
 		} catch (InterfaceException ie) {
-			return super.failed(ie, param, ErrorCode.PAY_TOCKEN);
+			return super.failed(ie, param, ErrorCode.PAY_TOKEN);
 		} catch (Exception e) {
 			log.error("支付平台/tocken方法异常", e);
-			return super.failed(ErrorCode.PAY_TOCKEN, e, param);
+			return super.failed(ErrorCode.PAY_TOKEN, e, param);
 		}
 
 	}

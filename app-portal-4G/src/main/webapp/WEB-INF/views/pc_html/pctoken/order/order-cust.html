@@ -1,0 +1,185 @@
+<@override name="title">中国电信4G营业受理</@override>
+<@override name="header">
+<#include "/pcpublic/busi-js-tpl.html"/>
+</@override>
+<@override name="content">
+<!--内容-->
+<div class="main_div" style="width:100%;display: none;" id="main_div_1" >
+    <div class="main_content" style="background:#71ab5a;">
+        <div>
+        <div id="div_main_index" class="main_index">
+            <div id="framecenter" style="min-height: 300px;height: auto !important; repeat-x fixed center;" >
+                <div title="可选包">
+                 	<input type="hidden" id="provIsale_" value="${provIsale_}"/>
+                 	<input type="hidden" id="phoneNum_" value="${phoneNum_}"/>
+                 	<input type="hidden" id="custAreaId_" value="${custAreaId_}"/>
+                 	
+                    <div>
+                        <#include "/pctoken/order/order-template-sub.html"/>
+                    </div>
+
+                    <div class="main_bottom"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--弹出框的内容-->
+<div class="easyDialogdiv" style="width:500px;height:400px;" id="moneyAdd">
+   	<div class="easyDialogclose" id="moneyclose"></div>
+   	<div id="addContent"></div>
+</div>
+<div class="easyDialogdiv" style="width:400px;height:200px;vertical-align: middle;" id="packageTip_dialog" >
+  <div id="infoTipContent" style="height: 200px;"></div>
+</div>
+<!--渠道选择弹窗结束-->
+<div class="easyDialogdiv" style="width:420px;height:300px;" id="CHANGEUIMSMS">
+  <div class="easyDialogclose" id="svCloseDiv"></div>
+    	<table class="contract_list">
+            <thead>
+                <tr>
+                  <td colspan="6" align="center">短信验证码</td>
+                </tr>                                                    
+            </thead>
+        </table>
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="SMScode">
+          <tr>
+            <td><p>为确保用户的个人信息安全，在办理该业务前，需先进行短信验证，请输入用户提供的随机短信验证码！</p></td>
+          </tr>
+           <tr class="randomCode">
+             <td>
+	         <span style="float:left; margin-top:5px">验证的号码</span>
+	         <form id="checkNum">
+		        <input id="changeUimSmsCheckNum" class="txtnum" disabled='disabled'  style="float:left; margin:0px 5px;height:24px" />
+		     </form>
+	        </td>
+           </tr>
+          <tr>
+            <td>
+            	<span style="float:left; margin-top:5px">短信验证码</span>
+		        <form id="changeUimSmsForm" >
+		        <input  type="text" class="txt2 inputWidth228px" style="float:left; margin:0px 5px;" name="smspwd" id="smspwd" data-validate="validate(required:短信验证码不能为空) on(blur)" placeholder="请输入您手机收到的验证码" maxlength="6"/>
+		        <a class="purchase" id="changeuimsmsbutton" href="javascript:void(0)">确 认</a>
+		        </form>
+	        </td>
+          </tr>
+           <tr class="randomCode" style="display:none">
+             <td>
+	         <span style="float:left; margin-top:5px">随机序列号</span>
+	         <form id="num">
+		        <input id="changeUimSmsRandomNum" class="txtnum" disabled='disabled'  style="float:left; margin:0px 5px;height:24px" />
+		     </form>
+	        </td>
+           </tr>
+          <tr>
+            <td>
+            <p>- 验证码在5分钟内有效，3次错误输入后失效。</p>
+            <!-- <p><span style="color:#aaa" id="timeInfo"></span></p> -->
+            <p>- 如您<font id="defaultTimeResend"></font>仍未收到验证码，请点击<a id="changeuimsmsresend" class="cf" onclick="javascript:void(0);">重新获取验证码。</a></p>
+			<p>- 如果您连续3次重试都没有成功收到短信验证码，建议您稍后再试。</p>
+			</td>
+          </tr>
+        </table>
+</div>
+<!--弹出层 end-->
+<#include "/validate-window.html"/>
+
+<script type="text/javascript">
+window.onload = function() { 
+		OrderInfo.actionFlag=3;
+		//初始化参数数据
+		var provIsale_="${provIsale_}";
+		var typeCd="${typeCd}";
+		OrderInfo.typeCd=typeCd;
+		var redirectUri_="${redirectUri_}";
+		var isFee_="${isFee_}";
+		var mktResInstCode_="${mktResInstCode_}";
+		var codeMsg_="${codeMsg_}";
+		var provCustAreaId = "${custAreaId_}";
+		var mainPhoneNum='${phoneNum_}';
+		OrderInfo.acctNbr=mainPhoneNum;
+		var orderJson;
+		var terminalCode='${terminalCode}'; //终端串码
+		//终端串码
+		if(terminalCode!=null && terminalCode!="" && terminalCode!="null"){
+			OrderInfo.terminalCode=terminalCode;
+		}
+		OrderInfo.provinceInfo.provIsale=provIsale_;
+		OrderInfo.provinceInfo.redirectUri=redirectUri_;
+		OrderInfo.provinceInfo.isFee=isFee_;
+		OrderInfo.provinceInfo.mergeFlag = "${mergeFlag}";
+		OrderInfo.provinceInfo.mktResInstCode=mktResInstCode_;
+		OrderInfo.provinceInfo.codeMsg=codeMsg_;
+		
+		//是否重载
+		var reload_="${reloadFlag_}";
+		
+		order.uiCust.packageInfo.reloadFlag="${reloadFlag_}";
+		
+		//重载数据
+		if(reload_=="N"){
+			order.uiCust.orderInfo=${orderJson_};
+			if(order.uiCust.orderInfo==null || order.uiCust.orderInfo=="" || order.uiCust.orderInfo=="undefined"){
+				order.uiCust.showPackageDialog("二次加载数据信息丢失!");
+				return;
+			}
+			
+			var resultCode=order.uiCust.orderInfo.resultCode;
+			
+			var resultMsg=order.uiCust.orderInfo.resultMsg;
+			
+			if(resultCode==null || resultCode=="" || resultCode=="undefined"){
+				order.uiCust.showPackageDialog("二次加载数据信息丢失!");
+				return;
+			}
+			
+			if(order.uiCust.orderInfo.result.orderList==null || order.uiCust.orderInfo.result.orderList==""){
+				order.uiCust.showPackageDialog(resultMsg);
+				return;
+			}
+		
+			var custOrderAttrs =order.uiCust.orderInfo.result.orderList.orderListInfo.custOrderAttrs;
+			
+			var isRight="0";
+			
+			$.each(custOrderAttrs,function(){
+				if(this.itemSpecId=="30010024"){
+					if(this.value!="14"){
+						isRight="1";
+					}
+				}
+			});
+			
+			if(isRight=="1"){
+				order.uiCust.showPackageDialog("不是可选包变更受理流水号，请重试!");
+				return;
+			}
+			
+			if(resultCode=="-1" || resultCode=="2"){
+				order.uiCust.showPackageDialog(resultMsg);
+				return;
+			}
+		}
+		
+		//可选包和变更服务
+		if(OrderInfo.provinceInfo.mergeFlag=="0"){
+			order.uiCust.custQuery();
+		}else{
+			order.cust.queryCustCompreInfo(mainPhoneNum,provCustAreaId,14,'');
+			//order.uiCust.orderAttachOffer();
+			 order.prodModify.querySecondBusinessAuth('3','N');
+		}
+   };
+</script>
+
+</@override>
+
+<#if Session["_session_portal_type"]?? && Session["_session_portal_type"]=="MVNO" >
+    <@extends name="/mvno-template.html"/>
+    <#else>
+        <@extends name="/pcpublic/main-template.html"/>
+</#if>
+<#if Session._loginUrl ?? && (Session._loginUrl!="") >
+<iframe style="display:none;"  src='${Session._loginUrl}'></iframe>
+</#if>

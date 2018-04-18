@@ -16,6 +16,7 @@ ess.print = (function() {
 		var accNbr = ec.util.defaultStr($("#p_accNbr").val());
 		var startDate = ec.util.defaultStr($("#p_startDate").val());
 		var endDate = ec.util.defaultStr($("#p_endDate").val());
+		var province = ec.util.defaultStr($("#p_areaId").val());
 		if(extCustOrderId == "" && consignee == "" && accNbr == "" && startDate == "" && endDate == ""){
 			$.alert("提示","请输入查询条件！");
 			return;
@@ -41,6 +42,7 @@ ess.print = (function() {
 		}
 		var param = {
 			extCustOrderId : extCustOrderId,
+			province : province,
 			consignee : consignee,
 			accNbr : accNbr,
 			startDate : startDate,
@@ -73,6 +75,10 @@ ess.print = (function() {
 		});
 	};
 	
+	var _chooseAllArea = function(areaName, areaId) {
+		order.area.chooseAreaTreeAll(areaName, areaId, "2");
+	};
+	
 	var _preVoucher=function(olId,areaId,accNbr,orderType,extCustOrderId,extSystem){
 		var soNbr = UUID.getDataId();
 		var param = {
@@ -103,7 +109,8 @@ ess.print = (function() {
 	
 	return {
 		queryOrderList : _queryOrderList,
-		preVoucher : _preVoucher
+		preVoucher : _preVoucher,
+		chooseAllArea : _chooseAllArea
 	};
 
 })();

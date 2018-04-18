@@ -32,7 +32,7 @@ ess.writeCard = (function() {
 			}
 		});
 	};
-	
+		
 	// 查询
 	var _queryOrderList = function(pageIndex) {
 		var curPage = 1;
@@ -45,6 +45,8 @@ ess.writeCard = (function() {
 		var orderStatus = ec.util.defaultStr($("#p_orderStatus").val());
 		var startDate = ec.util.defaultStr($("#p_startDate").val());
 		var endDate = ec.util.defaultStr($("#p_endDate").val());
+		//容灾分省 省份编号
+		var province = ec.util.defaultStr($("#p_areaId").val());
 		if(extCustOrderId == "" && consignee == "" && accNbr == "" && orderStatus == "" && startDate == "" && endDate == ""){
 			$.alert("提示","请输入查询条件！");
 			return;
@@ -70,6 +72,7 @@ ess.writeCard = (function() {
 		}
 		var param = {
 			extCustOrderId : extCustOrderId,
+			province : province,
 			consignee : consignee,
 			accNbr : accNbr,
 			orderStatus : orderStatus,
@@ -102,6 +105,11 @@ ess.writeCard = (function() {
 			}
 		});
 	};
+	
+
+	var _chooseAllArea = function(areaName, areaId) {
+		order.area.chooseAreaTreeAll(areaName, areaId, "2");
+	};
 
 	var _realNameAuth = function(extCustOrderId){
 		var pwdKey = "0CC13AE01AFF1868E053433210AC1DC1";
@@ -131,7 +139,8 @@ ess.writeCard = (function() {
 	return {
 		initDic : _initDic,
 		queryOrderList : _queryOrderList,
-		realNameAuth : _realNameAuth
+		realNameAuth : _realNameAuth,
+		chooseAllArea :_chooseAllArea
 	};
 
 })();

@@ -1,0 +1,35 @@
+<div id="order-content">
+	<div class="modal fade " id="attach-modal" tabindex="-1" role="dialog"
+		aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal_wrapper">
+			<div class="modal-dialog ">
+				<div class="modal-content">
+					<div class="modal-body"><strong>正在查询销售品实例中,请稍后....</strong></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+//初始化
+$(function(){
+	AttachOffer.init();
+});
+</script>
+<!-- 经办人展示 -->
+<div id="jbr" style="display: none;">
+	<#include "/agent/mktRes/jbr-create.html" />
+</div>
+<!-- 订单确认页面、收银台页面 -->
+<div id="order-confirm" style="display: none;">
+</div>
+<!-- 回执内容显示页面 -->
+<div id="order-print" style="display: none;">
+</div>
+<!-- 协销人展示 -->
+<div id="order-dealer" style="display: none;">
+	<@block name="dealer">
+		<#include "/app/order/order-dealer.html" />
+	</@block>
+</div>
+

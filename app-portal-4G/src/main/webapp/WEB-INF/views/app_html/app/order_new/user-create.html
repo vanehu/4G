@@ -1,0 +1,109 @@
+<div class="modal-dialog" style="display:block;">
+					<div class="modal-content" id="user_create">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+							<h4 class="modal-title">使用人</h4>
+						</div>
+						<form id="userFormdata" method="post">
+						<ul class="choice-list-box bg-body border-none">
+							<li class="m-t-10">
+								<div class="choice-box">
+									<i class="iconfont pull-left">&#xe616;</i>
+									<select name="" id="userorderIdentidiesTypeCd" class="myselect select-option" data-role="none">
+										<option value="1">居民身份证</option>
+									</select>
+								</div>
+							</li>
+							<li class="m-t-10" id="usersfz">
+								<div class="choice-box">
+									<i class="iconfont pull-left">&#xe609;</i>
+									<span class="list-title font-secondary border-none">证件扫描</span>
+									<i id="user_otg"  onclick="common.callGenerationRec('cust.getUserGenerationInfosForSec','3')" class="iconfont pull-right font-orange">&#xe6dc;</i>
+									<i  onclick="common.callGenerationRec('cust.getUserGenerationInfosForSec','1')" class="iconfont pull-right font-orange">&#xe653;</i>
+									<i id="user_nfc"  onclick="common.callGenerationRec('cust.getUserGenerationInfosForSec','2')" class="iconfont pull-right font-orange">&#xe654;</i>
+								</div>
+							</li>
+							<li class="m-t-10" id="usersfz_i">
+								<div class="choice-box">
+									<i class="iconfont pull-left">&#xe616;</i>
+									<input placeholder="证件号码" id="usersfzorderAttrIdCard" class="choice-input" readonly="readonly"/>
+									<div class="Validform_checktip"></div>
+								</div>
+							</li>
+							<li class="m-t-10" id="qtzj" style="display: none;">
+								<div class="choice-box">
+									<i class="iconfont pull-left">&#xe616;</i>
+									<input placeholder="证件号码" id="userOrderAttrIdCard" class="choice-input" />
+									<div class="Validform_checktip"></div>
+								</div>
+							</li>
+							<li class="m-t-10">
+								<div class="choice-box">
+									<i class="iconfont pull-left">&#xe663;</i>
+									<input placeholder="使用人姓名" id="userOrderAttrName" class="choice-input" readonly="readonly"/>
+									<div class="Validform_checktip"></div>
+								</div>
+							</li>
+							<li class="m-t-10">
+								<div class="choice-box">
+									<i class="iconfont pull-left">&#xe637;</i>
+									<input placeholder="证件地址" id="userOrderAttrAddr" class="choice-input" readonly="readonly"/>
+									<div class="Validform_checktip"></div>
+								</div>
+							</li>
+							<li class="m-t-10">
+								<div class="choice-box">
+									<i class="iconfont pull-left">&#xe639;</i>
+									<input placeholder="联系人手机" id="userOrderAttrPhoneNbr" class="choice-input"   ignore="ignore" />
+									<div class="Validform_checktip"></div>
+								</div>
+							</li>
+						</ul>
+						</form>
+						<div class="ordinary-btn-box p p-b-15">
+							<button class="sun-btn" id="userConfirmBtn">确定</button>
+						</div>
+						
+			</div>
+			<div class="modal-content" id="user_select" style="display:none;">
+					<div class="modal-header">
+						<button style="padding:0.1rem 0 0 0;" type="button" class="close iconfont icon-close" data-dismiss="modal"
+							aria-hidden="true" onClick="$('#userModal-result').hide();$('#userModal').find('.choice-box').children('.help-block').addClass('hidden');$('#staffCode,#salesCode').val('');"></button>
+						<h4 class="modal-title">选择使用人</h4>
+					</div>
+					<div>
+						<div class="choice-box">
+							<i class="iconfont pull-left p-l-10">&#xe637;</i> 
+							<select name="" id="diqu2" class="myselect select-option" data-role="none">
+							</select> 
+							<i class="iconfont pull-right p-r-10">&#xe66e;</i>
+						</div>
+						<div class="choice-box">
+							<i class="iconfont pull-left p-l-10">&#xe663;</i>
+							<select name="" id="p_cust_identityCd_choose" class="myselect select-option" onchange="order.main.useridentidiesTypeCdChoose(this,'p_cust_identityNum_choose')" >
+								<option value="-1" selected="selected">接入号码</option>
+                                <option value="acctCd">合同号</option>
+                                <option value="custNumber">客户编码</option>
+								<option value="1">居民身份证</option>
+							</select>
+							<i class="iconfont pull-right p-r-10">&#xe66e;</i>
+						</div>
+						
+						<div class="choice-box">
+							<i class="iconfont pull-left p-l-10">&#xe663;</i>
+							 <input id="p_cust_identityNum_choose" placeholder="请输入号码" class="choice-input" onblur="if($(this).val().trim() != ''){$('#dealerModal').find('.choice-box').children('.help-block').addClass('hidden');}$('#dealerModal-result').hide();">
+						     <div class="help-block error hidden">查询号码不能为空</div>
+						</div>
+						<div id="userModal-result" style="line-height: .86rem; color: #ff0000; font-size: .26rem; display:none; text-align:center;">没有查询到该客户信息！</div>
+						<ul id="user-result" style="line-height: .36rem;font-size: .26rem;margin-top: 0.3rem;color:#fe7e19;"></ul>
+						
+						<div class="sub-btn-box p relative">
+							<button class="sun-btn"  id="queryUser" data-loading-text="查询...">查询</button>
+							<button class="sun-btn"  style="display:none" id="chooseUserBtn" data-loading-text="确定...">确定</button>
+						</div>
+					</div>
+		</div>
+		</div>
+<script>
+order.broadband.init_select();//刷新select组件，使样式生效
+</script>

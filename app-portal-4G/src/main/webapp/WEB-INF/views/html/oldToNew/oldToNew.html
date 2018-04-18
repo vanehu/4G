@@ -1,0 +1,147 @@
+<@override name="title">以旧换新</@override>
+
+<@override name="header">
+<#include "/busi-js-tpl.html"/>
+<script src="${contextPath}/js/busi-js/oldToNew/oldToNew.js?${jsversion}" type="text/javascript"></script>
+<style>
+.la_item_name{
+	float: left;
+    font-size: 14px;
+    min-width: 100px;
+    height: 30px;
+    line-height: 30px;
+}
+.la_value_name{
+	padding: 0px 10px 0px 0px;
+}
+.la_item_name.cust_info{
+	text-align: right;
+	line-height: 46px;
+}
+.div_form_inline{
+	height: 30px;
+	padding: 2px 0px 2px 0px;
+}
+</style>
+</@override>
+<@override name="content">
+
+<#if configInfos??>
+<div class="pdcardcon show">
+<form id="oldToNewForm">
+
+<!-- 客户基本信息，非配置 -->
+<h5 id="custInfo" class="s_title">客户基本信息</h5>
+<div>
+<table class="numberList" style="text-align: left;border: none;">
+<tr>
+<td>
+	<label class="la_item_name cust_info" style="width:120px;">客户姓名：</label>
+	<input type="text" id="custName" class="inputWidth228px" data-validate="validate(required:请填写客户姓名) on(blur)" placeholder="请填写客户姓名"/>
+	<label class="f_red">*</label>
+</td>
+<td>
+	<label class="la_item_name cust_info" style="width:120px;">身份证号：</label>
+	<input type="text" id="custIdNumber" class="inputWidth228px" maxlength="100" data-validate="validate(idCardCheck18:请输入合法身份证号码) on(blur)" placeholder="请输入合法身份证号码" onkeyup="value=value.replace(/[^\w]|_/ig,'')">
+	<label class="f_red">*</label>
+</td>
+</tr>
+<tr>
+<td>
+	<label class="la_item_name cust_info" style="width:120px;">联系地址：</label>
+	<input type="text" id="custAddress" class="inputWidth228px"  data-validate="validate(required:请填写联系地址) on(blur)" placeholder="请填写联系地址"/>
+	<label class="f_red">*</label>
+</td>
+<td>
+	<label class="la_item_name cust_info" style="width:120px;">联系电话/手机：</label>
+	<input type="text" id="custPhone" data-validate="validate(contactTel:请输入手机号或固话) on(blur)" maxlength="32" class="inputWidth228px" placeholder="请填写手机号或固话">
+	<label class="f_red">*</label>
+</td>
+</tr>
+</table>
+
+</div>
+
+<!-- 加载配置数据 -->
+<#list configInfos as info1 >
+	<h5 id="${info1.attrCd}" class="s_title">${info1.attrCdName}</h5>
+	<#list info1.attrIdList as info2 >
+		<div>
+		<#if info2.attrId==info1.attrCd> <!-- 两层 -->
+			<#list info2.attrValueList as info3 >
+				<input type="radio" value="${info3.attrValueId}" name="couponConfigInfo_${info2.attrId}" attrId="${info2.attrId}" attrValue="${info3.attrValue}" attrName="${info2.attrIdName}"><label class="la_value_name">${info3.attrValueName}</label>
+			</#list>
+		<#else> <!-- 三层 -->
+			<div class="sub_items">
+				<div class="sub_item_name">
+				<label class="la_item_name" style="float: none;">${info2.attrIdName}</label>
+				</div>
+				<div class="sub_item_value">
+				<#list info2.attrValueList as info3 >
+					<input type="radio" value="${info3.attrValueId}" name="couponConfigInfo_${info2.attrId}" attrId="${info2.attrId}" attrValue="${info3.attrValue}" attrName="${info2.attrIdName}"><label class="la_value_name">${info3.attrValueName}</label>
+				</#list>
+				</div>
+			</div>
+		</#if>
+		</div>
+	</#list>
+	
+</#list>
+
+<!-- 回购信息 -->
+<h5 class="s_title"></h5>
+<div class="div_form_inline">
+<label class="la_item_name">回购产品串码：</label>
+<input type="text" data-validate="validate(terminalCodeCheck) on(keyup blur)" maxlength="50" placeholder="请输入终端串号" id="oldCouponNumber" class="inputWidth228px inputMargin0">
+<a style="margin: 3px 0 0 5px;" class="purchase kh_btn" id="chkOldCouponNumber">校验</a>
+<label class="f_red">*</label>
+</div>
+<div class="div_form_inline">
+<label class="la_item_name">IMEI：</label>
+<input type="text" id="oldImeiCode" class="inputWidth228px" data-validate="validate(required:请填写IMEI) on(blur)" placeholder="请填写IMEI"/>
+<label class="f_red">*</label>
+</div>
+<div class="div_form_inline">
+<!--  根据选择的配置数据调用后台接口决定可选范围，未确定时不可选 -->
+<label class="la_item_name">回购价格：</label>
+<select id="discountPrice" name="discountPrice" disabled="disabled" style="display: none;">
+</select>
+<input type="text" name="discountPrice" maxlength="50" placeholder="请先选择配置信息" id="discountPrice" class="inputWidth228px inputMargin0" disabled="disabled">
+元
+<label class="f_red">*</label>
+</div>
+
+<!-- 新产品信息 -->
+<h5 class="s_title">换新产品</h5>
+<div class="div_form_inline">
+<label class="la_item_name">新产品串码：</label>
+<input type="text" data-validate="validate(terminalCodeCheck) on(keyup blur)" maxlength="50" placeholder="请输入终端串号" id="newCouponNumber" class="inputWidth228px inputMargin0">
+<a style="margin: 3px 0 0 5px;" class="purchase kh_btn" id="chkNewCouponNumber">校验</a>
+<label class="f_red">*</label>
+</div>
+<div id="newCouponDescDiv" class="div_form_inline" style="display: none;">
+<label class="la_item_name">新产品机型：</label>
+<label id="newCouponDesc" class="la_item_name"></label>
+</div>
+<div>
+<label class="la_item_name">备注：</label>
+<textarea id="remark" class="order-remark" rows="4"></textarea>
+</div>
+
+<div align="right" style="margin: 20px auto; padding:0 20px;">
+	<a class="btna_o" href="javascript:void(0)" id="submitOldToNewFormBtn"><span>
+		保存提交
+	</span></a> 
+</div>
+</form>
+</div>
+<#else>
+获取配置数据为空
+</#if>
+</@override>
+
+<#if Session["_session_portal_type"]?? && Session["_session_portal_type"]=="MVNO" >
+<@extends name="/mvno-template.html"/>
+<#else>
+<@extends name="/content-template.html"/>
+</#if>

@@ -329,13 +329,13 @@ cert = (function() {
 	var _fillupOrderInfoCertInfoKeys = function(certResults, servCode){
 		if(ec.util.isArray(certResults)){
 			$.each(certResults, function(index, certResult){
-				if(certResult.certInfoId != -1 && certResults.certNumber != -1){
-					OrderInfo.pushCertInfoKeys({
+				//certInfoId和certNumber返回-1表示不需要记录读卡信息
+				if(ec.util.isObj(certResult.certInfoId) && ec.util.isObj(certResult.certInfoId) && certResult.certInfoId != -1 && certResults.certNumber != -1){
+					OrderInfo.pushCertInfoKeysNoFilter({
 						"certNumber":certResult.certNumber,
 						"certInfoId":certResult.certInfoId,
 						"servCode"	:servCode,//该节点非协议规定，仅门户用作标识
 						"partyId"	:""
-						
 					});
 				}
 			});
@@ -440,6 +440,10 @@ cert = (function() {
 			});
 		}
 	};
+	//清空OrderInfo.certInfoKeys中的读卡信息
+	var _resetAllCertReaderCustInfos = function(){
+		OrderInfo.certInfoKeys = [];
+	};
 	
 	return {
 		readCert		: _readCert,
@@ -452,7 +456,8 @@ cert = (function() {
 		fillupPartyId2CertReaderCustInfos	:_fillupPartyId2CertReaderCustInfos,
 		fillupOrderInfoCertReaderCustInfos	:_fillupOrderInfoCertReaderCustInfos,
 		deleteCertReaderCustInfosByCertNum	:_deleteCertReaderCustInfosByCertNum,
-		deleteCertReaderCustInfosByServCode	:_deleteCertReaderCustInfosByServCode
+		deleteCertReaderCustInfosByServCode	:_deleteCertReaderCustInfosByServCode,
+		resetAllCertReaderCustInfos			:_resetAllCertReaderCustInfos
 	};
 })();
 $(function(){

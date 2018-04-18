@@ -1,40 +1,22 @@
 package com.al.lte.portal.controller.crm;
 
-import com.al.common.utils.DateUtil;
-import com.al.common.utils.StringUtil;
-import com.al.ec.serviceplatform.client.ResultCode;
-import com.al.ecs.common.entity.JsonResponse;
-import com.al.ecs.common.entity.PageModel;
-import com.al.ecs.common.util.*;
-import com.al.ecs.common.web.ServletUtils;
-import com.al.ecs.common.web.SpringContextUtil;
-import com.al.ecs.exception.AuthorityException;
-import com.al.ecs.exception.BusinessException;
-import com.al.ecs.exception.ErrorCode;
-import com.al.ecs.exception.InterfaceException;
-import com.al.ecs.exception.InterfaceException.ErrType;
-import com.al.ecs.exception.Result;
-import com.al.ecs.exception.ResultConstant;
-import com.al.ecs.spring.annotation.log.LogOperatorAnn;
-import com.al.ecs.spring.annotation.session.AuthorityValid;
-import com.al.ecs.spring.controller.BaseController;
-import com.al.lte.portal.bmo.crm.CartBmo;
-import com.al.lte.portal.bmo.crm.CommonBmo;
-import com.al.lte.portal.bmo.crm.CustBmo;
-import com.al.lte.portal.bmo.crm.OrderBmo;
-import com.al.lte.portal.bmo.crm.ProdBmo;
-import com.al.lte.portal.bmo.print.PrintBmo;
-import com.al.lte.portal.bmo.staff.StaffBmo;
-import com.al.lte.portal.common.*;
-import com.al.lte.portal.common.Base64;
-import com.al.lte.portal.core.DataRepository;
-import com.al.lte.portal.model.SessionStaff;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import net.sf.json.JSON;
-import net.sf.json.JSONObject;
-import net.sf.json.xml.XMLSerializer;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
-import org.apache.commons.codec.binary.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.collections.map.HashedMap;
@@ -53,23 +35,52 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import com.al.common.utils.DateUtil;
+import com.al.common.utils.StringUtil;
+import com.al.ec.serviceplatform.client.ResultCode;
+import com.al.ecs.common.entity.JsonResponse;
+import com.al.ecs.common.entity.PageModel;
+import com.al.ecs.common.util.BrowserUtil;
+import com.al.ecs.common.util.EncodeUtils;
+import com.al.ecs.common.util.JsonUtil;
+import com.al.ecs.common.util.MDA;
+import com.al.ecs.common.util.PageUtil;
+import com.al.ecs.common.util.PropertiesUtils;
+import com.al.ecs.common.util.UIDGenerator;
+import com.al.ecs.common.web.ServletUtils;
+import com.al.ecs.exception.AuthorityException;
+import com.al.ecs.exception.BusinessException;
+import com.al.ecs.exception.ErrorCode;
+import com.al.ecs.exception.InterfaceException;
+import com.al.ecs.exception.InterfaceException.ErrType;
+import com.al.ecs.exception.Result;
+import com.al.ecs.exception.ResultConstant;
+import com.al.ecs.spring.annotation.log.LogOperatorAnn;
+import com.al.ecs.spring.annotation.session.AuthorityValid;
+import com.al.ecs.spring.controller.BaseController;
+import com.al.lte.portal.bmo.crm.BusiBmo;
+import com.al.lte.portal.bmo.crm.CartBmo;
+import com.al.lte.portal.bmo.crm.CommonBmo;
+import com.al.lte.portal.bmo.crm.CustBmo;
+import com.al.lte.portal.bmo.crm.OrderBmo;
+import com.al.lte.portal.bmo.crm.ProdBmo;
+import com.al.lte.portal.bmo.print.PrintBmo;
+import com.al.lte.portal.bmo.staff.StaffBmo;
+import com.al.lte.portal.common.AESUtils;
+import com.al.lte.portal.common.CommonMethods;
+import com.al.lte.portal.common.Const;
+import com.al.lte.portal.common.EhcacheUtil;
+import com.al.lte.portal.common.InterfaceClient;
+import com.al.lte.portal.common.MySimulateData;
+import com.al.lte.portal.common.PortalServiceCode;
+import com.al.lte.portal.common.RedisUtil;
+import com.al.lte.portal.common.SysConstant;
+import com.al.lte.portal.core.DataRepository;
+import com.al.lte.portal.model.SessionStaff;
+
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+import net.sf.json.xml.XMLSerializer;
 
 /**
  * 订单受理控制层 主要受理，新装，变更，附属变更
@@ -114,6 +125,11 @@ public class OrderController extends BaseController {
 
     @Autowired
     PropertiesUtils propertiesUtils;
+    
+    public static final String reqPlatForm = SysConstant.CSB_SRC_SYS_ID_LTE; 
+    
+    @Resource(name = "com.al.lte.portal.bmo.crm.BusiBmo")
+   	private BusiBmo busiBmo;
 
     /** 短信验证前，登陆会话临时ID */
     public static final String SESSION_KEY_TEMP_LOGIN_STAFF = "_session_key_tenm_sms";
@@ -5406,4 +5422,506 @@ public class OrderController extends BaseController {
 			return super.failed(ErrorCode.CUST_ORDER_DETAIL, e, param);
 		}
    }
+	
+	/**
+	 * 取支付页面（url+token）
+	 * 
+	 * @param param
+	 * @param model
+	 * @param session
+	 * @param flowNum
+	 * @return
+	 */
+	@RequestMapping(value = "/getPayUrl", method = RequestMethod.POST)
+	@ResponseBody
+	public JsonResponse getPayUrl(@RequestBody Map<String, Object> param,
+			Model model, HttpSession session, @LogOperatorAnn String flowNum) {
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+						SysConstant.SESSION_KEY_LOGIN_STAFF);
+		Map<String, Object> rMap = null;
+		JsonResponse jsonResponse = null;
+		String dbKeyWord = sessionStaff == null ? null : sessionStaff.getDbKeyWord();
+		if(StringUtils.isBlank(dbKeyWord)){
+			dbKeyWord = "";
+		}
+		try {
+			rMap = orderBmo.queryPayToken(param, flowNum, sessionStaff);
+			log.debug("return={}", JsonUtil.toString(rMap));
+			if (rMap != null && "POR-0000".equals(rMap.get("respCode").toString())) {
+				jsonResponse = super.successed(MDA.PAY_URL.toString()+"payToken="+rMap.get("payToken"),
+						ResultConstant.SUCCESS.getCode());
+				// 保存金额到session
+				session.setAttribute(Const.SESSION_PAY_CHARGE_AMOUNT, MapUtils.getString(param, "charge", ""));
+			} else {
+				jsonResponse = super.failed(rMap.get("respMsg").toString(),
+						ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+			}
+			return jsonResponse;
+		} catch (BusinessException be) {
+			this.log.error("调用主数据接口失败", be);
+			return super.failed(be);
+		} catch (InterfaceException ie) {
+			return super.failed(ie, param, ErrorCode.PAY_TOKEN);
+		} catch (Exception e) {
+			log.error("支付平台/token方法异常", e);
+			return super.failed(ErrorCode.PAY_TOKEN, e, param);
+		}
+
+	}
+	
+    /**
+	 * 支付平台前端回调接口(二次确认) - 提供url给支付平台，支付平台跳转到如下页面。
+	 * 1   从支付平台 获取费用项信息
+	 * 2 建档
+	 *   2.1 建档成功 直接给出提示信息到页面
+	 *   2.2 建档失败  
+	 *     2.2.1  退款成功 直接给出提示信息到页面
+	 *     2.2.2 退款成功 直接给出提示信息到页面
+	 * @param request   来自支付平台，入参主要包括金额，付费方式等，具体参照支付平台协议。
+	 * @param response
+	 * @param model
+	 * @return  pay-result.html 提示信息页面
+	 * @throws Exception
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = "getPayResult", method = RequestMethod.GET)
+	public String getPayResult(HttpServletRequest request, HttpServletResponse response, Model model)
+			throws Exception {
+		HttpSession session = request.getSession();
+		String params = request.getParameter("params");// xml参数集合
+		log.debug("获取的参数集合:" + params);
+
+		if (StringUtil.isEmptyStr(params)) {
+			model.addAttribute("resultMsg", "参数集合为空!");
+			model.addAttribute("resultCode", "-1");
+		}
+         String jmParams = AESUtils.decryptToString(params, "4G_KEY_2017");
+		 log.error("解密后的参数集:" + jmParams);
+		 if (StringUtil.isEmptyStr(jmParams)) {
+		    model.addAttribute("resultMsg", "参数解密异常!");
+		    model.addAttribute("resultCode", "-1");
+		 }
+
+		XMLSerializer xmlSerializer = new XMLSerializer();
+		String postData = xmlSerializer.read(jmParams).toString();
+		JSONObject jasonObject = JSONObject.fromObject(postData);
+		Map<String, Object> param = (Map<String, Object>) jasonObject;
+		Map<String, Object> resultMsg = checkBeforeChargeParam(param, new HashMap<String, Object>());
+		Map<String, Object> rMap = new HashMap<String, Object>();
+        // 1 获取费用项信息
+		model.addAttribute("resultData", JsonUtil.toString(super.successed(rMap)));
+		SessionStaff sessionStaff = (SessionStaff) ServletUtils.getSessionAttribute(super.getRequest(),
+				SysConstant.SESSION_KEY_LOGIN_STAFF);
+		int sumAmount= 0;
+//		String olId = (String) ServletUtils.getSessionAttribute(super.getRequest(),
+//                SysConstant.SESSION_KEY_OLD_ID);
+	    if (model != null && model.asMap() != null && !"-1".equals(model.asMap().get("resultCode"))) {
+			try {
+				rMap = getChargeItems(param, null, sessionStaff); // resultMsg
+			} catch (BusinessException be) {
+				log.error("查询费用项失败", be);
+			} catch (InterfaceException ie) {
+				log.error("查询费用项失败", ie);
+			} catch (Exception e) {
+				log.error("查询费用项失败", e);
+			}
+		    if (rMap != null && ResultCode.R_SUCCESS.equals(rMap.get("respCode"))) {
+				boolean checkFlag = false;
+//				List<Map<String, String>> chargeItems = (List<Map<String, String>>) rMap.get("chargeItems");
+//				param.put("chargeItems", chargeItems);
+				JsonResponse jsonResponse = new JsonResponse();
+				// start  后台保存支付信息
+				//saveOrderPaymentRecord(param, sessionStaff,"1000");
+				//end 
+				//去除chargeItems中的重复项，根据acctItemId判断
+				List<Map<String, String>> chargeItems = (List<Map<String, String>>) rMap.get("chargeItems");
+				List<Map<String, String>> checkedChargeItems = new ArrayList<Map<String, String>>();
+				
+				if (chargeItems != null && chargeItems.size() != 0) {
+				    for (Map<String, String> item : chargeItems) {
+				        if (item != null) {
+				            String acctItemId = item.get("acctItemId");
+				            if (acctItemId != null) {
+				                boolean exist = false;
+				                for (Map<String, String> checkedItem : checkedChargeItems) {
+				                    if (acctItemId.equals(checkedItem.get("acctItemId"))) {
+				                        exist = true;
+				                        break;
+				                    }
+				                }
+				                if (!exist) {
+				                	if(StringUtils.isNotBlank(MapUtils.getString(param, "payCode"))){
+						            	item.put("payMethodCd", MapUtils.getString(param, "payCode"));
+						            }
+				                	String realAmount = item.get("realAmount");
+						            int rlAmount = Integer.parseInt(realAmount);
+						            sumAmount = sumAmount + rlAmount;
+				                    checkedChargeItems.add(item);
+				                }
+				            }
+				            String boActionType = (String) item.get("boActionType");
+				            String objId = (String) item.get("objId");
+				            if("14".equals(boActionType) || "13409281".equals(objId)){//补换卡   //国际及港澳台漫游电话（包含语音及短信）
+				            	checkFlag = true;
+				            }
+				        }
+				    }
+				    param.put("chargeItems", checkedChargeItems);
+				}
+				
+				
+				if (checkedChargeItems != null && checkedChargeItems.size() != 0) {
+				    for (Map<String, String> item : checkedChargeItems) {
+				        if (item != null) {
+				            String realAmount = item.get("realAmount");
+				            int rlAmount = Integer.parseInt(realAmount);
+				            sumAmount = sumAmount + rlAmount;
+				        }
+				    }
+				}
+				
+				param.put("soNbr", request.getParameter("soNbr"));
+				if (chargeItems != null && chargeItems.size() > 0
+						&& StringUtils.isNotBlank(chargeItems.get(0).get("soNbr"))) {
+					param.put("soNbr", chargeItems.get(0).get("soNbr"));
+				}
+				
+			    // 补退费-> 补费 
+				if (StringUtils.isNotBlank(chargeItems.get(0).get("operType"))) {
+					try {
+//						olId = (String) ServletUtils.getSessionAttribute(super.getRequest(),
+//				                    SysConstant.SESSION_KEY_REFUND_OLD_ID);
+						if("-9".equals(chargeItems.get(0).get("operType"))){
+							param.put("chargeItems", new ArrayList());
+						}
+						param.put("paymentTransId", reqPlatForm+UIDGenerator.getReqNo());
+						
+						rMap = busiBmo.updateForAddOrReturn(param, null, sessionStaff);
+						if (rMap != null&& ResultCode.R_SUCCESS.equals(rMap.get("code") +"")) {
+							model.addAttribute("resultMsg", "提交成功!");
+							model.addAttribute("resultCode", "0");
+						} else {
+							model.addAttribute("resultMsg", rMap.get("msg"));
+							model.addAttribute("resultCode", "-1");
+						}
+					} catch (BusinessException e) {
+						this.log.error("补退费提交服务出错", e);
+						model.addAttribute("resultData", JsonUtil.toString(super.failed(e).getData()));
+						model.addAttribute("resultCode", "-1");
+						model.addAttribute("resultMsg", "补退费提交服务出错!");
+					} catch (InterfaceException ie) {
+						log.error("补退费提交服务出错", ie);
+						model.addAttribute("resultCode", "-1");
+						model.addAttribute("resultMsg", "补退费提交服务出错!");
+						model.addAttribute("resultData",
+								JsonUtil.toString(super.failed(ie, param, ErrorCode.REFUND_CHARGE).getData()));
+					} catch (Exception e) {
+						log.error("补退费提交异常", e);
+						model.addAttribute("resultMsg", "补退费提交服务出错!");
+						model.addAttribute("resultCode", "-1");
+						model.addAttribute("resultData",
+								JsonUtil.toString(super.failed(ErrorCode.REFUND_CHARGE, e, param).getData()));
+					}
+				}else{  //  非补退费 场景
+					try {
+						
+						Map<String, Object> custOrderAttrsMap = new HashMap<String, Object>();
+						custOrderAttrsMap.put("itemSpecId", "40010020");
+						custOrderAttrsMap.put("value", session.getAttribute(Const.SESSION_PAY_REQ_NO));
+						param.put("custOrderAttrs", custOrderAttrsMap);
+						
+						chargeSubmit(param, null, request, sessionStaff, jsonResponse, checkFlag,checkedChargeItems);
+						if (jsonResponse != null && ResultCode.R_SUCC.equals(jsonResponse.getCode() + "")) {
+							model.addAttribute("resultMsg", "受理成功!");
+							model.addAttribute("resultCode", "0");
+						} else {
+							model.addAttribute("resultMsg", jsonResponse.getData() == null ? "" : jsonResponse.getData());
+							model.addAttribute("resultCode", "-1");
+						}
+					} catch (BusinessException be) {
+						log.error("收费建档方法异常", be);
+						model.addAttribute("resultData", JsonUtil.toString(super.failed(be).getData()));
+						model.addAttribute("resultCode", "-1");
+						model.addAttribute("resultMsg", "建档失败!");
+					} catch (InterfaceException ie) {
+						model.addAttribute("resultCode", "-1");
+						log.error("收费建档方法异常", ie);
+						model.addAttribute("resultMsg", "建档失败!");
+						model.addAttribute("resultData",
+								JsonUtil.toString(super.failed(ie, param, ErrorCode.CHARGE_SUBMIT).getData()));
+					} catch (Exception e) {
+						log.error("收费建档方法异常", e);
+						model.addAttribute("resultMsg", "建档失败!");
+						model.addAttribute("resultCode", "-1");
+						model.addAttribute("resultData",
+								JsonUtil.toString(super.failed(ErrorCode.CHARGE_SUBMIT, e, param).getData()));
+					}
+				}
+			} else {
+				model.addAttribute("resultMsg", "获取费用项异常!"); // rMap.get("respMsg");
+				model.addAttribute("resultCode", "-1");
+			}
+		 }
+			// 3 退款
+    	if (model != null && model.asMap() != null && "-1".equals(model.asMap().get("resultCode"))) {
+	       try {
+	    	   		Map orderMap = new HashMap();
+	    	   		orderMap.put("oldbusiOrderId ",param.get("olId"));
+	    	   		orderMap.put("amount", sumAmount);
+   	              	param.put("order", JsonUtil.toString(orderMap));
+   	              	
+	    	        getRefundResult(model, param, sessionStaff,MapUtils.getString(param, "olId",""));
+					// return jsonResponse;
+				} catch (BusinessException be) {
+					this.log.error("调用支付平台退费失败", be);
+					
+					model.addAttribute("resultMsg", MapUtils.getString(model.asMap(), "resultMsg","") + "退款失败！需要退款,请点击[我要退款]进行手动退款!");
+					model.addAttribute("resultCode", "-3");
+					// return super.failed(be);
+				} catch (InterfaceException ie) {
+					log.error("支付平台退费方法异常", ie);
+					model.addAttribute("resultMsg", MapUtils.getString(model.asMap(), "resultMsg","") + "退款失败！需要退款,请点击[我要退款]进行手动退款!");
+					model.addAttribute("resultCode", "-3");
+				} catch (Exception e) {
+					log.error("支付平台退费方法异常", e);
+					model.addAttribute("resultMsg", MapUtils.getString(model.asMap(), "resultMsg","") + "退款失败！需要退款,请点击[我要退款]进行手动退款!");
+					model.addAttribute("resultCode", "-3");
+				}
+		}
+	       
+//	    if (model != null && model.asMap() != null && "-3".equals(model.asMap().get("resultCode"))) {
+//	    	try{
+//	    		session.setAttribute(MapUtils.getString(param, "olId","")+"-"+SysConstant.SESSION_KEY_AMOUNT,Integer.parseInt(String.valueOf(param.get("payAmount")))); 
+//	    	}catch(Exception e){
+//	    		
+//	    	}
+//	     }
+	      
+		//session.setAttribute(MapUtils.getString(param, "olId","")+"-"+SysConstant.SESSION_KEY_RESULT_CODE,MapUtils.getString(model.asMap(), "resultCode"));
+		return "/pay/pay-result";
+	}
+
+	
+	public JsonResponse chargeSubmit(Map<String, Object> param, String flowNum, HttpServletRequest request,
+			SessionStaff sessionStaff, JsonResponse jsonResponse, boolean checkFlag,List<Map<String, String>> checkedChargeItems) throws Exception {
+		jsonResponse = checkOperatSpec(sessionStaff);
+		if(jsonResponse !=null){
+			return jsonResponse;
+		}
+		Map<String, Object> rMap;
+		int sumAmount = 0;
+		if (checkedChargeItems != null && checkedChargeItems.size() != 0) {
+		    for (Map<String, String> item : checkedChargeItems) {
+		        if (item != null) {
+		            String realAmount = item.get("realAmount");
+		            int rlAmount = Integer.parseInt(realAmount);
+		            sumAmount = sumAmount + rlAmount;
+		        }
+		    }
+		}
+		HttpSession session = request.getSession();
+		int amount = (Integer) session.getAttribute(SysConstant.SESSION_KEY_SUMAMOUNT);
+		if (amount != sumAmount) {
+		    Map<String, Object> paramMap = new HashMap<String, Object>();
+		    paramMap.put("operatSpecCd", "OPSCD_FYJM");
+		    paramMap.put("dataDimensionCd", "DIM_CD_JMFYX");
+		    paramMap.put("staffId", sessionStaff.getStaffId());
+		    paramMap.put("areaId", sessionStaff.getCurrentAreaId());
+		    rMap = orderBmo.queryAuthenticDataRange(paramMap, flowNum, sessionStaff);
+		    if (rMap != null && ResultCode.R_SUCCESS.equals(rMap.get("code").toString())) {
+		        List result = (List) rMap.get("result");
+		        Map remap = (Map) result.get(0);
+		        List dataRanges = (List) remap.get("dataRanges");
+		        if (!(dataRanges.size() > 0)) {
+		        	//首先判断可有积分权益扣减
+		        	if(checkFlag){//表示//补换卡   //国际及港澳台漫游电话（包含语音及短信）
+		        		String checkJFKJ = (String) session.getAttribute(SysConstant.JFKJCG+"_"+sessionStaff.getInPhoneNum());
+		        		if(!"Y".equals(checkJFKJ)){
+		        			jsonResponse = super.failed("您的工号没有修改费用权限，请核对费用！", ResultConstant.SERVICE_RESULT_FAILTURE
+		                            .getCode());
+		                    return jsonResponse;
+		        		}
+		        	}
+		        }
+		    } else {
+		    	if(checkFlag){//表示//补换卡   //国际及港澳台漫游电话（包含语音及短信）
+		    		String checkJFKJ = (String) session.getAttribute(SysConstant.JFKJCG+"_"+sessionStaff.getInPhoneNum());
+		    		if(!"Y".equals(checkJFKJ)){
+		    			jsonResponse = super.failed("您的工号没有修改费用权限，请核对费用！", ResultConstant.SERVICE_RESULT_FAILTURE
+		                        .getCode());
+		                return jsonResponse;
+		    		}
+		    	}
+		    }
+		   //如果金额不一致判断是否有星级权益和修改费用权限
+		   /* String iseditOperation = (String) ServletUtils.getSessionAttribute(super.getRequest(),
+		            SysConstant.SESSION_KEY_EDITCHARGE + "_" + sessionStaff.getStaffId());
+		    if(iseditOperation !="0" && "是否扣减积分权益"=="" ){
+		    	jsonResponse = super.failed("您的工号没有修改费用权限，请核对费用！", ResultConstant.SERVICE_RESULT_FAILTURE
+		                .getCode());
+		        return jsonResponse;
+		    }*/
+		}
+		rMap = orderBmo.chargeSubmit(param, flowNum, sessionStaff);
+	    log.debug("return={}", JsonUtil.toString(rMap));
+	    if (rMap != null && ResultCode.R_SUCCESS.equals(rMap.get("code").toString())) {
+	    	//受理成功清空session中的虚拟购物车ID(virOlId)
+	    	ServletUtils.removeSessionAttribute(super.getRequest(), Const.SESSION_UPLOAD_VIR_OLID);
+	    	//受理成功清空session中的实名信息采集单session缓存键
+	    	ServletUtils.removeSessionAttribute(super.getRequest(), SysConstant.CLT_ORDER_INFO);
+	        jsonResponse = super.successed("收费成功", ResultConstant.SUCCESS.getCode());
+	    } else {
+	        jsonResponse = super.failed(rMap.get("msg"), ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+	        if(rMap.get("invalidOrder")!=null && rMap.get("invalidOrder").equals("Y")){
+	        	jsonResponse = super.failed(rMap.get("msg"), ResultConstant.FAILD.getCode());
+			}
+	    }
+		return jsonResponse;
+	}
+	
+	private JsonResponse checkOperatSpec(SessionStaff sessionStaff) {
+		 JsonResponse jsonResponse = null;
+       //判断工号， 如果有“免短信验证权限”同时 有“限制提交权限维度”，则 不允许在 收银台界面点收费 提交按钮。
+       String smsPassFlag = (String) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.SMS_PASS_OPSCD
+               + "_" + sessionStaff.getStaffId());
+       try {
+           if (smsPassFlag == null) {
+               smsPassFlag = staffBmo.checkOperatSpec(SysConstant.SMS_PASS_OPSCD, sessionStaff);
+               ServletUtils.setSessionAttribute(super.getRequest(), SysConstant.SMS_PASS_OPSCD + "_"
+                       + sessionStaff.getStaffId(), smsPassFlag);
+           }
+       } catch (BusinessException e) {
+           smsPassFlag = "1";
+       } catch (InterfaceException ie) {
+           smsPassFlag = "1";
+       } catch (Exception e) {
+           smsPassFlag = "1";
+       }
+       String isLimitSubmit = (String) ServletUtils.getSessionAttribute(super.getRequest(), SysConstant.LIMIT_SUBMIT
+               + "_" + sessionStaff.getStaffId());
+       try {
+           if (isLimitSubmit == null) {
+               isLimitSubmit = staffBmo.checkOperatSpec(SysConstant.LIMIT_SUBMIT, sessionStaff);
+               ServletUtils.setSessionAttribute(super.getRequest(), SysConstant.LIMIT_SUBMIT + "_"
+                       + sessionStaff.getStaffId(), isLimitSubmit);
+           }
+       } catch (BusinessException e) {
+           isLimitSubmit = "1";
+       } catch (InterfaceException ie) {
+           isLimitSubmit = "1";
+       } catch (Exception e) {
+           isLimitSubmit = "1";
+       }
+       if (smsPassFlag == "0" && isLimitSubmit == "0") {
+           jsonResponse = super.failed("您的工号有“免短信验证权限”同时有“限制提交权限维”，不允许在收银台界面点收费提交按钮!",
+                   ResultConstant.SERVICE_RESULT_FAILTURE.getCode());
+           return jsonResponse;
+       }
+		return jsonResponse;
+	}
+//	private void saveOrderPaymentRecord(Map<String, Object> param, SessionStaff sessionStaff,String operationType) {
+//		Map<String, Object> rMap;
+//		try{
+//			Map orderPaymentRecord = new HashMap();
+//			orderPaymentRecord.put("paymentTransId", MapUtils.getString(param, "reqNo",""));
+//			orderPaymentRecord.put("paymentMethodCd",  MapUtils.getString(param, "payCode",""));
+//			orderPaymentRecord.put("operationType",  operationType);
+//			orderPaymentRecord.put("amount",  MapUtils.getString(param, "payAmount",""));
+//			orderPaymentRecord.put("staffId", sessionStaff.getStaffId());
+//			param.put("areaId", sessionStaff.getAreaId());
+//			param.put("orderId", MapUtils.getString(param, "olId",""));
+//			param.put("orderPaymentRecord", orderPaymentRecord);
+//			rMap = orderBmo.saveOrderPaymentRecord(orderPaymentRecord, null, sessionStaff);
+//			if (rMap != null && ResultCode.R_SUCCESS.equals(rMap.get("code").toString())) {
+//		    	
+//		    }
+//		}catch(Exception e){
+//		    this.log.error("支付交易信息保存接口服务出错", e);
+//		}
+//	}
+
+	/**
+	 * 支付回调前端参数校验
+	 * 
+	 * @return
+	 */
+	private Map<String, Object> checkBeforeChargeParam(Map<String, Object> param, Map<String, Object> resultMsg) {
+
+		if (StringUtils.isBlank(param.get("olId") + "")) {// 参数为空校验
+			resultMsg.put("success", "false"); // true:成功，false:失败
+			resultMsg.put("data", "购物车id为空！");
+			return resultMsg;
+		}
+		if (StringUtils.isBlank(param.get("payResult") + "")) {
+			resultMsg.put("success", "false"); // true:成功，false:失败
+			resultMsg.put("data", "支付结果为空！");
+			return resultMsg;
+		}
+		 if (StringUtils.isBlank(param.get("payCode") + "")) {
+			 resultMsg.put("success", "false"); // true:成功，false:失败
+			 resultMsg.put("data", "支付方式为空！");
+			 return resultMsg;
+		 }
+		 if (StringUtils.isBlank(param.get("payAmount") + "")) {
+			 resultMsg.put("success", "false"); // true:成功，false:失败
+			 resultMsg.put("data", "收费金额为空！");
+			 return resultMsg;
+		 }
+		// 将olId、支付方式和收费金额存入redis，表示支付成功
+		RedisUtil.set("app_status_" + param.get("olId"), "0");
+		RedisUtil.set("app_payMethodCd_" + param.get("olId"), param.get("payCode"));
+		RedisUtil.set("app_payAmount_" + param.get("olId"), param.get("payAmount"));
+		// 签名校验
+
+//		String paramStr = "olId=" + param.get("olId") + "&payResult=" + param.get("payResult") + "&payCode="
+//				+ param.get("payCode") + "&payAmount=" + param.get("payAmount");
+//		String gKey = "305c300d06092a864886f70d0101010500034b003048024100e738c688e669084e9a523c31b179748db82426ca3295b4797bcf9537de62273c417f5e8f69e305f17e77d1943fdea949345474cecd1b5c63c7ed84ea9bcbef0b0203010001";
+//		// MDA.PAY_RSA_KEY;
+//		PublicKey publicKey = RSAUtil.restorePublicKey(RSAUtil.hex2byte(gKey));
+//		byte[] encodedText = RSAUtil.RSAEncode(publicKey, paramStr.getBytes());
+//		String sign = Base64.encodeBase64String(encodedText);
+//		if (!sign.equals(param.get("sign"))) {
+//			resultMsg.put("success", "false"); // true:成功，false:失败
+//			resultMsg.put("data", "签名不一致！");
+//			return resultMsg;
+//		}
+		resultMsg.put("success", "true"); // true:成功，false:失败
+		resultMsg.put("data", "0");// 表示允许下计费接口
+		return resultMsg;
+	}
+	@SuppressWarnings("unchecked")
+	private Map<String, Object> getChargeItems(Map<String, Object> param, String flowNum, SessionStaff sessionStaff)
+			throws Exception {
+		Map<String, Object> rMap = orderBmo.queryPayOrderStatus(param, flowNum, sessionStaff);
+		if(rMap.get("chargeItems")!=null){
+			List<Map<String, Object>> chargeItems2 = new ArrayList<Map<String, Object>>();
+			chargeItems2 = (List<Map<String, Object>>) rMap.get("chargeItems");
+			if(chargeItems2.size()>0 && chargeItems2.get(0)!=null){
+				JSONArray chargeItems = JSONArray.fromObject(chargeItems2);	
+				rMap.put("chargeItems", chargeItems);	
+			}			
+		}
+		return rMap;
+	}
+	private void getRefundResult(Model model, Map<String, Object> param,SessionStaff sessionStaff,String olId) throws Exception {
+		Map<String, Object> rMap;
+	    if(MapUtils.isEmpty(param)){
+			model.addAttribute("resultMsg", MapUtils.getString(model.asMap(), "resultMsg","") + "退款失败！退款失败原因参数缺失,请点击[我要退款]进行手动退款!");
+			model.addAttribute("resultCode", "-3");
+			return;
+	    }else if(StringUtils.isNotEmpty(olId) &&  !olId.equals(param.get("olId"))){
+			model.addAttribute("resultMsg", MapUtils.getString(model.asMap(), "resultMsg","") + "退款失败！退款失败原因参数可能被篡改,请点击[我要退款]进行手动退款!");
+			model.addAttribute("resultCode", "-3");
+			return;
+		}
+	    rMap = orderBmo.payRefundOrder(param, null, sessionStaff);
+		log.debug("return={}", JsonUtil.toString(rMap));
+		if (rMap != null && ResultCode.R_SUCCESS.equals(rMap.get("respCode"))) {
+			model.addAttribute("resultMsg", MapUtils.getString(model.asMap(), "resultMsg","")  + "退费已成功，您的费用将在1到7个工作日退到您的账户,请注意查收!");
+			model.addAttribute("resultCode", "-2");
+		} else {
+			model.addAttribute("resultMsg", MapUtils.getString(model.asMap(), "resultMsg","") + "退款失败！退款失败原因为"+ rMap.get("respMsg") + ",请点击[我要退款]进行手动退款!");
+			model.addAttribute("resultCode", "-3");
+		}
+	}
 }

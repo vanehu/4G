@@ -114,6 +114,7 @@ order.undo = (function(){
 	};
 	
 	var _undoCheck = function (all_only,y_n,id) {
+		OrderInfo.uOlId = $("#"+id).attr("olid");
 		var statusCd = $("#"+id).attr("statusCd");
 		var cancelFlag = $("#"+id).attr("cancelFlag");
 		if(statusCd == 201800){

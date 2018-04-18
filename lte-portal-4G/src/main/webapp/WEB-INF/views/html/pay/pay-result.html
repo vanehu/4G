@@ -1,0 +1,147 @@
+
+      <h2 id="payResultDiv" style="text-align: center;font-size: 18px;"></h2>
+      <div id="payResultDataDiv" style="text-align: center;font-size: 18px;"></div>
+
+
+
+
+<script type="text/javascript">
+var contextPath = "${request.getContextPath()}";
+var globalAppDesc = "${APPDESC}";
+function getToken(){
+	var token="${Request['_al_ec_token']}";
+	return token;
+}
+</script>
+<link href="${staticResPath}/css/base-1.0.0.min.css?${jsversion}" rel="stylesheet" type="text/css" />
+<link href="${staticResPath}/css/busi-1.0.0.min.css?${jsversion}" rel="stylesheet" type="text/css" />
+<#if COMPRESS_JS_LEVEL?? && (COMPRESS_JS_LEVEL == "BASE" || COMPRESS_JS_LEVEL == "BUSI")>
+<script src="${contextPath}/merge/js/base-${BASE_VERSION}.min.js?${jsversion}" type="text/javascript"></script>
+<#else>
+<script src="${contextPath}/js/third-js/jquery/jquery-1.7.2.min.js?${jsversion}" type="text/javascript"></script>
+</#if>
+
+<div>
+    <script type="text/javascript"> 
+     //支付成功，收银台按钮不可用
+    $(function() {//
+            $("#payResultDiv").empty();
+    	    var resultCode = "${resultCode}";
+    	    var resultMsg = "${resultMsg}"; 
+    	    $("#payResultDiv").append(resultMsg);
+    	    var payResult = "${payResult}";
+    	    if(resultCode == 0){
+	    	    
+    	    	
+    	    	$('#payBack', window.parent.document).css('display','none');
+    	    	//var _payBackDiv = window.parent.document.getElementById('payBack');
+        	   //  _payBackDiv.style.display = 'none';
+        	     try{
+        	    	 $('#payInvoice', window.parent.document).css('display','');
+        	    	// $("#successTip_dialog_cnt").off("click").on("click",function(event){order.undo.toUndoMain(1);});
+	    	    	// var payInvoiceDiv = window.parent.document.getElementById('payInvoice');
+	    	    	// payInvoiceDiv.style.display = '';
+	    	    	 
+	    	    	 
+	    	    	// var payInvoiceDiv = window.parent.document.getElementById('printVoucherLoc');
+	    	    	// payInvoice.style.display = '';
+	    	    	 
+	    	    	
+	    	    	 $('#printVoucherA', window.parent.document).css('display','');
+	    	    
+	    	    	
+	    	    	// var printVoucherADiv = window.parent.document.getElementById('printVoucherA');
+	    	    	// printVoucherADiv.style.display = '';
+	    	    	 
+	    	    	
+	    	    	 $('#continueAccept', window.parent.document).css('display','');
+	    	    	 
+	    	    	// var backToEntrDiv = window.parent.document.getElementById('continueAccept');
+	    	    	// backToEntrDiv.style.display = '';
+        	     }catch(e){} 
+	        	}else if(resultCode == -1 || resultCode == -3){
+	    	    	if(resultCode == -3){
+		    	    	//退费按钮可操作
+		    	    	 $('#payRefund', window.parent.document).css('display','');
+		    	    	
+		    	    	// $('#payRefund', window.parent.document).off("click").on("click",function(event){order.refund.payRefund(OrderInfo.orderResult.olId,$('#realmoney', window.parent.document).val()*100,'')});;
+		    	    	 
+		    	    
+		    	    	 $('#payBack', window.parent.document).css('display','none');
+		    	    	//var _payRefundDiv = window.parent.document.getElementById('payRefund');
+		    	    	//_payRefundDiv.style.display = '';
+		    	    }
+	    	    	//$.alertM(resultData);
+	    	        err = ${resultData}; 
+	    	        $("#payResultDataDiv").empty();
+	    	        if(err && err.code && err.code !=0){
+	    	        	var rand = ec.util.getNRandomCode(5);
+		    			var opId = "alertMoreOp" + rand;
+		    			var contId = "alertMoreContent" + rand;
+		    			var errData = ec.util.defaultStr(err.errData, "未知");
+		    			var c  = '<div>';
+		    			var errTitle = '异常信息' + alertIP + getAlertTimeStamp();
+		    			var typeIcon = 'error';
+		    			if (errData == 'ERR_RULE_-2') {
+		    				errTitle = '规则提示' + alertIP + getAlertTimeStamp();
+		    				typeIcon = 'warning';
+		    				c += '<div class="am_baseMsg">';
+		    				c += '规则编码【'+ec.util.defaultStr(err.errCode, "未知") + '】' + ec.util.encodeHtml(ec.util.defaultStr(err.errMsg, "未知"));
+		    				if (err.errorInstNbr) {
+		    					c += '【' + err.errorInstNbr + '】';
+		    				}
+		    				c += '</div>';
+		    			} else {
+		    				c += '<div class="am_baseMsg">';
+		    				var logSeqId = '';
+		    				// InterfaceException
+		    				if (err.logSeqId != undefined && err.logSeqId != '') {
+		    					logSeqId = '<br />日志标识ID【' + ec.util.defaultStr(err.logSeqId, "未知") + '】';
+		    				}
+		    				// BusinessException
+		    				if (jQuery.parseJSON(err.resultMap) != undefined && jQuery.parseJSON(err.resultMap).logSeqId != undefined && jQuery.parseJSON(err.resultMap).logSeqId != '') {
+		    					logSeqId = '<br />日志标识ID【' + ec.util.defaultStr(jQuery.parseJSON(err.resultMap).logSeqId, "未知") + '】';
+		    				}
+		    				c += '错误编码【'+ec.util.defaultStr(err.errCode, "未知") + '】' + ec.util.defaultStr(err.errMsg, "未知") + logSeqId;
+		    				if (err.errorInstNbr) {
+		    					c += '【' + err.errorInstNbr + '】';
+		    				}
+		    				c += '</div>';
+		    				c += '<div class="am_more"><a id="'+ opId +'" href="javascript:void(0);" onclick="">&nbsp;【更多】&nbsp;</a></div>';
+		    				c += '<div id="'+ contId +'" class="am_moreMsg"><font>【详细信息】</font><br/>';
+		    				if (err.resultMap) {
+		    				    c += '<font>回参：</font><br/><span>'+ec.util.defaultStr(err.resultMap, "未知")+'</span><br/>';
+		    				}
+		    				c += '<font>异常信息：</font><br/><span>'+ec.util.encodeHtml(errData)+'</span><br/>';
+		    				c += '<font>入参：</font><br/><span>'+ec.util.encodeHtml(ec.util.defaultStr(err.paramMap, "未知"))+'</span><br/>';
+		    			}
+		    			c += '</div></div>';
+		    			$("#payResultDataDiv").append(c);
+		    			$("#"+opId).off("click").toggle(
+		    					function(){
+		    						$("#"+contId).slideDown("normal");
+		    					},
+		    					function(){
+		    						$("#"+contId).slideUp("fast");
+		    					}
+		    				);
+	    	        }
+	    	    }else if(resultCode == -2){
+	    	    	
+	    	    	$('#payBack', window.parent.document).css('display','');
+	    	    	
+	    	    	//返回收银台按钮可用
+	    	    	// var _payBackDiv = window.parent.document.getElementById('payBack');
+		        	// _payBackDiv.style.display = '';
+	    	    }
+    	   // }else{
+    	   // 	var _div = window.parent.document.getElementById('payInvoice');
+        	//    _div.style.display = 'none';
+    	   // 	$("#payResultDiv").append("支付失败!返回收银台收银台重新操作！");
+    	  //  }
+    	      
+    	  });  
+     //};
+    
+   </script>
+</div>

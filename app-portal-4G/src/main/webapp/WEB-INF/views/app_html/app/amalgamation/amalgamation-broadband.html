@@ -1,0 +1,95 @@
+<link href="${contextPath}/css/app-css/newstyle.css" rel="stylesheet">
+<div id="page-add_${prodType}">
+    <div>
+	    <div class="main-box">
+		<div class="tab-1-box info-box">
+			<div class="input-box" onclick="javascript:order.amalgamation.searchADD('${prodType}');">
+				<i class="iconfont absolute-left">&#xe637;</i>
+				<i class="iconfont absolute-right">&#xe647;</i>
+				<span class="select-title font-color">装机地址</span>
+				<input type="text" id="addressName_${prodType}" class="form-control" placeholder="装机地址查询" readonly="readonly">
+				<input type="hidden" id="addressId_${prodType}" class="form-control">
+			</div>
+			<div class="input-box" id="dzbz_${prodType}" style="display:none;">
+				<i class="iconfont absolute-left">&#xe637;</i> 
+				<span class="select-title font-color">地址备注</span>
+				<input type="text" id="addbeizhu_${prodType}" class="form-control" placeholder="请输入地址备注">
+			</div>
+			<div class="input-box" id="jrfs_${prodType}" style="display:none;">
+				<i class="iconfont absolute-left">&#xe600;</i>
+				<i class="iconfont pull-right p-10 font-secondary">&#xe66e;</i> 
+				<span class="select-title font-color">接入方式</span> 
+				<select id="jrfsList_${prodType}" class="myselect select-option" data-role="none" onchange="order.broadband.setSl(this,'${prodType}')">
+				
+				</select>
+				<input type="hidden" id="jrfs_name_${prodType}" class="form-control">
+    		    <input type="hidden" id="AccessModeId_${prodType}" class="form-control">
+    		    <input type="hidden" id="TerminalId_${prodType}" class="form-control">
+    		    <input type="hidden" id="ExchId_${prodType}" class="form-control">
+    		    <input type="hidden" id="ExchName_${prodType}" class="form-control">
+    		    <input type="hidden" id="MaxRate_${prodType}" class="form-control">
+			</div>
+			<div class="input-box" id="kdkxk_${prodType}" style="display:none;">
+				<i class="iconfont absolute-left">&#xe65d;</i>
+				<span class="select-title font-color">宽带空闲口</span>
+				<input type="text" id="AdFreeNum_${prodType}" class="form-control" readonly="readonly">
+			</div>
+			<div class="input-box" id="ghkxk_${prodType}" style="display:none;">
+				<i class="iconfont absolute-left">&#xe65d;</i> 
+				<span class="select-title font-color">固话空闲口</span>
+				<input type="text" id="PstnFreeNum_${prodType}" class="form-control" readonly="readonly">
+			</div>
+			<div class="input-box" id="PONsx_${prodType}" style="display:none;">
+				<i class="iconfont absolute-left">&#xe65d;</i>  
+				<span class="select-title font-color">PON属性</span>
+				<input type="text" id="IsPon_${prodType}" class="form-control" readonly="readonly">
+			</div>
+			<div class="input-box" id="tcxz_${prodType}" style="" onclick="order.amalgamation.searchPack('${prodType}','','');">
+				<i class="iconfont absolute-left">&#xe6da;</i>
+				<i class="iconfont pull-right p-10 font-secondary">&#xe66e;</i>
+				<span class="select-title">选择套餐</span>
+				<input type="text" id="prodName_${prodType}" class="form-control" placeholder="请选择套餐" readonly="readonly">
+				<input type="hidden" class="form-control" id="objId_${prodType}">
+				<input type="hidden" class="form-control" id="prodId_${prodType}">
+                <input type="hidden" class="form-control" id="offerNbr_${prodType}">
+                <input type="hidden" class="form-control" id="prodNbr_${prodType}">
+                <input type="hidden" class="form-control" id="price_${prodType}">
+                <input type="hidden" class="form-control" id="index_${prodType}">
+                <input type="hidden" class="form-control" id="RoleCd_${prodType}">
+                <input type="hidden" class="form-control" id="compTypeCd_${prodType}">
+				<span class="select-option"></span>
+			</div>
+			<div class="input-box" id="upsl_${prodType}" style="display:none;">
+				<i class="iconfont absolute-left">&#xe601;</i> 
+				<i class="iconfont pull-right p-10 font-secondary">&#xe66e;</i> 
+				<span class="select-title font-color">上行速率</span> 
+				<select id="upslList_${prodType}" class="myselect select-option" data-role="none">
+					
+				</select>
+			</div>
+			<div class="input-box" id="dwsl_${prodType}" style="display:none;">
+				<i class="iconfont absolute-left">&#xe601;</i> 
+				<i class="iconfont pull-right p-10 font-secondary">&#xe66e;</i> 
+				<span class="select-title font-color">下行速率</span> 
+				<select id="dwslList_${prodType}" class="myselect select-option" data-role="none">
+					
+				</select>
+			</div>
+		</div>
+		<div class="submite-box" id="submite-box-1_${prodType}" style="">
+			<button class="submite-btn" onclick="order.amalgamation.showAllProd('page_${prodType}');">确认</button>
+		</div>
+		</div>
+    </div>
+</div>
+<!-- 选地址 -->
+<div id="searchADD_${prodType}">
+</div>
+<!-- 选套餐 -->
+<div id="searchProd_${prodType}">
+</div>
+<script>
+$(function() {
+    order.broadband.init_select();
+});
+</script>

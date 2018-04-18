@@ -35,6 +35,11 @@ OrderInfo = (function() {
 	var _confidence = "0";  //  人脸比对结果的相似程度
 	 
 
+	
+    var _uOlId ="";  // 撤单原购物车Id
+	
+	var _rOlId ="";  // 返销原购物车Id
+	
 	var _isExistCFQ = false;//是否是橙分期业务
 	
 	/*购物车业务动作，定义依据《购物车动作跟主数据对应关系.xlsx》
@@ -1852,8 +1857,6 @@ OrderInfo = (function() {
 			OrderInfo.boUserPartyContactInfo  = $.extend(true, {}, _boUserPartyContactInfo);//使用人：联系人节点
 			OrderInfo.handleCustCertReadInfos = {}
 			//OrderInfo.getCustAgeByCheck = {}
-			
-			cert.deleteCertReaderCustInfosByServCode(CONST.CERT_READER_HANDLE_CUST);
 			OrderInfo.confidence = 0 ;
 			OrderInfo.faceVerifyFlag = "N" ;
 		}
@@ -1919,6 +1922,14 @@ OrderInfo = (function() {
 		
 		if(!ifReapted){
 			OrderInfo.certInfoKeys.push(certInfoKeys);
+		}
+	};
+	//读卡信息（不去重）
+	var _pushCertInfoKeysNoFilter = function(certInfoKeys){
+		if(ec.util.isObj(certInfoKeys) && ec.util.isObj(certInfoKeys["certNumber"]) && ec.util.isObj(certInfoKeys["certInfoId"])){
+			OrderInfo.certInfoKeys.push(certInfoKeys);
+		} else{
+			window.console && window.console.log && (console.log("%cWarn：certInfoKeys为空节点或存在空字段", "color:red"));
 		}
 	};
 	
@@ -2067,11 +2078,14 @@ OrderInfo = (function() {
         confidence 				: _confidence,
         certInfoKeys			:_certInfoKeys,
         pushCertInfoKeys		:_pushCertInfoKeys,
+        pushCertInfoKeysNoFilter:_pushCertInfoKeysNoFilter,
         needCheckFlag           :_needCheckFlag,
         handleCustCertReadInfos	:_handleCustCertReadInfos,
         getCustAgeByCheck       :_getCustAgeByCheck,
         saveOrderedOfferSpecIds :_saveOrderedOfferSpecIds,
         queryExcludeDependData  :_queryExcludeDependData,
-        secondBusiAuthType      :_secondBusiAuthType
+        secondBusiAuthType      :_secondBusiAuthType,
+        uOlId                  :_uOlId,
+        rOlId                  :_rOlId
 	};
 })();

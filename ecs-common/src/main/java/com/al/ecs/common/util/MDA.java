@@ -686,6 +686,32 @@ public class MDA {
   
 	/**营销推荐接触反馈结果*/
 	public static final List<Map<String,String>> MKT_CONTACT_RESULT = new ArrayList<Map<String,String>>();
+	
+	/**爱运维菜单配置列表*/
+	public static final List<String> AYW_MENU_PRO = new ArrayList<String>();
+	
+	/**
+     * 支付平台RSA加密公钥
+     */
+	public static final String gKey = new String("");
+	
+	/**
+	 * 宽带甩单定位门店接口地址
+	 */
+	public static final String READ_UIM=new String("");
+	
+	/**
+	 * 宽带甩单定位门店接口地址
+	 */
+	public static final String BROWSER_FINGERPRINT_URL=new String("");
+	
+	/**
+     * 一五接口加密密钥
+     */
+	public static final String OneFiveSecretKey = new String("");
+	
+	/**省份特殊协议配置*/
+	public static final Map<String, List> SPECIAL_AGREEMENT  = new HashMap<String, List>();
 
 	/**#1614052套餐变更校验副卡数量是否满足目的套餐规则*/	
 	public static final String OFFER_CHANGE_CHECK = new String("");
@@ -705,6 +731,9 @@ public class MDA {
     /**是否进行实名认证的开关*/
     public static final String REAL_NAME_AUTHENTICATION_TOGGLE = new String("");
     
+    /**订单类型、订单状态默认配置*/
+	public static final Map<String, Object> ORDER_TYPE_ORDER_STATUS = new HashMap<String, Object>();
+    
     /**浏览器指纹记录地址*/
 	public static final String FINGER_PRINT_ADDRESS = new String("");
 	
@@ -719,4 +748,20 @@ public class MDA {
 	
 	/**撤单页面对订单类型为2的撤单限制开关*/
 	public static final Map<String,String> ESS_UNDO_FLAG  = new HashMap<String,String>();
+	
+	/**
+     * 支付平台退费接口秘钥
+     */
+    public static final Map<String, String> PRO_PAY_KEY = new HashMap<String, String>();
+    
+	/**
+     * 支付平台RSA加密公钥
+     */
+	public static final String PAY_RSA_KEY = new String("");
+	
+	
+	/**
+     * 支付平台AES加密
+     */
+	public static final String PAY_AES_KEY = new String("");
 }

@@ -26,6 +26,8 @@ public class UIDGenerator {
 	private static final  int INT_4= 4;
 	/** 数:8 */
 	private static final  int INT_8= 8;
+	/** 数:8 */
+	private static final  int INT_6= 6;
 	/** 数:10 */
 	private static final  int INT_10= 10;
 	/** 数:10000 */
@@ -282,6 +284,18 @@ public class UIDGenerator {
 		}
 
 		return buffer.toString();
+	}
+	
+	/**
+	 * 15位日期加6位随机数<br>
+	 * 日期格式yyMMddHHmmssSSS
+	 * @return
+	 */
+	public static String getReqNo() {
+		synchronized (LOCK) {
+			String time = DateFormatUtils.format(new Date(), "yyyyMMddHHmmss");
+			return time + RandomStringUtils.randomNumeric(INT_6);
+		}
 	}
 
 	public static void main(String[] args) {

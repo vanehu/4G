@@ -1141,11 +1141,14 @@ public final class PortalServiceCode {
     /** 宽带融合--查询回执信息**/
     public static final String BORAD_BAND_QUERORDERFORPRT = "biz-service/intf.soService/queryOrderListInfoForPrintZT";
 
-    /**支付平台获取tocken*/
-    public static final String PAY_TOCKEN = "pay-token";
+    /**支付平台获取token*/
+    public static final String PAY_TOKEN = "pay-token";
 
     /**支付平台查询订单*/
     public static final String PAY_QUERY = "pay-qryRepayTrans";
+    
+    /**支付平台退费接口*/
+    public static final String PAY_REFUND = "pay-refundOrder";
 
     /** 宽带甩单－－销售品单列表查询*/
     public static final String QUERY_SALES_ORDER_LIST = "qry.order.saleorderlist";

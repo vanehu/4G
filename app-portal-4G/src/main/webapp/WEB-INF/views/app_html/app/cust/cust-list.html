@@ -1,0 +1,92 @@
+<#if (cust.custInfos)?? &&((cust.custInfos)?size>0)>
+
+<#if query??>
+<table class="table tabletop paddingnone" id="custListTable" custInfoSize="0">
+  <thead>
+    <tr>
+      <th style="padding-left: 0">姓名</th>
+      <th>证件号</th>
+      <th>操作</th>
+    </tr>
+  </thead>
+  <tbody class="panel-group" id="accordion">
+    <#list cust.custInfos as custInfo>
+    <tr id="custInfos" class="custInfo_${custInfo_index}" canRealName="${custInfo.canRealName}" custFlag="${custInfo.custFlag}" norTaxPayer="${custInfo.norTaxPayer}" identityName="${custInfo.identityName}" custId="${custInfo.custId}" partyName="${custInfo.partyName}" areaId="${custInfo.areaId}" corCustId="${custInfo.corCustId}" identityCd="${custInfo.identityCd}" addressStr="${custInfo.addressStr}" areaName="${custInfo.areaName}" vipLevel="${custInfo.vipLevel}" vipLevelName="${custInfo.vipLevelName}" segmentId="${custInfo.segmentId}" segmentName="${custInfo.segmentName}" extCustId="${custInfo.extCustId}" accNbr="${custInfo.accNbr}" age="${custInfo.age}" <#if query=="prod">onclick="product.query.chooseCust(this)"<#elseif query=="acct">onclick="account.query.chooseCust(this)"</#if> >
+      <td id="custListTableParName">${custInfo.partyName}</td>
+      <td>${custInfo.filterIdCardNumber}</td>
+      <td id="custAccNbr">${custInfo.accNbr}</td>
+	  <!-- <td id="areaName">${custInfo.areaName}</td> -->
+	  <td><button type="button" class="btn btn-info">选择</button></td>
+	  <td id="custListTablecustId" style="display:none;">${custInfo.custId}</td>
+	</tr>
+	</#list>
+  </tbody>
+</table>
+<#elseif multiCust=="Y">
+	<div class="userclose"></div>
+	<div><input id="jumpAuthflag" type="hidden" value="${jumpAuthflag}"/></div>
+	<ul class="single-list-box meal-choice-box">
+	<#list cust.custInfos as custInfo>
+		<li class="done p-10 p-t-15 p-b-15" id="custInfos" class="custInfo_${custInfo_index}" onclick="custQuery.showCustAuth(this)"  canRealName="${custInfo.canRealName}"
+				userIdentityCd="${custInfo.userIdentityCd}" userIdentityName="${custInfo.userIdentityName}" userIdentityNum="${custInfo.userIdentityNum}" accountName="${custInfo.accountName}" userName="${custInfo.userName}" userCustId="${custInfo.userCustId}" isSame="${custInfo.isSame}"
+				custFlag="${custInfo.custFlag}" norTaxPayer="${custInfo.norTaxPayer}" identityName="${custInfo.identityName}" custId="${custInfo.custId}" partyName="${custInfo.partyName}" idCardNumber="${custInfo.filterIdCardNumber}" areaId="${custInfo.areaId}" corCustId="${custInfo.corCustId}" identityCd="${custInfo.identityCd}" addressStr="${custInfo.addressStr}" areaName="${custInfo.areaName}" vipLevel="${custInfo.vipLevel}" vipLevelName="${custInfo.vipLevelName}" segmentId="${custInfo.segmentId}" segmentName="${custInfo.segmentName}" extCustId="${custInfo.extCustId}" accNbr="${custInfo.accNbr}" age="${custInfo.age}">
+			<p class="title" id="custListTableParName">姓名：${custInfo.partyName}</p>
+			<p class="message m-r-10">
+				<!-- <i class="iconfont p-r-10">&#xe648;</i> -->
+				<span><span class="orange"> 
+				接入号码：<#if custInfo.accNbr??>${custInfo.accNbr}<#else>无</#if> 
+				</span></span>
+			</p>
+		</li>
+	</#list>
+	</ul>
+<#else>
+	<div class="userclose"></div>
+	<div><input id="jumpAuthflag" type="hidden" value="${jumpAuthflag}"/></div>
+	<ul class="single-list-box meal-choice-box">
+	<#list cust.custInfos as custInfo>
+		<li class="done p-10 p-t-15 p-b-15" id="custInfos" class="custInfo_${custInfo_index}" onclick="custQuery.showCustAuth(this)"  canRealName="${custInfo.canRealName}" MD5_isReal="${custInfo.MD5_isReal}"
+				userIdentityCd="${custInfo.userIdentityCd}" userIdentityName="${custInfo.userIdentityName}" userIdentityNum="${custInfo.userIdentityNum}" accountName="${custInfo.accountName}" userName="${custInfo.userName}" userCustId="${custInfo.userCustId}" isSame="${custInfo.isSame}"
+				custFlag="${custInfo.custFlag}" norTaxPayer="${custInfo.norTaxPayer}" identityName="${custInfo.identityName}" custId="${custInfo.custId}" partyName="${custInfo.partyName}" idCardNumber="${custInfo.filterIdCardNumber}" areaId="${custInfo.areaId}" corCustId="${custInfo.corCustId}" identityCd="${custInfo.identityCd}" addressStr="${custInfo.addressStr}" areaName="${custInfo.areaName}" vipLevel="${custInfo.vipLevel}" vipLevelName="${custInfo.vipLevelName}" segmentId="${custInfo.segmentId}" segmentName="${custInfo.segmentName}" extCustId="${custInfo.extCustId}" accNbr="${custInfo.accNbr}" CN="${custInfo.CN}" address="${custInfo.address}" certNum="${custInfo.certNum}" isGov="${custInfo.isGov}" userCustId="${custInfo.userCustId}" usercertAddress="${custInfo.usercertAddress}" ifEncoded="${custInfo.ifEncoded}" isSame="${custInfo.isSame}" age="${custInfo.age}">
+			<div>
+			<p class="title" id="custListTableParName">姓名：${custInfo.partyName}</p>
+			<p class="message m-r-10">
+				<!-- <i class="iconfont p-r-10">&#xe648;</i> -->
+				<span><span class="title"> 
+				接入号码：<#if custInfo.accNbr??>${custInfo.accNbr}<#else>无</#if> 
+				</span></span>
+			</p>
+			<div class="arrow-right-box p-15 m-t-15">
+			<i class="iconfont">&#xe66e;</i>
+			</div>
+			</div>
+		</li>
+	</#list>
+	</ul>
+</#if>
+<!-- 解决IE7下  easydialog未定义问题
+<script src="${contextPath}/js/4g-js/easydialog.min.js?${jsversion}" type="text/javascript"></script>-->
+<script>
+	custQuery.jumpAuthflag = "";
+	custQuery.govSwitch = "";
+	custQuery.q_custList = [];
+	var jumpAuthflag=${jumpAuthflag};
+	var govSwitch='${govSwitch}';
+	var custInfoSize=${custInfoSize};
+	custQuery.jumpAuthflag=jumpAuthflag;
+	custQuery.govSwitch = govSwitch;
+	//if(custInfoSize>1 && (OrderInfo.actionFlag==1 || OrderInfo.actionFlag==13 || OrderInfo.actionFlag==14)){//新装老客户定位默认使用第一个
+	//	cust.authType = '${cust.custInfos[0].authType}';
+	//	$(".custInfo_0").click();
+	//}else 
+	if(custInfoSize==1){
+		custQuery.authType = '${cust.custInfos[0].authType}';
+		$("#custInfos").click();
+	}
+	if(custInfoSize!=0){
+		custQuery.q_custList = $.parseJSON('${custInfos}');
+	}
+</script>
+<#else>
+false
+</#if>
