@@ -1301,15 +1301,15 @@
 			},
 			'832':<!-- 江苏 -->
 			{
-			'QRCODE_LOGIN_SWITCH':'ON'
+			'QRCODE_LOGIN_SWITCH':'OFF'
 			},
 			'851':<!-- 四川 -->
 			{
-			'QRCODE_LOGIN_SWITCH':'ON'
+			'QRCODE_LOGIN_SWITCH':'OFF'
 			},
 			'833':<!-- 浙江 -->
 			{
-			'QRCODE_LOGIN_SWITCH':'ON'
+			'QRCODE_LOGIN_SWITCH':'OFF'
 			},
 			'834':<!-- 安徽 -->
 			{
@@ -1317,7 +1317,7 @@
 			},
 			'861':<!-- 陕西 -->
 			{
-			'QRCODE_LOGIN_SWITCH':'ON'
+			'QRCODE_LOGIN_SWITCH':'OFF'
 			},
 			'842':<!-- 湖北 -->
 			{
@@ -3516,7 +3516,7 @@
 			},
 			'FACE_VERIFY_832':<!-- 江苏 -->
 			{
-			'FACE_VERIFY_SWITCH':'ON','FZ':'60','FACE_VERIFY_LIVENESS':'OFF','FACE_VERIFY_ROTATE':'OFF'<!-- FACE_VERIFY_LIVENESS  是否打开后端防hack校验     FACE_VERIFY_ROTATE  是否翻转照片-->
+			'FACE_VERIFY_SWITCH':'OFF','FZ':'60','FACE_VERIFY_LIVENESS':'OFF','FACE_VERIFY_ROTATE':'OFF'<!-- FACE_VERIFY_LIVENESS  是否打开后端防hack校验     FACE_VERIFY_ROTATE  是否翻转照片-->
 			},
 			'FACE_VERIFY_851':<!-- 四川 -->
 			{
@@ -3739,6 +3739,103 @@
 		}
 		</const>
 		<const type="String" name="REAL_NAME_AUTHENTICATION_TOGGLE" value="OFF" description="是否进行实名认证的开关ON OFF"></const>
+		<const type="Map" name="ORDER_TYPE_ORDER_STATUS" description="订单类型、订单状态默认配置">
+		{
+			"result": {
+				"orderStatusList": [
+					{
+						"orderStatus": "19",
+						"orderStatusName": "返销"
+					}, {
+						"orderStatus": "99",
+						"orderStatusName": "订单失效"
+					}, {
+						"orderStatus": "10",
+						"orderStatusName": "订单校验"
+					}, {
+						"orderStatus": "11",
+						"orderStatusName": "处理中"
+					}, {
+						"orderStatus": "12",
+						"orderStatusName": "在途"
+					}, {
+						"orderStatus": "13",
+						"orderStatusName": "竣工"
+					}, {
+						"orderStatus": "14",
+						"orderStatusName": "撤单"
+					}, {
+						"orderStatus": "15",
+						"orderStatusName": "退单"
+					}, {
+						"orderStatus": "16",
+						"orderStatusName": "换单"
+					}, {
+						"orderStatus": "17",
+						"orderStatusName": "异常竣工"
+					}, {
+						"orderStatus": "18",
+						"orderStatusName": "系统异常"
+					}, {
+						"orderStatus": "9",
+						"orderStatusName": "订单预校验"
+					}
+				],
+				"orderTypeList": [
+					{
+						"orderType": "smallOrderCancle",
+						"orderTypeName": "小号拆机"
+					}, {
+						"orderType": "modCust",
+						"orderTypeName": "反档"
+					}, {
+						"orderType": "preCheck",
+						"orderTypeName": "预校验"
+					}, {
+						"orderType": "check",
+						"orderTypeName": "校验单"
+					}, {
+						"orderType": "newInstall",
+						"orderTypeName": "新装"
+					}, {
+						"orderType": "preInstall",
+						"orderTypeName": "预装"
+					}, {
+						"orderType": "offerChange",
+						"orderTypeName": "套餐变更"
+					}, {
+						"orderType": "changeRoleMember",
+						"orderTypeName": "成员变更"
+					}, {
+						"orderType": "functional",
+						"orderTypeName": "功能类订单"
+					}, {
+						"orderType": "optional",
+						"orderTypeName": "可选包订单"
+					}, {
+						"orderType": "addCard",
+						"orderTypeName": "补换卡"
+					}, {
+						"orderType": "backEnd",
+						"orderTypeName": "退货"
+					}, {
+						"orderType": "changeEnd",
+						"orderTypeName": "换货"
+					}, {
+						"orderType": "cancelOrder",
+						"orderTypeName": "撤单"
+					}, {
+						"orderType": "backToSell",
+						"orderTypeName": "返销"
+					}, {
+						"orderType": "bareTerminal",
+						"orderTypeName": "裸终端"
+					}
+				]
+			}
+		}
+		</const>
+		
 		<const type="String" name="FINGER_PRINT_ADDRESS" value="http://10.128.21.66:8020/fingerprint/browser" description="浏览器指纹记录地址"></const>
 		
 		<const type="List" name="CERTIFICATES_MUST_READ_CERT" description="必须读卡的证件：人民武装警察居民身份证52、现役军人居民身份证51、居民身份证1">
@@ -3831,5 +3928,85 @@
 			'ESS_UNDO_899':'OFF'<!-- 虚拟省 -->
 			}
 		</const>
+		<const type="String" name="PAY_TOKEN_URL" value="http://10.128.90.195:7001/payconf/" />
+		<const type="String" name="PAY_URL" value="http://10.128.90.195:7001/upay/platpay/indexpc?" />
+        <const type="Map" name="PAY_METHOD_CD" value="100000,120100,120200,120400" description="对接支付平台开关开启情况下，配置现金，翼支付，微信和支付宝四种付费方式将跳转到支付平台进行支付"/>
+        <const type="String" name="PAY_RSA_KEY" value="305c300d06092a864886f70d0101010500034b003048024100e738c688e669084e9a523c31b179748db82426ca3295b4797bcf9537de62273c417f5e8f69e305f17e77d1943fdea949345474cecd1b5c63c7ed84ea9bcbef0b0203010001" description="支付平台RSA加密钥"/>
+        <const type="String" name="PAY_AES_KEY" value="4G_KEY_2017" description="支付平台AES加密钥"/>
+        <const type="Map" name="NEWPAYFLAG" description="省份收费调用新支付平台开关">
+		{
+			'NEWPAYFLAG_854':'OFF',<!-- 西藏 -->
+			'NEWPAYFLAG_863':'OFF',<!-- 青海 -->
+			'NEWPAYFLAG_815':'OFF',<!-- 内蒙古 -->
+			'NEWPAYFLAG_823':'OFF',<!-- 黑龙江 -->
+			'NEWPAYFLAG_845':'OFF',<!-- 广西 -->
+			'NEWPAYFLAG_850':'OFF',<!-- 重庆 -->
+			'NEWPAYFLAG_861':'OFF',<!-- 陕西 -->
+			'NEWPAYFLAG_842':'OFF',<!-- 湖北 -->
+			'NEWPAYFLAG_835':'OFF',<!-- 福建 -->
+			'NEWPAYFLAG_832':'ON',<!-- 江苏 -->
+			'NEWPAYFLAG_846':'OFF',<!-- 海南 -->
+			'NEWPAYFLAG_864':'OFF',<!-- 宁夏 -->
+			'NEWPAYFLAG_814':'OFF',<!-- 山西 -->
+			'NEWPAYFLAG_853':'OFF',<!-- 云南 -->
+			'NEWPAYFLAG_836':'OFF',<!-- 江西 -->
+			'NEWPAYFLAG_837':'OFF',<!-- 山东 -->
+			'NEWPAYFLAG_811':'OFF',<!-- 北京 -->
+			'NEWPAYFLAG_843':'OFF',<!-- 湖南 -->
+			'NEWPAYFLAG_851':'ON',<!-- 四川 -->
+			'NEWPAYFLAG_844':'OFF',<!-- 广东 -->
+			'NEWPAYFLAG_831':'OFF',<!-- 上海 -->
+			'NEWPAYFLAG_812':'OFF',<!-- 天津 -->
+			'NEWPAYFLAG_813':'ON',<!-- 河北 -->
+			'NEWPAYFLAG_841':'OFF',<!-- 河南 -->
+			'NEWPAYFLAG_821':'ON',<!-- 辽宁 -->
+			'NEWPAYFLAG_822':'OFF',<!-- 吉林 -->
+			'NEWPAYFLAG_834':'OFF',<!-- 安徽 -->
+			'NEWPAYFLAG_833':'OFF',<!-- 浙江 -->
+			'NEWPAYFLAG_852':'OFF',<!-- 贵州 -->
+			'NEWPAYFLAG_862':'OFF',<!-- 甘肃 -->
+			'NEWPAYFLAG_865':'OFF',<!-- 新疆 -->
+			'NEWPAYFLAG_899':'OFF'<!-- 虚拟省 -->
+			}
+		</const>
+		
+		
+		<const type="Map" name="PRO_PAY_KEY" description="支付平台退费接口秘钥，区分省份">
+            {
+            'PRO_PAY_KEY_8540000':'PRO_PAY_8540000',<!-- 西藏 -->
+            'PRO_PAY_KEY_8630000':'PRO_PAY_8630000',<!-- 青海 -->
+            'PRO_PAY_KEY_8150000':'PRO_PAY_8150000',<!-- 内蒙古 -->
+            'PRO_PAY_KEY_8230000':'PRO_PAY_8230000',<!-- 黑龙江 -->
+            'PRO_PAY_KEY_8450000':'PRO_PAY_8450000',<!-- 广西 -->
+            'PRO_PAY_KEY_8500000':'PRO_PAY_8500000',<!-- 重庆 -->
+            'PRO_PAY_KEY_8610000':'PRO_PAY_8610000',<!-- 陕西 -->
+            'PRO_PAY_KEY_8420000':'PRO_PAY_8420000',<!-- 湖北 -->
+            'PRO_PAY_KEY_8350000':'PRO_PAY_8350000',<!-- 福建 -->
+            'PRO_PAY_KEY_8320000':'PRO_PAY_8320000',<!-- 江苏 -->
+            'PRO_PAY_KEY_8460000':'PRO_PAY_8460000',<!-- 海南 -->
+            'PRO_PAY_KEY_8640000':'PRO_PAY_8640000',<!-- 宁夏 -->
+            'PRO_PAY_KEY_8140000':'PRO_PAY_8140000',<!-- 山西 -->
+            'PRO_PAY_KEY_8530000':'PRO_PAY_8530000',<!-- 云南 -->
+            'PRO_PAY_KEY_8360000':'PRO_PAY_8360000',<!-- 江西 -->
+            'PRO_PAY_KEY_8370000':'PRO_PAY_8370000',<!-- 山东 -->
+            'PRO_PAY_KEY_8110000':'PRO_PAY_8110000',<!-- 北京 -->
+            'PRO_PAY_KEY_8430000':'PRO_PAY_8430000',<!-- 湖南 -->
+            'PRO_PAY_KEY_8510000':'PRO_PAY_8510000',<!-- 四川 -->
+            'PRO_PAY_KEY_8440000':'PRO_PAY_8440000',<!-- 广东 -->
+            'PRO_PAY_KEY_8310000':'PRO_PAY_8310000',<!-- 上海 -->
+            'PRO_PAY_KEY_8120000':'PRO_PAY_8120000',<!-- 天津 -->
+            'PRO_PAY_KEY_8130000':'PRO_PAY_8130000',<!-- 河北 -->
+            'PRO_PAY_KEY_8410000':'PRO_PAY_8410000',<!-- 河南 -->
+            'PRO_PAY_KEY_8210000':'PRO_PAY_8210000',<!-- 辽宁 -->
+            'PRO_PAY_KEY_8220000':'PRO_PAY_8220000',<!-- 吉林 -->
+            'PRO_PAY_KEY_8340000':'PRO_PAY_8340000',<!-- 安徽 -->
+            'PRO_PAY_KEY_8330000':'PRO_PAY_8330000',<!-- 浙江 -->
+            'PRO_PAY_KEY_8520000':'PRO_PAY_8520000',<!-- 贵州 -->
+            'PRO_PAY_KEY_8620000':'PRO_PAY_8620000',<!-- 甘肃 -->
+            'PRO_PAY_KEY_8650000':'PRO_PAY_8650000',<!-- 新疆 -->
+            'PRO_PAY_KEY_8990000':'PRO_PAY_8990000'<!-- 虚拟省 -->
+            }
+        </const>
+		
 	</mda>
 </mdas>

@@ -1106,7 +1106,9 @@ order.calcharge = (function(){
 //				$("#realAmountDiv").html($("#realAmountText_"+trid).html());
 				realAmount=$("#realhidden_money"+trid).val();
 				$("#realAmount_"+trid).val(realAmount);
-				
+				if(realAmount!=0){
+					realAmountOld=realAmount;
+				}
 				if(payMethod != ''){
 					$("#changeMethod_"+trid).val(payMethod);  //付费方式
 				}
@@ -1125,9 +1127,22 @@ order.calcharge = (function(){
 		var trid=$("#trid").val();
 		_editMoney($("#realAmount_"+trid).val(),trid,'old');
 		//修改付费方式
+		var methodCd = $("#changeMethod_" + trid).val();
 		var payMethod=$("#payMethodDiv select").val();
 		if(payMethod!=null && payMethod!="" && payMethod!=undefined){
 			$("#payMethodCd_"+trid).val(payMethod);
+			if (CONST.PAYMETHOD_CD.ZHANG_WU_DAI_SHOU == payMethod) {//账务代收设置金额为0.00
+				$("#realAmount_" + trid).click();
+				$("#realAmount_" + trid).val("0.00");
+				$("#realAmount_" + trid).blur();
+			} else {//不是账务代收还原金额设置
+				if (ec.util.isObj(realAmountOld)) {
+					$("#item_" + trid).find("td:eq(2)").text(realAmountOld);
+					$("#realAmount_" + trid).click();
+					$("#realAmount_" + trid).val(realAmountOld);
+					$("#realAmount_" + trid).blur();
+				}
+			}
 		}
 	};
 	var _close = function(accessNumber,trid,realAmount){

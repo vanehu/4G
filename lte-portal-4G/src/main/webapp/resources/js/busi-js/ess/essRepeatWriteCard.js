@@ -14,12 +14,14 @@ ess.repeatWriteCard = (function() {
 		var accNbr = ec.util.defaultStr($("#p_accNbr").val());
 		var startDate = ec.util.defaultStr($("#p_startDate").val());
 		var endDate = ec.util.defaultStr($("#p_endDate").val());
+		var province = ec.util.defaultStr($("#p_areaId").val());
 		if(extCustOrderId=="" && accNbr==""){
 			$.alert("提示","'外部订单号'和'手机号码'必须输入一个条件！");
 			return;
 		}
 		var param = {
 			extCustOrderId : extCustOrderId,
+			province : province,
 			accNbr : accNbr,
 			startDate : startDate,
 			endDate : endDate,
@@ -51,9 +53,13 @@ ess.repeatWriteCard = (function() {
 		});
 	};
 
+	var _chooseAllArea = function(areaName, areaId) {
+		order.area.chooseAreaTreeAll(areaName, areaId, "2");
+	};
 	
 	return {
-		queryOrderList : _queryOrderList
+		queryOrderList : _queryOrderList,
+		chooseAllArea : _chooseAllArea
 	};
 
 })();

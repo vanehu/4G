@@ -4025,6 +4025,7 @@ SoOrder = (function() {
 				$("#isTemplateOrder").removeAttr("checked");
 				return;
 			}
+			$("#templateInfo").show();
 			if(OrderInfo.actionFlag==1||OrderInfo.actionFlag==14){
 				$(".template_info_type").show();
 				$(".share_info_type").show();
@@ -4036,6 +4037,7 @@ SoOrder = (function() {
 			}
 			$(".template_info_name").show();
 		}else {
+			$("#templateInfo").hide();
 			$(".template_info_name").hide();
 			$(".template_info_type").hide();
 			$(".share_info_type").hide();
@@ -4730,7 +4732,11 @@ SoOrder = (function() {
 									+ "张移动号卡，您当前业务在本证件下新增" + newNumbers
 									+ "张号卡「" + numbers
 									+ "]，合计超过5卡，请对于新号卡登记其他使用人！");
-					oneCertFiveNum = false;
+					if($("#isTemplateOrder").attr("checked")=="checked"){
+						oneCertFiveNum = true;
+					}else{
+						oneCertFiveNum = false;
+					}
 				} else {
 					oneCertFiveNum = true;
 				}
