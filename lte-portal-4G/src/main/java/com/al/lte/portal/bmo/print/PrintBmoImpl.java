@@ -1279,14 +1279,29 @@ public class PrintBmoImpl implements PrintBmo {
 			for (int j = 0; j < eventContList.size(); j++) {
 				Map<String, Object> eventCont = eventContList.get(j);
 				String objId = MapUtils.getString(eventCont, "objId", "");
+				String itemName = MapUtils.getString(eventCont, "itemName", "");
 				String currentRelaAcceNbr = MapUtils.getString(eventCont, "relaAcceNbr", "");
-				if(mergeMap.containsKey(objId)) {
-					Map<String, Object> map = mergeMap.get(objId);
+				if(mergeMap.containsKey(objId) || mergeMap.containsKey(itemName)) {
+					Map<String,Object> map = null;
+					if(objId != null && objId != ""){
+						map = mergeMap.get(objId);
+						if(map == null){
+							map = mergeMap.get(itemName);
+						}
+					}else{
+						map = mergeMap.get(itemName);
+					}
 					String relaAcceNbr = MapUtils.getString(map, "relaAcceNbr", "");
-					relaAcceNbr = relaAcceNbr + SysConstant.STR_PAU + currentRelaAcceNbr;
-					map.put("relaAcceNbr",relaAcceNbr);
+					if(!relaAcceNbr.endsWith(currentRelaAcceNbr)){
+						relaAcceNbr = relaAcceNbr + SysConstant.STR_PAU + currentRelaAcceNbr;
+						map.put("relaAcceNbr",relaAcceNbr);
+					}	
 				}else{
-					mergeMap.put(objId,eventCont);
+					if(objId != null && objId != ""){
+						mergeMap.put(objId,eventCont);
+					}else{
+						mergeMap.put(itemName,eventCont);
+					}
 				}
 			}
 		}
