@@ -102,7 +102,7 @@ essOrder.main = (function() {
 		var orderType = ec.util.defaultStr($("#p_orderType").val());
 		var commonRegionId = ec.util.defaultStr($("#p_areaId").val());
 		var province = commonRegionId;
-		if(commonRegionId.endsWith("0000") ){//如果是二级地区，将commonRegionId置空
+		if(commonRegionId.endWith("0000")){//如果是二级地区，将commonRegionId置空
 			commonRegionId = "";
 		}
 		var transactionId = ec.util.defaultStr($("#p_transactionId").val());
@@ -330,3 +330,9 @@ $(function() {
 	});
 	
 });
+
+
+String.prototype.endWith=function(str){  
+	var reg=new RegExp(str+"$");  
+	return reg.test(this);  
+	}   
