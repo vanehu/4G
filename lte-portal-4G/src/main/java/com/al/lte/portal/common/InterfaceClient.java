@@ -424,7 +424,11 @@ public class InterfaceClient {
 								intfUrl = (String)csbUrlObj+"?prov="+getAreaJianp(sessionStaff.getCurrentAreaId());
 								log.debug("intfUrl={}", intfUrl);
 							}else{
-								intfUrl = (String)csbUrlObj;
+								if(SysConstant.ON.equals(MDA.NEW_CSB_URL_FLAG)){
+									intfUrl = (String)csbUrlObj+"/"+  SysConstant.CSB_SRC_SYS_ID_LTE + "/"+ MapUtils.getString(map, "DstSysID")+"/"+MapUtils.getString(map, "ServiceCode");
+								}else{
+									intfUrl = (String)csbUrlObj;
+								}
 							}
 						}
 					}
