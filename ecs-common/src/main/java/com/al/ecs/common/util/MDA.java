@@ -103,6 +103,13 @@ public class MDA {
 	 * CSB标识 ON OFF
 	 */
 	public static final String CSB_FLAG=new String("");
+	
+	/**
+	 * CSB 新 url 标识 ON OFF
+	 */
+	public static final String NEW_CSB_URL_FLAG=new String("");
+	
+	
 	/**
 	 * 异步标识 ON OFF
 	 */
