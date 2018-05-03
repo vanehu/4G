@@ -8,13 +8,10 @@
 		<version>4.0.1-SNAPSHOT</version>
 		<relativePath>../lte-parent</relativePath>
 	</parent>
-	<groupId>com.al.ecs</groupId>
-	<artifactId>lte-portal</artifactId>
-	<version>4.0.1-SNAPSHOT</version>
+	<artifactId>app-portal-4G</artifactId>
 	<packaging>war</packaging>
-	<name>lte-portal</name>
+	<name>app-portal-4G</name>
 	<description>LTE门户WEB工程</description>
-	<url>http://127.0.0.1:8080/lte-portal</url>
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
@@ -28,7 +25,6 @@
 		<dependency>
 			<groupId>com.al.ecs</groupId>
 			<artifactId>ecs-common</artifactId>
-			<version>4.0.1-SNAPSHOT</version>
 			<exclusions>
 				<exclusion> 
 					<groupId>com.al.ecs</groupId>
@@ -55,7 +51,6 @@
 		<dependency>
 			<groupId>com.al.ecs</groupId>
 			<artifactId>ecs-common-freemarker</artifactId>
-			<version>4.0.1-SNAPSHOT</version>
 			<exclusions>
 				<exclusion>
 					<groupId>com.al.ecs</groupId>
@@ -114,7 +109,6 @@
 	<dependency>
 		<groupId>log4j</groupId>
 		<artifactId>log4j</artifactId>
-		<version>1.2.15</version>
 		<exclusions>
 			<exclusion>
 				<groupId>javax.mail</groupId>
@@ -238,7 +232,6 @@
 		<dependency>
 			<groupId>jaxen</groupId>
 			<artifactId>jaxen</artifactId>
-			<version>1.1.1</version>
 		</dependency>
 		<!-- excel jxl -->
 		<dependency>
@@ -296,7 +289,6 @@
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-excelant</artifactId>
-			<version>3.8</version>
 		</dependency>
 		
 		<!-- <dependency>
@@ -403,7 +395,6 @@
 		<dependency>
 	  		<groupId>com.al.crm.asynframe</groupId>
 	  		<artifactId>asyn-integration</artifactId>
-	  		<version>1.0.3-SNAPSHOT</version>
 		</dependency> 
 		<!-- CRM异步框架 END -->
 		<!-- yui compressor BEGIN -->
@@ -438,7 +429,7 @@
         <pro.outerDirectory>src/main/webapp</pro.outerDirectory> 
     </properties>
 	<build>
-		<finalName>ltePortal</finalName>
+		<finalName>appPortal</finalName>
 		<!-- 单元测试插件 -->
 		<plugins>
 			<plugin>
@@ -458,8 +449,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>2.3.2</version>
 				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
+					<source>1.6</source>
+					<target>1.6</target>
 					<encoding>UTF-8</encoding>
 				</configuration>
 			</plugin>

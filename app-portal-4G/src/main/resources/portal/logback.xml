@@ -57,52 +57,52 @@
 		</layout>
 	</appender>
 	<root level="INFO">
-		<appender-ref ref="lsbLogFile" />
+		<appender-ref ref="stdout" />
 	</root>
 	<logger name="com.al" level="DEBUG" additivity="false">
-		<appender-ref ref="lsbLogFile" />
+		<appender-ref ref="stdout" />
 	</logger>
 	<logger name="com.al.lte" level="DEBUG" additivity="false">
-		<appender-ref ref="lsbLogFile" />
+		<appender-ref ref="stdout" />
 	</logger>
 	<logger name="com.al.ecs" level="DEBUG" additivity="false">
-		<appender-ref ref="lsbLogFile" />
+		<appender-ref ref="stdout" />
 	</logger>
 	<logger name="com.ailk.ecsp" level="DEBUG" additivity="false">
-		<appender-ref ref="lsbLogFile" />
+		<appender-ref ref="stdout" />
 	</logger>
     <logger name="com.linkage.portal" level="DEBUG" additivity="false">
-         <appender-ref ref="lsbLogFile" />
+         <appender-ref ref="stdout" />
     </logger>
 	<logger name="com.linkage.portal.spring.annotation.log" level="ERROR" additivity="false">
-		<appender-ref ref="lsbLogFile" />
+		<appender-ref ref="stdout" />
 	</logger>
 	<logger name="com.opensymphony.oscache" level="OFF" additivity="false">
-		<appender-ref ref="lsbLogFile" />
+		<appender-ref ref="stdout" />
 	</logger>
 	<logger name="org.springframework" level="ERROR" additivity="false">
 		<appender-ref ref="stdout" />
 	</logger>
 	<logger name="org.springframework.web" level="ERROR" additivity="false">
-		<appender-ref ref="lsbLogFile" />
+		<appender-ref ref="stdout" />
 	</logger>
 	<logger name="org.apache" level="ERROR" additivity="false">
-		<appender-ref ref="lsbLogFile" />
+		<appender-ref ref="stdout" />
 	</logger>
 	<logger name="freemarker.core" level="INFO" additivity="false">
-		<appender-ref ref="lsbLogFile" />
+		<appender-ref ref="stdout" />
 	</logger>
 	<logger name="com.linkage.crm.csb" level="ERROR" additivity="false">
 		<!-- 如果使用日志平台，这里不能配置成unilog或stdout，可以为lsbLogFile -->
-		<appender-ref ref="lsbLogFile"/>
+		<appender-ref ref="stdout"/>
 	</logger>
 	<logger name="com.linkage.crm.csb.core.task.MQComsumer" level="ERROR" additivity="false">
 		<!-- 如果使用日志平台，这里不能配置成unilog或stdout，可以为lsbLogFile -->
-		<appender-ref ref="lsbLogFile"/>
+		<appender-ref ref="stdout"/>
 	</logger>
 	<logger name="com.al.crm.log" level="ERROR" additivity="false">
 		<!-- 使用lsbLogFile -->
-		<appender-ref ref="lsbLogFile"/>
+		<appender-ref ref="stdout"/>
 	</logger>
 	<logger name="com.al.crm.asynframe" level="DEBUG" additivity="false">
 		<!-- 如果使用日志平台，则应使用unilog -->
