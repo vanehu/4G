@@ -1015,6 +1015,10 @@ query.offer = (function() {
 				}
 			}
 		}
+		//#2934153 关于开通OCS国际港台语音、短信漫游业务的通知-关闭 入参增加付费类型
+		var feeType = $("select[name='pay_type_-1']").val();
+		if(feeType==undefined) feeType = order.prodModify.choosedProdInfo.feeType;
+		param.feeType = feeType;
 	};
 	
 	var _invokeLoadInst = function(param) {
