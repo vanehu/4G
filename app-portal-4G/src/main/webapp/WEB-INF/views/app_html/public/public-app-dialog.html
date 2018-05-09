@@ -137,7 +137,7 @@
 					</ul>
 				</div>
 					<div class="form-group" style="height: 1.38rem!important;">
-						<input type="text" id="idCardNumber2" class="form-control" placeholder="输入证件号码" maxlength="30" oninput="this.value=this.value.replace(/[/W]/g,'')">
+						<input type="text" id="idCardNumber2" class="form-control" placeholder="输入证件号码" maxlength="30" oninput="this.value=this.value.replace(/[\W]/g,'')">
                  	</div>
 					<div class="modal-footer">
 	        			<button id="custAuthbtn" type="button" class="btn btn-primary" onclick="custQuery.identityTypeAuth('1')" >校验</button>
