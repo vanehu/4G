@@ -961,7 +961,7 @@
 
             //arr.sort();
             var arrString = arr.join("");
-            var v23 = $.md5("djT&#m23d4i@1#2D" + arrString+"timestamp" + v17);
+            var v23 = MD5("djT&#m23d4i@1#2D" + arrString+"timestamp" + v17);
             return '{"sdkVersion":"1.2.0","language":"' + v2 +
                 '","timestamp":"' +v17+
                 '","colorDepth":' + v3 +
