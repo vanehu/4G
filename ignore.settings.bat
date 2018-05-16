@@ -59,3 +59,13 @@ git update-index --assume-unchanged ./unifyLogin/.settings/org.eclipse.wst.commo
 git update-index --assume-unchanged ./unifyLogin/.settings/org.eclipse.wst.jsdt.ui.superType.container
 git update-index --assume-unchanged ./unifyLogin/.settings/org.eclipse.wst.jsdt.ui.superType.name
 
+git update-index --assume-unchanged ./app-portal-4G/.settings/.jsdtscope
+git update-index --assume-unchanged ./app-portal-4G/.settings/org.eclipse.core.resources.prefs
+git update-index --assume-unchanged ./app-portal-4G/.settings/org.eclipse.jdt.core.prefs
+git update-index --assume-unchanged ./app-portal-4G/.settings/org.eclipse.m2e.core.prefs
+git update-index --assume-unchanged ./app-portal-4G/.settings/org.eclipse.wst.common.component
+git update-index --assume-unchanged ./app-portal-4G/.settings/org.eclipse.wst.common.project.facet.core.xml
+git update-index --assume-unchanged ./app-portal-4G/.settings/org.eclipse.wst.jsdt.ui.superType.container
+git update-index --assume-unchanged ./app-portal-4G/.settings/org.eclipse.wst.jsdt.ui.superType.name
+git update-index --assume-unchanged ./app-portal-4G/.settings/org.eclipse.wst.validation.prefs
+git update-index --assume-unchanged ./app-portal-4G/.settings/org.eclipse.wst.xsl.core.prefs

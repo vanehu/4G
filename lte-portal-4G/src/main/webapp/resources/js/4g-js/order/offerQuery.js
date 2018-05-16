@@ -920,6 +920,10 @@ query.offer = (function() {
 			//不需要查询产品信息的产品大类或接入类产品 (可能产品大类未返回)
 			param.prodBigClass = CONST.PROD_BIG_CLASS.PROD_CLASS_CLOUD;
 		}
+		//#2931712 关于开通OCS国际港台语音、短信漫游业务的通知-关闭 入参增加付费类型
+		var feeType = $("select[name='pay_type_-1']").val();
+		if(feeType==undefined) feeType = order.prodModify.choosedProdInfo.feeType;
+		param.feeType = feeType;
 	};
 	
 	var _invokeLoadInst = function(param) {

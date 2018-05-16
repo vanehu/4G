@@ -813,7 +813,7 @@ order.phoneNumber = (function(){
 				pnNotExitNum = '';
 			}
 		}
-		pnNotExitNum = (pnNotExitNum == '') ? pnNotExitNum : "[^" + pnNotExitNum + "]{4}$";
+		//pnNotExitNum = (pnNotExitNum == '') ? pnNotExitNum : "[^" + pnNotExitNum + "]{4}$";
 		// 校验中间四位是否是数字
 		var singleNum = /^\d?$/;
 		if (!singleNum.test(pnFour) || !singleNum.test(pnFive) || !singleNum.test(pnSix) || !singleNum.test(pnSeven)) {
@@ -821,29 +821,30 @@ order.phoneNumber = (function(){
 			return false;
 		}
 		// 组合正则（中间四位+后四位不含）
-		if (ec.util.isObj(pnFour) || ec.util.isObj(pnFive) || ec.util.isObj(pnSix) || ec.util.isObj(pnSeven)) {
-			if (ec.util.isObj(pnFour)) {
-				middleRegExp += pnFour;
-			} else {
-				middleRegExp += '\\d';
-			}
-			if (ec.util.isObj(pnFive)) {
-				middleRegExp += pnFive;
-			} else {
-				middleRegExp += '\\d';
-			}
-			if (ec.util.isObj(pnSix)) {
-				middleRegExp += pnSix;
-			} else {
-				middleRegExp += '\\d';
-			}
-			if (ec.util.isObj(pnSeven)) {
-				middleRegExp += pnSeven;
-			} else {
-				middleRegExp += '\\d';
-			}
-			pnNotExitNum = !ec.util.isObj(pnNotExitNum) ? middleRegExp + "\\d{4}$" : middleRegExp + pnNotExitNum;
-		}
+//		if (ec.util.isObj(pnFour) || ec.util.isObj(pnFive) || ec.util.isObj(pnSix) || ec.util.isObj(pnSeven)) {
+//			if (ec.util.isObj(pnFour)) {
+//				middleRegExp += pnFour;
+//			} else {
+//				middleRegExp += '\\d';
+//			}
+//			if (ec.util.isObj(pnFive)) {
+//				middleRegExp += pnFive;
+//			} else {
+//				middleRegExp += '\\d';
+//			}
+//			if (ec.util.isObj(pnSix)) {
+//				middleRegExp += pnSix;
+//			} else {
+//				middleRegExp += '\\d';
+//			}
+//			if (ec.util.isObj(pnSeven)) {
+//				middleRegExp += pnSeven;
+//			} else {
+//				middleRegExp += '\\d';
+//			}
+//			pnNotExitNum = !ec.util.isObj(pnNotExitNum) ? middleRegExp + "\\d{4}$" : middleRegExp + pnNotExitNum;
+//		}
+	
 		var phoneNum=$.trim($("#phoneNum").val());
 		if(phoneNum == "任意四位" || query_flag_01 == 1){
 			phoneNum = '';
@@ -885,7 +886,7 @@ order.phoneNumber = (function(){
 			areaId = p_areaId;
 		}
 		return {
-			"pnHead":pnHead, "pnEnd":pnEnd, "pnNotExitNum":pnNotExitNum, "goodNumFlag":pnCharacterId,
+			"pnHead":pnHead, "pnIndexNotExit":"8-11","notContainNum":pnNotExitNum, "number4": pnFour, "number5": pnFive, "number6": pnSix,"number7": pnSeven,  "pnEnd":pnEnd, "goodNumFlag":pnCharacterId,
 			"maxPrePrice":Less, "minPrePrice":Greater, "pnLevelId":'', "pageSize":"20","minLowPrice":lowPrice, "maxLowPrice":lowPrice,
 			"phoneNum":phoneNum, "areaId":areaId, "poolId":poolId, "queryFlag":query_flag_01
 		};

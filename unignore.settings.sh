@@ -59,3 +59,14 @@ git update-index --no-assume-unchanged ./lte-parent/.project
 git update-index --no-assume-unchanged ./lte-portal-4G/.project
 git update-index --no-assume-unchanged ./lte-service-client/.project
 git update-index --no-assume-unchanged ./servicePack-LteCore/.project
+
+git update-index --no-assume-unchanged ./app-portal-4G/.settings/.jsdtscope
+git update-index --no-assume-unchanged ./app-portal-4G/.settings/org.eclipse.core.resources.prefs
+git update-index --no-assume-unchanged ./app-portal-4G/.settings/org.eclipse.jdt.core.prefs
+git update-index --no-assume-unchanged ./app-portal-4G/.settings/org.eclipse.m2e.core.prefs
+git update-index --no-assume-unchanged ./app-portal-4G/.settings/org.eclipse.wst.common.component
+git update-index --no-assume-unchanged ./app-portal-4G/.settings/org.eclipse.wst.common.project.facet.core.xml
+git update-index --no-assume-unchanged ./app-portal-4G/.settings/org.eclipse.wst.jsdt.ui.superType.container
+git update-index --no-assume-unchanged ./app-portal-4G/.settings/org.eclipse.wst.jsdt.ui.superType.name
+git update-index --no-assume-unchanged ./app-portal-4G/.settings/org.eclipse.wst.validation.prefs
+git update-index --no-assume-unchanged ./app-portal-4G/.settings/org.eclipse.wst.xsl.core.prefs

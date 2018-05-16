@@ -179,6 +179,7 @@ query.offer = (function() {
 			OrderInfo.order.soNbr = UUID.getDataId();
 		}
 		param.newFlag=1; //新ui标识
+		param.feeType = order.prodModify.choosedProdInfo.feeType;
 	};
 	
 	/**
