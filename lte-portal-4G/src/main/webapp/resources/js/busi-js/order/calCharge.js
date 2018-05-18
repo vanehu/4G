@@ -385,28 +385,15 @@ order.calcharge = (function(){
 								if(_payFlag &&  ec.util.isObj($("#paymentTransId_"+trid).val()) ){
 								    html='';
 								    html='<select class=\'txt_cal_edit\' id="changeMethod_'+trid+'" style="border: 1px solid #DCDCDC;height: 23px;line-height: 23px;padding: 1px; width: 120px;" onchange="order.calcharge.selectChangePayMethodCd('+id+')">';
-								    var payMethodCdStr = offerChange.queryPortalProperties("PAY_METHOD_CD");
-								    for(var i=0;i<payMethodCdStr.split(",").length;i++){
-								    	var str = '';
-								    	if(payMethodCdStr.split(",")[i] == 100000){
-								    		str = '现金';
-								    	}
-								    	if(payMethodCdStr.split(",")[i] == 120100){
-								    		str = '翼支付';
-								    	}
-								    	if(payMethodCdStr.split(",")[i] == 120200){
-								    		str = '支付宝';
-								    	}
-								    	if(payMethodCdStr.split(",")[i] == 120400){
-								    		str = '微信';
-								    	}
-								    	if(payMethodCdStr.split(",")[i] == 100000){
-								    		html+='<option value="'+payMethodCdStr.split(",")[i]+'" selected="selected">'+str+'</option>';
-								    	}else{
-								    		html+='<option value="'+payMethodCdStr.split(",")[i]+'">'+str+'</option>';
-								    	}
-								    }
-								}
+								    var payMethodCdStr = query.common.queryPropertiesObject("PAY_METHOD_CD");
+								    for(var i in payMethodCdStr){
+								    	if(payMethodCdStr[i].id == 100000){
+									    		html+='<option value="'+ payMethodCdStr[i].id +'" selected="selected">'+payMethodCdStr[i].name+'</option>';
+									    }else{
+									    		html+='<option value="'+ payMethodCdStr[i].id+'">'+payMethodCdStr[i].name+'</option>';
+									    }
+							        }
+                                }
 								html+='</select>';
 								$("#payMethodText_"+trid).html(html);
 								
