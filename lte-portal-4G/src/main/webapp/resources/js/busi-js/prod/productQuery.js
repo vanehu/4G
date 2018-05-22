@@ -161,7 +161,10 @@ product.query = (function(){
 		var custName = $(tr).find("td:eq(0)").text();
 		var custId = $(tr).find("td:eq(3)").text();
 		$("#custName").val(custName).attr("name", custId);
-		easyDialog.close();
+		//easyDialog.close();
+		$.unecOverlay();
+		$("#overlay").css("display","none");
+		$("#easyDialogBox").css("display","none");
 	};
 	
 	//产品信息查询
