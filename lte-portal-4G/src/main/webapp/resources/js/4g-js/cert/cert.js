@@ -311,16 +311,10 @@ cert = (function() {
 		if(ec.util.isObj(certInfo)){
 			var param = {"certInfos":[certInfo]};
 			try{
-				$.callServiceAsJson(contextPath + "/cert/recordCertReaderCustInfos", param, {
-					"done" : function(response) {
-						if(response.code == 0 && response.data){
-							_fillupOrderInfoCertInfoKeys(response.data.certResults, certInfo.servCode);
-						}
-					},
-					"fail" : function(response) {
-						window.console && window.console.log && (console.log("%crecordCertReaderCustInfos异常：" + e, "color:red"));
-					}
-				});
+				var response = $.callServiceAsJson(contextPath + "/cert/recordCertReaderCustInfos", param);
+					if(response.code == 0 && response.data){
+						_fillupOrderInfoCertInfoKeys(response.data.certResults, certInfo.servCode);
+				}
 			} catch(e){
 				window.console && window.console.log && (console.log("%crecordCertReaderCustInfos异常：" + e, "color:red"));
 			}

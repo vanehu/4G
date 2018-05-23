@@ -27,6 +27,7 @@
 	<modules>
 		<module>../ecs-common</module>
 		<module>../lte-portal-4G</module>
+		<module>../lte-unify-login</module>
 	</modules>
 	<dependencyManagement>
 		<dependencies>

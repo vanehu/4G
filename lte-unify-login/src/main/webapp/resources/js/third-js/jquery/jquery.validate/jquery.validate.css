@@ -1,0 +1,42 @@
+body {
+	font-size:14px;
+}
+label.validate_error {
+	color: red;
+	font-weight: bold;
+	background: transparent url(images/unchecked.gif) no-repeat scroll 0 0;
+	padding-left: 18px;
+}
+.validate_form_box {
+	border: solid 1px red;
+	background-color:#FFB9B9;
+}
+label.validate_checked {
+	background: transparent url(images/checked.gif) no-repeat scroll 0 0;
+}
+label.valid {
+	background: transparent url(images/checked.gif) no-repeat scroll 0 0;
+}
+
+div.error {
+	color: red;
+	font-weight: bold;
+	background: transparent url(images/unchecked.gif) no-repeat scroll 0 0;
+	padding-left: 18px;
+}
+
+div.checked {
+	background: transparent url(images/checked.gif) no-repeat scroll 0 0;
+}
+.tooltipinputerr
+{
+	padding: 2px 0 2px 18px;
+	border: solid 1px red;
+	background: #ffff99 url(images/unchecked.gif) no-repeat 2px center;
+	}
+
+.tooltipinputok
+{
+	padding: 2px 0 2px 18px;
+	background: url(images/checked.gif) no-repeat 2px center;
+	}

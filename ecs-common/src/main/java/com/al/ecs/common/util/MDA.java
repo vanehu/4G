@@ -103,6 +103,13 @@ public class MDA {
 	 * CSB标识 ON OFF
 	 */
 	public static final String CSB_FLAG=new String("");
+	
+	/**
+	 * CSB 新 url 标识 ON OFF
+	 */
+	public static final String NEW_CSB_URL_FLAG=new String("");
+	
+	
 	/**
 	 * 异步标识 ON OFF
 	 */
@@ -764,4 +771,9 @@ public class MDA {
      * 支付平台AES加密
      */
 	public static final String PAY_AES_KEY = new String("");
+	
+	/**
+	 * 公众号是否显示地址
+	 */
+	public static final String SHOW_ADDRESS = new String("");
 }

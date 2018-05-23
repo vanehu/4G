@@ -326,7 +326,7 @@
         function($, md5, fingerprint2, rc) { 
             new fingerprint2().get(function(result, components) { 
             	var uuid = rc.generateUUID(); 
-                rc.picking(fingerprintAddress,uuid,result); 
+                rc.picking(fingerprintAddress,uuid,"4G-LTE",result); 
             }); 
         }); 
     }catch(e){ 

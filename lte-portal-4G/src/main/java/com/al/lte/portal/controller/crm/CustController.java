@@ -17,6 +17,7 @@ import com.al.lte.portal.bmo.crm.MktResBmo;
 import com.al.lte.portal.bmo.crm.OrderBmo;
 import com.al.lte.portal.bmo.staff.StaffBmo;
 import com.al.lte.portal.common.*;
+import com.al.lte.portal.common.Base64;
 import com.al.lte.portal.model.SessionStaff;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;

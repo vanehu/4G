@@ -67,6 +67,7 @@
 		<!-- <const type="String" name="CSB_PIC_VERIFY" value="http://cn2csb.crm.189.cn/LTE-CSB/HttpAPIService" 
 			description="人证照片比对地址(生产)"/> -->
 		<const type="String" name="CSB_FLAG" value="OFF" />
+		<const type="String" name="NEW_CSB_URL_FLAG" value="OFF" />
 		<const type="String" name="CSB_HTTP_CMP_URL"
 			value="http://10.128.90.194:8201/LTE-CSB/HttpAPIService" description="一证五号地址" />
 
@@ -3836,7 +3837,7 @@
 		}
 		</const>
 		
-		<const type="String" name="FINGER_PRINT_ADDRESS" value="http://10.128.21.66:8020/fingerprint/browser" description="浏览器指纹记录地址"></const>
+		<const type="String" name="FINGER_PRINT_ADDRESS" value="http://fingerprint.crm.189.cn:7777/fingerprint/browser" description="浏览器指纹记录地址"></const>
 		
 		<const type="List" name="CERTIFICATES_MUST_READ_CERT" description="必须读卡的证件：人民武装警察居民身份证52、现役军人居民身份证51、居民身份证1">
 		["1", "51", "52"]
@@ -3930,7 +3931,27 @@
 		</const>
 		<const type="String" name="PAY_TOKEN_URL" value="http://10.128.90.195:7001/payconf/" />
 		<const type="String" name="PAY_URL" value="http://10.128.90.195:7001/upay/platpay/indexpc?" />
-        <const type="Map" name="PAY_METHOD_CD" value="100000,120100,120200,120400" description="对接支付平台开关开启情况下，配置现金，翼支付，微信和支付宝四种付费方式将跳转到支付平台进行支付"/>
+        <const type="List" name="PAY_METHOD_CD" description="对接支付平台开关开启情况下，配置现金，翼支付，微信和支付宝四种付费方式将跳转到支付平台进行支付">
+		 [
+			{
+			"id": "100000",
+			"name": "现金"
+			},
+			{
+			"id": "120100",
+			"name": "翼支付"
+			},
+			{
+			"id": "120200",
+			"name": "支付宝"
+			},
+			{
+			"id": "120400",
+			"name": "微信"
+			}
+		 ]
+		</const>
+		
         <const type="String" name="PAY_RSA_KEY" value="305c300d06092a864886f70d0101010500034b003048024100e738c688e669084e9a523c31b179748db82426ca3295b4797bcf9537de62273c417f5e8f69e305f17e77d1943fdea949345474cecd1b5c63c7ed84ea9bcbef0b0203010001" description="支付平台RSA加密钥"/>
         <const type="String" name="PAY_AES_KEY" value="4G_KEY_2017" description="支付平台AES加密钥"/>
         <const type="Map" name="NEWPAYFLAG" description="省份收费调用新支付平台开关">
