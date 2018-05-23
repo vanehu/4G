@@ -259,21 +259,21 @@ public class MySimulateData {
 		returnStr = new String(returnStr.getBytes("ISO-8859-1"), "UTF-8");
 		return returnStr;
 	}
+	
 	public static Properties getProperties(String resource) {
-		Properties properties = new Properties();
+		Properties proper = new Properties();
 		try {
-			if (getClassLoader().getResource(resource) == null){
-				System.out.println("单元测试特殊处理");
-				String path = getClassLoader().getResource("").getPath();
-				properties.load(new BufferedInputStream(new FileInputStream(path.substring(1,path.indexOf("/test-classes/"))+"/classes"+resource)));
-			}else{
-				properties.load(new BufferedInputStream(new FileInputStream(getClassLoader().getResource(resource).getPath())));
+			if (getClassLoader().getClass().getName().startsWith("org.apache.catalina")) {
+				if (StringUtils.isNotBlank(resource) && resource.startsWith("/")) {
+					resource = resource.substring(1);
+				}
 			}
-		} catch (IOException e) {
-			throw new RuntimeException("couldn't load properties file '"
-					+ resource + "'", e);
+			proper.load(new BufferedInputStream(new FileInputStream(getClassLoader().getResource(resource).getPath())));
+		} catch (Exception e) {
+			log.error("翼销售加载配置文件{}异常：", resource, e);
+			throw new RuntimeException("无法加载配置文件：" + resource, e);
 		}
-		return properties;
+		return proper;
 	}
 	
 	public static Properties getPropertiesByAbs(String resource) {
