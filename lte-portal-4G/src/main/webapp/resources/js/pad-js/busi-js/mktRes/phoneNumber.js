@@ -681,7 +681,7 @@ mktRes.phoneNbr = (function(){
 		if(pnNotExitNum == '后四位不含'){
 			pnNotExitNum = '';
 		}
-		pnNotExitNum = (pnNotExitNum == '') ? pnNotExitNum : "[^" + pnNotExitNum + "]{4}$";
+		//pnNotExitNum = (pnNotExitNum == '') ? pnNotExitNum : "[^" + pnNotExitNum + "]{4}$";
 		var phoneNum='';
 		var Greater  = "";
 		var Less  ="";
@@ -696,8 +696,9 @@ mktRes.phoneNbr = (function(){
 			Less="";
 		}
 		var poolId = $.trim($("#nbrPool option:selected").val());	
-		var pnCharacterId=$.trim($("#pnCharacterId option:selected").val());	
-		return {"pnHead":pnHead,"pnEnd":pnEnd,"pnNotExitNum":pnNotExitNum,"goodNumFlag":pnCharacterId,"maxPrePrice":Less,
+		var pnCharacterId=$.trim($("#pnCharacterId option:selected").val());
+		
+		return {"pnHead":pnHead,"pnEnd":pnEnd, "pnIndexNotExit":"8-11","notContainNum":pnNotExitNum, "goodNumFlag":pnCharacterId,"maxPrePrice":Less,
 			"minPrePrice":Greater,"pnLevelId":'',"pageSize":"16","phoneNum":phoneNum,"areaId":areaId,"poolId":poolId,
 			"queryFlag":query_flag_01
 		};
