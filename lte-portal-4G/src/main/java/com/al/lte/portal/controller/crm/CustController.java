@@ -2455,7 +2455,7 @@ public class CustController extends BaseController {
 					// + sessionStaff.getCurrentAreaId()
 					// .substring(0, 3));
 					String fz = MapUtils.getString(fzConfig, "FZ", "0");
-					Double confidences = (Double) rMap.get("confidence");
+					Double confidences = Double.parseDouble(rMap.get("confidence")+"");
 					rMap.put("fz", fz);
 					if (confidences >= Double.valueOf(fz)) {
 						rMap.put("faceVerifyFlag", "Y");
