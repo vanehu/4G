@@ -771,4 +771,9 @@ public class MDA {
      * 支付平台AES加密
      */
 	public static final String PAY_AES_KEY = new String("");
+	
+	/**
+	 * 公众号是否显示地址
+	 */
+	public static final String SHOW_ADDRESS = new String("");
 }

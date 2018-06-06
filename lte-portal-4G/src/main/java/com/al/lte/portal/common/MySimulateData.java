@@ -259,15 +259,21 @@ public class MySimulateData {
 		returnStr = new String(returnStr.getBytes("ISO-8859-1"), "UTF-8");
 		return returnStr;
 	}
+	
 	public static Properties getProperties(String resource) {
-		Properties properties = new Properties();
+		Properties proper = new Properties();
 		try {
-			properties.load(new BufferedInputStream(new FileInputStream(getClassLoader().getResource(resource).getPath())));
-		} catch (IOException e) {
-			throw new RuntimeException("couldn't load properties file '"
-					+ resource + "'", e);
+			if (getClassLoader().getClass().getName().startsWith("org.apache.catalina")) {
+				if (StringUtils.isNotBlank(resource) && resource.startsWith("/")) {
+					resource = resource.substring(1);
+				}
+			}
+			proper.load(new BufferedInputStream(new FileInputStream(getClassLoader().getResource(resource).getPath())));
+		} catch (Exception e) {
+			log.error("门户加载配置文件{}异常：", resource, e);
+			throw new RuntimeException("无法加载配置文件 ：" + resource, e);
 		}
-		return properties;
+		return proper;
 	}
 	
 	public static Properties getPropertiesByAbs(String resource) {

@@ -777,7 +777,7 @@ order.phoneNumber = (function(){
 				pnNotExitNum = '';
 			}
 		}
-		pnNotExitNum = (pnNotExitNum == '') ? pnNotExitNum : "[^" + pnNotExitNum + "]{4}$";
+//		pnNotExitNum = (pnNotExitNum == '') ? pnNotExitNum : "[^" + pnNotExitNum + "]{4}$";
 		var phoneNum='';
 //		var phoneNum=$.trim($("#phoneNum").val());
 //		if(phoneNum=="任意四位"){
@@ -815,7 +815,7 @@ order.phoneNumber = (function(){
 //			pnCharacterId = $("#pnCharacterId_all option:selected").attr("val");
 //		}
 		pnCharacterId = ec.util.defaultStr(pnCharacterId);
-		return {"pnHead":pnHead,"pnEnd":pnEnd,"pnNotExitNum":pnNotExitNum,"goodNumFlag":pnCharacterId,"maxPrePrice":Less,
+		return {"pnHead":pnHead, "pnIndexNotExit":"8-11","notContainNum":pnNotExitNum, "pnEnd":pnEnd,"goodNumFlag":pnCharacterId,"maxPrePrice":Less,
 			"minPrePrice":Greater,"pnLevelId":'',"pageSize":"10","minLowPrice":Greater1, "maxLowPrice":Less1,"phoneNum":phoneNum,"areaId":areaId,"poolId":poolId,"subPage":subPage,   
 			"queryFlag":query_flag_01
 		};
