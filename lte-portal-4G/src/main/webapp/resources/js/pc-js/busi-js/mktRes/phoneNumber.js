@@ -772,7 +772,7 @@ order.phoneNumber = (function(){
 		}
 		pnCharacterId = ec.util.defaultStr(pnCharacterId);
 		
-		return {"pnHead":pnHead, "pnIndexNotExit":"8-11","notContainNum":pnNotExitNum, "number4": pnFour, "number5": pnFive, "number6": pnSix,"number7": pnSeven, "goodNumFlag":pnCharacterId,"maxPrePrice":Less,
+		return {"pnHead":pnHead, "pnEnd":pnEnd,"pnIndexNotExit":"8-11","notContainNum":pnNotExitNum, "number4": pnFour, "number5": pnFive, "number6": pnSix,"number7": pnSeven, "goodNumFlag":pnCharacterId,"maxPrePrice":Less,
 			"minPrePrice":Greater,"pnLevelId":'',"pageSize":"20","phoneNum":phoneNum,"areaId":areaId,"poolId":poolId,"minLowPrice":lowPrice, "maxLowPrice":lowPrice,
 			"queryFlag":query_flag_01
 		};
