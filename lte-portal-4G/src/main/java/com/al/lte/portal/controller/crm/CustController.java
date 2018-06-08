@@ -17,7 +17,6 @@ import com.al.lte.portal.bmo.crm.MktResBmo;
 import com.al.lte.portal.bmo.crm.OrderBmo;
 import com.al.lte.portal.bmo.staff.StaffBmo;
 import com.al.lte.portal.common.*;
-import com.al.lte.portal.common.Base64;
 import com.al.lte.portal.model.SessionStaff;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -2456,7 +2455,7 @@ public class CustController extends BaseController {
 					// + sessionStaff.getCurrentAreaId()
 					// .substring(0, 3));
 					String fz = MapUtils.getString(fzConfig, "FZ", "0");
-					Double confidences = (Double) rMap.get("confidence");
+					Double confidences = Double.parseDouble(rMap.get("confidence")+"");
 					rMap.put("fz", fz);
 					if (confidences >= Double.valueOf(fz)) {
 						rMap.put("faceVerifyFlag", "Y");

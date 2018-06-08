@@ -1166,6 +1166,7 @@ order.main = (function(){
 					acctCd : $("#d_query_cd input").val(),
 					custId : OrderInfo.cust.custId
 				};
+
 			}
 			//0.查询当前客户下帐户
 			else{
@@ -2439,6 +2440,12 @@ order.main = (function(){
 	
 	//帐户查询
 	var _chooseAcct = function() {
+		//redmine2999579加入判断custid=-1?
+		if(OrderInfo.cust.custId == -1){
+			$("#querAcctBtn").attr("disabled",true);
+		}else{
+			$("#querAcctBtn").removeAttr("disabled");
+		}
 		$("#acctDialog .contract_list td").text("帐户查询");
 		$("#acctDialog .selectList").show();
 		easyDialog.open({
