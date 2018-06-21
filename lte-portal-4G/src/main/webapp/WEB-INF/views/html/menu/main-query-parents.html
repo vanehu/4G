@@ -1,8 +1,0 @@
-<h2>快捷菜单分类</h2>
-<div class="service-menu" id="first_level">
-<#if lv1??>
-	<#list lv1 as nav>        
-	<a href="javascript:;" onclick="main.home.changeParent(${nav.resourceId});" id="${nav.resourceId}">${nav.resourceName}</a>
-	</#list>	
-</#if>
-</div>
