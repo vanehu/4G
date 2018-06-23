@@ -1,0 +1,96 @@
+
+<div id="order-content" style="display: block">
+	<div class="modal fade " id="attach-modal" tabindex="-1" role="dialog"
+		aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal_wrapper">
+			<div class="modal-dialog ">
+				<div class="modal-content">
+					<div class="modal-body"><strong>正在查询销售品实例中,请稍后....</strong></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!--用户鉴权弹窗 -->
+
+          <div style="display:none; height:300px;background:#fff; -webkit-border-radius:5px; -moz-border-radius:5px; border-radius:5px;-webkit-box-shadow:0 8px 8px rgba(0,0,0,0.4);-moz-box-shadow:0 8px 8px rgba(0,0,0,0.4);box-shadow:0 8px 8px rgba(0,0,0,0.4); border:5px solid #cbced0;
+	         
+	          overflow-y:auto;"  id="auth2">
+          </div>
+<script type="text/javascript">
+//初始化
+$(function(){
+	var reloadFlag=OrderInfo.provinceInfo.reloadFlag;
+	
+	if(reloadFlag=="N"){
+		var orderInfo=OrderInfo.reloadOrderInfo;
+		
+		if(orderInfo==null || orderInfo=="" || orderInfo=="undefined"){
+			$.alert("提示","二次加载数据信息丢失!");
+			return;
+		}
+		
+		
+		var resultCode=orderInfo.resultCode;
+		
+		var resultMsg=orderInfo.resultMsg;
+		
+		if(resultCode==null || resultCode=="" || resultCode=="undefined"){
+			$.alert("提示","二次加载数据信息丢失!");
+			return;
+		}
+		
+		if(orderInfo.result.orderList==null || orderInfo.result.orderList==""){
+			$.alert("提示",resultMsg);
+			return;
+		}
+
+		var custOrderAttrs =orderInfo.result.orderList.orderListInfo.custOrderAttrs;
+		
+		var isRight="0";
+		
+		$.each(custOrderAttrs,function(){
+			if(this.itemSpecId=="30010024"){
+				if(this.value!="14"){
+					isRight="1";
+				}
+			}
+		});
+		
+		if(isRight=="1"){
+			$.alert("提示","不是可选包变更受理流水号，请重试!");
+			return;
+		}
+		
+		if(resultCode=="-1" || resultCode=="2"){
+			alert(resultMsg);
+			return;
+		}
+	}
+	OrderInfo.order.soNbr='${soNbr}';
+	//设置可选包订单唯一标识
+	OrderInfo.busitypeflag="14";
+	
+	if(reloadFlag=="N"){
+		PackageAttachOffer.init();
+	}
+	else{
+		 order.prodModify.querySecondBusinessAuth('3','N');
+	}
+
+	//AttachOffer.init();
+});
+</script>
+<!-- 订单确认页面、收银台页面 -->
+<div id="order-confirm" style="display: none;">
+</div>
+<!-- 回执内容显示页面 -->
+<div id="order-print" style="display: none;">
+</div>
+<!-- 协销人展示 -->
+<div id="order-dealer" style="display: none;">
+	<@block name="dealer">
+		<#include "/apptoken/order/order-dealer.html" />
+	</@block>
+</div>
+

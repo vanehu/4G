@@ -1,0 +1,255 @@
+<!-- 弹出确认框Modal -->
+<div class="modal fade" id="alert-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog" style="display:block;">
+    <div class="modal-content">
+      <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h4 class="modal-title" id="modal-title">标题</h4>
+      </div>
+      <div class="modal-body" id="modal-content">
+       	 内容
+      </div>
+      <div class="modal-footer" id="div_info_btn">
+      	<div class="btn-group btn-group-justified" role="group" aria-label="...">
+          <div class="btn-group" role="group">
+            <button type="button" class="btn btn-primary btn-lg"  data-dismiss="modal" aria-hidden="true" id="btn-dialog-ok">确认</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- 遮罩 弹出框-->
+<div class="modal fade " id="overlay-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal_wrapper">
+  <div class="modal-dialog ">
+    <div class="modal-content">
+    	<div class="modal-body" id="overlay-modal-content">
+      Loading...
+      </div>
+    </div>
+  </div>
+  </div>
+</div>
+<div id="auth3" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+  <div class="modal-dialog modal-sm" style="display:block;">
+    <div class="modal-content">
+    	<div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	        <h4 class="modal-title">客户鉴权</h4>
+	    </div>
+      <div class="panel-body">
+			<div class="panel-heading p-0">
+				<!-- begin nav-tabs -->
+				<div class="tab-overflow">
+					<ul class="nav nav-tabs nav-tabs-inverse p-t-5" style="border-radius: 5px 5px 0 0;">
+						<li id="auth_tab1" style="" class="gz_jq" onclick="custQuery.changeTab(1);">
+						<a data-toggle="tab">
+						<i class="iconfont tab-icon">&#xe667;</i>
+						产品密码
+						<i class="iconfont tab-result-icon">&#xe611;</i>
+						</a>
+						</li>
+						<li id="auth_tab2" style="" class="gz_jq" onclick="custQuery.changeTab(2);">
+						<a data-toggle="tab">
+						<i class="iconfont tab-icon">&#xe671;</i>
+						证件
+						<i class="iconfont tab-result-icon">&#xe611;</i>
+						</a>
+						</li>
+						<li id="auth_tab3" style="" class="gz_jq" onclick="custQuery.changeTab(3);">
+						<a data-toggle="tab">
+						<i class="iconfont tab-icon">&#xe671;</i>
+						短信
+						<i class="iconfont tab-result-icon">&#xe611;</i>
+						</a>
+						</li>
+						<li id="auth_tab10" style="" class="gz_jq" onclick="custQuery.changeTab(10);">
+						<a data-toggle="tab">
+						<i class="iconfont tab-icon">&#xe671;</i>
+						更多方式
+						<i class="iconfont tab-result-icon">&#xe611;</i>
+						</a>
+						</li>
+						<li id="auth_tab4" class="zq_jq" style="display:none;" onclick="custQuery.changeTab(4);">
+						<a data-toggle="tab">
+						<i class="iconfont tab-icon">&#xe671;</i>
+						单位证件
+						<i class="iconfont tab-result-icon">&#xe611;</i>
+						</a>
+						</li>
+						<li id="auth_tab5" class="zq_jq" style="display:none;" onclick="custQuery.changeTab(5);">
+						<a data-toggle="tab">
+						<i class="iconfont tab-icon">&#xe671;</i>
+						使用人
+						<i class="iconfont tab-result-icon">&#xe611;</i>
+						</a>
+						</li>
+						<li id="auth_tab6" class="zq_jq" style="display:none;" onclick="custQuery.changeTab(6);">
+						<a data-toggle="tab">
+						<i class="iconfont tab-icon">&#xe671;</i>
+						证件+使用人
+						<i class="iconfont tab-result-icon">&#xe611;</i>
+						</a>
+						</li>
+						<li id="auth_tab11" style="display:none;" class="zq_jq" onclick="custQuery.changeTab(11);">
+						<a data-toggle="tab">
+						<i class="iconfont tab-icon">&#xe671;</i>
+						更多方式
+						<i class="iconfont tab-result-icon">&#xe611;</i>
+						</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+
+			<div class="tab-content p-0" id="">
+				<div class="tab-pane fade " id="auth-nav-tab-1">
+					<div class="form-group" style="height: 66px!important;">
+						<input type="text" class="form-control" id="authPassword2" placeholder="请输入产品密码" maxlength="20" oninput="this.value=this.value.replace(/[/W]/g,'')">
+					</div>
+					<div class="modal-footer">
+	        			<button id="custAuthbtn1" type="button" class="btn btn-primary"  onclick="custQuery.productPwdAuth('1')">校验</button>
+	        			<button id="jumpAuth1" style="display:none" onclick="custQuery.jumpAuth()" type="button" class="btn btn-primary">跳过校验</button>
+	    			</div>
+				</div>
+				<div class="tab-pane fade" id="auth-nav-tab-2">
+				<div class="list-box m-t-10">
+					<ul class="choice-list-box bg-body border-none">
+						<li class="m-t-10">
+							<div class="choice-box">
+								<i class="iconfont pull-left">&#xe60b;</i>
+								<div class="choice-box-left">
+									<span class="select-title left-0">证件类型：</span>
+									<span id="idCardType2" class="select-title" placeholder="" readonly="readonly" style="margin-left: 80px;">证件类型</span>
+								</div>
+							</div>
+						</li>
+						<li class="m-t-10" id="readCertBtnID2">
+							<div class="choice-box">
+								<i class="iconfont pull-left">&#xe609;</i>
+								<span class="list-title font-secondary border-none">证件扫描</span>
+								<i id="otg" onclick="common.callGenerationRec('cust.getGenerationInfos','3','1')" class="iconfont pull-right font-orange">&#xe6dc;</i>
+								<i onclick="common.callGenerationRec('cust.getGenerationInfos','1','1')" class="iconfont pull-right font-orange">&#xe653;</i>
+								<i id="nfc" onclick="common.callGenerationRec('cust.getGenerationInfos','2','1')" class="iconfont pull-right font-orange">&#xe654;</i>
+							</div>
+						</li>
+					</ul>
+				</div>
+					<div class="form-group" style="height: 1.38rem!important;">
+						<input type="text" id="idCardNumber2" class="form-control" placeholder="输入证件号码" maxlength="30" oninput="this.value=this.value.replace(/[\W]/g,'')">
+                 	</div>
+					<div class="modal-footer">
+	        			<button id="custAuthbtn" type="button" class="btn btn-primary" onclick="custQuery.identityTypeAuth('1')" >校验</button>
+	        			<button id="jumpAuth2" style="display:none" onclick="custQuery.jumpAuth()" type="button" class="btn btn-primary">跳过校验</button>
+	    			</div>
+				</div>
+				<div class="tab-pane fade" id="auth-nav-tab-3">
+					<div class="form-group" style="height: 66px!important;">
+						<div class="input-group" style="margin-top: 2px;">
+							<input type="text" id="smspwd2" class="form-control" placeholder="输入短信验证码" maxlength="8" oninput="this.value=this.value.replace(/\D/g,'')">
+							<span style="display: table-cell; vertical-align: middle; width: 1%;" >
+		                      <button class="btn btn-info" id="smsSend" onclick="custQuery.smsResend('1')"  type="button"> 获取 </button>
+		                      </span> </div>
+					</div>
+					<div class="form-group" style="height: 66px!important;">
+						随机序列号:<input id="num" disabled='disabled'  style="float:right; margin:0px 5px;height:24px" />
+					 </div>
+					<div class="modal-footer">
+				        <!-- <button type="button" class="btn btn-default" data-dismiss="modal">取消</button> -->
+				        <button id="custAuthbt3" type="button" class="btn btn-primary" onclick="custQuery.smsvalid('1')" >校验</button>
+				        <button id="jumpAuth3" style="display:none" onclick="custQuery.jumpAuth()" type="button" class="btn btn-primary">跳过校验</button>
+				    </div>
+				</div>
+				<div class="tab-pane fade " id="auth-nav-tab-4">
+					<div class="form-group" style="height: 0.86rem!important;">
+						<input type="text" class="form-control" id="danweiNum" placeholder="请输入组织机构代码" maxlength="50" oninput="this.value=this.value.replace(/[/W]/g,'')">
+					</div>
+					<div class="modal-footer">
+	        			<button id="custAuthbtn4" type="button" class="btn btn-primary"  onclick="custQuery.productPwdAuth('1')">校验</button>
+	        			<button id="jumpAuth4" style="display:none" onclick="custQuery.jumpAuth()" type="button" class="btn btn-primary">跳过校验</button>
+	    			</div>
+				</div>
+				<div class="tab-pane fade" id="auth-nav-tab-5">
+				<div class="list-box m-t-10">
+					<!-- <div class="form-group" style="height: 0.58rem!important;">
+						使用人名称:<input id="zq_userName" disabled='disabled'  style="float:right; margin:0px 5px;height:24px" />
+					 </div>
+					 <div class="form-group" style="height: 0.58rem!important;">
+						账户名称:<input id="zq_account" disabled='disabled'  style="float:right; margin:0px 5px;height:24px" />
+					 </div> -->
+					<ul class="choice-list-box bg-body border-none">
+						<li class="m-t-10">
+							<div class="choice-box">
+								<i class="iconfont pull-left">&#xe60b;</i>
+								<div class="choice-box-left">
+									<span class="select-title left-0">证件类型：</span>
+									<span id="idCardType5" class="select-title" placeholder="" readonly="readonly" style="margin-left: 80px;">身份证</span>
+								</div>
+							</div>
+						</li>
+						<li class="m-t-10" id="readCertBtnID5">
+							<div class="choice-box">
+								<i class="iconfont pull-left">&#xe609;</i>
+								<span class="list-title font-secondary border-none">证件扫描</span>
+								<i id="otg5" onclick="common.callGenerationRec('cust.getGenerationInfos','3','1')" class="iconfont pull-right font-orange">&#xe6dc;</i>
+								<i onclick="common.callGenerationRec('cust.getGenerationInfos','1','1')" class="iconfont pull-right font-orange">&#xe653;</i>
+								<i id="nfc5" onclick="common.callGenerationRec('cust.getGenerationInfos','2','1')" class="iconfont pull-right font-orange">&#xe654;</i>
+							</div>
+						</li>
+					</ul>
+				</div>
+					<div class="form-group" style="height: 1.38rem!important;">
+						<input type="text" id="idCardNumber5" class="form-control" readonly="readonly" placeholder="使用人证件号码" maxlength="30" oninput="this.value=this.value.replace(/[/W]/g,'')">
+                 	</div>
+					<div class="modal-footer">
+	        			<button id="custAuthbtn5" type="button" class="btn btn-primary" onclick="custQuery.identityTypeAuth('7')" >校验</button>
+	        			<button id="jumpAuth5" style="display:none" onclick="custQuery.jumpAuth()" type="button" class="btn btn-primary">跳过校验</button>
+	    			</div>
+				</div>
+				<div class="tab-pane fade " id="auth-nav-tab-6">
+					<div class="form-group" style="height: 0.86rem!important;">
+						<input type="text" class="form-control" id="danweiNum1" placeholder="请输入组织机构代码" maxlength="50" oninput="this.value=this.value.replace(/[/W]/g,'')">
+					</div>
+					<div class="list-box m-t-10">
+					<ul class="choice-list-box bg-body border-none">
+						<li class="m-t-10" id="readCertBtnID6">
+							<div class="choice-box">
+								<i class="iconfont pull-left">&#xe609;</i>
+								<span class="list-title font-secondary border-none">证件扫描</span>
+								<i id="otg6" onclick="common.callGenerationRec('cust.getGenerationInfos','3','1')" class="iconfont pull-right font-orange">&#xe6dc;</i>
+								<i onclick="common.callGenerationRec('cust.getGenerationInfos','1','1')" class="iconfont pull-right font-orange">&#xe653;</i>
+								<i id="nfc6" onclick="common.callGenerationRec('cust.getGenerationInfos','2','1')" class="iconfont pull-right font-orange">&#xe654;</i>
+							</div>
+						</li>
+					</ul>
+				</div>
+					<div class="form-group" style="height: 1.38rem!important;">
+						<input type="text" id="idCardNumber6" class="form-control" readonly="readonly" placeholder="使用人证件号码" maxlength="30" oninput="this.value=this.value.replace(/[/W]/g,'')">
+                 	</div>
+					<div class="modal-footer">
+	        			<button id="custAuthbtn6" type="button" class="btn btn-primary"  onclick="custQuery.identityTypeAuthSub('5')">校验</button>
+	        			<button id="jumpAuth6" style="display:none" onclick="custQuery.jumpAuth()" type="button" class="btn btn-primary">跳过校验</button>
+	    			</div>
+				</div>
+			</div>
+          </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+ 	var ua = navigator.userAgent.toLowerCase();	
+	if (/iphone|ipad|ipod/.test(ua)) {
+		$("#nfc").hide();
+		$("#otg").hide();
+		$("#nfc5").hide();
+		$("#otg5").hide();
+		$("#nfc6").hide();
+		$("#otg6").hide();
+		home.phoneType = "iphone";
+		    //alert("iphone");		
+	} else if (/android/.test(ua)) {
+		home.phoneType = "android";
+		    //alert("android");	
+	}
+</script>

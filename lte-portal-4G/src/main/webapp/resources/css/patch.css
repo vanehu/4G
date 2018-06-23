@@ -1,0 +1,227 @@
+button:focus{
+	outline: none;
+}
+.dis-none{
+	display: none!important;
+}
+.market{
+	position: relative;
+}
+.market table{
+	width: 100%;
+}
+.market table thead{
+	background: #f8f9f9;
+	line-height: 36px;
+}
+.market table thead th{
+	color: #666;
+	padding-left: 10px;
+}
+.market tbody tr{
+	line-height: 59px;
+	border-bottom: 1px solid #eeeff0; 
+}
+.market tbody tr td{
+	position: relative;
+	padding-left: 10px;
+}
+.market tbody tr td .no_btn{
+	line-height: 32px;
+	padding: 0 12px;
+	border-radius: 3px;
+	border: 1px solid #d8d8d8;
+	color: #666;
+	background: #fff;
+	margin-right: 4px;
+}
+.market tbody tr td .no_btn.active{
+	color: #ff6601;
+	border-color: #ff6601;
+}
+.market tbody tr td .yes_btn{
+	line-height: 32px;
+	padding: 0 12px;
+	border-radius: 3px;
+	border: 1px solid #6dae60;
+	color: #fff;
+	background: #6dae60;
+	margin-right: 4px;
+}
+.alert-market{
+	width: 652px;
+	height: auto;
+	box-shadow:  0 0 4px rgba(0,0,0,0.1);
+	position: absolute;
+	left: 0;
+	top: 36px;
+	background: #fff;
+	z-index: 10;
+}
+
+.alert-market .tab_nav{
+	padding: 0 19px;
+}
+.alert-market .tab_nav ul{
+	height: 45px;
+	overflow: hidden;
+	border-bottom: 1px solid #eeeeee;
+}
+.alert-market .tab_nav ul li{
+	display: inline-block;
+	line-height: 45px;
+	padding: 0;
+	margin-right: 24px;
+	float: left;
+	color: #999999;
+}
+.alert-market .tab_nav ul li.active{
+	color: #8ab945;
+	border-bottom: 2px solid #8ab945;
+	height: 43px;
+}
+.alert-market .tab_nav .close{
+	line-height: 46px;
+	width: 46px;
+	display: inline-block;
+	position: absolute;
+	right: -19px;
+	top: 0;
+	
+}
+.alert-market .tab_nav .close a{
+	font-size: 14px;
+}
+.setmeat.active{
+	color: #6dae60;
+}
+.tab-box{
+	padding: 14px 19px;
+	position: relative;
+}
+.tab-box .tab-info p{
+	line-height: 14px;
+	margin-bottom: 14px;
+}
+.tab-box .tab-info .label{
+	padding: 0 6px;
+	line-height: 24px;
+	display: inline-block;
+	margin-right: 2px;
+	border-radius: 3px;
+	background: #adce7c;
+	color: #fff;
+}
+
+.feedback{
+	width: 360px;
+	position: absolute;
+	top: 59px;
+	left: -208px;
+	background: #fff;
+	z-index: 10;
+	box-shadow:  0 0 4px rgba(0,0,0,0.1);
+	padding: 0 19px;
+}
+.feedback .title{
+	height: 45px;
+	overflow: hidden;
+	border-bottom: 1px solid #eeeeee;
+	line-height: 45px;
+	font-size: 15px;
+}
+.feedback .title .close{
+	line-height: 46px;
+	width: 46px;
+	display: inline-block;
+	position: absolute;
+	right: -19px;
+	top: 0;
+}
+.feedback .title .close a{
+	font-size: 14px;
+}
+.feedback .feedback-info{
+	padding-top: 18px;
+	position: relative;
+}
+.feedback .feedback-info .check_box{
+	margin: 0 0 18px;
+	line-height: 18px;
+}
+.feedback .feedback-info .check_box .checked{
+	display: inline-block;
+	width: 18px;
+	height: 18px;
+	border-radius: 2px;
+	border: 1px solid #cccccc;
+	margin-right: 15px;
+	vertical-align: middle;
+}
+.feedback .feedback-info .check_box.active{
+	color: #6dae60;
+}
+.feedback .feedback-info .check_box.active .checked{
+	border-color: #6dae60;
+	background: url(../image/checked.png) 100% 100% no-repeat;
+	box-shadow:  0 1px 3px #6dae60;
+}
+
+/*2017-6-12*/
+.uicon>a{
+color: #fff;
+}
+.usercon li{
+position: relative;
+}
+.user_card{
+position: absolute;
+left: 0;
+top: 25px;
+padding: 15px;
+background: #fff;
+width: 150px;
+box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+display: none;
+}
+.user_card.active{
+display: block!important;
+}
+.user_card.user_tb{
+	display: block;
+	top: 0;
+}
+.user_card>p{
+font-size: 13px;
+line-height: 24px;
+}
+.market-tab>ul{
+	width: 100%;
+	position: relative;
+	overflow: hidden;
+	margin-bottom: 12px;
+}
+.market-tab>ul>li{
+	width: 130px;
+	height: 36px;
+	background: #f2f4ef;
+	font-size: 13px;
+	display: inline-block;
+	text-align: center;
+	line-height: 36px;
+	float: left;
+	margin-right: 15px;
+}
+.market-tab>ul>li.active{
+	background: #76ab54;
+	color: #fff;
+}
+.mark1-box, .mark2-box{
+	display: none;
+}
+.mark1-box.active, .mark2-box.active{
+	display: block!important;
+}
+.user-card-box{
+	padding: 30px 10px;
+}

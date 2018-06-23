@@ -1,0 +1,14 @@
+eclipse.preferences.version=1
+encoding//src/main/java=UTF-8
+encoding//src/main/java/com/linkage/portal/agent/bmo/log/LocalThread.java=UTF-8
+encoding//src/main/resources=UTF-8
+encoding//src/main/resources/i18n/messages.properties=UTF-8
+encoding//src/main/resources/i18n/messages_zh_CN.properties=UTF-8
+encoding//src/main/resources/portal/config_portalClient.properties=UTF-8
+encoding//src/main/resources/portal/portal.properties=UTF-8
+encoding//src/main/resources/properties/simulate.properties=UTF-8
+encoding//src/main/webapp/WEB-INF/views/decorators/loading-template.html=UTF-8
+encoding//src/main/webapp/WEB-INF/views/decorators/main-header-nav.html=UTF-8
+encoding//src/test/java=UTF-8
+encoding/<project>=UTF-8
+separateDerivedEncodings=true

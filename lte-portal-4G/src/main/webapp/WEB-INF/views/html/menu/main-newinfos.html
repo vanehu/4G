@@ -1,0 +1,42 @@
+<#list newinfos as newInfo>
+<!-- <li onclick="javascript:ec.agent.page.pageNewLoad('${contextPath}${newInfo.MENU_PATH}')">
+	<div class="faster_ul_img">
+		<img src="${contextPath}${stnewInfoESOURCE_PATH}" />
+	</div>
+	<p>${newInfo.RESOURCE_NAME}</p>
+</li> -->
+
+<li class="goodsLi">
+	<a title="标题：iPhone 4S 电信版 32G" href="${contextPath}/order/prepare" target="_blank" class="goodsImg">
+		<img width="170" height="170" src="${contextPath}/image/common/phone/20120409123004-1319113024_170_170.jpg">
+	</a>
+	<p class="mobileGoodsName">
+		<a href="${contextPath}/order/prepare" class="name"><em>iPhone 4S</em> 电信版(32G) 黑色</a>
+	</p>
+	<p class="hot_web_price">天翼价:
+		<label class="cDarkRed">￥5999.0元</label>
+	</p>                                    
+	<p>
+		<a class="phone_btn" href="${contextPath}/order/prepare">立刻订购</a>
+	</p>
+</li>
+
+<!--        
+<#if resign==1>
+	<li><a href="${contextPath}/order/prepare?flowStep=order_tab_panel_offer-${newInfo.COLUMN_VALUE}" title="${newInfo.COLUMN_VALUE_NAME}">${newInfo.COLUMN_VALUE_NAME}</a></li>
+</#if>
+<#if resign==2>
+	<li><a href="${contextPath}/order/prepare?flowStep=order_tab_panel_terminal-${newInfo.COLUMN_VALUE}">${newInfo.COLUMN_VALUE_NAME}</a></li>
+</#if>
+<#if resign==3>
+	<li><a href="${contextPath}/order/prepare?flowStep=order_tab_panel_phonenumber-${newInfo.COLUMN_VALUE}">${newInfo.COLUMN_VALUE_NAME}</a></li>
+</#if>
+<#if resign==4>
+	<li><a href="${contextPath}/order/prepare?flowStep=order_tab_panel_offer-${newInfo.COLUMN_VALUE}" title="${newInfo.COLUMN_VALUE_NAME}">${newInfo.COLUMN_VALUE_NAME}</a></li>
+</#if>
+<#if resign==5>
+	<li><a href="${contextPath}/order/prepare?flowStep=order_tab_panel_terminal-${newInfo.COLUMN_VALUE}">${newInfo.COLUMN_VALUE_NAME}</a></li>
+</#if>
+ -->
+ 
+</#list>

@@ -1,0 +1,35 @@
+<!--终端回填-->
+<h2 class="h2_title">
+             终端回填<span></span>
+    <a href="javascript:void(0);" class="numberSearch back3" 
+        onclick="easyDialog.close();">
+        <span>返回</span>
+    </a>
+</h2>
+<input type="hidden" id="s_extCustOrderId" value="${extCustOrderId}" /> 
+<input type="hidden" id="s_commonRegionId" value="${commonRegionId}" /> 
+<input type="hidden" id="s_channelId" value="${channelId}" /> 
+<div class="order">
+	<div class="order_content" style="border: none; padding: 10px">
+		<div class="order_tab_panel lazyloadModule" style="display: block;"
+			id="ess_order_event">
+			<div class="order_tab_header">
+				<div class="selectList">
+				    <form id ="chkTsnAForm" >
+					<dl>
+						<dt style="width: 100px">终端串号：</dt>
+						<dd>
+						    <input type="text" class="inputWidth228px inputMargin0" id="s_mktResInstCode" placeholder="请先输入终端串号" maxlength="35"  data-validate="validate(terminalCodeCheck) on(keyup blur)" />
+						</dd>
+						<dd>
+							<label class="f_red">&nbsp;&nbsp;</label> 
+							<input type="button" value="提 交" class="numberSearch" id="bt_backFill" />
+						</dd>
+					</dl>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!--订单状态历史 end-->

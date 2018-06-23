@@ -1,0 +1,134 @@
+<@override name="title">ESS订单查询</@override> <@override name="header">
+<#include "/busi-js-tpl.html"/>
+<script src="${contextPath}/js/busi-js/ess/essOrder.js?${jsversion}"
+	type="text/javascript"></script>
+
+<style>
+.cartLink_fail:hover {
+	text-decoration: underline;
+	cursor: pointer;
+}
+</style>
+</@override> <@override name="content">
+<div class="main_div" id="d_query">
+	<div class="main_warp">
+		<!--订单准备-->
+		<h2 class="h2_title" id="pageType">
+			ESS订单查询<span></span>
+		</h2>
+		<div class="order">
+			<div class="order_content" style="border: none; padding: 10px">
+				<div class="order_tab_panel" style="display: block;">
+					<div class="selectList">
+					<form method="post" id="essOrderList_action"><input type="hidden" id="p_extCustOrderId_hidden" name="p_extCustOrderId_hidden"/></form>
+						<dl>
+							<dt style="width: 100px">外部订单号：</dt>
+							<dd>
+								<input type="text" class="numberTextBox width198"
+									id="p_extCustOrderId" value="" placeholder="批量时以英文输入状态下逗号分隔" />
+							   <label class="f_red">&nbsp;&nbsp;</label>
+							</dd>
+							<dt style="width: 100px">订单类型：</dt>
+							<dd>
+								<select id="p_orderType" class="width202" style="width: 160px">
+									<option value="">--请选择--</option>
+								</select>
+								<label class="f_red">&nbsp;&nbsp;</label>
+							</dd>
+							<dt style="width: 100px">选择地区：</dt>
+							<dd>
+								<input type="text" class="numberTextBox width198"
+									readonly="readonly" id="p_areaId_val"
+									onclick="essOrder.main.chooseAllArea('p_areaId_val','p_areaId')" value="${p_areaId_val}"
+									placeholder="请选择地区" />
+							    <input type="hidden" id="p_areaId" value="${p_areaId}">
+							</dd>
+						</dl>
+						<dl>
+							<dt style="width: 100px">交易流水号：</dt>
+							<dd>
+								<input type="text" class="numberTextBox width198"
+									id="p_transactionId" value=""/>
+							   <label class="f_red">&nbsp;&nbsp;</label>
+							</dd>
+							<dt style="width: 100px">订单状态：</dt>
+							<dd>
+								<select id="p_orderStatus" class="width202" style="width: 160px">
+									<option value="">--请选择--</option>
+								</select>
+								<label class="f_red">&nbsp;&nbsp;</label>
+							</dd>
+							<dt style="width: 100px">销售点：</dt>
+							<dd>
+								<select id="p_channelId" class="width202">
+									<option value="">--选择渠道--</option> <#if
+									Session["_staff_channel"]?? &&
+									(Session["_staff_channel"]?size>0) > <#list
+									Session["_staff_channel"] as channel>
+									<option value="${channel.id}" areaid="${channel.areaId}">${channel.name}</option>
+									</#list> </#if>
+								</select>
+							</dd>
+						</dl>
+						<dl>
+						    <dt style="width: 100px">创建时间：</dt>
+							<dd>
+								<input type="text" class="numberTextBox" style="width: 160px"
+									id="p_startDate" readonly="readonly" value="${p_startDt}"/>
+								至&nbsp;&nbsp;
+							</dd>
+							<dd>
+							    <input type="text" class="numberTextBox" style="width: 160px"
+									id="p_endDate" readonly="readonly" value="${p_endDt}"/> 
+							    <label class="f_red">*</label>
+							</dd>
+							<dt>接入号：</dt>
+							<dd>
+								<input type="text" class="numberTextBox width198"
+									id="p_accNbr" value="" />
+								<label class="f_red">&nbsp;</label>
+							</dd>
+							<dt style="width: 100px">号卡发货渠道：</dt>
+							<dd>
+								<select id="p_accNbrSellChannel" class="width202" style="width: 160px">
+									<option value="">--请选择--</option>
+								</select>
+								<label class="f_red">&nbsp;&nbsp;</label>
+							</dd>
+						</dl>
+						<dl>
+							<dt style="width: 100px">终端发货渠道：</dt>
+							<dd>
+								<select id="p_termSellChannel" class="width202" style="width: 160px">
+									<option value="">--请选择--</option>
+								</select>
+								<label class="f_red">&nbsp;&nbsp;</label>
+							</dd>
+							<dd>
+								<label class="f_red">&nbsp;&nbsp;</label> 
+								<input type="button" value="查 询" class="numberSearch" id="bt_orderListQry" />
+							</dd>
+							<dd>
+								<label class="f_red">&nbsp;&nbsp;</label> 
+								<input type="button" value="导 出" class="numberSearch" id="bt_exportExcel" />
+							</dd>
+						</dl>
+					</div>
+					<!--订单列表-->
+					<div class="phone_warp" id="cart_list">
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!--内容 end-->
+<div id="d_essOrderInfo" style="display: none" ></div>
+<div id="cart_link" style="display:none"></div>
+<div class="easyDialogdiv"
+	style="width: 780px; height: 460px; display: none" id="d_offer">
+	<div class="easyDialogclose" id="d_offer_close"></div>
+	<div id="d_offer_info"></div>
+</div>
+</@override>
+<@extends name="/content-template.html"/>

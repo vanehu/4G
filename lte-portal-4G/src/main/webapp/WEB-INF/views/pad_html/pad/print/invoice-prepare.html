@@ -1,0 +1,98 @@
+<div id="div_printInvoice" style="display:none">
+	<div id="div_printInvoice_prepare" data-role="popup" data-transition="slideup" data-corners="false" data-overlay-theme="b" class="popwindow" data-dismissible="false">
+		<div data-role="header" data-position="inline" data-tap-toggle="false" data-theme="t">
+			<a href="#" data-role="button" data-icon="back" data-rel="back" data-iconpos="notext" class="ui-btn-right">返回</a>
+			<h1>准备票据内容</h1>
+		</div>
+		<div data-role="content">
+			 <form id="invoiceItemsForm">
+			 	<div class="orderform">
+					<div class="ui-grid-a" id="invoiceNbrNumDl" billType="1">
+						<div class="ui-block-a">
+							<div class="ui-grid-b">
+								<div class="ui-block-a">
+									<label for="invoiceNbrInp">发票代码：</label>
+								</div>
+								<div class="ui-block-b">
+									<input type="text" id="invoiceNbrInp" name="invoiceNbrInp" value=""/>
+								</div>
+								<div class="ui-block-c"></div>
+							</div>
+						</div>
+						<div class="ui-block-b">
+							<div class="ui-grid-b">
+								<div class="ui-block-a">
+									<label for="invoiceNumInp">发票号码：</label>
+								</div>
+								<div class="ui-block-b">
+									<input type="text" id="invoiceNumInp"  name="invoiceNumInp" value=""/>
+								</div>
+								<div class="ui-block-c"></div>
+							</div>
+						</div>
+					</div>
+					
+					<div class="ui-grid-a">
+						<div class="ui-block-a">
+							<div class="ui-grid-b">
+								<div class="ui-block-a">
+									<label for="invoiceTitleInp" id="titleDt">发票抬头：</label>
+								</div>
+								<div class="ui-block-b">
+									<input type="text" id="invoiceTitleInp" name="invoiceTitleInp" value=""/>
+								</div>
+								<div class="ui-block-c"></div>
+							</div>
+						</div>
+						<div class="ui-block-b">
+							<div class="ui-grid-b">
+								<div class="ui-block-a">
+									<label for="acceNbrSel">接入号码：</label>
+								</div>
+								<div class="ui-block-b">
+									<select name="acceNbrSel" id="acceNbrSel"  data-native-menu="false" data-icon="select">
+									</select>
+								</div>
+								<div class="ui-block-c"></div>
+							</div>
+						</div>
+					</div>
+					<div class="ui-grid-a">
+						<div class="ui-block-a">
+							<div class="ui-grid-b">
+								<div class="ui-block-a">
+									<label for="invoiceTitleInp">票据类型：</label>
+								</div>
+								<div class="ui-block-b">
+								 	<select name="billType" id="billType" data-role="slider">
+					                  <option value="0"  selected>发票</option>
+					                  <option value="1">收据</option>
+					                </select>
+								</div>
+								<div class="ui-block-c"></div>
+							</div>
+						</div>
+						<div class="ui-block-b">
+							<div class="ui-grid-b">
+								<div class="ui-block-a">
+									<label for="acceNbrSel" id="tempDt">发票模板：</label>
+								</div>
+								<div class="ui-block-b">
+									<select name="tempListSel" id="tempListSel"  data-native-menu="false" data-icon="select">
+									</select>
+								</div>
+								<div class="ui-block-c"></div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div id="invoiceItemsContDiv">
+				</div>
+			 </form>
+		</div>
+		<div data-role="footer" data-position="inline" data-tap-toggle="false" data-theme="n">
+	   		<button data-inline="true" data-icon="check" id="invoiceItemsConfirm" >打印</button>
+	   		<button data-inline="true" data-icon="back"  id="invoiceItemsConCancel">取消</button>
+		</div>
+	</div>
+</div>

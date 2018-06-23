@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ailk.ecsp.mybatis.mapper.PackMapper">
+  <resultMap id="PackResultMap" type="com.ailk.ecsp.mybatis.model.Pack">
+    <id column="PACK_ID" jdbcType="DECIMAL" property="packId" />
+    <result column="PACK_CODE" jdbcType="VARCHAR" property="packCode" />
+    <result column="PACK_NAME" jdbcType="VARCHAR" property="packName" />
+    <result column="PACK_PATH" jdbcType="VARCHAR" property="packPath" />
+    <result column="PACK_TYPE" jdbcType="VARCHAR" property="packType" />
+    <result column="CREAT_TIME" jdbcType="TIMESTAMP" property="creatTime" />
+    <result column="UPDATE_TIME" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="STATUS" jdbcType="CHAR" property="status" />
+    <result column="PATH_TYPE" jdbcType="CHAR" property="pathType" />
+  </resultMap>
+  <select id="findPack"  parameterType="java.lang.String" resultMap="PackResultMap">
+    select * from sp_pack p where p.pack_code = #{packCode}
+  </select>
+  
+  <select id="queryAllPacks"  resultMap="PackResultMap">
+    select * from sp_pack p
+  </select>
+  
+  <select id="queryPacksByType" parameterType="java.lang.String"  resultMap="PackResultMap">
+    select * from sp_pack p where p.pack_type = #{packType}
+  </select>
+  
+   <select id="queryPackCount" resultType="int">
+     select count(1) from SP_PACK
+   </select>
+  
+  <select id="queryPack" parameterType="map" resultMap="PackResultMap" >
+   	<![CDATA[
+	    SELECT * 
+		FROM(
+			SELECT ROWNUM r,t1.* 
+			FROM SP_PACK  t1 
+			where rownum < #{endIndex}
+			order by t1.pack_id desc
+		) t2 
+		where t2.r >= #{startIndex}
+	]]>
+   </select>
+   
+   <insert id="insertPack" parameterType="com.ailk.ecsp.mybatis.model.Pack" >
+    insert into SP_PACK
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+        PACK_ID,
+      <if test="packCode != null" >
+        PACK_CODE,
+      </if>
+      <if test="packName != null" >
+        PACK_NAME,
+      </if>
+      <if test="packPath != null" >
+        PACK_PATH,
+      </if>
+      <if test="packType != null" >
+        PACK_TYPE,
+      </if>
+      <if test="creatTime != null" >
+        CREAT_TIME,
+      </if>
+      <if test="updateTime != null" >
+        UPDATE_TIME,
+      </if>
+      <if test="status != null" >
+        STATUS,
+      </if>
+      <if test="pathType != null" >
+        PATH_TYPE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+       PACK_SEQ.nextval,
+      <if test="packCode != null" >
+        #{packCode,jdbcType=VARCHAR},
+      </if>
+      <if test="packName != null" >
+        #{packName,jdbcType=VARCHAR},
+      </if>
+      <if test="packPath != null" >
+        #{packPath,jdbcType=VARCHAR},
+      </if>
+      <if test="packType != null" >
+        #{packType,jdbcType=VARCHAR},
+      </if>
+      <if test="creatTime != null" >
+        #{creatTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="pathType != null" >
+        #{pathType,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  
+  <delete id="deletePack" parameterType="long" >
+    delete from SP_PACK where pack_id = #{packId}
+  </delete>
+  
+  <update id="updatePack" parameterType="com.ailk.ecsp.mybatis.model.Pack" >
+    update SP_PACK
+    <set >
+      <if test="packCode != null" >
+        PACK_CODE = #{packCode,jdbcType=VARCHAR},
+      </if>
+      <if test="packName != null" >
+        PACK_NAME = #{packName,jdbcType=VARCHAR},
+      </if>
+      <if test="packPath != null" >
+        PACK_PATH = #{packPath,jdbcType=VARCHAR},
+      </if>
+      <if test="packType != null" >
+        PACK_TYPE = #{packType,jdbcType=VARCHAR},
+      </if>
+      <if test="creatTime != null" >
+        CREAT_TIME = #{creatTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        UPDATE_TIME = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null" >
+        STATUS = #{status,jdbcType=VARCHAR},
+      </if>
+      <if test="pathType != null" >
+        PATH_TYPE = #{pathType,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where pack_id = #{packId}
+  </update>
+  
+</mapper>

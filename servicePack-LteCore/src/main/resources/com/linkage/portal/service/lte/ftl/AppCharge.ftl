@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContractRoot>
+	<TcpCont>
+		<AppKey>1000000244</AppKey>
+		<Method>recharge.rechargeIssued</Method>
+		<TransactionID>${TcpCont.TransactionID}</TransactionID>
+		<ReqTime>${TcpCont.ReqTime}</ReqTime>
+		<Sign>|sign|</Sign>
+		<Version>V1.2</Version>
+	</TcpCont>
+	<SvcCont>
+		<Charge_Source>12345</Charge_Source>
+		<Req_Serial>${TcpCont.TransactionID}</Req_Serial>
+		<Destination_Id>${destinationId}</Destination_Id>
+		<Destination_Id_Type>2</Destination_Id_Type>
+		<Destination_Attr>${destinationAttr}</Destination_Attr>
+		<Balance_ItemType_ID>${balanceItemTypeID}</Balance_ItemType_ID>
+		<UnitType_Id>${unitTypeId}</UnitType_Id>
+		<FeeAmount>${feeAmount}</FeeAmount>
+		<timeStart>${timeStart}</timeStart>
+		<provinceId>${provinceId}</provinceId>
+		<replyUri/>
+	</SvcCont>
+</ContractRoot>

@@ -1,0 +1,53 @@
+<input type="hidden" id="mainAccNbr" value="${param.mainAccNbr}">
+<input type="hidden" id="areaId" value="${param.areaId}">
+<input type="hidden" id="extCustOrderId" value="${param.extCustOrderId}">
+<div class="order_confirmation">
+	<h2 class="h2_title">
+		<span> 一卡双号退购 </span>
+		${param.mainAccNbr}
+		<span class="showhide"></span>
+	</h2>
+    <div class="main_body">
+    	<h2 class="s_title">订单确认</h2>
+<#if resMap.resultCode==0>
+<table class="numberList" id="tab_accNbrList" >
+<tr>
+<td>虚号号码</td>
+<td>虚号地区</td>
+</tr>
+<tr>
+<td><input type="hidden" id="virtualAccNbr" value="${accNbrMap.accNbr}">${accNbrMap.accNbr}</td>
+<td><input type="hidden" id="virtualAreaId" value="${accNbrMap.areaId}">${accNbrMap.areaName}</td>
+</tr>
+</table>
+<div align="right" style="margin: 20px auto; padding:0 20px;">
+	<a id="fillLastStep" href="javascript:void(0)" class="btna_o"><span>
+		上一步
+	</span></a> <a id="undoAccNbr"
+		href="javascript:void(0)" class="btna_o" style=" margin-left:20px;"><span>退订</span></a>
+</div>
+<#else>
+<div class="height18"></div>
+	    		<table id="ruleTable" class="com_table">
+	    			<thead>
+		    			<tr>
+			                <th>校验失败</th>
+		              	</tr>
+		    		</thead>
+		    		<tbody id="ruleTbody">		            	
+		            	<tr>				            
+				        	<td>失败原因：${resMap.resultMsg}</td>
+			          	</tr>
+		            </tbody>
+	    		</table>
+	    		<div align="right" style="margin: 20px auto; padding:0 20px;">
+	<a id="fillLastStep" href="javascript:void(0)" class="btna_o"><span>
+		返回
+	</span></a>
+</div>
+</#if>
+</div>
+</div>
+
+	
+

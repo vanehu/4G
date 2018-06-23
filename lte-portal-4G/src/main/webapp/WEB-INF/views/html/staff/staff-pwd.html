@@ -1,0 +1,94 @@
+<@override name="title">我的密码</@override>
+<@override name="header">
+<script src="${contextPath}/js/busi-js/staff/staffMgr.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/4g-js/order/orderInfo.js" type="text/javascript"></script>
+<script src="${contextPath}/js/busi-js/staff/staffForget.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/busi-js/staff/login.js?${jsversion}" type="text/javascript"></script>
+</@override>
+<@override name="content">
+<div class="main_div" id="main_content">
+	<div class="main_warp">
+		<div class="order_confirmation">
+			<h2 class="h2_title">密码修改</h2>
+			<div class="main_body"> 				
+                <label id="msg" style="display:none;margin-left:100px;color:red;"></label>
+                <div class="selectList">
+                <table width="100%">
+                <tbody>
+                <tr>
+                	<td width="60%">
+				<!-- <div class="infoBox"> -->
+					<form id="staffPwdForm">
+					<input name="token" type="hidden"  id="token" value="${token}"/>
+					<input name="staffCode" type="hidden"  id="staffCode" value="${staffCode}"/>
+					<input name="areaId" type="hidden"  id="areaId" value="${areaId}"/>
+					<table class="network">
+						<tbody>
+						     <tr>
+								<td align="right" width="80px"><label class="f_red">*</label>短信验证码</td>
+								<td>
+									 <input type="text" class="txt2 inputWidth228px" style="float:left; margin:0px 5px;" name="smspwd" id="smspwd" data-validate="validate(required:短信验证码不能为空) on(blur)" placeholder="请输入您手机收到的验证码" maxlength="6"/><p>如您在30秒内仍未收到验证码，请点击<a alctag="nochecklogin" id="smsresend1" class="cf" onclick="javascript:void(0)">重新获取验证码。</a></p>
+								</td>
+								 <td>
+								</td>
+							 </tr>
+							<tr>
+								<td align="right" width="80px"><label class="f_red">*</label>旧密码</td>
+								<td>
+									<input type="password" id="password" placeholder="请输入旧密码"  data-validate="validate(required:旧密码不能为空) on(blur)" class="inputWidth228px"/>
+								</td>
+							</tr>
+							<tr>
+								<td align="right"><label class="f_red">*</label>新密码</td>
+								<td>
+									<input type="password" id="newPassword" placeholder="请输入新密码"  data-validate="validate(required:密码不能为空,minlength:口令长度至少8位(8),isHasString(${staffCode}),isNewRegex,isContinue) on(blur)" class="inputWidth228px" maxlength="20" />
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<label class="f_red">*</label>确认新密码
+								</td>
+								<td>
+									<input type="password" id="confirm_password" placeholder="请输入确认密码"  data-validate="validate(depEq:两次密码必须一致(newPassword)) on(blur)" class="inputWidth228px"/>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					</form>
+					</td>
+					
+					<td width="40%">
+    					<table style="margin-left:20px;">
+						<tbody>
+						<tr>
+							<td><i class="rule_icon_notice"></i></td>
+							<td>
+								<span style="line-height:25px;"> 
+									(1) 口令长度至少8位
+								<br>(2) 口令不能包含用户名
+								<br>(3) 口令需包含字母大小写、数字、特殊符号@#$四种字符中至少3种
+								<br>(4) 不能出现超过三位的连续数字或者字母（字母大小写比如Abc，不算连续）
+								</span>
+							</td>
+						</tr>
+						</tbody>
+						</table>
+                	</td>
+                </tr>
+                </tbody>
+                </table>
+				</div>
+				
+				<div align="right" style="margin:20px auto;">
+					<a id="btn_staffPwd_submit" style="margin-right:60px;" class="btna_o" href="javascript:void(0);"><span>提交</span></a>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+</@override>
+<#if Session["_session_portal_type"]?? && Session["_session_portal_type"]=="MVNO" >
+<@extends name="/mvno-template.html"/>
+<#else>
+<@extends name="/content-template.html"/>
+</#if>

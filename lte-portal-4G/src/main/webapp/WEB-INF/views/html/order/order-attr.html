@@ -1,0 +1,94 @@
+<script src="${contextPath}/js/busi-js/orderQuery/orderQuery.js?${jsversion}" type="text/javascript"></script>
+
+<h5 class="s_title">经办人</h5>
+<form id="jbrForm">
+<ul class="fillin show" style="overflow: hidden;">
+   <li id="li_order_remark1">
+		<label>证件类型：</label>
+        <select id="orderIdentidiesTypeCd" onchange="order.cust.identidiesTypeCdChoose(this,'orderAttrIdCard')">
+        </select>
+        <label class="f_red">*</label>
+        <a class="btn_h30" id="orderAttrReadCertBtn" onclick="javascript:order.cust.readCertWhenOrder()" style="margin-top: 0px; display: none;"><span>读 卡</span></a>
+        <a class="btn_h30" id="orderAttrQueryCertBtn"><span>查询</span></a>
+        <a class="btn_h30" id="orderAttrResetBtn" onclick="javascript:order.cust.resetHandleCustInfos()" style="margin-top: 0px; display: none;"><span>重置</span></a>
+        <a class="btn_h30" id="orderAttrPicShowBtn" style="margin-top: 0px; display: none;"><span>拍照查看</span></a>
+    </li>
+    <li id="li_isCheck">
+        <label>实名核验：</label>
+		<select id="isCheck" disabled="disabled">
+            <option value="1">是</option>
+        </select>
+		<label class="f_red">*</label>
+	</li>
+</ul>
+<ul class="fillin show" style="overflow: hidden;">
+	<!-- 经办人为个人用户，证件类型只显示个人证件类型，隐藏客户类型 -->
+	<li  id="li_order_remark" style="display: none;">
+		<label>客户类型：</label> 
+		<select id="orderPartyTypeCd" onchange="order.cust.partyTypeCdChoose(this,'orderIdentidiesTypeCd')">
+        	<option value="1" >个人</option>
+        </select>
+        <label class="f_red">*</label>
+	</li>
+	<li  id="li_order_attr">
+		<label>经办人姓名：</label>
+		<input id="orderAttrName" onkeyup="" placeHolder="请输入经办人姓名" data-validate="validate(required:请准确填写经办人姓名) on(blur)" class="inputWidth250px" maxlength="16" type="text">
+		<span style="line-height: 28px; float:left;"></span>
+		<label class="f_red">*</label>
+	</li>
+	<li  id="li_order_remark2">
+		<label>证件号码：</label> 
+		<input id="orderAttrIdCard" placeHolder="请输入证件号码"  class="inputWidth250px"maxlength="50"type="text">
+		<span style="line-height: 28px; float:left;"></span>
+		<label class="f_red">*</label>
+	</li>
+</ul>
+<ul class="fillin show" style="overflow: hidden;">
+	<li  id="li_order_remark3">
+		<label>证件地址：</label> 		
+		<input id="orderAttrAddr" onkeyup="" placeHolder="请输入证件地址" data-validate="validate(required:请准确填写证件地址) on(blur)"  class="inputWidth250px" maxlength="125"type="text">
+		<span style="line-height: 28px; float:left;"></span>
+		<label class="f_red">*</label>
+	</li>
+	<li  id="li_order_remark4">
+		<label>联系人号码：</label> 
+		<input id="orderAttrPhoneNbr" placeHolder="请输入联系人号码"  class="inputWidth250px" type="text" maxlength="16">
+		<label class="f_red"></label>
+	</li>
+</ul>
+</form>
+<!-- 采集单经办人相片查看 -->
+<div style="display:none;background:#fff;" id="ec-dialog-photo-show" class="ec-dialog-form-container" style="width:640px;height:360px;">
+  <div class="easyDialogclose" onclick="order.cust.close()"></div>
+  <div class="ec-dialog-form-top">
+    <h1 class="ec-dialog-form-title">人证相符-拍照查看</h1>
+  </div>
+  <div class="order"> 
+     <img id="img_photo_show" width="640" height ="360">
+  </div>
+</div>
+<div class="height18"></div>
+<script>
+	//新建客户或老客户，如果是政企客户，经办人必填（2016-3-17回退）
+	/* if(OrderInfo.boCustInfos.partyTypeCd != '2' && !order.cust.isCovCust(OrderInfo.cust.identityCd)){ 
+		$("#orderAttrDiv .f_red").hide();
+	} */
+	//$("#orderAttrDiv .f_red").hide();
+	// 证件类型初始化（不加不会加载证件）
+	$("#orderPartyTypeCd").change();
+	if($("#orderIdentidiesTypeCd").val() !="1"){
+		$("#orderAttrQueryCertBtn").show(); 
+	}
+	
+	if(!ec.util.isObj(CONST.realNamePhotoFlag)){
+		CONST.realNamePhotoFlag = query.common.queryPropertiesValue("REAL_NAME_PHOTO_" + String(OrderInfo.staff.areaId).substr(0, 3));
+	}
+	if (CONST.realNamePhotoFlag == "OFF"){
+		$("#orderAttrDiv .f_red").hide();
+	//	$("#orderAttrReadCertBtn").hide();
+		$("#orderAttrQueryCertBtn").hide();
+	}
+	if($("#orderIdentidiesTypeCd").val()=="1"){
+		$("#orderAttrReadCertBtn").show(); 
+	}
+</script>

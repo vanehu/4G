@@ -1,0 +1,41 @@
+/* Component containers
+----------------------------------*/
+.ui-widget { font-family: segoe ui, Arial, sans-serif; font-size: 1.1em; }
+.ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button { font-family: segoe ui, Arial, sans-serif; font-size: 1em; }
+.ui-widget-content { border-top: 1px solid #aaaaaa; border-bottom: 1px solid #aaaaaa;border-right: 1px solid #aaaaaa;
+background: #f0efea url(images/ui-bg_highlight-soft_100_f0efea_1x100.png) 50% top repeat-x; color: #222222; }
+.ui-widget-content a { color: #222222; }
+.ui-widget-header { border: 1px solid #59584f; background: #3b3b35 url(images/ui-bg_inset-soft_22_3b3b35_1x100.png) 50% 50% repeat-x; color: #ffffff; font-weight: bold; }
+.ui-widget-header a { color: #ffffff; }
+
+/* Interaction states
+----------------------------------*/
+.ui-state-default, .ui-widget-content .ui-state-default { border: 1px solid #327E04; background: #327E04 url(images/ui-bg_highlight-soft_25_327E04_1x100.png) 50% 50% repeat-x; font-weight: bold; color: #ffffff; outline: none; }
+.ui-state-default a { color: #ffffff; text-decoration: none; outline: none; }
+.ui-state-hover, .ui-widget-content .ui-state-hover, .ui-state-focus, .ui-widget-content .ui-state-focus { border: 1px solid #327E04; background: #5A9D1A url(images/ui-bg_highlight-soft_25_5A9D1A_1x100.png) 50% 50% repeat-x; font-weight: bold; color: #ffffff; outline: none; }
+.ui-state-hover a { color: #ffffff; text-decoration: none; outline: none; }
+.ui-state-active, .ui-widget-content .ui-state-active { border: 1px solid #c4c5c3; background: #f0efea url(images/ui-bg_diagonals-small_100_f0efea_40x40.png) 50% 50% repeat; font-weight: bold; color: #403D38; outline: none; }
+.ui-state-active a { color: #403D38; outline: none; text-decoration: none; }
+
+
+/* states and images */
+.ui-icon { width: 16px; height: 16px; background-image: url(images/ui-icons_808080_256x240.png); }
+.ui-widget-content .ui-icon {background-image: url(images/ui-icons_808080_256x240.png); }
+.ui-widget-header .ui-icon {background-image: url(images/ui-icons_e7e6e4_256x240.png); }
+.ui-state-default .ui-icon { background-image: url(images/ui-icons_eeeeee_256x240.png); }
+.ui-state-hover .ui-icon, .ui-state-focus .ui-icon {background-image: url(images/ui-icons_ffffff_256x240.png); }
+.ui-state-active .ui-icon {background-image: url(images/ui-icons_8DC262_256x240.png); }
+
+/* positioning */
+.ui-icon-triangle-1-e { background-position: -32px -16px; }
+.ui-icon-triangle-1-w { background-position: -96px -16px; }
+.ui-icon-triangle-1-s { background-position: -64px -16px; }
+
+.ui-corner-all { -moz-border-radius: 4px; -webkit-border-radius: 4px;border-radius: 4px; }
+
+.ui-helper-clearfix:after { content: "."; display: block; height: 0; clear: both; visibility: hidden; }
+.ui-helper-clearfix { display: inline-block; }
+/* required comment for clearfix to work in Opera \*/
+* html .ui-helper-clearfix { height:1%; }
+.ui-helper-clearfix { display:block; }
+

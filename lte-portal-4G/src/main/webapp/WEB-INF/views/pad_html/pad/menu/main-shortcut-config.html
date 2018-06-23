@@ -1,0 +1,29 @@
+<div id="dlg_shortcut_quickset" data-role="popup" data-corners="false" class="popwindow" data-overlay-theme="b" data-dismissible="false">
+  <div data-role="header" data-position="in-line" data-tap-toggle="false" data-theme="t">
+  	<a href="#" data-role="button" data-icon="back" data-rel="back" data-iconpos="notext" class="ui-btn-right">返回</a>
+    <h1>设置快捷菜单</h1>
+  </div>
+  <div data-role="content">
+     <ul class="quick">
+     	<#if allLeafMenu?? && (allLeafMenu?size>0)>
+			<#list allLeafMenu as alf>
+				<#assign cls = "">
+				<#if preSetShortCut?? && (preSetShortCut?size >0)>
+					<#list preSetShortCut as pset>
+						<#if pset.resourceId == alf.resourceId>
+							<#assign cls = "set">
+						</#if>
+					</#list>
+				</#if>		
+    	<li style="margin:10px 12px" class="${cls}" rid="${alf.resourceId}">
+        	<span class="quickimg icon-q01"></span>
+            <p>${alf.resourceName}</p>
+        </li>
+        	</#list>
+		</#if>
+    </ul> 
+  </div>
+  <div data-role="footer" data-position="in-line" data-tap-toggle="false" data-theme="n">
+  	<a data-role="button" data-inline="true" data-icon="back" data-rel="back">关闭</a>
+  </div>
+</div>

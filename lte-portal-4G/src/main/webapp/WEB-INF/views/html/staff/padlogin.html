@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>中国电信4G营业受理</title>
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-store,no-cache,must-revalidate">
+<META HTTP-EQUIV="Expires" CONTENT="0">
+<META name="keywords" content="电信集团">
+<META name="description" content="电信集团">
+<#include "/common-js-tpl.html"/>
+<script src="${contextPath}/js/busi-js/staff/padlogin.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/our-js/cordova.js?${jsversion}"></script>
+<script src="${contextPath}/js/our-js/myplugin.js?${jsversion}"></script>
+<script>
+window.onload= function() 
+{  
+	var operateFlag=$("#operateFlag").val();
+	if(operateFlag=="0"){//会话失效返回客户端登录页面
+		staff.padlogin.callLogin();
+	}
+}
+</script>
+</head>
+<body>
+<input type="hidden" id="operateFlag" value="${serviceCall}">
+<#if serviceCall=="0">
+<div align="center">
+<img src="${contextPath}/image/common/loading.gif" />
+</div>
+</#if>
+</body>
+</html>

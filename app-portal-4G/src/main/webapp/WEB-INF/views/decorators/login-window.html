@@ -1,0 +1,34 @@
+<div style="display:none;" id="ec-dialog-form-container-login-window" class="ec-dialog-form-container">
+	<div class="ec-dialog-form-top">
+		<h1 class="ec-dialog-form-title">会话过期，请重新登录</h1>
+	</div>
+	<div class="ec-dialog-form-content">
+		<div class="ec-dialog-form-loading" style="display:none"></div>
+		<div class="ec-dialog-form-message" style="display:none"></div>
+		<div class="ec-dialog-form-form" >
+			<form id="dialogForm">
+                  <div class="login_body">
+				<div class="login_warp">
+					<div class="login clearfix">
+						<div class="login_middle">
+							<p title="请您输入您的工号" class="login_p">
+								<label class="login_label">工　号：</label>
+								<input class="login_input" style="" type="text" placeholder="输入您的工号" data-validate="validate(required:工号不能为空) on(blur)" name="staffUserName" id="staffUserName">
+							</p>
+							<p title="请您输入您的密码" class="login_p">
+								<label class="login_label">密　码：</label>
+								<input class="login_input" type="password" placeholder="输入您的密码" data-validate="validate(required:密码不能为空) on(blur)" name="staffPassword" id="staffPassword">
+							</p>
+							<div style="margin: 0pt;text-align: center;" class="btn_login_box">
+								<input class="ec-dialog-form-send ec-dialog-form-button" type="submit" id="dialogFormSubmit" value="登录"/>
+								<input type="button" class="ec-dialog-form-cancel ec-dialog-form-button simplemodal-close" tabindex="1008"   value="取消"/>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</form>
+		</div>
+	</div>
+	<div class="ec-dialog-form-bottom"></div>
+</div>

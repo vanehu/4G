@@ -1,0 +1,102 @@
+<script src="${contextPath}/js/app-js/new-js/function.min.js" type="text/javascript"></script>
+<div id="order-resource">
+<#include "/public/app-order-resource.html"/>
+</div>
+<!-- begin #content -->
+<div class="content p-t-0">
+	<!-- begin row -->
+	<div class="row">
+		<!-- begin col-12 -->
+		<div class="panel panel-inverse panel-with-tabs" data-sortable-id="ui-unlimited-tabs-1">
+			<div class="panel-heading p-0">
+				<!-- begin nav-tabs -->
+				<div class="tab-overflow">
+					<ul class="nav nav-tabs nav-tabs-inverse nav-top p-t-5">
+						<!--<li class="prev-button"><a href="javascript:;" data-click="prev-tab" class="text-success"><i class="fa fa-arrow-left"></i></a></li>-->
+						<li class="active">
+							<a id="queryParamTab" href="#nav-tab-1" data-toggle="tab"><i class="iconfont tab-icon">&#xe6d5;</i>查询条件<i class="iconfont tab-result-icon">&#xe611;</i></a>
+						</li>
+						<li class="">
+							<a id="queryResultTab" href="#nav-tab-2" data-toggle="tab"><i class="iconfont tab-icon">&#xe603;</i>查询结果<i class="iconfont tab-result-icon dis-none">&#xe611;</i></a>
+						</li>
+						<!--<li class="next-button"><a href="javascript:;" data-click="next-tab" class="text-success"><i class="fa fa-arrow-right"></i></a></li>-->
+					</ul>
+				</div>
+			</div>
+			<div class="tab-content p-0 m-t-10">
+				<div class="tab-pane fade active in tab-top" id="nav-tab-1">
+					<div class="list-box m-t-10">
+						<ul class="choice-list-box bg-body border-none">
+							<li>
+								<div class="choice-box">
+									<i class="iconfont pull-left">&#xe61d;</i>
+									<input placeholder="请输入手机号码" type="tel" class="choice-input" id="accNbrInput" />
+								</div>
+							</li>
+							<li class="m-t-10">
+								<span class="p-l-20 font-secondary">查询一个月之内的记录</span>
+							</li>
+							<!-- <li class="m-t-10">
+								<div class="choice-box">
+									<i class="iconfont pull-left">&#xe688;</i>
+									<input class="mydate form-control" id="" placeholder="受理时间">
+								</div>
+							</li>
+							<li class="m-t-10">
+								<div class="choice-box">
+									<i class="iconfont pull-left">&#xe635;</i>
+									<input placeholder="请输订单号码" class="choice-input" />
+								</div>
+							</li> -->
+						</ul>
+					</div>
+					<!-- begin button -->
+					<div class="sub-btn-box p p-b-15">
+						<button class="sun-btn done" id="paymentQueryBtn">查询</button>
+					</div>
+					<!-- end button -->
+				</div>
+				<div class="tab-pane fade tab-top" id="nav-tab-2">
+					<div class="list-box m-t-10">
+						<ul class="choice-list-box m-0" id="paymentQueryResult">
+							<li>
+								<i class="iconfont pull-left">&#xe640;</i>
+								<span class="list-title font-secondary">请先输入查询条件后再查询</span>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			<!-- end col-12 -->
+		</div>
+		<!-- end row -->
+
+	</div>
+	<!-- end #content -->
+	<!-- <div class="modal fade modal-message modal-top" id="queryDetailInfo">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+					<h4 class="modal-title">订单详情</h4>
+				</div>
+				<div>
+					<ul class="choice-list-box m-t-10">
+						<li>
+						</li>
+					</ul>
+					<div class="list-box">
+						<div class="sub-btn-box p p-b-15 relative">
+							<button class="sun-btn done" data-dismiss="modal">确定</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div> -->
+</div>
+<script>
+	$(document).ready(function() {
+		bill.paymentQuery.init();
+	});
+</script>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ailk.ecsp.mybatis.mapper.RoleServiceMapper" >
+  
+  <resultMap id="ServiceRoleResultMap" type="com.ailk.ecsp.mybatis.model.ServiceRole">
+    <id column="ROLE_ID" jdbcType="DECIMAL" property="roleId" />
+    <result column="ROLE_CODE" jdbcType="VARCHAR" property="roleCode" />
+    <result column="ROLE_NAME" jdbcType="VARCHAR" property="roleName" />
+    <result column="USE_PORTAL" jdbcType="VARCHAR" property="usePortal" />
+    <result column="STATUS" jdbcType="CHAR" property="status" />
+    <result column="CREAT_TIME" jdbcType="TIMESTAMP" property="creatTime" />
+  </resultMap>
+  
+  <resultMap id="RoleServiceResultMap" type="com.ailk.ecsp.mybatis.model.RoleService" >
+    <result column="ID" property="id" jdbcType="DECIMAL" />
+    <result column="SERVICE_ID" property="serviceId" jdbcType="DECIMAL" />
+    <result column="ROLE_ID" property="roleId" jdbcType="DECIMAL" />
+  </resultMap>
+  
+  <select id="queryRole" parameterType="long" resultMap="ServiceRoleResultMap">
+     SELECT 
+     	sr.role_id,
+     	sr.role_code,
+     	sr.role_name 
+     FROM 
+     	sp_service_role sr,
+     	sp_role_service rs
+	 WHERE 
+		sr.role_id = rs.role_id
+	    AND rs.service_id =#{roleCode}
+        AND sr.status = 'A'
+   </select>
+   
+   <insert id="insert" parameterType="com.ailk.ecsp.mybatis.model.RoleService" >
+    insert into SP_ROLE_SERVICE
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="serviceId != null" >
+        SERVICE_ID,
+      </if>
+      <if test="roleId != null" >
+        ROLE_ID,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=DECIMAL},
+      </if>
+      <if test="serviceId != null" >
+        #{serviceId,jdbcType=DECIMAL},
+      </if>
+      <if test="roleId != null" >
+        #{roleId,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+
+  <insert id="batchInsert" parameterType="java.util.List">
+	    <selectKey resultType="long" keyProperty="id" order="BEFORE"> 
+	            SELECT role_service_seq.NEXTVAL FROM DUAL 
+	    </selectKey> 
+	    insert into SP_ROLE_SERVICE (ID, SERVICE_ID, ROLE_ID)
+	    select  role_service_seq.NEXTVAL,A.*  from( 
+		    <foreach collection="list" item="it" index="index"  separator="union all">
+			    select 
+			      #{it.serviceId,jdbcType=DECIMAL},
+			      #{it.roleId,jdbcType=DECIMAL}
+			    from dual
+		    </foreach>  
+	    ) A 
+  </insert>
+  
+  <delete id="deleteRoleService" parameterType="long" >
+    delete from SP_ROLE_SERVICE where SERVICE_ID = #{serviceId}
+  </delete>
+  
+  
+</mapper>

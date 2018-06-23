@@ -1,0 +1,81 @@
+<div class="easyDialogclose" id="batchStatusQuery_dialog_close" onclick="easyDialog.close()"></div>
+<#if errorStack??>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+	<tr>
+		<td align="left">错误编码【${errorStack.data.errCode}】${errorStack.data.errMsg}<a style=" color: #FF0000;font-weight: bold;" id="alertMoreOp" href="javascript:void(0);" onclick="order.batch.getMoreError();">&nbsp;【更多】&nbsp;</a></div>
+		<br/>
+		<span id="alertMoreContent" style="display:none"> <span style="color: #0000FF;font-weight: bold;">【详细信息】</span>
+			<br/>
+			<span style="color: #0000FF;font-weight: bold;">入参：</span>
+			<br/>
+			<span style="word-wrap: break-word;word-break:break-all"> ${errorStack.data.paramMap} </span>
+			<br/>
+			<#if errorStack.data.resultMap??> <span style="color: #0000FF;font-weight: bold;">回参：</span>
+			<br/>
+			<span> ${errorStack.data.resultMap}</span>
+			<br/>
+			</#if> <span style="color: #0000FF;font-weight: bold;">异常信息：</span>
+			<br/>
+			<span> ${errorStack.data.errData} </span>
+			<br/>
+		</span></td>
+	</tr>
+</table>
+<#else>
+<#if message?? && message != "">
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+	<tr>
+		<td> <#if code?? && code == "0"> <i class="rule_icon"></i> <#elseif code?? && code="-1"> <i class="rule_icon_wrong"></i> </#if> </td>
+		<td> <#if code??> <span class="rule_font">${message}</span></#if></td>
+	</tr>
+</table>
+<#else>
+<#if resultList?? && (resultList?size>0)>
+<input type="hidden" id="batchType" value="${batchType}"/>
+<table class="contract_list">
+	<thead>
+		<tr>
+			<td>批量受理结果查询</td>
+		</tr>
+	</thead>
+</table>
+<table class="contract_list numberList" id="numberList">
+	<thead>
+		<tr>
+			<td width="10%"></td>
+			<td width="45%">批次处理状态</td>
+			<td width="45%">记录数</td>
+		</tr>
+	</thead>
+	<tbody>
+		<#list resultList as childList>
+			<tr>
+				<td width="10%"></td>
+				<td width="45%">
+					<#if childList.statusCd=="RC">资源返销
+		     	 	<#elseif childList.statusCd=="F">建档算费失败
+		     	 	<#elseif childList.statusCd=="X">生成购物车失败
+		     	 	<#elseif childList.statusCd=="S">生成购物车成功
+		     	 	<#elseif childList.statusCd=="C">建档算费成功
+		     	 	<#elseif childList.statusCd=="Q">导入成功
+		     	 	</#if>
+				</td>
+				<td width="45%">${childList.count}</td>
+			</tr>
+		</#list>
+		<tr>
+			<td width="10%"></td>
+			<td width="45%" style="font-weight:bold">总计</td>
+			<td width="45%">${totalNbr}</td>
+		</tr>
+	</tbody>
+</table>
+<#else>
+<div class="no_search">
+	<div class="h1">
+		<img style="vertical-align:middle" src="${contextPath}/image/common/query_search.gif" />&nbsp;&nbsp;抱歉，没有找到相关的信息记录。
+	</div>
+</div>
+</#if>
+</#if>
+</#if>

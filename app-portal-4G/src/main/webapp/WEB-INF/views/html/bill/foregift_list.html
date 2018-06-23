@@ -1,0 +1,59 @@
+<table class="contract_list numberList">
+	<thead>
+       <tr>
+           <td width="80">类型</td>
+           <td width="100">流水号</td>
+           <td width="100">客户名称</td>
+           <td width="100">接入号码</td>
+           <td width="80">押金金额/元</td>
+           <td width="50">状态</td>
+           <td width="80">费用项</td>
+           <td width="150">生效时间</td>
+           <td width="150">失效时间</td>
+           <td width="150">收费时间</td>
+           <td wudth="100">操作</td>
+       </tr>
+    </thead>
+    <#if resultlst?? && (resultlst.foregiftItems?size>0)>
+    <tbody id="foregiftList">
+    	<#list resultlst.foregiftItems as items >
+       	<tr >
+       		<#if items.rePayCoId=="">
+       			<td>已收费</td>
+       			<td>${items.payCoId}</td>
+       		<#else>
+       			<td>已退费</td>
+       			<td>${items.rePayCoId}</td>
+       		</#if>
+           	<td>${items.custName}</td>
+           	<#if items.accNb??>
+       			<td>${items.accNb}</td>
+       		<#else>
+       			<td>&nbsp;</td>
+       		</#if>
+           	<td>${items.charge/100}</td>
+           	<#if items.state=="2">
+       			<td>有效</td>
+       		<#else>
+       			<td>失效</td>
+       		</#if>
+       		<td>${items.acctItemTypeName}</td>
+       		<td style="display:none;" id="acctItemTypeId">${items.acctItemTypeId}</td>
+           	<td>${items.startDt}</td>
+           	<td>${items.endDt}</td>
+           	<td>${items.payDt}</td>
+           	<td> <input type="button" value="详情" class="numberSearch"
+						onclick="bill.foregiftMgr.showDetail(${items.id});" /> </td>
+           	<td style="display:none;">${items.acctItemId}</td>
+           	<td style="display:none;">${items.id}</td>
+        </tr>
+        </#list>
+	</tbody>
+	<#else>
+	<tbody>
+ 		<tr>
+ 			<td colspan="9">对不起，该用户没有押金记录！</td>
+ 		</tr>
+	</tbody>
+	</#if>
+</table>

@@ -1,0 +1,226 @@
+<#if custflag==0>
+<div style="display: block;" class="contract_tab_panel">
+                                          <div class="plan_warp location" >
+<#if (pageModel.list)?? &&((pageModel.list)?size>0)>	
+<!--号码列表-->
+<h5 id="orderedProdTitle" class="s_title" style="border-bottom: 0px solid rgb(79, 125, 63);">
+	<a style="float: left;">产品号码</a>
+	<input id="accNbrQuery" style="margin-left:5px;width:160px;" type="text" class="inputWidth228px"  placeHolder="请输入产品号码" />
+	<a style="margin-left:5px;float: left;">页条数</a>
+	<input type="text" placeholder="页条数" id="custPageSize" style="margin-left:5px;width:30px;float: left;" value="5" class="inputWidth228px">
+	<a href="#" class="purchase" id="" onclick="javasrcrpt:order.cust.btnQueryCustProd(1)" style="margin-left:5px;float: left;">查询</a>
+</h5>
+	<table id="orderedProdList" class="contract_list textleft" style="height: 24px;">
+		<thead>
+             <tr>
+             	 <td width="2%">&nbsp;</td>
+                 <td width="2%">&nbsp;</td>
+                 <td width="15%">产品号码</td>
+                 <td width="26%">套餐名称</td>
+                 <td width="10%">产品规格</td>
+                 <td width="8%">状态</td>
+                 <td width="8%">付费类型</td>
+                 <td width="8%">卡类型</td>
+                 <td style="text-align:center" width="10%">查询</td>
+             </tr>                                                    
+         </thead>
+		<tbody id="phoneNumListtbody">
+		<#assign parm_row = 0 />
+		<#list pageModel.list as item>
+		<#assign parm_row = parm_row + 1 />
+		<#if item.prodOfferName!="">
+		  			<#assign styletype="display:none">
+		  			<#else>
+		  			<#assign styletype="">
+		</#if>
+        <#if item.treeFlag==""||item.treeFlag=="tree_bottom">
+		  			<#assign substyletype="">
+		  			<#else>
+		  			<#assign substyletype="tree_center">
+		</#if>
+			<tr <#if parm_row%2==1 >  class="bg"</#if>>
+			    <td prodBigClass="${item.prodBigClass}" areaId="${item.areaId}" accNbr="${item.accNbr}" productName="${item.productName}" prodStateName="${item.prodStateName}" feeType="${item.feeType.feeType}" feeTypeName="${item.feeType.feeTypeName}" 
+			    prodInstId="${item.prodInstId}" extProdInstId="${item.extProdInstId}" corProdInstId="${item.corProdInstId}" prodStateCd="${item.prodStateCd}" productId="${item.productId}" prodClass="${item.prodClass}" stopRecordCd="${item.stopRecordCd}" stopRecordName="${item.stopRecordName}" zoneNumber="${item.zoneNumber}" ifLteNewInstall="${item.ifLteNewInstall}"  roleCd="${item.roleCd}"style="text-align:center"></td>
+			    <td><i class="${item.treeFlag} floatright"></i></td>
+				<td style="position: relative;"><a class="setmeat" onclick="javascript:order.cust.showUserTag(${item.accNbr})" href="javascript:void(0);" id="a_${item.accNbr}">${item.roleName} ${item.accNbr}</a>
+				<div class="alert-market dis-none" id="userTag_${item.accNbr}">
+                  <div class="user_card user_tb" id="userTagShow_${item.accNbr}">
+                  </div>
+                </div>
+                </td>
+				<td><#if item.prodOfferName!="">${item.prodOfferName} <#if item.startDt!="">${item.startDt}生效</#if><#else>更多>></#if></td>
+				<td>${item.productName}</td>
+				<td>${item.prodStateName}${item.stopRecordName}</td>
+				<td>${item.feeType.feeTypeName}</td>
+				<td name = "pord_uim_type_query" areaId="${item.areaId}"  prodInstId="${item.prodInstId}" acctNbr="${item.accNbr}"></td>
+				<td style="text-align:center"><a class="purchase" onclick="product.query.queryProdDetail(${item.prodInstId},'${item.accNbr}',${item.areaId})">详情</a></td>
+				<td style="display:none;">${item.prodInstId}</td>
+				<td style="display:none;">${item.prodStateCd}</td>
+				<td style="display:none;">${item.productId}</td>
+				<td style="display:none;">${item.feeType.feeType}</td>
+				<td style="display:none;">${item.prodClass}</td>
+		  </tr>
+		  <tr class="nocolor" id="plan2ndTr" style="display:none;">
+		  	<td colspan="9" class="nopadding" style=${styletype}>
+		  	<div class="plan_second_list cashier_tr" id="plan2ndDiv">
+		  		<table class="contract_list">  
+		  			<tbody id="subphoneNumListtbody">
+		  			<#list item.mainProdOfferInstInfos as subitem>
+		  				<tr style=${styletype} >
+		  				<td style="width:67px;" prodOfferName="${subitem.prodOfferName}" startDt="${subitem.startDt}" custName="${subitem.custName}" endDt="${subitem.endDt}"
+		  				prodOfferId="${subitem.prodOfferId}" prodOfferInstId="${subitem.prodOfferInstId}" custId="${subitem.custId}" is3G="${subitem.is3G}" ><i class="${substyletype} floatright"></i></td>
+		  				<td style="text-align:center"><i class="select"></i></td>
+		  				<td style="width:900px;${styletype}"><i class="open_tree"></i>${subitem.prodOfferName} ${subitem.startDt} 生效</td>
+		  				<td style="display:none;">${subitem.custName}</td>
+		  				<td style=${styletype}></td>
+		  				<td style="display:none;">${subitem.endDt}</td>
+		  				<td style="display:none;">${subitem.prodOfferId}</td>
+		  				<td style="display:none;">${subitem.prodOfferInstId}</td>
+				        <td style="display:none;">${subitem.custId}</td>
+		  				</tr>
+		  			</#list>		  			
+		  			</tbody>
+		  		</table>
+		  	</div>
+		  	</td>
+		  </tr>
+		</#list>
+		</tbody>
+	</table>
+<!--页码-->
+<#if (pageModel.list)?? &&((pageModel.list)?size>0)>
+<@portal.modelPagination pageModel 5 "order.cust.btnQueryCustProd"/>
+<script src="${contextPath}/js/our-js/ec.pagination.js?${jsversion}" type="text/javascript"></script>
+<script src="${contextPath}/js/busi-js/prod/productQuery.js?${jsversion}" type="text/javascript"></script>
+<style>
+.prod li{
+	width:33%;
+}
+</style>
+</#if>
+<!--页码 end-->
+<!--号码列表 end-->
+
+        <!--===========营销推荐开始==========-->
+		<div style="display: block; margin-top: 40px;">
+			<h2 style="font-weight: bold;height: 43px;line-height: 43px;padding: 0 10px 0 10px;background: url(../image/common/icon_title.png) no-repeat 0 center;text-indent:25px;position: relative;">
+				<span style="cursor:pointer;color:#f15a1f;font-size:16px;margin:0 10px" onclick="order.cust.queryMktActivityList()">营销推荐</span><span class="showhide"></span>
+			</h2>
+			<div class="cardtabcon">
+				<div class="pdcardcon show">
+
+					<div class="market-tab">
+						<ul id="mark_tab">
+						</ul>
+					</div>
+					<div class="mark1-box active">
+						<div class="market" id="activity_table"></div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+		<!--===========营销推荐结束==========-->
+		<table width="100%" cellspacing="0" cellpadding="0" border="0">
+  <tbody>
+  <tr class="bottomline">
+	<td class="ordertitle" colspan="2" >
+		<img width="25" height="25" src="${contextPath}/image/icon/tip.png">
+		请先选择需要进行变更的产品后进行以下操作
+	</td>
+  </tr>
+  
+  <#if businessLink?? && (businessLink?size>0) >
+	<#list businessLink as busInfo >
+		<#assign lastTypeId = busInfo.lableTypeId >
+		<#assign lastTypeId_num = 0 >
+		<tr>
+		  <td>
+		  <a class="purchasetitle2" style="width:25px; vertical-align:top"><img src="${contextPath}/image/icon/order_icon${lastTypeId}.png">&nbsp;</a>
+		  </td>
+		  <td>
+	<#break>
+	</#list>
+    	
+	<#list businessLink as busInfo >
+		<#if busInfo.lableTypeId?? && (busInfo.lableTypeId!=lastTypeId) >
+			<#assign lastTypeId_num = 1 >
+			</td>
+			</tr>
+			<tr>
+			  <td>
+			  <a class="purchasetitle" style="width:25px; vertical-align:top"><img src="${contextPath}/image/icon/order_icon${busInfo.lableTypeId}.png">&nbsp;</a>
+			  </td>
+			  <td>
+		</#if>
+			  <a href="<#if busInfo.menuPath?? && (busInfo.menuPath!='#') >${busInfo.menuPath}<#else>javascript:void(0)</#if>" 
+	    		class="<#if lastTypeId_num==0 >purchasebtn2<#else>purchasebtn</#if>" >${busInfo.resourceName}</a>
+			  <#assign lastTypeId = busInfo.lableTypeId > 
+	</#list>
+  </#if>
+  </td>
+  </tr>
+	
+</tbody></table>
+<#else>
+<div class="no_search"> 
+		<i><img width="25" height="25" src="${contextPath}/image/icon/tip.png"></i>抱歉,没有找到已订购的业务！
+</div>
+</#if>
+                        </div>
+                                          </div>
+<#elseif custflag==1>
+<#if msg??><i><img width="25" height="25" style="margin:5px;" src="${contextPath}/image/icon/tip.png"></i><p style="position:relative;left:40px;bottom:30px;margin-bottom:-20px;width:97%;word-break:break-all;color:red;">查询失败：${msg}</p><#else>fail</#if>
+</#if>
+
+<div class="easyDialogdiv" style="width:420px;height:300px;" id="CHANGEUIMSMS">
+  <div class="easyDialogclose" id="svCloseDiv"></div>
+    	<table class="contract_list">
+            <thead>
+                <tr>
+                  <td colspan="6" align="center">短信验证码</td>
+                </tr>                                                    
+            </thead>
+        </table>
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="SMScode">
+          <tr>
+            <td><p>为确保用户的个人信息安全，在办理该业务前，需先进行短信验证，请输入用户提供的随机短信验证码！</p></td>
+          </tr>
+           <tr class="randomCode">
+             <td>
+	         <span style="float:left; margin-top:5px">验证的号码</span>
+	         <form id="checkNum">
+		        <input id="changeUimSmsCheckNum" class="txtnum" disabled='disabled'  style="float:left; margin:0px 5px;height:24px" />
+		     </form>
+	        </td>
+           </tr>
+          <tr>
+            <td>
+            	<span style="float:left; margin-top:5px">短信验证码</span>
+		        <form id="changeUimSmsForm" >
+		        <input  type="text" class="txt2 inputWidth228px" style="float:left; margin:0px 5px;" name="smspwd" id="smspwd" data-validate="validate(required:短信验证码不能为空) on(blur)" placeholder="请输入您手机收到的验证码" maxlength="6"/>
+		        <a class="purchase" id="changeuimsmsbutton" href="javascript:void(0)">确 认</a>
+		        </form>
+	        </td>
+          </tr>
+           <tr class="randomCode" style="display:none">
+             <td>
+	         <span style="float:left; margin-top:5px">随机序列号</span>
+	         <form id="num">
+		        <input id="changeUimSmsRandomNum" class="txtnum" disabled='disabled'  style="float:left; margin:0px 5px;height:24px" />
+		     </form>
+	        </td>
+           </tr>
+          <tr>
+            <td>
+            <p>- 验证码在5分钟内有效，3次错误输入后失效。</p>
+            <!-- <p><span style="color:#aaa" id="timeInfo"></span></p> -->
+            <p>- 如您<font id="defaultTimeResend"></font>仍未收到验证码，请点击<a id="changeuimsmsresend" class="cf" onclick="javascript:void(0);">重新获取验证码。</a></p>
+			<p>- 如果您连续3次重试都没有成功收到短信验证码，建议您稍后再试。</p>
+			</td>
+          </tr>
+        </table>
+</div>
+<!--弹出层 end-->
+
+

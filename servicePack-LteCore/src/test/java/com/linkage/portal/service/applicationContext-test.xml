@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
+	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+	http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache-3.1.xsd"
+	default-lazy-init="true">
+	
+    <context:component-scan base-package="com.ailk.ecsp">
+    	<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+    </context:component-scan>
+	<!--
+		<bean id="serviceDataSource"
+		class="org.springframework.jndi.JndiObjectFactoryBean"> <property
+		name="jndiName"> <value>serviceDataSource</value> </property>
+		<property name="resourceRef"> <value>true</value> </property> </bean>
+		<bean id="portalDataSource"
+		class="org.springframework.jndi.JndiObjectFactoryBean"> <property
+		name="jndiName"> <value>portalDataSource</value> </property> </bean>
+	-->
+
+	<!-- 测试环境 -->
+	<bean id="serviceDataSource" class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName">
+			<value>oracle.jdbc.driver.OracleDriver</value>
+		</property>
+		<property name="url">
+		<!--
+			<value>jdbc:oracle:thin:@192.168.111.95:1521:dev4g</value>
+		-->		
+			<value>jdbc:oracle:thin:@172.16.9.2:1521:ltejd</value>
+
+		</property>
+		<property name="username">
+			<value>portal</value>
+		</property>
+		<property name="password">
+			<value>portal</value>
+		</property>
+		<property name="maxActive">
+			<value>15</value>
+		</property>
+		<property name="maxIdle">
+			<value>5</value>
+		</property>
+		<property name="maxWait">
+			<value>120000</value>
+		</property>
+	</bean>
+<!--
+	<bean id="portalDataSource" class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName">
+			<value>oracle.jdbc.driver.OracleDriver</value>
+		</property>
+		<property name="url">
+			<value>jdbc:oracle:thin:@10.1.5.97:1521:testlte</value>
+		</property>
+		<property name="username">
+			<value>query</value>
+		</property>
+		<property name="password">
+			<value>query</value>
+		</property>
+		<property name="maxActive">
+			<value>15</value>
+		</property>
+		<property name="maxIdle">
+			<value>5</value>
+		</property>
+		<property name="maxWait">
+			<value>120000</value>
+		</property>
+	</bean>
+	-->
+	<bean id="serviceDataSource111" class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName">
+			<value>oracle.jdbc.driver.OracleDriver</value>
+		</property>
+		<property name="url">
+			<value>jdbc:oracle:thin:@10.1.5.117:1521:mvnodb</value>
+		</property>
+		<property name="username">
+			<value>crm_2</value>
+		</property>
+		<property name="password">
+			<value>crm_2</value>
+		</property>
+		<property name="maxActive">
+			<value>15</value>
+		</property>
+		<property name="maxIdle">
+			<value>5</value>
+		</property>
+		<property name="maxWait">
+			<value>120000</value>
+		</property>
+	</bean>
+<!--
+	<bean id="portalDataSource" class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName">
+			<value>oracle.jdbc.driver.OracleDriver</value>
+		</property>
+		<property name="url">
+			<value>jdbc:oracle:thin:@10.1.5.97:1521:testlte</value>
+		</property>
+		<property name="username">
+			<value>query</value>
+		</property>
+		<property name="password">
+			<value>query</value>
+		</property>
+		<property name="maxActive">
+			<value>15</value>
+		</property>
+		<property name="maxIdle">
+			<value>5</value>
+		</property>
+		<property name="maxWait">
+			<value>120000</value>
+		</property>
+	</bean>	
+	-->
+	<bean id="cardDataSource" class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName">
+			<value>oracle.jdbc.driver.OracleDriver</value>
+		</property>
+		<property name="url">
+			<value>jdbc:oracle:thin:@192.168.111.95:1521:dev4g</value>
+		</property>
+		<property name="username">
+			<value>portal</value>
+		</property>
+		<property name="password">
+			<value>portal</value>
+		</property>
+		<property name="maxActive">
+			<value>10</value>
+		</property>
+		<property name="maxIdle">
+			<value>5</value>
+		</property>
+		<property name="maxWait">
+			<value>120000</value>
+		</property>
+	</bean>
+	<!-- 生产环境 -->
+	<!-- 
+	<bean id="serviceDataSource" class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName">
+			<value>oracle.jdbc.driver.OracleDriver</value>
+		</property>
+		<property name="url">
+			<value>jdbc:oracle:thin:@(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=10.1.5.30)(PORT=1521))(ADDRESS=(PROTOCOL=TCP)(HOST=10.1.5.31)(PORT = 1521))(FAILOVER=yes)(LOAD_BALANCE=yes))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=essdb)))</value>
+		</property>
+		<property name="username">
+			<value>pcsp</value>
+		</property>
+		<property name="password">
+			<value>pcsp</value>
+		</property>
+		<property name="maxActive">
+			<value>15</value>
+		</property>
+		<property name="maxIdle">
+			<value>5</value>
+		</property>
+		<property name="maxWait">
+			<value>120000</value>
+		</property>
+	</bean>
+	<bean id="portalDataSource" class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName">
+			<value>oracle.jdbc.driver.OracleDriver</value>
+		</property>
+		<property name="url">
+			<value>jdbc:oracle:thin:@(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=10.1.5.30)(PORT=1521))(ADDRESS=(PROTOCOL=TCP)(HOST=10.1.5.31)(PORT = 1521))(FAILOVER=yes)(LOAD_BALANCE=yes))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=essdb)))</value>
+		</property>
+		<property name="username">
+			<value>ap</value>
+		</property>
+		<property name="password">
+			<value>ap</value>
+		</property>
+		<property name="maxActive">
+			<value>15</value>
+		</property>
+		<property name="maxIdle">
+			<value>5</value>
+		</property>
+		<property name="maxWait">
+			<value>120000</value>
+		</property>
+	</bean>
+	<bean id="cardDataSource" class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName">
+			<value>oracle.jdbc.driver.OracleDriver</value>
+		</property>
+		<property name="url">
+			<value>jdbc:oracle:thin:@10.10.31.30:1521:verifydb</value>
+		</property>
+		<property name="username">
+			<value>crm_app</value>
+		</property>
+		<property name="password">
+			<value>crm_app</value>
+		</property>
+		<property name="maxActive">
+			<value>10</value>
+		</property>
+		<property name="maxIdle">
+			<value>5</value>
+		</property>
+		<property name="maxWait">
+			<value>120000</value>
+		</property>
+	</bean>
+	<bean id="cardDataSource" class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName">
+			<value>oracle.jdbc.driver.OracleDriver</value>
+		</property>
+		<property name="url">
+			<value>jdbc:oracle:thin:@10.10.31.30:1521:verifydb</value>
+		</property>
+		<property name="username">
+			<value>crm_app</value>
+		</property>
+		<property name="password">
+			<value>crm_app</value>
+		</property>
+		<property name="maxActive">
+			<value>10</value>
+		</property>
+		<property name="maxIdle">
+			<value>5</value>
+		</property>
+		<property name="maxWait">
+			<value>120000</value>
+		</property>
+	</bean>
+	-->
+	<!-- 服务层配置库数据源 -->
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource">
+			<ref bean="serviceDataSource" />
+		</property>
+	</bean>
+	<!-- 门户层配置库数据源 -->
+	<bean id="portalJdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource">
+			<ref bean="portalDataSource" />
+		</property>
+	</bean>
+	<!-- 卡资源申请数据源 -->
+	<bean id="cardJdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource">
+			<ref bean="cardDataSource" />
+		</property>
+	</bean>
+	<!-- 充值缴费相关配置库数据源 -->
+	<bean id="chargeJdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource">
+			<ref bean="cardDataSource" />
+		</property>
+	</bean>
+		<!-- define the SqlSessionFactory-->
+    <bean id="ecspSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="serviceDataSource" />
+        <property name="mapperLocations">
+			<list>
+				<!-- 表示目录中，以Mapper.xml结尾所有文件 -->
+				<value>classpath:com/ailk/ecsp/mybatis/sqlmapper/*Mapper.xml</value>
+			</list>
+		</property>
+		<!--
+        <property name="mapperLocations" value="classpath*:com/linkage/portal/agent/mybaits/sqlmap/*.xml" />
+        -->
+    </bean>
+    
+	<bean class="com.ailk.ecsp.util.SpringContextUtil" lazy-init="false" />
+	<import resource="classpath:com/linkage/portal/service/portal-db-context-test.xml"/>
+</beans>

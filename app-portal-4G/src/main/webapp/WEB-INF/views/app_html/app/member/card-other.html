@@ -1,0 +1,43 @@
+<ul class="choice-list-box">
+	<li>
+		<i class="iconfont pull-left">&#xe66c;</i>
+		<span class="list-title">经办人</span>
+		<i onclick="order.dealer.showJbr()" data-toggle="modal" class="iconfont absolute-right font-default">&#xe670;</i>
+	</li>
+	<li>
+		<span class="list-title font-secondary" id="jbrName">无经办人
+		</span>
+	</li>
+</ul>
+<ul class="choice-list-box m-0">
+	<li>
+		<div class="choice-box border-none">
+			<i class="iconfont pull-left">&#xe656;</i>
+				<input placeholder="备注" class="choice-input" id="order_remark">
+		</div>
+		<i class="iconfont absolute-right"></i>
+	</li>
+</ul>
+
+<!-- 经办人弹出层 -->
+<div class="modal modal-message fade modal-top" id="jbr">
+	<#include "/app/order_new/jbr-create.html"/> 
+</div>
+<div class="sub-btn-box p p-b-15">
+	<button class="sun-btn done" onclick="javascript:{common.setBtnTimer(this);order.memberChange.submit();}">下一步</button>
+</div>
+			
+<script type="text/javascript">
+cust.jbrvalidatorForm();
+	var ua = navigator.userAgent.toLowerCase();	
+if (/iphone|ipad|ipod/.test(ua)) {
+	$("#jbr_nfc").hide();
+	$("#jbr_otg").hide();
+	$("#jbrduka_nfc").hide();
+	$("#jbrduka_otg").hide();
+	    //alert("iphone");		
+} else if (/android/.test(ua)) {
+	    //alert("android");	
+}
+
+</script>

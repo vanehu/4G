@@ -1,0 +1,25 @@
+<#if (pageModel.list)?? &&((pageModel.list)?size>0)>
+	<#if (pageModel.pageNo)?? && (pageModel.pageNo > 1) >
+		<#list pageModel.list as staffInfo>
+	  	<tr staffId="${staffInfo.staffId}" staffCode="${staffInfo.staffCode}" staffName="${staffInfo.staffName}">
+	    	<td>${staffInfo.salesCode}</td>
+	      	<td>${staffInfo.staffName}</td>
+	      	<td>${staffInfo.staffCode}</td>
+	      	<td>${staffInfo.orgName}</td>
+	    </tr>
+		</#list>
+	<#else>
+		<@portal.scrollPagination "order_staff" "both" pageModel.totalPages 200 56 "order.main.queryScroll">
+		<table class="searchtable">
+		<#list pageModel.list as staffInfo>
+	  	<tr staffId="${staffInfo.staffId}" staffCode="${staffInfo.staffCode}" staffName="${staffInfo.staffName}">
+	    	<td>${staffInfo.salesCode}</td>
+	      	<td>${staffInfo.staffName}</td>
+	      	<td>${staffInfo.staffCode}</td>
+	      	<td>${staffInfo.orgName}</td>
+	    </tr>
+		</#list>
+		</table>
+		</@portal.scrollPagination>
+	</#if>	
+</#if>

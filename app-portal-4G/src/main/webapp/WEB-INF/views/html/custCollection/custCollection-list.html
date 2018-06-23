@@ -1,0 +1,57 @@
+<#if code?? && (code==0) >
+<table class="numberList" id="tab_orderList" >
+   <thead>
+   	<tr>
+       <td width="60">采集单号</td>
+       <td width="80">受理渠道</td>
+       <td width="60">受理人</td>
+       <td width="60">受理工号</td>
+       <td width="80">受理时间</td>
+       <td width="30">状态</td>
+       <td width="80">失效时间</td>
+       <td width="180">备注</td>
+       <td width="70">操作</td>
+    	 </tr>
+   </thead>
+   <tbody>
+   <#if (pageModel.list)?? &&((pageModel.list)?size>0)>
+	   <#list pageModel.list as list >
+		   <tr orderId="${list.orderId}">
+	       <td>${list.orderNbr}</td>
+	       <td>${list.channelName}</td>
+	       <td>${list.staffName}</td>
+	       <td>${list.staffCode}</td>
+	       <td>${list.soDate}</td>
+	       <#if list.ifExp == "N">
+	       		<td>有效</td>
+	   	   <#else>
+	   			<td>失效</td>
+	   	   </#if>
+	       <td>${list.expDate}</td>
+	       <#if list.remarks == "">
+	       		<td>无</td>
+	   	   <#else>
+	   			<td>${list.remarks}</td>
+	   	   </#if>
+	       <td>
+	   		<a class="purchase" href="javascript:void(0)" onclick ="cust.collection.queryOrderDetail('${list.orderId}')">详情</a>
+	   		<#if list.ifExp == "N">
+	   			<a class="purchase" href="javascript:void(0)" onclick ="cust.collection.acceptOrder('${list.orderId}')">受理</a>
+	   		</#if>
+	       </td>
+	    	</tr>
+	   </#list>
+   <#else>
+	   <tr>
+	     <td colspan="9">没有查询到结果</td> 
+	   </tr>
+   </#if>
+   </tbody>
+ </table>
+ 
+ <!--页码-->
+<@portal.simplifyModelPagination pageModel "cust.collection.queryCartList"/>
+<!--页码 end-->
+
+<script src="${contextPath}/js/our-js/ec.pagination.js?${jsversion}" type="text/javascript"></script>
+<#else>${mess}</#if>

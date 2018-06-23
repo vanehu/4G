@@ -1,0 +1,34 @@
+<!--ActiveX 声明-->
+<OBJECT id="ocx${prodId}" style="height: 0px;width: 0px;" Classid="clsid:5e497bde-0e29-4ac0-bfb1-4af7b7940277" codeBase="${contextPath}/card/common.ocx#version=1.0.0.1"></OBJECT>
+<div style="display:none" id="ec-dialog-form-container-card${prodId}" class="ec-dialog-form-container">
+	<div class="ec-dialog-form-top">
+		<h1 class="ec-dialog-form-title">写卡</h1>
+	</div>
+	<div class="ec-dialog-form-content">
+		<div class="ec-dialog-form-loading" style="display:none"></div>
+		<div class="ec-dialog-form-message" style="display:none"></div>
+		<div class="ec-dialog-form-form" >
+		<form action="#" id="dialogForm">
+			<div>
+				<p class="pb" style="height: 30px;">
+					<label class="w1">手机号码:</label>
+					<input type="text"  id="write_card_phone_number${prodId}" class="txt2 inputDisabled" readonly="readonly" disabled="disabled" />
+				</p>
+				<p class="pb" id="dk_content">
+					<label class="w1">卡序列号:</label>
+					<input type="text" class="txt3" id="serialNum${prodId}"/>
+				</p>
+			</div>
+			<div align="left" style="margin-left: 60px;">
+				<a class="btna_o" href="javascript:void(0);" id="btnReadCard${prodId}"><span>读卡</span></a>&nbsp; <a class="btna_o" href="javascript:void(0);" id="btnWriteCard${prodId}"><span>写卡</span></a>
+			</div>
+			<input type="hidden" id="iccid" value=""/>
+			<input type="hidden" id="imsi" value=""/>
+			<a href = "https://ct.crm.189.cn/phoneimg/card/CardMan3x21_V1_1_1_0.exe">下载写卡器驱动</a>
+			
+		</form>
+		</div>
+	</div>
+	<div class="ec-dialog-form-bottom"></div>
+</div>	
+

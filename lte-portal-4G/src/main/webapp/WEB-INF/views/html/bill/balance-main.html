@@ -1,0 +1,81 @@
+<@override name="title"><#if pageType=="pay">余额支取<#else>余额查询</#if></@override>
+<@override name="header">
+<#include "/busi-js-tpl.html"/>
+
+<script src="${contextPath}/js/busi-js/bill/balance.js" type="text/javascript"></script>
+
+</@override>
+<@override name="content">
+
+<div class="main_div" id="balanceMain"> 
+  <div class=" main_warp">
+  <div class="ordercon">	
+  <div class="order_confirmation ordertabcon">
+  	<h2 class="h2_title" id="pageType" name="${pageType}"><#if pageType=="pay">余额支取<#else>余额查询</#if><span class="showhide"></span></h2>
+    <div class="main_body" style="padding-top:0px;">
+  	  <h5 class="s_title">余额详情</h5>
+      <br/>
+      <ul class="fillin show billSearch" style="height:136px">
+         <li>
+          <label>所属地区：</label>
+          <input type="text" id="areaName" value="${defaultAreaName}" class="inputWidth183px" readonly="readonly" <#if pageType=="pay">onclick="order.area.chooseAreaTree('bill/prePayBalance','areaName','areaId',3);"<#else>onclick="order.area.chooseAreaTree('bill/preQueryBalance','areaName','areaId',3);"</#if> placeHolder="请查询并选择地区"/>          
+          <input type="hidden" id="areaId" value="${defaultAreaId}" areaCode="${defaultAreaCode}"/>
+          <label class="f_red">*</label>
+        </li>
+        <li>
+      	  <label>接入号码：</label>
+      	  <input type="text" id="phoneNumber" class="inputWidth183px"/>
+          <label class="f_red">*</label>                		      
+	    </li>	
+	    <li id="queryFlag">
+	      <label>查询业务类型：</label>
+	      <input type="radio" name="queryFlag" value="0" checked="checked"/>
+          <label class="radioinput">按帐户查询</label>
+<!--          <input type="radio" name="queryFlag" value="1"/>
+          <label class="radioinput">按用户查询</label> --> 
+	    </li>    
+	    <li id="balanceType">
+          <label>余额类型：</label>
+          <input type="radio" name="balanceType" value="0"/>
+          <label class="radioinput">全部余额</label>
+          <input type="radio" name="balanceType" value="1" checked="checked"/>
+          <label class="radioinput">可用余额</label>         
+        </li>
+        <a class="btn_h30" style="margin:10px 0px 0px 30px;" <#if pageType=="pay">onclick="bill.balance.prodAuth()"<#else>onclick="bill.balance.queryBalance()"</#if>><span>查询</span></a>        
+      </ul>
+      <ul id="balanceDetail" class="billSearch" style="margin-top:10px;display:none;">
+      
+      </ul>
+    </div>
+  </div>
+  </div>
+  </div>
+</div>
+
+<div id="prodAuth" style="height:150px;display:none;" class="easyDialogdiv">
+  <div class="easyDialogclose"></div>
+  <form id="prodAuthForm">
+  <h1 class="easyDialogTitle">产品鉴权</h1>
+  <div class="infoBox">
+    <table class="network">
+      <tbody>
+        <tr>
+          <td width="100"><label class="f_red">*</label>产品密码：</td>
+          <td width="300">
+          	<input type="password" class="inputWidth150px" data-validate="validate(required:密码不能为空, maxlength:密码长度最多为{arg1}(12)) on(blur)" placeholder="请输入密码" id="prodPwd">
+          	<a href="javascript:void(0)" onclick="bill.balance.afterAuth()" class="purchase">校验</a>
+          	<a class="purchase" onclick="bill.balance.getBalance()" <#if jumpAuthflag!="0">style="display:none"</#if>>跳过校验</a>
+          </td>
+        </tr>   
+ 	  </tbody>
+	</table>
+  </div>
+  </form>
+</div>
+
+</@override>
+<#if Session["_session_portal_type"]?? && Session["_session_portal_type"]=="MVNO" >
+<@extends name="/mvno-template.html"/>
+<#else>
+<@extends name="/content-template.html"/>
+</#if>

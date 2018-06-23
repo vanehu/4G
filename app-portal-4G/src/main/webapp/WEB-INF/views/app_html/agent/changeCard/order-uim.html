@@ -1,0 +1,57 @@
+<script>
+	function changeIcon(obj, id) {
+		$(obj).find("span").removeClass().addClass("glyphicon glyphicon-chevron-down pull-right");
+		$("#" + id).find("span").removeClass().addClass("glyphicon glyphicon-chevron-right pull-right");
+	}
+</script>
+<div class="form-group">
+<label >补换卡类型：<span class="text-warning">*</span></label>
+		<select  id="uimSel" onchange="prod.uim.selUimAgent()" class="myselect" >
+				<option value="21">换卡</option>
+				<option value="22">补卡</option>
+		</select>
+</div>
+<div class="form-group" id="uimDiv_${prodId}" style="padding: 10px;">
+	<label for="exampleInputFile">UIM卡号<span class="text-warning">*</span><small id="isCheck_Card" class="text-warning" style="display:none">校验通过</small></label>
+	<div class="input-group">
+      <input type="tel" class="form-control" id="uim_txt_${prodId}">
+      <div class="input-group-btn">
+        <button type="button" class="btn btn-primary dropdown-toggle" style="border: 0;" id= "uim_check_btn_${prodId}" onclick="prod.uim.checkUimAgent(${prodId});"><span style="float:left;">校验</span></button>
+	    <button type="button" class="btn btn-primary dropdown-toggle" style="border: 0;" data-toggle="dropdown" aria-expanded="false"><span class="caret"></span></button>
+        <ul class="dropdown-menu dropdown-menu-right" role="menu">
+          <li><button class="btn btn-uim" type="button" onclick="common.callScanning('order.service.scaningCallBack',${prodId})"> <span style="float:left;">扫描 </span></button></li>
+          <li class="divider"></li>
+          <li>
+          	  <button class="btn btn-uim" id="uim_release_btn_${prodId}" onclick="prod.uim.releaseUimAgent(${prodId});"  type="button" disabled="disabled">
+				<span style="float:left;">释放</span>
+			  </button>
+		  </li>
+        </ul>
+      </div><!-- /btn-group -->
+    </div><!-- /input-group -->
+</div>
+<div id="terminalDiv_${prodId}" style="display: none;padding: 10px;">
+</div>
+<div id="selectOrderedOffer" class="tab-content" style="display:none">
+	<ul class="list-group" onclick="changeIcon(this, 'ready_offer')">
+		<!-- 已订购促销（补换卡) -->
+		<a id="ordered_offer" class="list-group-item" href="#ordering_offer_${prodId}" tabindex="-1" data-toggle="tab">
+			已订购促销
+			<span class="glyphicon glyphicon-chevron-right pull-right" aria-hidden="true"></span>
+		</a>
+	</ul>
+	<div class="tab-pane fade" id="ordering_offer_${prodId}">
+		<div class="list-group order-list" id="open_ul_${prodId}">
+		</div>
+	</div>
+	<div class="tab-pane fade" id="ordering_prod_${prodId}">
+		<div class="list-group order-list" id="open_serv_ul_${prodId}">
+		</div>
+	</div>
+	<div class="tab-pane fade" id="orderno_${prodId}">
+        <div id="attach_div_${prodId}" class="list-group" value=""></div>
+        <div class="list-group" id="attachSearch_div_${prodId}"> 
+        </div>
+      </div>
+</div>
+
