@@ -6,3 +6,7 @@ bin/
 RemoteSystemsTempFiles/
 Servers/
 .settings/
+<<<<<<< HEAD
+=======
+unifyLogin/build/
+>>>>>>> appBranch
